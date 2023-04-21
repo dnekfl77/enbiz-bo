@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.display.PrDispCtgBaseTrxMapper">
+
+	<insert id="prDispCtgBaseInsert" parameterType="prDispCtgBase">
+		<selectKey keyProperty="dispCtgNo" resultType="String" order="BEFORE">
+			SELECT NEXTVAL('PR_DISP_CTG_BASE_SQ01') AS dispCtgNo
+		</selectKey>
+		INSERT INTO PR_DISP_CTG_BASE (  /* prDispCtgBaseTrx.prDispCtgBaseInsert */
+			  DISP_CTG_NO
+			, DISP_CTG_NM
+			, SITE_NO
+			, DPML_NO
+			, SHOP_TYP_CD
+			, DISP_SEQ
+			, DISP_YN
+			, USE_YN
+			, DISP_STR_DT
+			, DISP_END_DT
+			, SHOP_DESC_CONT
+			, UPR_DISP_CTG_NO
+			, LRG_CTG_NO
+			, MID_CTG_NO
+			, SML_CTG_NO
+			, THN_CTG_NO
+			, LEAF_YN
+			, PRT_TYP_CD
+			, TMPL_NO
+			, LINK_URL_ADDR
+			, MOV_FRME_CD
+			, LINK_DISP_NO
+			, SYS_REG_ID
+			, SYS_REG_DTM
+			, SYS_MOD_ID
+			, SYS_MOD_DTM
+		) VALUES (
+			  #{dispCtgNo}
+			, #{dispCtgNm}
+			, #{siteNo}
+			, #{dpmlNo}
+			, #{shopTypCd}
+			, #{dispSeq}
+			, #{dispYn}
+			, #{useYn}
+			, #{dispStrDt}
+			, #{dispEndDt}
+			, #{shopDescCont}
+			, #{uprDispCtgNo}
+			, #{lrgCtgNo}
+			, #{midCtgNo}
+			, #{smlCtgNo}
+			, #{thnCtgNo}
+			, #{leafYn}
+			, #{prtTypCd}
+			, #{tmplNo}
+			, #{linkUrlAddr}
+			, #{movFrmeCd}
+			, #{linkDispNo}
+			, #{sysRegId}
+			, NOW()
+			, #{sysModId}
+			, NOW()
+		)
+	</insert>
+
+	<update id="prDispCtgBaseUpdate" parameterType="PrDpmlBase">
+		UPDATE    PR_DISP_CTG_BASE  /* prDispCtgBaseTrx.prDispCtgBaseUpdate */
+		SET 	  DISP_CTG_NM    = #{dispCtgNm}
+				, DISP_YN        = #{dispYn}
+				, USE_YN         = #{useYn}
+				, PRT_TYP_CD     = #{prtTypCd}
+				, LINK_URL_ADDR  = #{linkUrlAddr}
+				, TMPL_NO        = #{tmplNo}
+				, LINK_DISP_NO   = #{linkDispNo}
+				, MOV_FRME_CD    = #{movFrmeCd}
+				, SYS_MOD_ID 	= #{sysModId}
+				, SYS_MOD_DTM 	= now()
+		WHERE     DPML_NO = #{dpmlNo}
+		AND       SITE_NO = #{siteNo}
+	</update>
+
+	<update id="saveMallUpdate" parameterType="prDispCtgBase">
+		UPDATE    PR_DISP_CTG_BASE  /* prDispCtgBaseTrx.saveMallUpdate */
+		SET 	  DISP_CTG_NM    = #{dispCtgNm}
+				, DISP_SEQ 	   	 = #{dispSeq}
+				, DISP_YN        = #{dispYn}
+				, USE_YN         = #{useYn}
+				, PRT_TYP_CD     = #{prtTypCd}
+				, LINK_URL_ADDR  = #{linkUrlAddr}
+				, TMPL_NO        = #{tmplNo}
+				, LINK_DISP_NO   = #{linkDispNo}
+				, MOV_FRME_CD    = #{movFrmeCd}
+				, SYS_MOD_ID 	= #{sysModId}
+				, SYS_MOD_DTM 	= NOW()
+		WHERE     DISP_CTG_NO = #{dispCtgNo}
+	</update>
+
+	<update id="saveCategoryUpdate" parameterType="prDispCtgBase">
+		UPDATE    PR_DISP_CTG_BASE  /* prDispCtgBaseTrx.saveCategoryUpdate */
+		SET 	  DISP_CTG_NM    = #{dispCtgNm}
+				, DISP_SEQ 	   	 = #{dispSeq}
+				, DISP_YN        = #{dispYn}
+				, USE_YN         = #{useYn}
+				, SHOP_DESC_CONT = #{shopDescCont}
+				, DISP_STR_DT    = #{dispStrDt}
+				, DISP_END_DT    = #{dispEndDt}
+				, PRT_TYP_CD     = #{prtTypCd}
+				, LINK_URL_ADDR  = #{linkUrlAddr}
+				, TMPL_NO        = #{tmplNo}
+				, LINK_DISP_NO   = #{linkDispNo}
+				, MOV_FRME_CD    = #{movFrmeCd}
+				, SYS_MOD_ID 	= #{sysModId}
+				, SYS_MOD_DTM 	= NOW()
+		WHERE     DISP_CTG_NO = #{dispCtgNo}
+	</update>
+
+	<update id="updatePrDispCtgBase" parameterType="prDispCtgBase">
+		UPDATE    PR_DISP_CTG_BASE  /* prDispCtgBaseTrx.updatePrDispCtgBase */
+		SET 	  DISP_CTG_NM    = #{dispCtgNm}
+				, DISP_SEQ 	   	 = #{dispSeq}
+				, DISP_YN        = #{dispYn}
+				, USE_YN         = #{useYn}
+				, DISP_STR_DT    = #{dispStrDt}
+				, DISP_END_DT    = #{dispEndDt}
+				, SYS_MOD_ID 	 = #{sysModId}
+				, SYS_MOD_DTM 	 = now()
+		WHERE     DISP_CTG_NO = #{dispCtgNo}
+	</update>
+
+	<delete id="deletePrDispCtgBase" parameterType="prDispCtgBase">
+		DELETE    	/* prDispCtgBaseTrx.deletePrDispCtgBase */
+		FROM 	PR_DISP_CTG_BASE
+		WHERE   DISP_CTG_NO = #{dispCtgNo}
+	</delete>
+
+	<update id="prDispCtgBaseUpdateDispCtgNo" parameterType="prDispCtgBase">
+		UPDATE    PR_DISP_CTG_BASE  /* prDispCtgBaseTrx.prDispCtgBaseUpdateDispCtgNo */
+		SET
+				  LRG_CTG_NO = #{lrgCtgNo}
+				, MID_CTG_NO = #{midCtgNo}
+				, SML_CTG_NO = #{smlCtgNo}
+				, THN_CTG_NO = #{thnCtgNo}
+				, SYS_MOD_ID 	= #{sysModId}
+				, SYS_MOD_DTM 	= now()
+		WHERE     DISP_CTG_NO = #{dispCtgNo}
+	</update>
+
+</mapper>
+
+

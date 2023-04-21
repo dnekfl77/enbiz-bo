@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.system.PrFaqInfoTrxMapper">
+
+	<update id="updatePrFaqInfo" parameterType="prFaqInfo">
+		UPDATE PR_FAQ_INFO    				/* prFaqInfo.updatePrFaqInfo */
+		SET 	  BB_YN          = #{bbYn}
+				, SORT_SEQ       = #{sortSeq}
+				, SYS_MOD_ID     = #{sysModId}
+				, SYS_MOD_DTM     = NOW()
+		WHERE 	  FAQ_NO = #{faqNo}
+	</update>
+
+	<insert id="insertPopupPrFaqInfo" parameterType="prFaqInfo">
+		<selectKey keyProperty="faqNo" resultType="String" order="BEFORE">
+			SELECT NEXTVAL('PR_FAQ_INFO_SQ01') AS faqNo
+		</selectKey>
+		INSERT INTO PR_FAQ_INFO ( 	/* prFaqInfo.insertPopupPrFaqInfo */
+				  FAQ_NO
+				, FAQ_LGRP_CD
+				, FAQ_MGRP_CD
+				, UPR_FIX_YN
+				, SORT_SEQ
+				, BB_YN
+				, TITLE
+				, PC_NTC_CONT
+				, MO_NTC_CONT
+				, SYS_REG_ID
+				, SYS_REG_DTM
+				, SYS_MOD_ID
+				, SYS_MOD_DTM
+		) VALUES (
+				  #{faqNo}
+				, #{faqLgrpCd}
+				, #{faqMgrpCd}
+				, #{uprFixYn}
+				, #{sortSeq}
+				, #{bbYn}
+				, #{title}
+				, #{pcNtcCont}
+				, #{moNtcCont}
+				, #{sysRegId}
+				, NOW()
+				, #{sysModId}
+				, NOW()
+		)
+	</insert>
+
+	<update id="updatePopupPrFaqInfo" parameterType="prFaqInfo">
+		UPDATE PR_FAQ_INFO    				/* prFaqInfo.updatePopupPrFaqInfo */
+		SET 	  FAQ_LGRP_CD    = #{faqLgrpCd}
+				, FAQ_MGRP_CD    = #{faqMgrpCd}
+				, TITLE          = #{title}
+				, BB_YN          = #{bbYn}
+				, SORT_SEQ       = #{sortSeq}
+				, UPR_FIX_YN     = #{uprFixYn}
+				, PC_NTC_CONT    = #{pcNtcCont}
+				, MO_NTC_CONT    = #{moNtcCont}
+				, SYS_MOD_ID     = #{sysModId}
+				, SYS_MOD_DTM     = NOW()
+		WHERE 	  FAQ_NO = #{faqNo}
+	</update>
+
+</mapper>
+
+

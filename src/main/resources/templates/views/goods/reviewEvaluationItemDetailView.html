@@ -1,0 +1,62 @@
+<!--
+* 프로그램명 : 평가항목 상세 팝업
+* 작 성 일 : 2021.07.09
+* 작 성 자 : 홍혜리
+* 수 정 자 : 홍혜리
+* 버    전 : 1.0
+* 개    요 : 평가항목 상세 팝업
+* 이    력 : 2021.09.16 프레임워크 이전
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-layout}">
+<body>
+
+<!--Title Area-->
+<th:block layout:fragment="popup-title-area">
+    <th:block layout:insert="~{fragments/popup/popup-title :: popup-title}"
+              th:with="title=${#messages.msg('reviewEvaluationItemMgmt.reviewEvaluationItemDetail.title')}"></th:block>
+</th:block>
+<!--Title Area-->
+
+<!--List Area-->
+<th:block layout:fragment="popup-List-area">
+    <div class="grid">
+        <div class="grid-head" style="overflow: hidden;">
+            <div class="title-area">
+                <h2 class="title" th:text="${#messages.msg('reviewEvaluationItemMgmt.reviewEvaluationItemDetail.grid.title')}"></h2>
+            </div>
+            <div class="option-area">
+                <div class="page-option" grid-id="reviewEvaluationItemDetailGrid">
+                </div>
+            </div>
+        </div>
+        <div class="grid-body with-head">
+            <div id="reviewEvaluationItemDetailGrid" class="rg-root rg-grid" realgrid></div>
+        </div>
+    </div>
+</th:block>
+<!--List Area-->
+
+<!--List Button Area-->
+<th:block layout:fragment="popup-List-button-area">
+    <th:block layout:insert="~{fragments/popup/popup-btn :: popup-bottom-btn}"/>
+</th:block>
+<!--List Button Area-->
+
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        var _gridType = '';
+        var _evltItemValueList = [[${evltItemValueList}]];
+    </script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/reviewEvaluationItemDetailGrid.eventHandler.js?20210916'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/reviewEvaluationItemDetailGrid.provider.js?20210916'" ></script>
+    <script type="text/javascript">
+        $(function(){
+            reviewEvaluationItemDetailGrid.eventhandler.init();
+        });
+    </script>
+</th:block>
+</body>
+</html>

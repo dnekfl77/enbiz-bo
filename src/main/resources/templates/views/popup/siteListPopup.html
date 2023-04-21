@@ -1,0 +1,56 @@
+<!--
+* 프로그램명 : 사이트 관리 조회 팝업
+* 작 성 일 : 2021.03.05
+* 작 성 자 : 윤성원
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 사이트 관리 조회 팝업
+* 이    력 :
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-layout}">
+<body>
+<!--List Area-->
+<th:block layout:fragment="popup-List-area">
+    <div class="grid">
+        <div class="grid-head"  style="overflow: hidden;">
+            <div class="title-area">
+                <h2 class="title" th:text="${#messages.msg('baseInfoMgmt.label.popup.site.title')}"></h2>
+            </div>
+            <div class="option-area">
+                <div class="page-option" grid-id="sitePopGrid">
+                    <span class='total'>총 <span id='sitePopGrid-totalcount'>0</span>건</span>
+                </div>
+            </div>
+        </div>
+        <div class="grid-body with-head">
+            <div class="rg-root rg-grid" id="sitePopGrid" realgrid></div>
+        </div>
+    </div>
+</th:block>
+<!--List Area-->
+
+<!--List Button Area-->
+<th:block layout:fragment="popup-List-button-area">
+    <th:block layout:insert="~{fragments/popup/popup-btn :: popup-bottom-btn}"/>
+</th:block>
+
+<!-- Additional Script -->
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        var _siteList = [(${sitePopupList})];
+        var _gridType = '1';
+    </script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'popup/popup.siteList.sitePopGrid.eventHandler.js?202103050000'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'popup/popup.siteList.sitePopGrid.provider.js?202103050000'" ></script>
+
+    <script type="text/javascript">
+        $(function() {
+            sitePopGrid.eventhandler.init();
+        });
+    </script>
+</th:block>
+</body>
+</html>

@@ -1,0 +1,168 @@
+<!--
+* 프로그램명 : 전시 코너 관리
+* 작 성 일 : 2021.03.12
+* 작 성 자 : 권다솜
+* 수 정 자 : 권다솜
+* 버    전 : 1.0
+* 개    요 : 전시관리 > 전시템플릿/코너관리 > 전시코너관리
+* 이    력 :
+-->
+<html lang="ko-KR"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/page-realgrid-layout}">
+
+<head>
+    <title>sub title</title>
+</head>
+<body>
+<th:block layout:fragment="page-title-area">
+    <div class="page-title">
+        <div class="left">
+            <h1><th:block th:text="${#messages.msg('displayCornerMgmt.title')}"/></h1>
+        </div>
+    </div>
+</th:block>
+<th:block layout:fragment="page-contents">
+    <div class="page-fixed with-title">
+        <div class="search-cont">
+            <!-- 조회테이블 -->
+            <div class="search">
+                <form name="displayCornerGridForm" id="displayCornerGridForm">
+                <table class="search-table">
+                    <colgroup>
+                        <col width="120">
+                        <col>
+                        <col width="120">
+                        <col>
+                        <col width="120">
+                        <col>
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <td class="label" th:text="${#messages.msg('displayCornerMgmt.search.label.displayTarget')}" />
+                        <td>
+                            <select class="form-control w60" id="conrTgtCd" name="conrTgtCd">
+                                <option value="" th:text="${#messages.msg('adminCommon.entirety')}"></option>
+                                <option th:each="list : ${codeList.DP005}" th:value="${list.cd}" th:text="${list.cdNm}"></option>
+                            </select>
+                        </td>
+                        <td class="label" th:text="${#messages.msg('displayCornerMgmt.search.label.templateType')}" />
+                        <td>
+                            <select class="form-control w30" id="tmplTypCd" name="tmplTypCd">
+                                <option value="" th:text="${#messages.msg('adminCommon.entirety')}"></option>
+                                <option th:each="list : ${codeList.DP004}" th:value="${list.cd}" th:text="${list.cdNm}"></option>
+                            </select>
+                        </td>
+                        <td class="label" th:text="${#messages.msg('displayCornerMgmt.search.label.useYn')}" />
+                        <td>
+                            <select class="form-control w30" id="useYn" name="useYn">
+                                <option value="" th:text="${#messages.msg('adminCommon.entirety')}"></option>
+                                <option value="Y" th:text="${#messages.msg('adminCommon.use')}" selected></option>
+                                <option value="N" th:text="${#messages.msg('adminCommon.disuse')}"/>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label" th:text="${#messages.msg('displayCornerMgmt.search.label.displayManager')}" />
+                        <td>
+                            <input class="input disabled w60" type="text" id="aempNm" th:readonly="true"/>
+                            <input type="hidden" id="aempId" name="aempId"/>
+                            <a href="#" class="button small" id="btn_aempPopup_call"><i class="icon-sarch"></i></a>
+                            <a href="#" class="button small" id="btn_aempPopup_reset"><i class="icon-clear"></i></a>
+                        </td>
+                        <td class="label" th:text="${#messages.msg('displayCornerMgmt.search.label.displayCorner')}" />
+                        <td>
+                            <select class="form-control" id="displayCornerSearchType" name="displayCornerSearchType">
+                                <option value="01" th:text="${#messages.msg('displayCornerMgmt.search.label.cornerNm')}" th:selected="true"></option>
+                                <option value="02" th:text="${#messages.msg('displayCornerMgmt.search.label.cornerNo')}"></option>
+                            </select>
+                            <input class="input" type="text" name="displayCornerSearchWord" id="displayCornerSearchWord"/>
+                        </td>
+                        <td class="label" th:text="${#messages.msg('displayCornerMgmt.search.label.template')}" />
+                        <td>
+                            <select class="form-control" id="templateSearchType" name="templateSearchType">
+                                <option value="01" th:text="${#messages.msg('displayCornerMgmt.search.label.templateNm')}" th:selected="true"></option>
+                                <option value="02" th:text="${#messages.msg('displayCornerMgmt.search.label.templateNo')}" ></option>
+                            </select>
+                            <input class="input" type="text" name="templateSearchWord" id="templateSearchWord"/>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                </form>
+            </div>
+            <!-- //조회테이블 -->
+            <!-- 검색버튼 -->
+            <div class="button-group search-btn">
+                <a href="#" class="btn_gblue button white" id="btn_init">
+                    <span class="text" th:text="${#messages.msg('adminCommon.button.init')}" />
+                </a>
+                <a href="#" class="btn_blue button dark" id="btn_search">
+                    <span class="text" th:text="${#messages.msg('adminCommon.button.search')}" />
+                </a>
+            </div>
+            <!-- //검색버튼 -->
+            <!-- 리얼그리드 -->
+            <div class="grid-cont">
+                <div class="grid">
+                    <div class="grid-head">
+                        <div class="title-area">
+                            <h2 class="title" th:text="${#messages.msg('displayCornerMgmt.grid.title')}" />
+                        </div>
+                        <div class="option-area">
+                            <div class="edit-option">
+                                <div class="button-group">
+                                    <a href="#" class="button inside" id="btn_grid_insert">
+                                        <span class="text" th:text="${#messages.msg('displayCornerMgmt.grid.btn.insert')}" />
+                                    </a>
+                                    <a href="#" class="button inside" id="btn_grid_remove">
+                                        <span class="text" th:text="${#messages.msg('adminCommon.grid.button.delete.row')}" />
+                                    </a>
+                                    <a href="#" class="button inside" id="btn_grid_save">
+                                        <span class="text" th:text="${#messages.msg('adminCommon.grid.button.save')}" />
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="page-option" grid-id="displayCornerGrid">
+                                <span class="total">총 <span id="displayCornerGrid-totalcount">0</span>건</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid-body with-head">
+                        <div id="displayCornerGrid" realgrid></div>
+                    </div>
+                </div>
+            </div>
+            <!-- //리얼그리드 -->
+        </div>
+    </div>
+</th:block>
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        var msg = x2coMessage.getMessage( {
+              displayCornerNo    	        : 'displayCornerMgmt.grid.field.displayCornerNo'
+            , displayCornerNm    		    : 'displayCornerMgmt.grid.field.displayCornerNm'
+            , connectionDisplayTemplate     : 'displayCornerMgmt.grid.field.connectionDisplayTemplate'
+            , displayTarget                 : 'displayCornerMgmt.grid.field.displayTarget'
+            , setUseYn                      : 'displayCornerMgmt.grid.field.setUseYn'
+            , useYn 		                : 'displayCornerMgmt.grid.field.useYn'
+            , displayManager                : 'displayCornerMgmt.grid.field.displayManager'
+            , sysModId                      : 'displayCornerMgmt.grid.field.sysModId'
+            , sysModDtm 		            : 'displayCornerMgmt.grid.field.sysModDtm'
+            , deleteRowCheck : 'adminCommon.alert.no.selected.item.for.delete'
+            , saveRowCheck : 'adminCommon.alert.no.selected.item.for.save'
+            , checkPrTmplConrMappInfo : 'displayCornerMgmt.error.msg.checkPrTmplConrMappInfoMsg'
+        });
+    </script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/displayCornerGrid.eventHandler.js?2021031202'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/displayCornerGrid.provider.js?2021031202'" ></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            displayCornerGrid.eventhandler.init();
+        });
+    </script>
+</th:block>
+
+</body>
+</html>

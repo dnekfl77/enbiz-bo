@@ -1,0 +1,55 @@
+<!--
+* 프로그램명 : 전시 카테고리 Tree 조회 팝업
+* 작 성 일 : 2021.08.20
+* 작 성 자 : 이원희
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 부서 목록 조회 Tree 팝업 UI
+* 이    력 :
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-layout}">
+<body>
+
+    <!--Title Area-->
+    <th:block layout:fragment="popup-title-area">
+        <div class="header" style="margin-bottom : 10px;">
+            <div class="title" th:text="${#messages.msg('baseInfoMgmt.label.popup.userDeptMgmt.title')}"></div>
+        </div>
+    </th:block>
+
+    <!--List Area-->
+    <th:block layout:fragment="popup-List-area">
+        <div class="data-cont" style="height: 80%;">
+            <div class="data full-height" style="overflow: hidden;">
+                <div class="data-body full-height">
+                    <ul id="tree" class="ztree"></ul>
+                </div>
+            </div>
+        </div>
+    </th:block>
+    <!--List Area-->
+
+<!--List Button Area-->
+<th:block layout:fragment="popup-List-button-area">
+    <div class="button-group search-btn" style="margin: 10px auto;">
+        <a href="#" class="button" id="btn_popup_bottom_close">
+            <span class="text" th:text="${#messages.msg('baseInfoMgmt.label.popup.btn.close')}"></span>
+        </a>
+    </div>
+</th:block>
+
+<th:block layout:fragment="add-script">
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'popup/popup.deptMgmtList.tree.eventHandler.js?202108201455'" ></script>
+    <script th:inline="javascript">
+        var req         = [[${request}]];
+        $(document).ready(function() {
+            userDeptMgmtTree.eventHandler.init();
+        });
+    </script>
+</th:block>
+
+</body>
+</html>

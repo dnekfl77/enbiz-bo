@@ -1,0 +1,363 @@
+<!--
+* 프로그램명 : 결제수단 제어관리 등록/수정 팝업
+* 작 성 일 : 2021.07.06
+* 작 성 자 : 권다솜
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 결제관리 > 결제수단관리 > 결제수단 제어관리 > 등록 > 결제수단 제어관리 등록/수정 팝업
+* 이    력 :
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-update-layout}">
+<body>
+
+<th:block layout:fragment="header-area">
+    <div class="header">
+        <h1 class="title" th:if="${requestData.argInsertUpdate} == 'I'"
+            th:text="${#messages.msg('paymentMeanMgmt.popupInsert.title')}"></h1>
+        <h1 class="title" th:if="${requestData.argInsertUpdate} == 'U'"
+            th:text="${#messages.msg('paymentMeanMgmt.popupUpdate.title')}"></h1>
+    </div>
+</th:block>
+
+<th:block layout:fragment="data-area">
+    <form name="controlGridForm" id="controlGridForm">
+        <input type="hidden" name="payMeanCtrlNo" id="payMeanCtrlNo">
+        <input type="hidden" name="ctrlGbCdList" id="ctrlGbCdList">
+        <!--data-cont-->
+        <div class="data-cont">
+            <div class="data">
+                <div class="data-head">
+                    <div class="left">
+                        <span class="title" th:text="${#messages.msg('paymentMeanMgmt.popupUpdate.subTitle1')}"></span>
+                    </div>
+                </div>
+                <div class="data-body toggle-cont">
+                    <table class="data-table">
+                        <colgroup>
+                            <col width="120">
+                            <col>
+                            <col width="120">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                        <tr>
+                            <td class="label"><strong th:text="${#messages.msg('paymentMeanMgmt.popupUpdate.label.useLmtStrDtm')}"></strong></td>
+                            <td>
+                                <div class="input-group">
+                                    <div class="picker-group" data-lopicker="basic">
+                                        <input type="text" class="input disabled" name="startDate" id="startDate" disabled>
+                                        <span class="input-group-addon"><i class="icon-calendar" id="calendarButton1"></i></span>
+                                    </div>
+                                    <select class="form-control" id="startHour" name="startHour">
+                                        <option th:each="num,numStat : ${#numbers.sequence(0,23)}"
+                                                th:value="${#numbers.formatInteger(numStat.index,2)}"
+                                                th:text="${#numbers.formatInteger(numStat.index,2)}"></option>
+                                    </select>
+                                    <em> : </em>
+                                    <select class="form-control" id="startMinute" name="startMinute">
+                                        <option th:each="num,numStat : ${#numbers.sequence(0,59)}"
+                                                th:value="${#numbers.formatInteger(numStat.index,2)}"
+                                                th:text="${#numbers.formatInteger(numStat.index,2)}"></option>
+                                    </select>
+                                    <input class="input" type="hidden" name="useLmtStrDtm" id="useLmtStrDtm"/>
+                                </div>
+                            </td>
+                            <td class="label"><strong th:text="${#messages.msg('paymentMeanMgmt.popupUpdate.label.useLmtEndDtm')}"></strong></td>
+                            <td>
+                                <div class="input-group">
+                                    <div class="picker-group" data-lopicker="basic">
+                                        <input type="text" class="input disabled" name="endDate" id="endDate" disabled>
+                                        <span class="input-group-addon"><i class="icon-calendar" id="calendarButton2"></i></span>
+                                    </div>
+                                    <select class="form-control" id="endHour" name="endHour">
+                                        <option th:each="num,numStat : ${#numbers.sequence(0,23)}"
+                                                th:value="${#numbers.formatInteger(numStat.index,2)}"
+                                                th:text="${#numbers.formatInteger(numStat.index,2)}"></option>
+                                    </select>
+                                    <em> : </em>
+                                    <select class="form-control" id="endMinute" name="endMinute">
+                                        <option th:each="num,numStat : ${#numbers.sequence(0,59)}"
+                                                th:value="${#numbers.formatInteger(numStat.index,2)}"
+                                                th:text="${#numbers.formatInteger(numStat.index,2)}"></option>
+                                    </select>
+                                    <input class="input" type="hidden" name="useLmtEndDtm" id="useLmtEndDtm"/>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label"><strong th:text="${#messages.msg('paymentMeanMgmt.popupUpdate.label.dvcGbCd')}"></strong></td>
+                            <td>
+                                <select class="form-control w30" id="dvcGbCd" name="dvcGbCd">
+                                    <option value="" th:text="${#messages.msg('baseInfoMgmt.label.select')}"></option>
+                                    <option th:each="list : ${codeList.OM031}" th:value="${list.cd}" th:text="${list.cdNm}"></option>
+                                </select>
+                            </td>
+                            <td class="label"><strong th:text="${#messages.msg('paymentMeanMgmt.popupUpdate.label.useYn')}"></strong></td>
+                            <td>
+                                <div class="input-group">
+                                    <label class="radio-inline" th:for="useYn_Y">
+                                        <input type="radio" name="useYn" th:value="Y" th:id="useYn_Y">
+                                        <span th:text="${#messages.msg('methodsOfPaymentManagement.label.useYn_Y')}"></span>
+                                    </label>
+                                    <label class="radio-inline" th:for="useYn_N">
+                                        <input type="radio" name="useYn" th:value="N" th:id="useYn_N">
+                                        <span th:text="${#messages.msg('methodsOfPaymentManagement.label.useYn_N')}"></span>
+                                    </label>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label" th:text="${#messages.msg('paymentMeanMgmt.popupUpdate.label.sysModId')}"></td>
+                            <td>
+                                <span id="sysModId"></span>
+                            </td>
+                            <td class="label" th:text="${#messages.msg('paymentMeanMgmt.popupUpdate.label.sysModDtm')}"></td>
+                            <td>
+                                <span id="sysModDtm"></span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!--//data-cont-->
+
+        <!-- grid-cont -->
+        <div class="grid-cont">
+            <div class="grid">
+                <div class="grid-head">
+                    <div class="title-area">
+                        <h2 class="title" th:text="${#messages.msg('paymentMeanMgmt.popupUpdate.subTitle2')}"></h2>
+                    </div>
+                    <div class="option-area">
+                        <div class="edit-option">
+                            <div class="button-group">
+                                <a href="#" class="button inside" id="btn_grid_add">
+                                    <span class="text" th:text="${#messages.msg('methodsOfPaymentManagement.label.add')}"></span>
+                                </a>
+                                <a href="#" class="button inside" id="btn_grid_remove">
+                                    <span class="text" th:text="${#messages.msg('methodsOfPaymentManagement.label.remove')}"></span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="page-option">
+                            <span class="total">총 <span id="controlUpdateGrid-totalcount">0</span> 건</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- //grid-head -->
+
+                <div class="grid-body with-head">
+                    <div id="controlUpdateGrid" realgrid></div>
+                </div>
+            </div>
+        </div>
+        <!-- //grid-cont -->
+
+        <!--data-cont-->
+        <div class="data-cont mt20">
+            <div class="data">
+                <div class="data-head">
+                    <div class="left">
+                        <span class="title" th:text="${#messages.msg('paymentMeanMgmt.popupUpdate.subTitle3')}"></span>
+                    </div>
+                </div>
+                <div class="data-body toggle-cont">
+                    <table class="data-table">
+                        <colgroup>
+                            <col width="120">
+                            <col>
+                            <col width="120">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                        <tr>
+                            <td class="label"><strong th:text="${#messages.msg('paymentMeanMgmt.popupUpdate.label.dispDtm')}"></strong></td>
+                            <td>
+                                <div class="input-group">
+                                    <div class="picker-group" data-lopicker="basic">
+                                        <input type="text" class="input disabled" name="dispStartDate" id="dispStartDate" disabled>
+                                        <span class="input-group-addon"><i class="icon-calendar" id="calendarButton3"></i></span>
+                                    </div>
+                                    <select class="form-control" id="dispStartHour" name="dispStartHour">
+                                        <option th:each="num,numStat : ${#numbers.sequence(0,23)}"
+                                                th:value="${#numbers.formatInteger(numStat.index,2)}"
+                                                th:text="${#numbers.formatInteger(numStat.index,2)}"></option>
+                                    </select>
+                                    <em> : </em>
+                                    <select class="form-control" id="dispStartMinute" name="dispStartMinute">
+                                        <option th:each="num,numStat : ${#numbers.sequence(0,59)}"
+                                                th:value="${#numbers.formatInteger(numStat.index,2)}"
+                                                th:text="${#numbers.formatInteger(numStat.index,2)}"></option>
+                                    </select>
+                                    <input class="input" type="hidden" name="dispStrDtm" id="dispStrDtm"/>
+                                </div>
+                                <em> ~ </em>
+
+                                <div class="input-group">
+                                    <div class="picker-group" data-lopicker="basic">
+                                        <input type="text" class="input disabled" name="dispEndDate" id="dispEndDate" disabled>
+                                        <span class="input-group-addon"><i class="icon-calendar" id="calendarButton4"></i></span>
+                                    </div>
+                                    <select class="form-control" id="dispEndHour" name="dispEndHour">
+                                        <option th:each="num,numStat : ${#numbers.sequence(0,23)}"
+                                                th:value="${#numbers.formatInteger(numStat.index,2)}"
+                                                th:text="${#numbers.formatInteger(numStat.index,2)}"></option>
+                                    </select>
+                                    <em> : </em>
+                                    <select class="form-control" id="dispEndMinute" name="dispEndMinute">
+                                        <option th:each="num,numStat : ${#numbers.sequence(0,59)}"
+                                                th:value="${#numbers.formatInteger(numStat.index,2)}"
+                                                th:text="${#numbers.formatInteger(numStat.index,2)}"></option>
+                                    </select>
+                                    <input class="input" type="hidden" name="dispEndDtm" id="dispEndDtm"/>
+                                </div>
+                            </td>
+                            <td class="label"><strong th:text="${#messages.msg('paymentMeanMgmt.popupUpdate.label.dispYn')}"></strong></td>
+                            <td>
+                                <div class="input-group">
+                                    <label class="radio-inline" th:for="dispYn_Y">
+                                        <input type="radio" name="dispYn" th:value="Y" th:id="dispYn_Y">
+                                        <span th:text="${#messages.msg('methodsOfPaymentManagement.label.dispYn_Y')}"></span>
+                                    </label>
+                                    <label class="radio-inline" th:for="dispYn_N">
+                                        <input type="radio" name="dispYn" th:value="N" th:id="dispYn_N">
+                                        <span th:text="${#messages.msg('methodsOfPaymentManagement.label.dispYn_N')}"></span>
+                                    </label>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label"><strong th:text="${#messages.msg('paymentMeanMgmt.popupUpdate.label.title')}"></strong></td>
+                            <td colspan="3">
+                                <input class="input w100" type="text" name="title" id="title" maxlength="500"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label"><strong th:text="${#messages.msg('paymentMeanMgmt.popupUpdate.label.cont')}"></strong></td>
+                            <td colspan="3">
+                                <textarea class="w100" id="cont" name="cont" rows="4"></textarea>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!--//data-cont-->
+
+    </form>
+    <div class="button-group search-btn">
+        <a href="#" class="button" id="btn_popup_cancel">
+            <span class="text" th:text="${#messages.msg('adminCommon.button.cancel')}">취소</span>
+        </a>
+        <a href="#" class="button large" id="btn_popup_save">
+            <span class="text" th:text="${#messages.msg('adminCommon.button.save')}">저장</span>
+        </a>
+    </div>
+</th:block>
+
+
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        var req         = [[${requestData}]];
+
+        // 그리드 내 selectBox 옵션 셋팅 (제어구분코드, PG사, 결제수단)
+        var ctrlGbCdList = [[${codeList.OM032}]];
+        var pgList = [[${codeList.OM030}]];
+        var payWayList = [[${codeList.OM013}]];
+        var bankList = [[${codeList.OM026}]];
+        var issuerList = [[${codeList.OM027}]];
+
+        // 제어구분코드
+        var ctrlGbCdValues = [];
+        var ctrlGbCdLabels = [];
+
+        for(var data of ctrlGbCdList){
+            ctrlGbCdValues.push(data.cd);
+            ctrlGbCdLabels.push(data.cdNm);
+        }
+
+        ctrlGbCdValues.unshift('');
+        ctrlGbCdLabels.unshift('선택');
+
+        // 제어대상번호
+        var ctrlTgtNoCodes = {
+             id : 'ctrlTgtNo'
+           , levels : 2
+           , tags : []
+           , keys: []
+           , values : []
+        }
+
+        pgList.forEach(function(data){
+            ctrlTgtNoCodes.tags.push(data.cd);
+            ctrlTgtNoCodes.keys.push(['10',data.cd]);
+            ctrlTgtNoCodes.values.push(data.cdNm);
+        });
+
+        payWayList.forEach(function(data){
+            if(data.ref1Val == "Y") { // 주결제수단 여부가 Y인 것만
+                ctrlTgtNoCodes.tags.push(data.cd);
+                ctrlTgtNoCodes.keys.push(['20',data.cd]);
+                ctrlTgtNoCodes.values.push(data.cdNm);
+            }
+        });
+
+        ctrlTgtNoCodes.tags.unshift('','','');
+        ctrlTgtNoCodes.keys.unshift(['',''],['10',''],['20','']);
+        ctrlTgtNoCodes.values.unshift('선택','선택','선택');
+
+        // 제어대상상세번호
+        var ctrlTgtDtlNoCodes = {
+             id : 'ctrlTgtDtlNo'
+           , levels : 3
+           , tags : []
+           , keys: []
+           , values : []
+        }
+
+        bankList.forEach(function(data){
+            ctrlTgtDtlNoCodes.tags.push(data.cd);
+            ctrlTgtDtlNoCodes.keys.push(['20','11',data.cd]);
+            ctrlTgtDtlNoCodes.values.push(data.cdNm);
+        });
+
+        issuerList.forEach(function(data){
+            ctrlTgtDtlNoCodes.tags.push(data.cd);
+            ctrlTgtDtlNoCodes.keys.push(['20','21',data.cd]);
+            ctrlTgtDtlNoCodes.values.push(data.cdNm);
+            ctrlTgtDtlNoCodes.tags.push(data.cd);
+            ctrlTgtDtlNoCodes.keys.push(['20','22',data.cd]);
+            ctrlTgtDtlNoCodes.values.push(data.cdNm);
+        });
+
+        ctrlTgtDtlNoCodes.tags.unshift('','','','','','','','');
+        ctrlTgtDtlNoCodes.keys.unshift(['','',''],['10','',''],['20','',''],['10','10',''],['10','20',''],['20','11',''],['20','21',''],['20','22','']);
+        ctrlTgtDtlNoCodes.values.unshift('선택','선택','선택','선택','선택','선택','선택','선택');
+
+        var msg = x2coMessage.getMessage( {
+              deleteRowCheck : 'paymentMeanMgmt.message.deleteRowCheck'
+            , cancelMessage : 'paymentMeanMgmt.message.cancelMessage'
+            , necessaryCheckMessage : 'paymentMeanMgmt.message.necessaryCheckMessage'
+            , gridCountCheck : 'paymentMeanMgmt.message.gridCountCheck'
+            , payWayCdOverLap : 'paymentMeanMgmt.message.payWayCdOverLap'
+            , save : 'paymentMeanMgmt.message.save'
+        });
+    </script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'payment/controlUpdateGrid.eventHandler.js?202107060001'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'payment/controlUpdateGrid.provider.js?202107060001'" ></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            controlUpdateGrid.eventhandler.init();
+        });
+    </script>
+</th:block>
+
+</body>
+</html>

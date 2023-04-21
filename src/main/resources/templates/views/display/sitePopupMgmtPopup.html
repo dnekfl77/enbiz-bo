@@ -1,0 +1,306 @@
+<!--
+* 프로그램명 : 사이트 팝업 관리 등록/수정 팝업
+* 작 성 일 : 2021.03.04
+* 작 성 자 : 권다솜
+* 수 정 자 : 권다솜
+* 버    전 : 1.0
+* 개    요 : 전시관리 > 사이트관리 > 팝업관리 > 사이트 팝업 등록/수정
+* 이    력 :
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-update-layout}">
+<body>
+
+<th:block layout:fragment="header-area">
+    <div class="header">
+        <h1 class="title" th:if="${requestData} == null"
+            th:text="${#messages.msg('sitePopupMgmt.into.title.insert')}"></h1>
+        <h1 class="title" th:unless="${requestData} == null"
+            th:text="${#messages.msg('sitePopupMgmt.into.title.update')}"></h1>
+    </div>
+</th:block>
+
+<th:block layout:fragment="data-area">
+    <div class="data">
+        <div class="data-body">
+            <form name="sitePopupForm" id="sitePopupForm">
+                <table class="data-table">
+                    <colgroup>
+                        <col style="width:120px;"/>
+                        <col />
+                        <col style="width:120px;"/>
+                        <col />
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <td class="label"><strong th:text="${#messages.msg('sitePopupMgmt.into.label.siteNm')}"></strong></td>
+                        <td colspan="3">
+                            <select class="form-control w20" id="siteNo" name="siteNo">
+                                <option value="" th:text="${#messages.msg('adminCommon.select')}"></option>
+                                <option th:each="list : ${siteList}" th:value="${list.siteNo}" th:text="${list.siteNm}"></option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label"><strong th:text="${#messages.msg('sitePopupMgmt.into.label.popupNm')}"></strong></td>
+                        <td>
+                            <input class="input" type="text" name="popupNm" id="popupNm" maxlength="300"/>
+                            <input class="input" type="hidden" name="popupNo" id="popupNo"/>
+                        </td>
+                        <td class="label"><strong th:text="${#messages.msg('sitePopupMgmt.into.label.displayMedia')}"></strong></td>
+                        <td>
+                            <div class="input-group">
+                                <th:block th:each="list,idx : ${codeList.DP015}">
+                                    <label class="radio-inline" th:for="${list.cdNm}">
+                                        <input type="radio" name="dispMediaCd" th:value="${list.cd}" th:id="${list.cdNm}" th:disabled="${requestData} != null">
+                                        <span th:text="${list.cdNm}"></span>
+                                    </label>
+                                </th:block>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label"><strong th:text="${#messages.msg('sitePopupMgmt.into.label.popupTerm')}"></strong></td>
+                        <td colspan="3">
+                            <div class="input-group">
+                                <div class="picker-group" data-lopicker="basic">
+                                    <input type="text" class="input disabled" name="startDate" id="startDate" disabled>
+                                    <span class="input-group-addon"><i class="icon-calendar" id="calendarButton1"></i></span>
+                                </div>
+                                <select class="form-control" id="startHour" name="startHour">
+                                    <option th:each="num,numStat : ${#numbers.sequence(0,23)}"
+                                            th:value="${#numbers.formatInteger(numStat.index,2)}"
+                                            th:text="${#numbers.formatInteger(numStat.index,2)}"></option>
+                                </select>
+                                <em> : </em>
+                                <select class="form-control" id="startMinute" name="startMinute">
+                                    <option th:each="num,numStat : ${#numbers.sequence(0,59)}"
+                                            th:value="${#numbers.formatInteger(numStat.index,2)}"
+                                            th:text="${#numbers.formatInteger(numStat.index,2)}"></option>
+                                </select>
+                                <input class="input" type="hidden" name="popupDispStrDtm" id="popupDispStrDtm"/>
+                                <em> ~ </em>
+
+                                <div class="picker-group" data-lopicker="basic">
+                                    <input type="text" class="input disabled" name="endDate" id="endDate" disabled>
+                                    <span class="input-group-addon"><i class="icon-calendar" id="calendarButton2"></i></span>
+                                </div>
+                                <select class="form-control" id="endHour" name="endHour">
+                                    <option th:each="num,numStat : ${#numbers.sequence(0,23)}"
+                                            th:value="${#numbers.formatInteger(numStat.index,2)}"
+                                            th:text="${#numbers.formatInteger(numStat.index,2)}"></option>
+                                </select>
+                                <em> : </em>
+                                <select class="form-control" id="endMinute" name="endMinute">
+                                    <option th:each="num,numStat : ${#numbers.sequence(0,59)}"
+                                            th:value="${#numbers.formatInteger(numStat.index,2)}"
+                                            th:text="${#numbers.formatInteger(numStat.index,2)}"></option>
+                                </select>
+                                <input class="input" type="hidden" name="popupDispEndDtm" id="popupDispEndDtm"/>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label"><strong th:text="${#messages.msg('sitePopupMgmt.into.label.prioRnk')}"></strong></td>
+                        <td>
+                            <input class="input" type="text" name="prioRnk" id="prioRnk" maxlength="2" onKeyup="number(this)"/>
+                        </td>
+                        <td class="label"><strong th:text="${#messages.msg('sitePopupMgmt.into.label.popupTypCd')}"></strong></td>
+                        <td>
+                            <select class="form-control" id="popupTypCd" name="popupTypCd">
+                                <option value="" th:text="${#messages.msg('adminCommon.select')}"></option>
+                                <option th:each="list : ${codeList.DP014}" th:value="${list.cd}" th:text="${list.cdNm}"></option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label"><strong th:text="${#messages.msg('sitePopupMgmt.into.label.popupTgtScrn')}"></strong></td>
+                        <td>
+                            <div class="input-group">
+                                <th:block th:each="list : ${codeList.DP016}">
+                                    <label th:for="${list.cdNm}">
+                                        <input class="checkbox-inline" type="checkbox" name="popupTgtScrn" th:value="${list.cd}" th:id="${list.cdNm}"/>
+                                        <span th:text="${list.cdNm}"></span>
+                                    </label>
+                                </th:block>
+                                <input class="input" type="hidden" name="popupTgtScrnList" id="popupTgtScrnList"/>
+                            </div>
+                        </td>
+                        <td class="label"><strong th:text="${#messages.msg('sitePopupMgmt.into.label.useYn')}"></strong></td>
+                        <td>
+                            <div class="input-group">
+                                <label class="radio-inline" th:for="useYn_Y">
+                                    <input type="radio" name="useYn" th:value="Y" th:id="useYn_Y">
+                                    <span th:text="${#messages.msg('baseInfoMgmt.label.use')}"></span>
+                                </label>
+                                <label class="radio-inline" th:for="useYn_N">
+                                    <input type="radio" name="useYn" th:value="N" th:id="useYn_N">
+                                    <span th:text="${#messages.msg('baseInfoMgmt.label.disuse')}"></span>
+                                </label>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label" th:text="${#messages.msg('sitePopupMgmt.into.label.popupChlAply')}"></td>
+                        <td colspan="3">
+                            <div class="input-group">
+                                <div class="grid-cont">
+                                    <div class="grid" style="overflow: hidden;">
+                                        <div class="grid-head">
+                                            <div class="option-area">
+                                                <div class="edit-option">
+                                                    <div class="button-group">
+                                                        <a href="#" class="button inside" id="btn_grid_insert">
+                                                            <span class="text" th:text="${#messages.msg('sitePopupMgmt.into.btn.channelInsert')}" />
+                                                        </a>
+                                                        <a href="#" class="button inside" id="btn_grid_remove">
+                                                            <span class="text" th:text="${#messages.msg('adminCommon.grid.button.delete.row')}" />
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                                <div class="tip fl-right mt5 mb5" th:text="${#messages.msg('sitePopupMgmt.into.label.channelTip')}"> </div>
+                                            </div>
+                                        </div>
+                                        <div class="grid-body with-head">
+                                            <div id="popupChlGrid" realgrid></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- //리얼그리드 -->
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- PC -->
+                    <tr id="pc_layout_1">
+                        <td class="label"><strong th:text="${#messages.msg('sitePopupMgmt.into.label.popupSize')}"></strong></td>
+                        <td>
+                            <div class="input-group">
+                                <em> Width : </em>
+                                <input class="input w20" type="text" name="popupSzWdt" id="popupSzWdt" maxlength="4"/>
+                                <em> Height : </em>
+                                <input class="input w20" type="text" name="popupSzHigh" id="popupSzHigh" maxlength="4"/>
+                            </div>
+                        </td>
+                        <td class="label"><strong th:text="${#messages.msg('sitePopupMgmt.into.label.popupLocation')}"></strong></td>
+                        <td>
+                            <div class="input-group">
+                                <em> Left : </em>
+                                <input class="input w20" type="text" name="popupLocLeft" id="popupLocLeft" maxlength="4"/>
+                                <em> Top : </em>
+                                <input class="input w20" type="text" name="popupLocTop" id="popupLocTop" maxlength="3"/>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr id="pc_layout_2">
+                        <td class="label"><strong th:text="${#messages.msg('sitePopupMgmt.into.label.popupCont')}"></strong></td>
+                        <td colspan="3">
+                            <textarea id="popupCont" name="popupCont" style="display:none; width: 100%; height: 200px;"></textarea>
+                        </td>
+                    </tr>
+                    <!-- PC -->
+
+                    <!-- 모바일 -->
+                    <tr id="mobile_layout_1">
+                        <td class="label"><strong th:text="${#messages.msg('sitePopupMgmt.into.label.prtTypCd')}"></strong></td>
+                        <td>
+                            <div class="input-group">
+                                <th:block th:each="list,idx : ${codeList.DP017}">
+                                    <label class="radio-inline" th:for="${list.cdNm}">
+                                        <input type="radio" name="prtTypCd" th:value="${list.cd}" th:id="${list.cdNm}">
+                                        <span th:text="${list.cdNm}"></span>
+                                    </label>
+                                </th:block>
+                            </div>
+                        </td>
+                        <td class="label"><strong th:text="${#messages.msg('sitePopupMgmt.into.label.popupLnk')}"></strong></td>
+                        <td>
+                            <input class="input" type="text" name="popupLnk" id="popupLnk" maxlength="1000"/>
+                        </td>
+                    </tr>
+                    <tr id="mobile_layout_2">
+                        <td class="label"><strong th:text="${#messages.msg('sitePopupMgmt.into.label.popupImgUpload')}"></strong></td>
+                        <td colspan="3">
+                            <div class="input-group file-upload">
+                                <a href="#" class="button small gray" id="btn_fileUpload"><span class="text" th:text="${#messages.msg('adminCommon.button.select.file')}"></span></a>
+                                <input type="text" class="input disabled" disabled="disabled">
+                                <input type="hidden" name="popupImgPathNm" id="popupImgPathNm">
+                                <input type="hidden" name="popupImgFileNm" id="popupImgFileNm">
+                                <div class="tip-wrap">
+                                    <p class="tip" th:text="${#messages.msg('sitePopupMgmt.into.label.fileSize')}"></p>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <!-- 모바일 -->
+
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </div>
+</th:block>
+
+<th:block layout:fragment="button-area">
+    <div class="button-group" style="margin-top: 0px !important;" >
+        <a href="#" class="button" id="btn_popup_cancel">
+            <span class="text" th:text="${#messages.msg('adminCommon.button.cancel')}"></span>
+        </a>
+        <a href="#" class="button large" id="btn_popup_save">
+            <span class="text" th:text="${#messages.msg('adminCommon.button.save')}"></span>
+        </a>
+    </div>
+</th:block>
+
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        var oEditors = [];
+        var requestData    = [[${requestData}]];
+        const maxUploadSizePerFile = [[${maxUploadSizePerFile}]];
+
+        var msg = x2coMessage.getMessage( {
+              siteNm : 'sitePopupMgmt.into.label.siteNm'
+            , popupNm : 'sitePopupMgmt.into.label.popupNm'
+            , prioRnk : 'sitePopupMgmt.into.label.prioRnk'
+            , popupTypCd : 'sitePopupMgmt.into.label.popupTypCd'
+            , popupTgtScrn : 'sitePopupMgmt.into.label.popupTgtScrn'
+            , popupSizeWdt : 'sitePopupMgmt.into.label.popupSizeWdt'
+            , popupSizeHigh : 'sitePopupMgmt.into.label.popupSizeHigh'
+            , popupLocationLeft : 'sitePopupMgmt.into.label.popupLocationLeft'
+            , popupLocationTop : 'sitePopupMgmt.into.label.popupLocationTop'
+            , popupCont : 'sitePopupMgmt.into.label.popupCont'
+            , popupLnk : 'sitePopupMgmt.into.label.popupLnk'
+            , img : 'sitePopupMgmt.into.label.img'
+
+            , cancelMessage : 'adminCommon.alert.cancel'
+            , necessaryCheckMessage : 'adminCommon.alert.required.parameter'
+            , numberRange1CheckMessage : 'sitePopupMgmt.error.msg.numberRange1CheckMsg'
+            , numberRange2CheckMessage : 'sitePopupMgmt.error.msg.numberRange2CheckMsg'
+            , numberRange3CheckMessage : 'sitePopupMgmt.error.msg.numberRange3CheckMsg'
+            , numberRange4CheckMessage : 'sitePopupMgmt.error.msg.numberRange4CheckMsg'
+            , numberRange5CheckMessage : 'sitePopupMgmt.error.msg.numberRange5CheckMsg'
+         	, saveQuestionMessage : 'adminCommon.alert.save'
+         	, deleteRowCheck : 'adminCommon.alert.no.selected.item.for.delete'
+
+            , dataCheck1 : 'sitePopupMgmt.error.msg.dataCheck1Msg'
+            , dataCheck2 : 'sitePopupMgmt.error.msg.dataCheck2Msg'
+            , dataCheck3 : 'sitePopupMgmt.error.msg.dataCheck3Msg'
+            , fileLength : 'sitePopupMgmt.error.msg.file.lengthMsg'
+            , fileLimitSize : 'sitePopupMgmt.error.msg.file.fileTypeErrorMsg'
+         	, fileTypeError : 'sitePopupMgmt.error.msg.file.limit.sizeMsg'
+        });
+    </script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/popupChlGrid.eventHandler.js?2021100801'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/popupChlGrid.provider.js?2021100801'" ></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            popupChlGrid.eventhandler.init();
+        });
+    </script>
+</th:block>
+
+</body>
+</html>

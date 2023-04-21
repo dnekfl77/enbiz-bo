@@ -1,0 +1,186 @@
+<!--
+* 프로그램명 : 관련상담 전체보기
+* 작 성 일 : 2021.05.28
+* 작 성 자 : 윤성원
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 관련상담 전체보기 팝업
+* 이    력 :
+-->
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layouts/popup-update-layout}">
+
+<body>
+    <!--Title Area-->
+    <th:block layout:fragment="header-area">
+        <div class="header">
+            <h1 class="title" th:text="${#messages.msg('integratedCounselMgmt.relatedConsultationPopup.title')}"></h1>
+        </div>
+    </th:block>
+    <!--Title Area-->
+
+    <th:block layout:fragment="data-area">
+
+        <div class="data-cont">
+            <div class="data">
+                <div class="data-body bo-tnone">
+                    <form name="csCnslTypInfoForm" id="csCnslTypInfoForm">
+                        <table class="data-table fixed">
+                            <colgroup>
+                                <col width="120">
+                                <col>
+                                <col width="120">
+                                <col>
+                            </colgroup>
+                            <tbody>
+                                <tr>
+                                    <td class="label">
+                                        <th:block
+                                            th:text="${#messages.msg('integratedCounselMgmt.relatedConsultationPopup.ordNo')}" />
+                                    </td>
+                                    <td colspan="3">
+                                        <th:block th:text="${data.ordNo} == null ? '' : ${data.ordNo} "></th:block>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="label">
+                                        <th:block
+                                            th:text="${#messages.msg('integratedCounselMgmt.relatedConsultationPopup.goodSNo')}" />
+                                    </td>
+                                    <td>
+                                        <th:block th:text="${data.goodsNo} == null ? '' : ${data.goodsNo} "></th:block>
+                                    </td>
+                                    <td class="label">
+                                        <th:block
+                                            th:text="${#messages.msg('integratedCounselMgmt.relatedConsultationPopup.goodsNm')}" />
+                                    </td>
+                                    <td>
+                                        <th:block th:text="${data.goodsNm} == null ? '' : ${data.goodsNm} "></th:block>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="label">
+                                        <th:block
+                                            th:text="${#messages.msg('integratedCounselMgmt.relatedConsultationPopup.entrNo')}" />
+                                    </td>
+                                    <td>
+                                        <th:block th:text="${data.entrNo} == null ? '' : ${data.entrNo} "></th:block>
+                                    </td>
+                                    <td class="label">
+                                        <th:block
+                                            th:text="${#messages.msg('integratedCounselMgmt.relatedConsultationPopup.entrNm')}" />
+                                    </td>
+                                    <td>
+                                        <th:block th:text="${data.entrNm} == null ? '' : ${data.entrNm} "></th:block>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+                <!-- //data-body -->
+            </div>
+        </div>
+
+        <div class="fl-right mr10 f11 mb10">
+            <label>상담내역</label>
+            <label>
+                <th:block th:text="${data.count}" class="f11"></th:block>건
+            </label>
+        </div>
+        <div class="data-cont mt20" th:each="relatedData : ${data.relatedConsultation}">
+            <div class="data">
+                <div class="data-body bo-tnone">
+                    <table class="data-table">
+                        <colgroup>
+                            <col width="120">
+                            <col>
+                            <col width="120">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                            <tr>
+                                <td class="label">상담번호</td>
+                                <td>
+                                    <a>
+                                        <span class="ccnNo">
+                                            <th:block th:text="${relatedData.ccnNo}" class="ls0"></th:block>
+                                        </span>
+                                    </a>
+                                </td>
+                                <td class="label">처리상태</td>
+                                <td>
+                                    <th:block th:text="${relatedData.ccnPrgsStatNm}"></th:block>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label">상담유형</td>
+                                <td colspan="3">
+                                    <th:block th:text="${relatedData.cnslTypText}"></th:block>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label">문의내용</td>
+                                <td colspan="3">
+                                    <th:block th:text="${relatedData.accpCont}"></th:block>
+                                </td>
+                            </tr>
+
+
+                            <tr>
+                                <td class="label">처리내역</td>
+                                <td colspan="3" class="pd0">
+                                    <div class="scroll-a">
+                                        <th:block th:each="procInfo : ${relatedData.integrateProcInfo}">
+                                            <table>
+                                                <colgroup>
+                                                    <col>
+                                                </colgroup>
+                                                <tbody>
+                                                    <tr>
+                                                        <td class="label">
+                                                            <p><th:block th:text="${procInfo.cnslProcDtm}"></th:block></p>
+                                                            처리자 : <th:block th:text="${procInfo.userNm}"></th:block>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="con">
+                                                            <th:block th:text="${procInfo.cnslProcCont}"></th:block>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </th:block>
+                                    </div>
+                                    <!-- <th:block th:text="${procInfo.cnslProcCont}"></th:block> -->
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="button-group search-btn">
+            <a href="#" class="button" id="close"><span class="text">확인</span></a>
+        </div>
+
+    </th:block>
+
+    <th:block layout:fragment="add-script">
+        <script th:inline="javascript">
+            /*<![CDATA[*/
+            /*]]>*/
+        </script>
+
+
+        <script type="text/javascript">
+            $('#close').click(function () {
+                window.close();
+            })
+        </script>
+    </th:block>
+
+</body>
+
+</html>

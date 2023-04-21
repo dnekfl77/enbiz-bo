@@ -1,0 +1,77 @@
+<html lang="ko-KR">
+
+<head>
+    <title>x2</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+    <link type="text/css" rel="stylesheet" href="../css/reset.css">
+    <link type="text/css" rel="stylesheet" href="../css/layout.css">
+    <link type="text/css" rel="stylesheet" href="../css/zTree.css">
+    <link type="text/css" rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" type="text/css" href="../css/realgrid-style.css">
+    <script src="../js/libs/jquery/jquery-3.4.1.min.js"></script>
+    <script src="../js/contents.js"></script>
+    <script type="text/javascript" src="../js/libs/jquery/jquery.ztree.all.js?202102260000"></script>
+</head>
+
+<body>
+    <div class="win-popup page-root">
+        <div class="page-fixed">
+            <!-- page-title 가 있을경우 with-title 클래스 추가 -->
+            <div class="search-cont">
+                <div class="header">
+                    <h1 class="title" id="">기획전 기간 일괄 변경</h1>
+                </div>
+
+                <div class="search">
+                    <table class="search-table">
+                        <colgroup>
+                            <col>
+                            <col>
+                        </colgroup>
+                        <tbody>
+                            <tr>
+                                <td class="label">변경 방식</td>
+                                <td>
+                                    <label class="radio-inline"><input type="radio" name="" value="" checked="checked">기획전 종료 일자 지정</label>
+                                    <label class="radio-inline"><input type="radio" name="" value="">기획전 종료 일자 일괄 연장</label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label">변경 내용</td>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="picker-group">
+                                            <input type="text" class="form-control disabled" readonly>
+                                            <span class="input-group-addon"><i class="icon-calendar"></i></span>
+                                        </div>
+                                        <em>일시로 선택된 기획전 종료일시 일괄 변경</em>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label">변경 내용</td>
+                                <td>
+                                    <div class="input-group">
+                                        <em>선택된 기획전의 종료 일시를</em>
+                                        <input type="text" name="" value="" class="input w10">
+                                        <em>일 후로 일괄 연장</em>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+            <div class="button-group">
+                <a href="#" class="button"><span class="text">저장</span></a>
+                <a href="#" class="button"><span class="text">닫기</span></a>
+            </div>
+        </div>
+        <!-- //page-fixed -->
+    </div>
+</body>
+
+</html>

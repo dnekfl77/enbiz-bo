@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enbiz.bo.app.repository.goods.PrEvltValInfoMapper">
+
+    <sql id="paginatedBase">
+        LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+    </sql>
+
+    <select id="getEvltItemValueList" parameterType="java.lang.String" resultType="ReviewEvaluationItemMgmtResponse">
+        SELECT IC.EVLT_ITEM_NM /* prEvltValInfo.getEvltItemValueList */
+             , VI.EVLT_VAL
+             , VI.SORT_SEQ
+          FROM PR_EVLT_VAL_INFO VI
+             , PR_EVLT_ITEM_CD IC
+         WHERE 1 = 1
+           AND VI.EVLT_ITEM_NO = IC.EVLT_ITEM_NO
+           AND VI.EVLT_ITEM_NO = #{evltItemNo}
+         ORDER BY SORT_SEQ
+    </select>
+
+    <sql id="evltValueListBase">
+        SELECT EVLT_ITEM_NO /* prEvltValInfo.evltValueListBase */
+             , EVLT_VAL_NO
+             , EVLT_VAL
+             , SORT_SEQ
+             , SYS_REG_ID
+             , TO_CHAR(SYS_REG_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_REG_DTM
+             , SYS_MOD_ID
+             , TO_CHAR(SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+          FROM PR_EVLT_VAL_INFO
+         WHERE EVLT_ITEM_NO = #{evltItemNo}
+         ORDER BY SORT_SEQ
+    </sql>
+
+    <select id="getEvltValueListCount" parameterType="ReviewEvaluationItemMgmtRequest" resultType="java.lang.Integer">
+        SELECT COUNT(*) /* prEvltValInfo.getEvltValueListCount */
+          FROM (
+            <include refid="evltValueListBase"/>
+        ) T1
+    </select>
+
+    <select id="getEvltValueList" parameterType="ReviewEvaluationItemMgmtRequest" resultType="ReviewEvaluationItemMgmtResponse">
+        /* prEvltValInfo.getEvltValueList */
+        <include refid="evltValueListBase" />
+        <include refid="paginatedBase" />
+    </select>
+
+</mapper>

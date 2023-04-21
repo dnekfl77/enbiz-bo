@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.order.OpOrdDtlTrxMapper">
+	<update id="updateSendInstruct" parameterType="opOrdDtl">
+		UPDATE    OP_ORD_DTL 	   /* OpOrdDtl.updateSendInstruct */
+		SET 	  ORD_DTL_STAT_CD = '21'
+				, SYS_MOD_ID = #{sysModId}
+				, SYS_MOD_DTM = NOW()
+		WHERE 	  ORD_NO = #{ordNo}
+		AND 	  DELI_UNIT_NO = #{deliUnitNo}
+	</update>
+</mapper>
+
+

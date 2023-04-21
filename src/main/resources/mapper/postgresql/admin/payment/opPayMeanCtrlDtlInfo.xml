@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.payment.OpPayMeanCtrlDtlInfoMapper">
+
+	<sql id="methodsOfPaymentControlDetail">
+		SELECT  				/* OpPayMeanCtrlDtlInfo.methodsOfPaymentControlDetail */
+				  PAY_MEAN_CTRL_NO
+				, CTRL_GB_CD
+				, CTRL_TGT_NO
+				, ( CASE WHEN CTRL_TGT_DTL_NO = '0' THEN '' ELSE CTRL_TGT_DTL_NO END ) AS CTRL_TGT_DTL_NO
+		FROM 	  OP_PAY_MEAN_CTRL_DTL_INFO
+		WHERE 	  PAY_MEAN_CTRL_NO = #{payMeanCtrlNo}
+	</sql>
+
+	<select id="getMethodsOfPaymentControlDetail" parameterType="OpPayMeanCtrlInfoRequest" resultType="OpPayMeanCtrlInfoResponse">
+		<include refid="methodsOfPaymentControlDetail" />
+	</select>
+
+	<select id="getMethodsOfPaymentControlDetailCount" parameterType="OpPayMeanCtrlInfoRequest" resultType="java.lang.Integer">
+		SELECT   /* OpPayMeanCtrlDtlInfo.getMethodsOfPaymentControlDetailCount */
+				COUNT(*)
+		FROM (
+				<include refid="methodsOfPaymentControlDetail" />
+		) T1
+	</select>
+
+	<insert id="insertOpPayMeanCtrlDtlInfo" parameterType="opPayMeanCtrlDtlInfo">
+		INSERT INTO OP_PAY_MEAN_CTRL_DTL_INFO (  /* OpPayMeanCtrlDtlInfo.insertOpPayMeanCtrlDtlInfo */
+				  PAY_MEAN_CTRL_NO
+				, CTRL_GB_CD
+				, CTRL_TGT_NO
+				, CTRL_TGT_DTL_NO
+				, SYS_REG_ID
+				, SYS_REG_DTM
+				, SYS_MOD_ID
+				, SYS_MOD_DTM
+		) VALUES (
+				  #{payMeanCtrlNo}
+				, #{ctrlGbCd}
+				, #{ctrlTgtNo}
+				, #{ctrlTgtDtlNo}
+				, #{sysRegId}
+				, now()
+				, #{sysRegId}
+				, now()
+		)
+	</insert>
+
+	<delete id="deleteOpPayMeanCtrlDtlInfo" parameterType="opPayMeanCtrlDtlInfo">
+		DELETE  						/* OpPayMeanCtrlDtlInfo.deleteOpPayMeanCtrlDtlInfo */
+		FROM 	  OP_PAY_MEAN_CTRL_DTL_INFO
+		WHERE     PAY_MEAN_CTRL_NO 	= #{payMeanCtrlNo}
+		AND       CTRL_GB_CD 		= #{ctrlGbCd}
+		AND       CTRL_TGT_NO 		= #{ctrlTgtNo}
+		AND       CTRL_TGT_DTL_NO 	= #{ctrlTgtDtlNo}
+	</delete>
+
+</mapper>
+
+

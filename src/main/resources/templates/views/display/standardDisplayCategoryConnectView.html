@@ -1,0 +1,100 @@
+<!--
+* 프로그램명 : 표준분류&전시카테고리연결
+* 프 로 그 램 : standardDisplayCategoryConnectView.html
+* 작 성 일 : 2021.04.14
+* 작 성 자 : N.J.Kim
+* 수 정 자 : 권다솜
+* 버	전 : 1.0
+* 개	요 : 전시관리 > 전시카테고리관리 > 표준분류&전시카테고리연결
+* 이	력 :
+-->
+<html lang="ko"
+	  xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{layouts/page-realgrid-layout}">
+<body>
+<th:block layout:fragment="page-title-area">
+	<div class="page-title">
+		<div class="left">
+			<h1 th:text="${#messages.msg('standardDisplayCategoryConnect.title')}"></h1>
+		</div>
+	</div>
+</th:block>
+<th:block layout:fragment="page-contents">
+	<div class="page-fixed with-title">
+		<div class="data-cont col-30 full-height">
+			<!-- 표준분류목록-->
+			<div class="data full-height">
+				<div class="data-head">
+					<div class="left"><span class="title" th:text="${#messages.msg('standardDisplayCategoryConnect.tree.title')}"></span></div>
+				</div>
+				<div class="data-body">
+					<!-- Ztree -->
+					<ul id="standardDisplayCategoryTree" class="ztree"></ul>
+					<!-- Ztree -->
+				</div>
+			</div>
+			<!-- 표준분류목록 -->
+
+			<div class="data-cont full-height">
+				<!-- 하위표준분류목록 그리드 -->
+				<form id="stdCtgDispInfoForm"></form>
+				<div class="grid full-height" id="categoryList">
+					<div class="grid-head">
+						<div class="title-area">
+							<h2 class="title" th:text="${#messages.msg('standardDisplayCategoryConnect.grid.title')}"></h2>
+						</div>
+						<div class="option-area">
+							<div class="edit-option">
+								<div class="button-group">
+									<a href="#" class="button inside" id="btn_grid_add">
+										<span class="text" th:text="${#messages.msg('standardDisplayCategoryConnect.grid.btn.DispCtgAdd')}" />
+									</a>
+									<a href="#" class="button inside" id="btn_grid_save">
+										<span class="text"th:text="${#messages.msg('adminCommon.button.save')}" />
+									</a>
+								</div>
+							</div>
+							<div class="page-option" grid-id="standardDisplayCategoryConnectGrid"></div>
+						</div>
+					</div>
+					<div class="grid-body with-head vh1">
+						<div id="standardDisplayCategoryConnectGrid" class="rg-root rg-grid vh1" realgrid></div>
+					</div>
+				</div>
+				<!-- 하위표준분류목록 그리드 -->
+			</div>
+		</div>
+	</div>
+</th:block>
+<th:block layout:fragment="add-script">
+	<script th:inline="javascript">
+		var msg = x2coMessage.getMessage({
+			  dispCtgNo 			: 'standardDisplayCategoryConnect.grid.field.dispCtgNo'		//전시 카테고리 번호
+			, dispCtgNm 			: 'standardDisplayCategoryConnect.grid.field.dispCtgNm'		//전시 카테고리
+			, repCtgYn 				: 'standardDisplayCategoryConnect.grid.field.repCtgYn'		//대표 카테고리
+			, useYn 				: 'standardDisplayCategoryConnect.grid.field.useYn'			//사용여부
+			, sysModId 				: 'standardDisplayCategoryConnect.grid.field.sysModId'		//수정자
+			, sysModDtm 			: 'standardDisplayCategoryConnect.grid.field.sysModDtm'		//수정일시
+			, saveConfirmMsg		: 'adminCommon.grid.alert.save'
+			, saveRequiredMsg		: 'adminCommon.alert.required.parameter'
+			, noCheckedRowErrMsg	: 'adminCommon.grid.alert.no.selected.row'
+			, notLeafRowErrMsg		: 'standardDisplayCategoryConnect.error.msg.saveNotLeafMsg'
+			, noRepCtgYn			: 'standardDisplayCategoryConnect.error.msg.noRepCtgYnMsg'
+			, dupDispCtgNo			: 'standardDisplayCategoryConnect.error.msg.dupDispCtgNoMsg'
+			, changeRepCtgYn		: 'standardDisplayCategoryConnect.alert.msg.changeRepCtgYnMsg'
+		});
+	</script>
+	<script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/standardDisplayCategoryTree.eventHandler.js?2021032401'" ></script>
+	<script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/standardDisplayCategoryConnectGrid.provider.js?2021032401'" ></script>
+	<script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/standardDisplayCategoryConnectGrid.eventHandler.js?2021032401'" ></script>
+	<script th:inline="javascript">
+		$(function(){
+			var leafCtgYn = 'N';
+			standardDisplayCategoryTree.eventhandler.init();
+			standardDisplayCategoryConnectGrid.eventhandler.init();
+		});
+	</script>
+</th:block>
+</body>
+</html>

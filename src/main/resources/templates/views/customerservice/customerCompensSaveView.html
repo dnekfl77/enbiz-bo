@@ -1,0 +1,225 @@
+<!--
+* 프로그램명 : 고객보상팝업
+* 작 성 일 : 2021.06.21
+* 작 성 자 : 윤성원
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 고객보상팝업
+* 이    력 :
+-->
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-update-layout}">
+
+<body>
+<!--Title Area-->
+<th:block layout:fragment="header-area">
+    <div class="header">
+        <h1 class="title" th:text="${#messages.msg('integratedCounselMgmt.customerCompensRegist.title')}"></h1>
+    </div>
+</th:block>
+<!--Title Area-->
+
+<th:block layout:fragment="data-area">
+
+    <div class="data-cont">
+        <div class="data">
+            <div class="data-body bo-tnone">
+                <form name="csCnslTypInfoForm" id="csCnslTypInfoForm">
+                    <table class="data-table fixed">
+                        <colgroup>
+                            <col width="120">
+                            <col>
+                            <col width="120">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                        <tr>
+                            <td class="label">
+                                <th:block th:text="${#messages.msg('integratedCounselMgmt.customerCompensRegist.mbrData')}" />
+                            </td>
+                            <td>
+                                <th:block th:text="${ccnData.mbrNo} == null ? '' : |${ccnData.mbrNm} / ${ccnData.loginId}|"></th:block>
+                            </td>
+                            <td class="label">
+                                <th:block th:text="${#messages.msg('integratedCounselMgmt.customerCompensRegist.ccnNo')}" />
+                            </td>
+                            <td>
+                                <th:block th:text="${ccnData.ccnNo} == null ? '' : ${ccnData.ccnNo}"></th:block>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">
+                                <th:block th:text="${#messages.msg('integratedCounselMgmt.customerCompensRegist.ordNo')}" />
+                            </td>
+                            <td>
+                                <th:block th:text="${ccnData.ordNo} == null ? '' : ${ccnData.ordNo} "></th:block>
+                            </td>
+                            <td class="label">
+                                <th:block th:text="${#messages.msg('integratedCounselMgmt.customerCompensRegist.goodsData')}" />
+                            </td>
+                            <td>
+                                <th:block th:text="${ccnData.goodsNo} == null ? '' : |${ccnData.goodsNo} / ${ccnData.goodsNm}|"></th:block>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+            <!-- //data-body -->
+        </div>
+    </div>
+
+    <div class="data-cont">
+        <div class="data">
+            <div class="data-head">
+                <div class="left"><span class="title"><th:block th:text="${#messages.msg('integratedCounselMgmt.customerCompensRegist.info2.title')}"/></span>
+                </div>
+            </div>
+            <!-- //data-head -->
+
+            <div class="data-body">
+                <table class="data-table">
+                    <colgroup>
+                        <col width="120">
+                        <col>
+                        <col width="120">
+                        <col>
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <td class="label"><strong><th:block th:text="${#messages.msg('integratedCounselMgmt.customerCompensRegist.info2.cpnsMeanCd')}"/></strong></td>
+                        <td>
+                            <select class="form-control" id="cpnsMeanCd" name="cpnsMeanCd">
+                                <option th:each="list : ${codeList.CS019}" th:value="${list?.cd}" th:utext="${list?.cdNm}"></option>
+                            </select>
+                        </td>
+                        <td class="label"></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="label"><strong><th:block th:text="${#messages.msg('integratedCounselMgmt.customerCompensRegist.info2.cpnsTypNo')}"/></strong></td>
+                        <td>
+                            <div class="input-group">
+                                <input type="text" class="input disabled" id="cpnsTypNm" name="cpnsTypNm" disabled="disabled">
+                                <input type="hidden" id="cpnsTypNo" name="cpnsTypNo">
+                                <a href="javascript:;" class="button small" id="btn-regist-cpnsTyp"><i class="icon-sarch"></i></a>
+                                <a href="#" class="button small" id="btn-reset-cpnsTyp"><i class="icon-clear"></i></a>
+                            </div>
+                        </td>
+                        <td class="label"><strong><th:block th:text="${#messages.msg('integratedCounselMgmt.customerCompensRegist.info2.rspnGbCd')}"/></strong></td>
+                        <td>
+                            <select class="form-control" id="rspnGbCd" name="rspnGbCd">
+                                <option th:each="list : ${codeList.CS020}" th:value="${list?.cd}" th:utext="${list?.cdNm}"></option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label"><th:block th:text="${#messages.msg('integratedCounselMgmt.customerCompensRegist.info2.cpnsStdRate')}"/></td>
+                        <td colspan="3">
+                            <input type="text" class="input disabled w50" id="cpnsStdRate" name="cpnsStdRate" disabled="disabled">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label"><th:block th:text="${#messages.msg('integratedCounselMgmt.customerCompensRegist.info2.maxPayLim')}"/></td>
+                        <td>
+                            <div class="input-group">
+                                <input type="text" class="input disabled price" id="maxPayLim" name="maxPayLim" disabled="disabled">원
+                            </div>
+                        </td>
+                        <td class="label"><strong><th:block th:text="${#messages.msg('integratedCounselMgmt.customerCompensRegist.info2.cpnsAmt')}"/></strong></td>
+                        <td>
+                            <div class="input-group">
+                                <input type="text" class="input price" id="cpnsAmt" name="cpnsAmt"  maxlength="10" numberOnly>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label"><th:block th:text="${#messages.msg('integratedCounselMgmt.customerCompensRegist.info2.payBankCd')}"/></td>
+                        <td>
+                            <select class="form-control cash" id="payBankCd" name="payBankCd" disabled="disabled">
+                                <option th:each="list : ${codeList.OM026}" th:value="${list?.cd}" th:utext="${list?.cdNm}"></option>
+                            </select>
+                        </td>
+                        <td class="label"><th:block th:text="${#messages.msg('integratedCounselMgmt.customerCompensRegist.info2.payDepositorNm')}"/></td>
+                        <td>
+                            <div class="input-group">
+                                <input type="text" class="input cash" id="payDepositorNm" name="payDepositorNm" disabled="disabled" maxlength="20">
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label"><th:block th:text="${#messages.msg('integratedCounselMgmt.customerCompensRegist.info2.payActnNo')}"/></td>
+                        <td colspan="3">
+                            <div class="input-group">
+                                <input type="text" class="input cash" id="payActnNo" name="payActnNo"  maxlength="30" disabled="disabled" numberOnly>
+                                <a href="#" class="button inside" id="btn_accNumValid"><span class="text">계좌인증</span></a>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- //data-body -->
+        </div>
+    </div>
+
+    <div class="data-cont">
+        <div class="data">
+            <div class="data-head">
+                <div class="left"><span class="title"><th:block th:text="${#messages.msg('integratedCounselMgmt.customerCompensRegist.info3.title')}"/></span>
+                </div>
+            </div>
+            <!-- //data-head -->
+
+            <div class="data-body">
+                <table class="data-table">
+                    <colgroup>
+                        <col width="120">
+                        <col>
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <td class="label"><strong><th:block th:text="${#messages.msg('integratedCounselMgmt.customerCompensRegist.info3.accpCont')}"/></strong></td>
+                        <td>
+                            <textarea id="accpCont" name="accpCont" class="textarea mt5 w100 dataCont"  rows="5" data-limitByte="4000" data-markId="accpContByte"></textarea>
+                            <em><span id="accpContByte">0</span>/4000</em>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- //data-body -->
+        </div>
+    </div>
+
+
+    <div class="button-group search-btn">
+        <a href="#" class="button" id="btn_close"><span class="text">취소</span></a>
+        <a href="#" class="button" id="btn_save"><span class="text">저장</span></a>
+    </div>
+
+</th:block>
+
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        var reservesCode = [[${T(com.enbiz.bo.app.enums.CS019).RESERVES.getCd()}]];
+        var depositCode = [[${T(com.enbiz.bo.app.enums.CS019).DEPOSIT.getCd()}]];
+        var cashCode = [[${T(com.enbiz.bo.app.enums.CS019).CASH.getCd()}]];
+        var ccnData = [[${ccnData}]];
+        console.log(ccnData);
+        /*]]>*/
+    </script>
+
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'customerservice/customerCompensRegist.eventHandler.js?20210621000026'" ></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            customerCompensRegist.eventhandler.init();
+        });
+    </script>
+</th:block>
+
+</body>
+
+</html>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enbiz.bo.app.repository.goods.PrGoodsBaseModLogMapper">
+
+    <sql id="paginatedBase">
+        LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+    </sql>
+
+    <sql id="goodsBaseModListBase">
+        SELECT GB.GOODS_NO /* prGoodsBaseModLog.goodsBaseModListBase */
+             , GB.GOODS_NM
+             , FN_GET_CODENAME('PR038',ML.GOODS_MOD_ITEM_CD ) AS GOODS_MOD_ITEM_CD_NM
+             , ML.GOODS_MOD_CONT
+             , ML.SYS_REG_ID
+             , TO_CHAR(ML.SYS_REG_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_REG_DTM
+          FROM PR_GOODS_BASE_MOD_LOG ML
+             , PR_GOODS_BASE GB
+             , ET_ENTR_BASE EB
+         WHERE ML.GOODS_NO = GB.GOODS_NO
+           AND GB.ENTR_NO = EB.ENTR_NO
+           AND ML.SYS_REG_DTM <![CDATA[ >= ]]> TO_TIMESTAMP( #{modStartDtm} || ' 00:00:00','YYYY-MM-DD HH24:MI:SS')
+           AND ML.SYS_REG_DTM <![CDATA[ <= ]]> TO_TIMESTAMP( #{modEndDtm} || ' 23:59:59','YYYY-MM-DD HH24:MI:SS')
+           AND ML.GOODS_MOD_ITEM_CD LIKE #{goodsModItemCd} || '%'
+           AND ML.GOODS_NO LIKE #{goodsNo} || '%'
+           AND GB.GOODS_NM LIKE #{goodsNm} || '%'
+         ORDER BY GOODS_CHG_SEQ DESC
+    </sql>
+
+    <select id="getGoodsBaseModLogListCount" parameterType="GoodsInfoModificationHistoryRequest" resultType="java.lang.Integer">
+        SELECT COUNT(*) /* prGoodsBaseModLog.getGoodsBaseModLogListCount */
+          FROM (
+            <include refid="goodsBaseModListBase"/>
+        ) T1
+    </select>
+
+    <select id="getGoodsBaseModLogList" parameterType="GoodsInfoModificationHistoryRequest" resultType="GoodsInfoModificationHistoryResponse">
+        /* prGoodsBaseModLog.getGoodsBaseModLogList */
+        <include refid="goodsBaseModListBase" />
+        <include refid="paginatedBase" />
+    </select>
+
+</mapper>

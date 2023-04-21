@@ -1,0 +1,148 @@
+<!--
+* 프로그램명 : 묶음대상 상품조회 팝업
+* 작 성 일 : 2021.06.07
+* 작 성 자 : 홍혜리
+* 수 정 자 : 홍혜리
+* 버    전 : 1.0
+* 개    요 : 묶음대상 상품조회 팝업
+* 이    력 : 2021.08.02 단일선택 적용방식 변경
+            2021.10.12 프레임워크 이전
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-layout}">
+<body>
+<!--Title Area-->
+<th:block layout:fragment="popup-title-area">
+    <th:block layout:insert="~{fragments/popup/popup-title :: popup-title}"
+              th:with="title=${#messages.msg('packageGoods.pkgTrgtGoodsPopup.title')}"></th:block>
+</th:block>
+<!--Title Area-->
+
+<!--Search Area-->
+<th:block layout:fragment="popup-search-area">
+    <div class="search search-detail">
+        <form name="packageTargetGoodsListGridForm" id="packageTargetGoodsListGridForm">
+            <input type="hidden" name="entrNo" th:value="${entrNo}">
+            <table class="search-table">
+                <colgroup>
+                    <col style="width:100px;">
+                    <col style="">
+                    <col style="width:100px;">
+                    <col style="">
+                    <col style="width:100px;">
+                    <col style="">
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td class="label">
+                        <strong th:text="${#messages.msg('packageGoods.pkgTrgtGoodsPopup.search.label.goodsRegDtm')}"></strong>
+                    </td>
+                    <td colspan="5">
+                        <div class="input-group">
+                            <div class="picker-group" data-lopicker="basic">
+                                <input type="text" class="form-control disabled" placeholder="" id="goodsRegStartDtm" name="goodsRegStartDtm" th:readonly="true">
+                                <span class="input-group-addon">~</span>
+                                <input type="text" class="form-control disabled" placeholder="" id="goodsRegEndDtm" name="goodsRegEndDtm" th:readonly="true">
+                                <span class="input-group-addon" id="btn_call_calender"><i class="icon-calendar"></i></span>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label" th:text="${#messages.msg('packageGoods.pkgTrgtGoodsPopup.search.label.mdNm')}"></td>
+                    <td>
+                        <input class="input disabled w60 mr5" type="text" id="mdNm" th:readonly="true"/>
+                        <input type="hidden" id="mdId" name="mdId"/>
+                        <a href="#" class="button small" id="btn_call_md_popup"><i class="icon-sarch"></i></a>
+                        <a href="#" class="button small" id="btn_reset_md_popup"><i class="icon-clear"></i></a>
+                    </td>
+                    <td class="label" th:text="${#messages.msg('packageGoods.pkgTrgtGoodsPopup.search.label.brandNm')}"></td>
+                    <td>
+                        <input class="input disabled w60 mr5" type="text" id="brandNm" th:readonly="true"/>
+                        <input type="hidden" id="brandNo" name="brandNo"/>
+                        <a href="#" class="button small" id="btn_call_brand_popup"><i class="icon-sarch"></i></a>
+                        <a href="#" class="button small" id="btn_reset_brand_popup"><i class="icon-clear"></i></a>
+                    </td>
+                    <td class="label" th:text="${#messages.msg('packageGoods.pkgTrgtGoodsPopup.search.label.stdCtgNm')}"></td>
+                    <td>
+                        <input class="input disabled w60 mr5" type="text" id="stdCtgNm" th:readonly="true"/>
+                        <input type="hidden" id="stdCtgNo" name="stdCtgNo"/>
+                        <a href="#" class="button small" id="btn_call_stdCtg_popup"><i class="icon-sarch"></i></a>
+                        <a href="#" class="button small" id="btn_reset_stdCtg_popup"><i class="icon-clear"></i></a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label" th:text="${#messages.msg('packageGoods.pkgTrgtGoodsPopup.search.label.saleStatNm')}"></td>
+                    <td>
+                        <select class="form-control w80" id="saleStatCdNm" th:with="codeString=${#strings.listJoin(codeList.PR005.![cd],',')}">
+                            <option th:value="${#strings.replace(codeString,'40','')}" th:text="${#messages.msg('adminCommon.entirety')}"></option>
+                            <option th:each="list : ${codeList.PR005}" th:unless="${list?.cd == '40'}" th:value="${list?.cd}" th:utext="${list?.cdNm}"></option>
+                        </select>
+                        <input type="hidden" name="saleStatCdList" id="saleStatCdList">
+                    </td>
+                    <td class="label" th:text="${#messages.msg('packageGoods.pkgTrgtGoodsPopup.search.label.searchOption')}"></td>
+                    <td colspan="2">
+                        <select class="form-control" id="searchOption">
+                            <option value="" th:text="${#messages.msg('adminCommon.select')}"></option>
+                            <option value="01" th:text="${#messages.msg('packageGoods.pkgTrgtGoodsPopup.search.label.goodsNm')}"></option>
+                            <option value="02" th:text="${#messages.msg('packageGoods.pkgTrgtGoodsPopup.search.label.goodsNo')}"></option>
+                        </select>
+                        <input class="input" type="text" id="searchWord" maxlength="400"/>
+                        <input type="hidden" id="goodsNo" name="goodsNo"/>
+                        <input type="hidden" id="goodsNm" name="goodsNm"/>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+</th:block>
+<!--Search Area-->
+
+<!--Search Button Area-->
+<th:block layout:fragment="popup-search-button-area">
+    <th:block layout:insert="~{fragments/popup/popup-btn :: popup-search-btn}"/>
+</th:block>
+<!--Search Button Area-->
+
+<!--List Area-->
+<th:block layout:fragment="popup-List-area">
+    <div class="grid">
+        <div class="grid-head" style="overflow: hidden;">
+            <div class="title-area">
+                <h2 class="title" th:text="${#messages.msg('packageGoods.packageTargetGoodsListGrid.title')}"></h2>
+            </div>
+            <div class="option-area">
+                <div class="page-option" grid-id="packageTargetGoodsListGrid"></div>
+            </div>
+        </div>
+        <div class="grid-body with-head">
+            <div id="packageTargetGoodsListGrid" class="rg-root rg-grid" realgrid></div>
+        </div>
+    </div>
+</th:block>
+<!--List Area-->
+
+<!--List Button Area-->
+<th:block layout:fragment="popup-List-button-area">
+    <th:block layout:insert="~{fragments/popup/popup-btn :: popup-List-btn}"/>
+</th:block>
+
+<!-- Additional Script -->
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        var _gridType = '1';
+    </script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/temporaryPackageGoods/packageTargetGoodsListGrid.eventHandler.js?20211015'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/temporaryPackageGoods/packageTargetGoodsListGrid.provider.js?20211015'" ></script>
+
+    <script type="text/javascript">
+        $(function() {
+            packageTargetGoodsListGrid.eventhandler.init();
+        });
+    </script>
+</th:block>
+</body>
+</html>

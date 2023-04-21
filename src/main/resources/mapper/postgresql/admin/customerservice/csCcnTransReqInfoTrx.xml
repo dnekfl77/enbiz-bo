@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.customerservice.CsCcnTransReqInfoTrxMapper">
+
+    <insert id="insertCsCsCcnTransReqInfo" parameterType="CsCcnTransReqInfo" useGeneratedKeys="false">
+            INSERT INTO CS_CCN_TRANS_REQ_INFO( /* CsCcnTransReqInfo.insertCsCsCcnTransReqInfo */
+                        CCN_NO
+                      , CNSL_PROC_SEQ
+                      , CS_MVOT_TYP_NO
+                      , MVOT_REQ_CONT
+                      , MVOT_PROC_STAT_CD
+                      , MVOT_REQMN_ID
+                      , MVOT_REQ_DTM
+                      , EMERG_MVOT_YN
+                      , MVOT_AF_AEMP_ID
+                      , MVOT_ANS_PROC_CONT
+                      , QUOT_DTM
+                      , FNSHMN_ID
+                      , FNSH_DTM
+                      , SYS_REG_ID
+                      , SYS_REG_DTM
+                      , SYS_MOD_ID
+                      , SYS_MOD_DTM)
+                VALUES(
+                        #{ccnNo}
+                      , (SELECT MAX(CNSL_PROC_SEQ) FROM CS_CCN_PROC_INFO WHERE CCN_NO = #{ccnNo})
+                      , #{csMvotTypNo}
+                      , #{mvotReqCont}
+                      , #{mvotProcStatCd}
+                      , #{mvotReqmnId}
+                      , NOW()
+                      , #{emergMvotYn}
+                      , #{mvotAfAempId}
+                      , #{mvotAnsProcCont}
+                      , NOW()
+                      , #{fnshmnId}
+                      , #{fnshDtm}
+                      , #{sysRegId}
+                      , NOW()
+                      , #{sysModId}
+                      , NOW()
+                      )
+    </insert>
+
+    <update id="postTempCsTransReqInfo" parameterType="CsCcnTransReqInfo">
+        UPDATE CS_CCN_TRANS_REQ_INFO
+           SET /* CsCcnTransReqInfo.postTempCsTransReqInfo */
+               MVOT_PROC_STAT_CD = #{mvotProcStatCd}
+             , MVOT_ANS_PROC_CONT = #{mvotAnsProcCont}
+             , QUOT_DTM = NOW()
+             , SYS_MOD_ID = #{sysModId}
+             , SYS_MOD_DTM = NOW()
+         WHERE CCN_NO = #{ccnNo}
+           AND CNSL_PROC_SEQ = #{cnslProcSeq}
+    </update>
+
+    <update id="postCompleteCsTransReqInfo" parameterType="CsCcnTransReqInfo">
+        UPDATE CS_CCN_TRANS_REQ_INFO
+           SET /* CsCcnTransReqInfo.postCompleteCsTransReqInfo */
+               MVOT_PROC_STAT_CD = #{mvotProcStatCd}
+             , MVOT_ANS_PROC_CONT = #{mvotAnsProcCont}
+             , FNSHMN_ID = #{fnshmnId}
+             , FNSH_DTM = NOW()
+             , SYS_MOD_ID = #{sysModId}
+             , SYS_MOD_DTM = NOW()
+         WHERE CCN_NO = #{ccnNo}
+           AND CNSL_PROC_SEQ = #{cnslProcSeq}
+    </update>
+
+    <update id="csTransferCancel" parameterType="CsCcnTransReqInfo">
+        UPDATE CS_CCN_TRANS_REQ_INFO
+           SET /* CsCcnTransReqInfo.csTransferCancel */
+               MVOT_PROC_STAT_CD = #{mvotProcStatCd}
+             , SYS_MOD_ID = #{sysModId}
+             , SYS_MOD_DTM = NOW()
+         WHERE CCN_NO = #{ccnNo}
+           AND CNSL_PROC_SEQ = #{cnslProcSeq}
+    </update>
+
+</mapper>

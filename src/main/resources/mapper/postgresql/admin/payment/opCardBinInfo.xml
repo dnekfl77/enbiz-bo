@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.payment.OpCardBinInfoMapper">
+
+	<sql id="paginatedBase">
+		LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+	</sql>
+
+	<sql id="cardBinList">
+		<![CDATA[
+		SELECT  				/* OpCardBinInfo.cardBinList */
+				CARD_BINNO
+				, ISCM_CD
+				, CARDCO_NM
+				, MBR_GB_CD
+				, CARD_TYP_CD
+				, SUBSTRING(APLY_DT,1,4)||'-'||SUBSTRING(APLY_DT,5,2)||'-'||SUBSTRING(APLY_DT,7,2) AS APLY_DT
+				, RMK
+				, SYS_MOD_ID
+				, TO_CHAR(SYS_MOD_DTM,'YYYY-MM-DD HH24:MI') AS SYS_MOD_DTM
+		FROM 	  OP_CARD_BIN_INFO
+		WHERE 	  CARD_BINNO 		LIKE 	#{cardBinno} 	|| '%'
+		AND 	  ISCM_CD 			LIKE 	#{iscmCd} 		|| '%'
+		AND 	  CARDCO_NM 		LIKE 	#{cardcoNm} 	|| '%'
+		AND 	  MBR_GB_CD 		LIKE 	#{mbrGbCd} 		|| '%'
+		AND 	  APLY_DT 	>=	#{startDate}
+		AND 	  APLY_DT   <=	#{endDate}
+		ORDER BY CARD_BINNO
+		]]>
+	</sql>
+
+	<select id="getCardBinList" parameterType="OpCardBinInfoRequest" resultType="OpCardBinInfoResponse">
+		<include refid="cardBinList" />
+		<include refid="paginatedBase" />
+	</select>
+
+	<select id="getCardBinListCount" parameterType="OpCardBinInfoRequest" resultType="java.lang.Integer">
+		SELECT   /* OpCardBinInfo.getCardBinListCount */
+				COUNT(*)
+		FROM (
+				<include refid="cardBinList"/>
+		) T1
+	</select>
+
+	<insert id="insertOpCardBinInfo" parameterType="opCardBinInfo">
+		INSERT INTO OP_CARD_BIN_INFO (  /* OpCardBinInfo.insertOpCardBinInfo */
+				  CARD_BINNO
+				, ISCM_CD
+				, CARDCO_NM
+				, MBR_GB_CD
+				, CARD_TYP_CD
+				, APLY_DT
+				, RMK
+				, SYS_REG_ID
+				, SYS_REG_DTM
+				, SYS_MOD_ID
+				, SYS_MOD_DTM
+		) VALUES (
+				  #{cardBinno}
+				, #{iscmCd}
+				, #{cardcoNm}
+				, #{mbrGbCd}
+				, #{cardTypCd}
+				, REPLACE(#{aplyDt}, '-','')
+				, #{rmk}
+				, #{sysRegId}
+				, now()
+				, #{sysRegId}
+				, now()
+		)
+	</insert>
+
+	<update id="updateOpCardBinInfo" parameterType="opCardBinInfo">
+		UPDATE    OP_CARD_BIN_INFO  /* OpCardBinInfo.updateOpCardBinInfo */
+		SET
+			   ISCM_CD          = #{iscmCd}
+			 , CARDCO_NM        = #{cardcoNm}
+			 , MBR_GB_CD        = #{mbrGbCd}
+			 , CARD_TYP_CD      = #{cardTypCd}
+			 , APLY_DT          = REPLACE(#{aplyDt}, '-','')
+			 , RMK              = #{rmk}
+			 , SYS_MOD_ID 	    = #{sysModId}
+			 , SYS_MOD_DTM 	    = now()
+		WHERE  CARD_BINNO = #{cardBinno}
+	</update>
+
+	<delete id="deleteOpCardBinInfo" parameterType="opCardBinInfo">
+		DELETE FROM OP_CARD_BIN_INFO  /* OpCardBinInfo.deleteOpCardBinInfo */
+		WHERE  CARD_BINNO = #{cardBinno}
+	</delete>
+
+	<select id="checkCardBinno" parameterType="OpCardBinInfoRequest" resultType="java.lang.Integer">
+		SELECT  /* OpCardBinInfo.checkCardBinno */
+				COUNT(*)
+		FROM 	OP_CARD_BIN_INFO
+		WHERE   CARD_BINNO = #{cardBinno}
+	</select>
+
+</mapper>
+
+

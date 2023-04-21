@@ -1,0 +1,314 @@
+<html lang="ko-KR">
+
+<head>
+  <title>x2</title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+  <link type="text/css" rel="stylesheet" href="../css/reset.css">
+  <link type="text/css" rel="stylesheet" href="../css/layout.css">
+  <link type="text/css" rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" type="text/css" href="../css/realgrid-style.css">
+  <script src="../js/libs/jquery/jquery-3.4.1.min.js"></script>
+  <script src="../js/contents.js"></script>
+</head>
+
+<body>
+  <div class="win-popup page-root">
+    <div class="page-fixed with-title">
+      <div class="search-cont">
+        <div class="header">
+          <h1 class="title">상품 조회</h1>
+        </div>
+
+        <div class="tabs-area">
+          <ul class="tabs">
+            <li class="active"><a href="javascript:void(0);">키워드</a></li>
+            <li><a href="javascript:void(0);">고객주문이력</a></li>
+            <li><a href="javascript:void(0);">찜목록</a></li>
+            <li><a href="javascript:void(0);">베스트100</a></li>
+          </ul>
+
+          <div class="tabs-body">
+            <div class="tab-cont">
+              <!-- search -->
+              <div class="search">
+                <table class="search-table">
+                  <colgroup>
+                    <col width="120">
+                    <col>
+                    <col width="120">
+                    <col>
+                  </colgroup>
+                  <tbody>
+                    <tr>
+                      <td class="label">표준상품분류</td>
+                      <td>
+                        <select class="form-control">
+                          <option value="">option1</option>
+                        </select>
+                      </td>
+                      <td class="label">판매상태</td>
+                      <td>
+                        <select class="form-control">
+                          <option value="">option1</option>
+                        </select>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="label">상품번호</td>
+                      <td><input type="text" name="" value="" class="input"></td>
+                      <td class="label">협력사번호/명</td>
+                      <td>
+                        <div class="input-group">
+                          <input type="text" id="" class="input disabled w20" readonly>
+                          <input type="text" id="" class="input disabled" readonly>
+                          <a href="javascript:;" class="button small" onclick=""><i class="icon-sarch"></i></a>
+                          <a href="javascript:;" class="button small"><i class="icon-clear"></i></a>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td class="label">상품명</td>
+                      <td><input type="text" name="" value="" class="input"></td>
+                      <td class="label">전시카테고리</td>
+                      <td>
+                        <div class="input-group">
+                          <input type="text" id="" class="input disabled" readonly>
+                          <a href="javascript:;" class="button small" onclick=""><i class="icon-sarch"></i></a>
+                          <a href="javascript:;" class="button small"><i class="icon-clear"></i></a>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!-- //search -->
+
+              <!-- search-btn -->
+              <div class="button-group search-btn">
+                <a href="#" class="button white"><span class="text">초기화</span></a>
+                <a href="#" class="button dark"><span class="text">조회</span></a>
+              </div>
+              <!-- //search-btn -->
+
+              <div class="grid">
+                <div class="grid-head">
+                  <div class="title-area">
+                    <h2 class="title">상품 조회 결과</h2>
+                  </div>
+                  <!-- //title-area -->
+      
+                  <div class="option-area">
+                    <div class="page-option">
+                      <span class="total">총 <em>24</em>건</span>
+                      <select class="form-control">
+                        <option value="0">20건씩</option>
+                        <option value="1">30건씩</option>
+                        <option value="2">100건씩</option>
+                      </select>
+                      <select class="form-control">
+                        <option value="0">20건씩</option>
+                        <option value="1">30건씩</option>
+                        <option value="2">100건씩</option>
+                      </select>
+                    </div>
+                  </div>
+                  <!-- //option-area -->
+                </div>
+                <!-- //grid-head -->
+      
+                <div class="grid-body with-head" id="realgrid" realgrid>realgrid area</div>
+                <!-- //grid-body -->
+              </div>
+              <!-- //grid -->
+            </div>
+            <!-- //키워드 -->
+
+            <div class="tab-cont">
+              <!-- search -->
+              <div class="search">
+                <table class="search-table">
+                  <colgroup>
+                    <col width="120">
+                    <col>
+                  </colgroup>
+                  <tbody>
+                    <tr>
+                      <td class="label">주문일자</td>
+                      <td>
+                        <div class="input-group">
+                          <div class="picker-group">
+                            <input type="text" class="form-control disabled" readonly>
+                            <span class="input-group-addon">~</span>
+                            <input type="text" class="form-control disabled" readonly>
+                            <span class="input-group-addon"><i class="icon-calendar"></i></span>
+                          </div>
+                          <label><input class="checkbox-inline" type="checkbox" name="">기간전체</label>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!-- //search -->
+
+              <!-- search-btn -->
+              <div class="button-group search-btn">
+                <a href="#" class="button white"><span class="text">초기화</span></a>
+                <a href="#" class="button dark"><span class="text">조회</span></a>
+              </div>
+              <!-- //search-btn -->
+
+              <div class="grid">
+                <div class="grid-head">
+                  <div class="title-area">
+                    <h2 class="title">고객주문이력</h2>
+                  </div>
+                  <!-- //title-area -->
+      
+                  <div class="option-area">
+                    <div class="page-option">
+                      <span class="total">총 <em>24</em>건</span>
+                      <select class="form-control">
+                        <option value="0">20건씩</option>
+                        <option value="1">30건씩</option>
+                        <option value="2">100건씩</option>
+                      </select>
+                      <select class="form-control">
+                        <option value="0">20건씩</option>
+                        <option value="1">30건씩</option>
+                        <option value="2">100건씩</option>
+                      </select>
+                    </div>
+                  </div>
+                  <!-- //option-area -->
+                </div>
+                <!-- //grid-head -->
+      
+                <div class="grid-body with-head" id="realgrid" realgrid>realgrid area</div>
+                <!-- //grid-body -->
+              </div>
+              <!-- //grid -->
+            </div>
+            <!-- //고객주문이력 -->
+
+            <div class="tab-cont">
+              <!-- search-btn -->
+              <div class="button-group search-btn">
+                <a href="#" class="button white"><span class="text">초기화</span></a>
+                <a href="#" class="button dark"><span class="text">조회</span></a>
+              </div>
+              <!-- //search-btn -->
+
+              <div class="grid">
+                <div class="grid-head">
+                  <div class="title-area">
+                    <h2 class="title">찜목록</h2>
+                  </div>
+                  <!-- //title-area -->
+      
+                  <div class="option-area">
+                    <div class="page-option">
+                      <span class="total">총 <em>24</em>건</span>
+                      <select class="form-control">
+                        <option value="0">20건씩</option>
+                        <option value="1">30건씩</option>
+                        <option value="2">100건씩</option>
+                      </select>
+                      <select class="form-control">
+                        <option value="0">20건씩</option>
+                        <option value="1">30건씩</option>
+                        <option value="2">100건씩</option>
+                      </select>
+                    </div>
+                  </div>
+                  <!-- //option-area -->
+                </div>
+                <!-- //grid-head -->
+      
+                <div class="grid-body with-head" id="realgrid" realgrid>realgrid area</div>
+                <!-- //grid-body -->
+              </div>
+              <!-- //grid -->
+            </div>
+            <!-- //찜목록 -->
+
+            <div class="tab-cont">
+              <!-- search -->
+              <div class="search">
+                <table class="search-table">
+                  <colgroup>
+                    <col width="120">
+                    <col>
+                  </colgroup>
+                  <tbody>
+                    <tr>
+                      <td class="label">전시카테고리</td>
+                      <td>
+                        <div class="input-group">
+                          <input type="text" id="" class="input disabled" readonly>
+                          <a href="javascript:;" class="button small" onclick=""><i class="icon-sarch"></i></a>
+                          <a href="javascript:;" class="button small"><i class="icon-clear"></i></a>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!-- //search -->
+
+              <!-- search-btn -->
+              <div class="button-group search-btn">
+                <a href="#" class="button white"><span class="text">초기화</span></a>
+                <a href="#" class="button dark"><span class="text">조회</span></a>
+              </div>
+              <!-- //search-btn -->
+
+              <div class="grid">
+                <div class="grid-head">
+                  <div class="title-area">
+                    <h2 class="title">베스트100</h2>
+                  </div>
+                  <!-- //title-area -->
+      
+                  <div class="option-area">
+                    <div class="page-option">
+                      <span class="total">총 <em>24</em>건</span>
+                      <select class="form-control">
+                        <option value="0">20건씩</option>
+                        <option value="1">30건씩</option>
+                        <option value="2">100건씩</option>
+                      </select>
+                      <select class="form-control">
+                        <option value="0">20건씩</option>
+                        <option value="1">30건씩</option>
+                        <option value="2">100건씩</option>
+                      </select>
+                    </div>
+                  </div>
+                  <!-- //option-area -->
+                </div>
+                <!-- //grid-head -->
+      
+                <div class="grid-body with-head" id="realgrid" realgrid>realgrid area</div>
+                <!-- //grid-body -->
+              </div>
+              <!-- //grid -->
+            </div>
+            <!-- //베스트100 -->
+
+          </div>
+        </div>
+      </div>
+
+      <div class="button-group">
+        <a href="#" class="button"><span class="text">적용</span></a>
+        <a href="#" class="button" onclick="javascript"><span class="text">닫기</span></a>
+      </div>
+    </div>
+    <!-- //page-fixed -->
+  </div>
+</body>
+
+</html>

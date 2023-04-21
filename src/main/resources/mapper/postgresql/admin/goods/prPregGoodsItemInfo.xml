@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enbiz.bo.app.repository.goods.PrPregGoodsItemInfoMapper">
+    <select id="getPregGoodsItemList" parameterType="java.lang.String" resultType="PrPregGoodsItemInfo">
+        SELECT PREG_GOODS_NO    /* prPregGoodsItemInfo.getPregGoodsItemList */
+             , GOODS_NOTI_LISART_CD
+             , GOODS_NOTI_ITEM_CD
+             , NOTI_ITEM_CMT
+             , SYS_REG_ID
+             , TO_CHAR(SYS_REG_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_REG_DTM
+             , SYS_MOD_ID
+             , TO_CHAR(SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+          FROM PR_PREG_GOODS_ITEM_INFO
+         WHERE PREG_GOODS_NO = #{pregGoodsNo}
+         ORDER BY GOODS_NOTI_ITEM_CD
+    </select>
+
+    <select id="getPregGoodsNotiLisartCode" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT DISTINCT(GOODS_NOTI_LISART_CD) /* prPregGoodsItemInfo.getPregGoodsItemCount */
+          FROM PR_PREG_GOODS_ITEM_INFO
+         WHERE PREG_GOODS_NO = #{pregGoodsNo}
+    </select>
+</mapper>

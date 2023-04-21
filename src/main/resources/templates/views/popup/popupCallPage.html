@@ -1,0 +1,2039 @@
+<!--
+* 프로그램명 : 공통팝업 call 페이지
+* 작 성 일 : 2021.02.24
+* 작 성 자 : 권다솜
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 공통팝업의 argument와 페이지를 불러오는 기본 UI
+* 이    력 :
+-->
+<html lang="ko-KR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>X2-Commerce</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+    <link type="text/css" rel="stylesheet" th:href="${@domainConfig.getProperty('cssUrl')} + 'common.css?202103080002'">
+    <link type="text/css" rel="stylesheet" th:href="${@domainConfig.getProperty('cssUrl')} + 'luplina.css?202103080001'">
+    <link type="text/css" rel="stylesheet" th:href="${@domainConfig.getProperty('cssUrl')} + 'zTree.css?202103080001'">
+    <script th:src="${@domainConfig.getProperty('jsUrl')} + 'libs/jquery/jquery-3.4.1.min.js?202102260000'"></script>
+    <script th:src="${@domainConfig.getProperty('jsUrl')} + 'libs/jquery/jquery.ztree.all.js?202103080001'"></script>
+    <script th:src="${@domainConfig.getProperty('jsUrl')} + 'libs/luplina/luplina.js?202103080001'"></script>
+    <script th:src="${@domainConfig.getProperty('jsUrl')} + 'libs/luplina/luplino-core.js?202103080001'"></script>
+    <script th:src="${@domainConfig.getProperty('jsUrl')} + 'libs/luplina/luplino-toast.js?202103080001'"></script>
+    <script th:src="${@domainConfig.getProperty('jsUrl')} + 'libs/luplina/luplino-menu.js?202103080001'"></script>
+    <script th:src="${@domainConfig.getProperty('jsUrl')} + 'libs/alertify/alertify-1.11.0.min.js?202103080001'"></script>
+    <script th:src="${@domainConfig.getProperty('jsUrl')} + 'libs/bootstrap/bootstrap.min.js?202103080001'"></script>
+    <script th:src="${@domainConfig.getProperty('jsUrl')} + 'libs/bootstrap/bootstrap.bundle.min.js?202103080001'"></script>
+
+	<!-- SmartEditer -->
+	<script th:src="${@domainConfig.getProperty('jsUrl')} + 'libs/smartEditor/js/HuskyEZCreator.js'"></script>
+	<!-- //SmartEditer -->
+
+    <!-- common 스크립트 -->
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'common/common.js?202103080001'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'common/ajax.js?202103080001'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'common/util.js?202103080001'" ></script>
+    <!-- //common 스크립트 -->
+
+    <script th:src="${@domainConfig.getProperty('jsUrl')} + 'common/popup.js?202108121247'"></script>
+
+    <!--    <script th:src="${@domainConfig.getProperty('jsUrl')} + 'libs/jquery/jquery.ztree.core.js'"></script>-->
+    <!--    <script th:src="${@domainConfig.getProperty('jsUrl')} + 'libs/domutil/domutils.js'"></script>-->
+    <!--    <script th:src="${@domainConfig.getProperty('jsUrl')} + 'libs/alertify/alertify-1.11.0.min.js'"></script>-->
+
+    <!-- <link type="text/css" rel="stylesheet" th:href="${@domainConfig.getProperty('cssUrl')} + 'entypoplus.css?202103080001'"> -->
+
+<!-- datepicker 는 jquery 1.7.1 이상 bootstrap 2.0.4 이상 버전이 필요함 -->
+<!-- jQuery가 먼저 로드 된 후 datepicker가 로드 되어야함.-->
+<link type="text/css" rel="stylesheet" th:href="${@domainConfig.getProperty('jsUrl')} + 'libs/datepicker/bootstrap-datepicker3.css'">
+<link type="text/css" rel="stylesheet" th:href="${@domainConfig.getProperty('jsUrl')} + 'libs/datepicker/bootstrap-datepicker3.standalone.css'">
+<script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'libs/datepicker/bootstrap-datepicker.js'" ></script>
+<script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'libs/datepicker/bootstrap-datepicker.kr.min.js'" ></script>
+</head>
+<body>
+<div class="pop page-root">
+    <div class="page-fixed with-title">
+        <div class="search-cont full-height">
+            <!-- 전시 카테고리 (그리드형) 조회 -->
+            <div class="search">
+                <div class="search-body">
+                    <form id="displayCategoryForm" name="displayCategoryForm">
+                        <table class="search-table">
+                            <colgroup>
+                                <col style="width:15%;" />
+                                <col style="width:35%;" />
+                                <col style="width:15%;" />
+                                <col style="width:35%;" />
+                            </colgroup>
+                            <tbody>
+                            <tr>
+                                <td class="label" th:text="선택구분"></td>
+                                <td>
+                                    <input class="la-input" type="radio" name="argSelectType" id="dcList_argSelectType_single"  value="1" checked>
+                                    <label for="dcList_argSelectType_single">1</label>
+                                    <input class="la-input" type="radio" name="argSelectType" id="dcList_argSelectType_multi"  value="N">
+                                    <label for="dcList_argSelectType_multi">N</label>
+                                </td>
+                                <td class="label" th:text="전시여부"></td>
+                                <td>
+                                    <input class="la-input" type="radio" name="argDispYn" id="dcList_argDispYn_total" value="" checked>
+                                    <label for="dcList_argDispYn_total">전체</label>
+                                    <input class="la-input" type="radio" name="argDispYn" id="dcList_argDispYn_y"  value="Y">
+                                    <label for="dcList_argDispYn_y">Y</label>
+                                    <input class="la-input" type="radio" name="argDispYn" id="dcList_argDispYn_n"  value="N">
+                                    <label for="dcList_argDispYn_n">N</label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label" th:text="사이트"></td>
+                                <td><input class="la-input" type="text" name="argSiteNo" id="dcList_argSiteNo" value="1"></td>
+                                <td class="label" th:text="매장유형"></td>
+                                <td><input class="la-input" type="text" name="argShopType" id="dcList_argShopType" value="10"/></td>
+                            </tr>
+                            <tr>
+                                <td class="label" th:text="팝업결과"></td>
+                                <td colspan="3" name="dcList_result" id="dcList_result"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <a href="#" class="la-button" id="btn_displayCategory">
+                                        <span class="text">전시 카테고리 그리드형</span>
+                                    </a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+            </div>
+            <!-- 전시 카테고리 (그리드형) 조회 -->
+            <!-- 전시 카테고리 (Tree) 조회 -->
+            <div class="search">
+                <div class="search-body">
+                    <form id="displayCategoryTreeForm" name="displayCategoryTreeForm">
+                        <table class="search-table">
+                            <colgroup>
+                                <col style="width:15%;" />
+                                <col style="width:35%;" />
+                                <col style="width:15%;" />
+                                <col style="width:35%;" />
+                            </colgroup>
+                            <tbody>
+                            <tr>
+                                <td class="label" th:text="팝업결과"></td>
+                                <td colspan="3" name="dcTreeList_result" id="dcTreeList_result"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <a href="#" class="la-button" id="btn_displayCategoryTree">
+                                        <span class="text">전시 카테고리 Tree형</span>
+                                    </a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+            </div>
+            <!-- 전시 카테고리 (Tree) 조회 -->
+            <!-- MD 조회 -->
+            <div class="search">
+                <div class="search-body">
+                    <form id="mdListForm" name="mdListForm">
+                        <table class="search-table">
+                            <colgroup>
+                                <col style="width:15%;" />
+                                <col style="width:35%;" />
+                                <col style="width:15%;" />
+                                <col style="width:35%;" />
+                            </colgroup>
+                            <tbody>
+                            <tr>
+                                <td class="label" th:text="선택구분"></td>
+                                <td>
+                                    <input class="la-input" type="radio" name="argSelectType" id="mdList_argSelectType_single"  value="1" checked>
+                                    <label for="mdList_argSelectType_single">1</label>
+                                    <input class="la-input" type="radio" name="argSelectType" id="mdList_argSelectType_multi"  value="N">
+                                    <label for="mdList_argSelectType_multi">N</label>
+                                </td>
+                                <td class="label" th:text="근무상태"></td>
+                                <td>
+                                    <input class="la-input" type="radio" name="argWorkStatCd" id="mdList_argWorkStatCd_work"  value="01" checked>
+                                    <label for="mdList_argWorkStatCd_work">재직중</label>
+                                    <input class="la-input" type="radio" name="argWorkStatCd" id="mdList_argWorkStatCd_quit"  value="02">
+                                    <label for="mdList_argWorkStatCd_quit">퇴사</label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label" th:text="사용여부"></td>
+                                <td colspan="3">
+                                    <input class="la-input" type="radio" name="argUseYn" id="mdList_argUseYn_Y"  value="Y" checked>
+                                    <label for="mdList_argUseYn_Y">사용</label>
+                                    <input class="la-input" type="radio" name="argUseYn" id="mdList_argUseYn_N"  value="N">
+                                    <label for="mdList_argUseYn_N">사용안함</label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label" th:text="팝업결과"></td>
+                                <td colspan="3" name="mdList_result" id="mdList_result"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <input type="button" id="mdList_btn" value="MD조회팝업">
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+            </div>
+            <!-- MD 조회 조회 -->
+            <!-- 상품고시품목조회 -->
+            <div class="search">
+                <div class="search-body">
+                    <form id="goodsNotiLisartCdListForm" name="goodsNotiLisartCdListForm">
+                        <table class="search-table">
+                            <colgroup>
+                                <col style="width:20%;" />
+                                <col style="width:80%;" />
+                            </colgroup>
+                            <tbody>
+                                <tr>
+                                    <td class="label" th:text="팝업결과"></td>
+                                    <td name="mdList_result" id="goodsNotiLisartCdList_result"></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <input type="button" id="goodsNotiLisartCdList_btn" value="상품고시품목조회팝업">
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+            </div>
+            <!-- 상품고시품목조회 -->
+
+            <!-- 템플릿 조회 -->
+            <div class="search">
+                <div class="search-body">
+                    <form id="templateForm" name="templateForm">
+                        <table class="search-table">
+                            <colgroup>
+                                <col style="width:15%;" />
+                                <col style="width:35%;" />
+                                <col style="width:15%;" />
+                                <col style="width:35%;" />
+                            </colgroup>
+                            <tbody>
+                            <tr>
+                                <td class="label" th:text="선택구분"></td>
+                                <td>
+                                    <input class="la-input" type="radio" name="argSelectType" id="tmplList_argSelectType_single"  value="1" checked>
+                                    <label for="tmplList_argSelectType_single">1</label>
+                                    <input class="la-input" type="radio" name="argSelectType" id="tmplList_argSelectType_multi"  value="N">
+                                    <label for="tmplList_argSelectType_multi">N</label>
+                                </td>
+                                <td class="label" th:text="템플릿유형"></td>
+                                <td>
+                                    <input class="la-input" type="radio" name="argTmplTypCd" id="tmplList_argTmplTypCd_total"  value="" checked>
+                                    <label for="tmplList_argTmplTypCd_total">전체</label>
+                                    <input class="la-input" type="radio" name="argTmplTypCd" id="tmplList_argTmplTypCd_01"  value="01">
+                                    <label for="tmplList_argTmplTypCd_01">몰메인</label>
+                                    <input class="la-input" type="radio" name="argTmplTypCd" id="tmplList_argTmplTypCd_02"  value="02">
+                                    <label for="tmplList_argTmplTypCd_02">대카</label>
+                                    <input class="la-input" type="radio" name="argTmplTypCd" id="tmplList_argTmplTypCd_03"  value="03">
+                                    <label for="tmplList_argTmplTypCd_03">중카</label>
+                                    <input class="la-input" type="radio" name="argTmplTypCd" id="tmplList_argTmplTypCd_04"  value="04">
+                                    <label for="tmplList_argTmplTypCd_04">소카</label>
+                                    <input class="la-input" type="radio" name="argTmplTypCd" id="tmplList_argTmplTypCd_05"  value="05">
+                                    <label for="tmplList_argTmplTypCd_05">세카</label>
+                                    <input class="la-input" type="radio" name="argTmplTypCd" id="tmplList_argTmplTypCd_06"  value="06">
+                                    <label for="tmplList_argTmplTypCd_06">비정형매장</label>
+                                    <input class="la-input" type="radio" name="argTmplTypCd" id="tmplList_argTmplTypCd_07"  value="07">
+                                    <label for="tmplList_argTmplTypCd_07">기타</label>
+                                    <input class="la-input" type="radio" name="argTmplTypCd" id="tmplList_argTmplTypCd_08"  value="08">
+                                    <label for="tmplList_argTmplTypCd_08">기획전메인</label>
+                                    <input class="la-input" type="radio" name="argTmplTypCd" id="tmplList_argTmplTypCd_09"  value="09">
+                                    <label for="tmplList_argTmplTypCd_09">기획전서브</label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label" th:text="팝업결과"></td>
+                                <td colspan="3" name="tmplList_result" id="tmplList_result"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <a href="#" class="la-button" id="btn_template">
+                                        <span class="text">템플릿 조회</span>
+                                    </a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+            </div>
+            <!-- 템플릿 조회 -->
+            <!-- 채널 조회 -->
+            <div class="search">
+                <div class="search-body">
+                    <form id="channelForm" name="channelForm">
+                        <table class="search-table">
+                            <colgroup>
+                                <col style="width:15%;" />
+                                <col style="width:35%;" />
+                                <col style="width:15%;" />
+                                <col style="width:35%;" />
+                            </colgroup>
+                            <tbody>
+                            <tr>
+                                <td class="label" th:text="선택구분"></td>
+                                <td>
+                                    <input class="la-input" type="radio" name="argSelectType" id="chlList_argSelectType_single"  value="1" checked>
+                                    <label for="chlList_argSelectType_single">1</label>
+                                    <input class="la-input" type="radio" name="argSelectType" id="chlList_argSelectType_multi"  value="N">
+                                    <label for="chlList_argSelectType_multi">N</label>
+                                </td>
+                                <td class="label" th:text="채널분류"></td>
+                                <td><input class="la-input" type="text" name="argChlClssCd" id="chlList_argChlClssCd" value="10"/></td>
+                            </tr>
+                            <tr>
+                                <td class="label" th:text="팝업결과"></td>
+                                <td colspan="3" name="chlList_result" id="chlList_result"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <a href="#" class="la-button" id="btn_channel">
+                                        <span class="text">채널 조회</span>
+                                    </a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+            </div>
+            <!-- 채널 조회 -->
+            <!-- 브랜드 조회 -->
+            <div class="search">
+                <div class="search-body">
+                    <form id="brandListForm" name="brandListForm">
+                        <table class="search-table">
+                            <colgroup>
+                                <col style="width:20%;" />
+                                <col style="width:30%;" />
+                                <col style="width:20%;" />
+                                <col style="width:30%;" />
+                            </colgroup>
+                            <tbody>
+                            <tr>
+                                <td class="label" th:text="선택구분"></td>
+                                <td>
+                                    <input class="la-input" type="radio" name="argSelectType" id="brandList_argSelectType_single"  value="1" checked>
+                                    <label for="brandList_argSelectType_single">1</label>
+                                    <input class="la-input" type="radio" name="argSelectType" id="brandList_argSelectType_multi"  value="N">
+                                    <label for="brandList_argSelectType_multi">N</label>
+                                </td>
+                                <td class="label" th:text="사용여부"></td>
+                                <td>
+                                    <input class="la-input" type="radio" name="argUseYn" id="brandList_argUseYn_all"  value="" checked>
+                                    <label for="brandList_argUseYn_all">전체</label>
+                                    <input class="la-input" type="radio" name="argUseYn" id="brandList_argUseYn_Y"  value="Y">
+                                    <label for="brandList_argUseYn_Y">사용</label>
+                                    <input class="la-input" type="radio" name="argUseYn" id="brandList_argUseYn_N"  value="N">
+                                    <label for="brandList_argUseYn_N">사용안함</label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label" th:text="팝업결과"></td>
+                                <td  colspan="3" name="brandList_result" id="brandList_result"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <input type="button" id="brandList_btn" value="브랜드조회팝업">
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+            </div>
+            <!-- 브랜드 조회 -->
+            <!-- 협력사 조회 -->
+            <div class="search">
+                <div class="search-body">
+                    <form id="etEntrListForm" name="etEntrListForm">
+                        <table class="search-table">
+                            <colgroup>
+                                <col style="width:15%;" />
+                                <col style="width:35%;" />
+                                <col style="width:15%;" />
+                                <col style="width:35%;" />
+                            </colgroup>
+                            <tbody>
+                            <tr>
+                                <td class="label" th:text="선택구분"></td>
+                                <td>
+                                    <input class="la-input" type="radio" name="argSelectType" id="etEntrList_argSelectType_single"  value="1" checked>
+                                    <label for="etEntrList_argSelectType_single">1</label>
+                                    <input class="la-input" type="radio" name="argSelectType" id="etEntrList_argSelectType_multi"  value="N">
+                                    <label for="etEntrList_argSelectType_multi">N</label>
+                                    <input class="la-input" type="radio" name="argSelectType" id="etEntrList_argSelectType_noArgu"  value="3">
+                                    <label for="etEntrList_argSelectType_noArgu">이상한값</label>
+                                </td>
+                                <td class="label" th:text="거래상태"></td>
+                                <td>
+                                    <input class="la-input" type="radio" name="argTrdStatCd" id="etEntrList_argTrdStatCd_all"  value="">
+                                    <label for="etEntrList_argTrdStatCd_all">전체</label>
+                                    <input class="la-input" type="radio" name="argTrdStatCd" id="etEntrList_argTrdStatCd_1"  value="10">
+                                    <label for="etEntrList_argTrdStatCd_1">거래대기</label>
+                                    <input class="la-input" type="radio" name="argTrdStatCd" id="etEntrList_argTrdStatCd_2"  value="20" checked>
+                                    <label for="etEntrList_argTrdStatCd_2">거래중</label>
+                                    <input class="la-input" type="radio" name="argTrdStatCd" id="etEntrList_argTrdStatCd_3"  value="30">
+                                    <label for="etEntrList_argTrdStatCd_3">거래종료</label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label" th:text="협력사구분"></td>
+                                <td colspan="3">
+                                    <input class="la-input" type="radio" name="argEntrGbCd" id="etEntrList_argEntrGbCd_all"  value="" checked>
+                                    <label for="etEntrList_argEntrGbCd_all">전체</label>
+                                    <input class="la-input" type="radio" name="argEntrGbCd" id="etEntrList_argEntrGbCd_supply"  value="10">
+                                    <label for="etEntrList_argEntrGbCd_supply">상품공급업자</label>
+                                    <input class="la-input" type="radio" name="argEntrGbCd" id="etEntrList_argEntrGbCd_partner"  value="20">
+                                    <label for="etEntrList_argEntrGbCd_partner">제휴사업자</label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label" th:text="팝업결과"></td>
+                                <td colspan="3" name="etEntrList_result" id="etEntrList_result"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <input type="button" id="etEntrList_btn" value="협력사조회팝업">
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+            </div>
+            <!-- 협력사 조회  -->
+            <!-- 사용자 조회 -->
+            <div class="search">
+                <div class="search-body">
+                    <form id="userListForm" name="userListForm">
+                        <table class="search-table">
+                            <colgroup>
+                                <col style="width:15%;" />
+                                <col style="width:35%;" />
+                                <col style="width:15%;" />
+                                <col style="width:35%;" />
+                            </colgroup>
+                            <tbody>
+                            <tr>
+                                <td class="label" th:text="선택구분"></td>
+                                <td>
+                                    <input class="la-input" type="radio" name="argSelectType" id="userList_argSelectType_single"  value="1" checked>
+                                    <label for="userList_argSelectType_single">1</label>
+                                    <input class="la-input" type="radio" name="argSelectType" id="userList_argSelectType_multi"  value="N">
+                                    <label for="userList_argSelectType_multi">N</label>
+                                </td>
+                                <td class="label" th:text="근무상태"></td>
+                                <td>
+                                    <input class="la-input" type="radio" name="argWorkStatCd" id="userList_argWorkStatCd_work"  value="01" checked>
+                                    <label for="userList_argWorkStatCd_work">재직</label>
+                                    <input class="la-input" type="radio" name="argWorkStatCd" id="userList_argWorkStatCd_out"  value="02">
+                                    <label for="userList_argWorkStatCd_out">퇴사</label>
+                                    <input class="la-input" type="radio" name="argWorkStatCd" id="userList_argWorkStatCd_noArgu"  value="03">
+                                    <label for="userList_argWorkStatCd_noArgu">이상한값</label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label" th:text="사용여부"></td>
+                                <td colspan="3">
+                                    <input class="la-input" type="radio" name="useYn" id="userList_useYn_Y"  value="Y" checked>
+                                    <label for="userList_useYn_Y">사용</label>
+                                    <input class="la-input" type="radio" name="useYn" id="userList_useYn_N"  value="N">
+                                    <label for="userList_useYn_N">사용안함</label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label" th:text="팝업결과"></td>
+                                <td colspan="3" name="userList_result" id="userList_result"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <input type="button" id="userList_btn" value="사용자조회팝업">
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+            </div>
+            <!-- 사용자 조회  -->
+            <!-- 메뉴 조회 -->
+            <div class="search">
+                <div class="search-body">
+                    <form id="menuListForm" name="menuListForm">
+                        <table class="search-table">
+                            <colgroup>
+                                <col style="width:15%;" />
+                                <col style="width:35%;" />
+                                <col style="width:15%;" />
+                                <col style="width:35%;" />
+                            </colgroup>
+                            <tbody>
+                            <tr>
+                                <td class="label" th:text="선택구분"></td>
+                                <td>
+                                    <input class="la-input" type="radio" name="sysGbCd" id="menuList_sysGbCd_backoffice"  value="11" checked>
+                                    <label for="menuList_sysGbCd_backoffice">백오피스</label>
+                                    <input class="la-input" type="radio" name="sysGbCd" id="menuList_sysGbCd_notBackoffice"  value="2">
+                                    <label for="menuList_sysGbCd_notBackoffice">!백오피스</label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label" th:text="팝업결과"></td>
+                                <td colspan="3" name="menuList_result" id="menuList_result"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <input type="button" id="menuList_btn" value="메뉴 조회 팝업">
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+            </div>
+            <!-- 메뉴 조회  -->
+            <!-- 우편번호 조회 -->
+            <div class="search">
+                <div class="search-body">
+                    <form id="zipNoListForm" name="zipNoListForm">
+                        <table class="search-table">
+                            <colgroup>
+                                <col style="width:15%;" />
+                                <col style="width:35%;" />
+                                <col style="width:15%;" />
+                                <col style="width:35%;" />
+                            </colgroup>
+                            <tbody>
+                            <tr>
+                                <td class="label" th:text="선택구분"></td>
+                                <td>
+                                    <input class="la-input" type="radio" name="argSelectType" id="zipNoList_1"  value="1" checked>
+                                    <label for="zipNoList_1">1</label>
+                                    <input class="la-input" type="radio" name="argSelectType" id="zipNoList_N"  value="N">
+                                    <label for="zipNoList_N">N</label>
+                                    <input class="la-input" type="radio" name="argSelectType" id="zipNoList_other"  value="12N">
+                                    <label for="zipNoList_other">이상한값</label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label" th:text="팝업결과"></td>
+                                <td colspan="3" name="zipNoList_result" id="zipNoList_result"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <input type="button" id="zipNoList_btn" value="우편번호 조회 팝업">
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+            </div>
+            <!-- 우편번호 조회  -->
+            <!-- 상품 표준 분류 조회 -->
+            <div class="search">
+                <div class="search-body">
+                    <form id="prStdCtgListForm" name="prStdCtgListForm">
+                        <table class="search-table">
+                            <colgroup>
+                                <col style="width:20%;" />
+                                <col style="width:80%;" />
+                            </colgroup>
+                            <tbody>
+                            <tr>
+                                <td class="label" th:text="팝업결과"></td>
+                                <td name="prStdCtgList_result" id="prStdCtgList_result"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <input type="button" id="prStdCtgList_btn" value="상품표준분류조회팝업">
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+            </div>
+            <!-- 상품 표준 분류 조회 -->
+            <!-- 상품 조회 -->
+            <div class="search">
+                <div class="search-body">
+                    <form id="goodsListForm" name="goodsListForm">
+                        <table class="search-table">
+                            <colgroup>
+                                <col style="width:15%;" />
+                                <col style="width:35%;" />
+                                <col style="width:15%;" />
+                                <col style="width:35%;" />
+                            </colgroup>
+                            <tbody>
+                            <tr>
+                                <td class="label" th:text="선택구분"></td>
+                                <td>
+                                    <input class="la-input" type="radio" name="argSelectType" id="goodsList_argSelectType_single"  value="1" checked>
+                                    <label for="goodsList_argSelectType_single">1</label>
+                                    <input class="la-input" type="radio" name="argSelectType" id="goodsList_argSelectType_multi"  value="N">
+                                    <label for="goodsList_argSelectType_multi">N</label>
+                                </td>
+                                <td class="label" th:text="판매상태"></td>
+                                <td>
+                                    <input class="la-input" type="checkbox" name="argSaleState" id="goodsList_argSaleState_1"  value="10" checked>
+                                    <label for="goodsList_argSaleState_1">판매중</label>
+                                    <input class="la-input" type="checkbox" name="argSaleState" id="goodsList_argSaleState_2"  value="20" checked>
+                                    <label for="goodsList_argSaleState_2">품절</label>
+                                    <input class="la-input" type="checkbox" name="argSaleState" id="goodsList_argSaleState_3"  value="30" checked>
+                                    <label for="goodsList_argSaleState_3">일시중단</label>
+                                    <input class="la-input" type="checkbox" name="argSaleState" id="goodsList_argSaleState_4"  value="40" checked>
+                                    <label for="goodsList_argSaleState_4">판매종료</label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label" th:text="상품유형"></td>
+                                <td colspan="3">
+                                    <input class="la-input" type="radio" name="argGoodsType" id="goodsList_argGoodsType_all"  value="" checked>
+                                    <label for="goodsList_argGoodsType_all">전체</label>
+                                    <input class="la-input" type="radio" name="argGoodsType" id="goodsList_argGoodsType_1"  value="10">
+                                    <label for="goodsList_argGoodsType_1">일반상품</label>
+                                    <input class="la-input" type="radio" name="argGoodsType" id="goodsList_argGoodsType_2"  value="20">
+                                    <label for="goodsList_argGoodsType_2">사은품</label>
+                                    <input class="la-input" type="radio" name="argGoodsType" id="goodsList_argGoodsType_3"  value="30">
+                                    <label for="goodsList_argGoodsType_3">e-쿠폰상품</label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label" th:text="팝업결과"></td>
+                                <td colspan="3" name="goodsList_result" id="goodsList_result"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <input type="button" id="goodsList_btn" value="상품조회팝업">
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+            </div>
+            <!-- 상품 조회  -->
+            <!-- 회원 조회 -->
+            <div class="search">
+                <div class="search-body">
+                    <form id="mbrListForm" name="mbrListForm">
+                        <table class="search-table">
+                            <colgroup>
+                                <col style="width:15%;" />
+                                <col style="width:35%;" />
+                                <col style="width:15%;" />
+                                <col style="width:35%;" />
+                            </colgroup>
+                            <tbody>
+                            <tr>
+                                <td class="label" th:text="선택구분"></td>
+                                <td>
+                                    <input class="la-input" type="radio" name="argSelectType" id="mbrList_argSelectType_single"  value="1" checked>
+                                    <label for="mbrList_argSelectType_single">1</label>
+                                    <input class="la-input" type="radio" name="argSelectType" id="mbrList_argSelectType_multi"  value="N">
+                                    <label for="mbrList_argSelectType_multi">N</label>
+                                </td>
+                                <td class="label" th:text="회원상태"></td>
+                                <td>
+                                    <input class="la-input" type="radio" name="argMbrStatCd" id="mbrList_argMbrStatCd_blank" value="" checked>
+                                    <label for="mbrList_argMbrStatCd_blank">전체</label>
+                                    <input class="la-input" type="radio" name="argMbrStatCd" id="mbrList_argMbrStatCd_10" value="10">
+                                    <label for="mbrList_argMbrStatCd_10">정상회원</label>
+                                    <input class="la-input" type="radio" name="argMbrStatCd" id="mbrList_argMbrStatCd_20" value="20">
+                                    <label for="mbrList_argMbrStatCd_20">휴면회원</label>
+                                    <input class="la-input" type="radio" name="argMbrStatCd" id="mbrList_argMbrStatCd_30" value="30">
+                                    <label for="mbrList_argMbrStatCd_30">탈퇴회원</label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label" th:text="팝업결과"></td>
+                                <td colspan="3" name="mbrList_result" id="mbrList_result"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <input type="button" id="mbrList_btn" value="회원조회팝업">
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+            </div>
+            <!-- 회원 조회 -->
+            <!-- 기획전 조회 -->
+            <div class="search">
+                <div class="search-body">
+                    <form id="mkdpListForm" name="mkdpListForm">
+                        <table class="search-table">
+                            <colgroup>
+                                <col style="width:15%;" />
+                                <col style="width:35%;" />
+                                <col style="width:15%;" />
+                                <col style="width:35%;" />
+                            </colgroup>
+                            <tbody>
+                            <tr>
+                                <td class="label" th:text="선택구분"></td>
+                                <td>
+                                    <input class="la-input" type="radio" name="argSelectType" id="mkdpList_argSelectType_single"  value="1" checked>
+                                    <label for="mkdpList_argSelectType_single">1</label>
+                                    <input class="la-input" type="radio" name="argSelectType" id="mkdpList_argSelectType_multi"  value="N">
+                                    <label for="mkdpList_argSelectType_multi">N</label>
+                                </td>
+                                <td class="label" th:text="기획전상태"></td>
+                                <td>
+                                    <input class="la-input" type="checkbox" name="argDispStat" id="mkdpList_argDispStat_1"  value="10" checked>
+                                    <label for="mkdpList_argDispStat_1">준비중</label>
+                                    <input class="la-input" type="checkbox" name="argDispStat" id="mkdpList_argDispStat_2"  value="20" checked>
+                                    <label for="mkdpList_argDispStat_2">진행중</label>
+                                    <input class="la-input" type="checkbox" name="argDispStat" id="mkdpList_argDispStat_3"  value="30" checked>
+                                    <label for="mkdpList_argDispStat_3">종료</label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label" th:text="팝업결과"></td>
+                                <td colspan="3" name="mkdpList_result" id="mkdpList_result"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <input type="button" id="mkdpList_btn" value="기획전조회팝업">
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+            </div>
+            <!-- 기획전 조회 -->
+            <!-- 상품유형 조회 -->
+            <div class="search">
+                <div class="search-body">
+                    <form id="cnslTypeListForm" name="cnslTypeListForm">
+                        <table class="search-table">
+                            <colgroup>
+                                <col style="width:15%;" />
+                                <col style="width:35%;" />
+                            </colgroup>
+                            <tbody>
+                            <tr>
+                                <td class="label" th:text="선택구분"></td>
+                                <td>
+                                    <input class="la-input" type="radio" name="custCnslGbCd" value="" checked>
+                                    <label>전체</label>
+                                    <input class="la-input" type="radio" name="custCnslGbCd" value="10">
+                                    <label>IB</label>
+                                    <input class="la-input" type="radio" name="custCnslGbCd" value="20">
+                                    <label>BO</label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label" th:text="팝업결과"></td>
+                                <td colspan="3" name="cnslTypeList_result" id="cnslTypeList_result"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <input type="button" id="cnslTypeList_btn" value="상담유형조회팝업">
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+            </div>
+            <!-- 상품유형 조회 -->
+            <!-- 상품템플릿 조회 -->
+            <div class="search">
+                <div class="search-body">
+                    <form id="cnslTmplListForm" name="cnslTmplListForm">
+                        <table class="search-table">
+                            <colgroup>
+                                <col style="width:15%;" />
+                                <col style="width:35%;" />
+                                <col style="width:15%;" />
+                                <col style="width:35%;" />
+                            </colgroup>
+                            <tbody>
+                            <tr>
+                                <td class="label" th:text="선택구분"></td>
+                                <td colspan="3">
+                                    <input class="la-input" type="radio" name="argSelectType" id="cnslTmplList_argSelectType_single"  value="1" checked>
+                                    <label for="cnslTmplList_argSelectType_single">1</label>
+                                    <input class="la-input" type="radio" name="argSelectType" id="cnslTmplList_argSelectType_multi"  value="N">
+                                    <label for="cnslTmplList_argSelectType_multi">N</label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label" th:text="팝업결과"></td>
+                                <td colspan="3" name="cnslTmplList_result" id="cnslTmplList_result"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <input type="button" id="cnslTmplList_btn" value="상담템플릿조회팝업">
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+            </div>
+            <!-- 상품템플릿 조회 -->
+            <!-- 보상유형 조회 -->
+            <div class="search">
+                <div class="search-body">
+                    <form id="csCpnsTypCdListForm" name="csCpnsTypCdListForm">
+                        <table class="search-table">
+                            <colgroup>
+                                <col style="width:15%;" />
+                                <col style="width:35%;" />
+                                <col style="width:15%;" />
+                                <col style="width:35%;" />
+                            </colgroup>
+                            <tbody>
+                            <tr>
+                                <td class="label" th:text="팝업결과"></td>
+                                <td colspan="3" name="csCpnsTypCdList_result" id="csCpnsTypCdList_result"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <input type="button" id="csCpnsTypCdList_btn" value="보상유형조회팝업">
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+            </div>
+            <!-- 보상유형 조회 -->
+            <!-- 상품리뷰 조회 -->
+            <div class="search">
+                <div class="search-body">
+                    <form id="prGoodsRevInfoListForm" name="prGoodsRevInfoListForm">
+                        <table class="search-table">
+                            <colgroup>
+                                <col style="width:15%;" />
+                                <col style="width:35%;" />
+                                <col style="width:15%;" />
+                                <col style="width:35%;" />
+                            </colgroup>
+                            <tbody>
+                            <tr>
+                                <td class="label" th:text="팝업결과"></td>
+                                <td colspan="3" name="prGoodsRevInfoList_result" id="prGoodsRevInfoList_result"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <input type="button" id="prGoodsRevInfoList_btn" value="전시대상상품리뷰조회팝업">
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+            </div>
+            <!-- 상품리뷰 조회 -->
+            <!-- 코너 조회 -->
+            <div class="search">
+                <div class="search-body">
+                    <form id="prConrBaseListForm" name="prConrBaseListForm">
+                        <table class="search-table">
+                            <colgroup>
+                                <col style="width:15%;" />
+                                <col style="width:35%;" />
+                                <col style="width:15%;" />
+                                <col style="width:35%;" />
+                            </colgroup>
+                            <tbody>
+                            <tr>
+                                <td class="label" th:text="팝업결과"></td>
+                                <td colspan="3" name="prConrBaseList_result" id="prConrBaseList_result"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <input type="button" id="prConrBaseList_btn" value="코너조회팝업">
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+            </div>
+
+            <div class="search">
+                <div class="search-body">
+                    <table class="search-table">
+                        <colgroup>
+                            <col style="width:15%;" />
+                            <col style="width:35%;" />
+                            <col style="width:15%;" />
+                            <col style="width:35%;" />
+                        </colgroup>
+                        <tbody>
+                        <tr>
+                            <td class="label" th:text="팝업결과"></td>
+                            <td colspan="3" name="dcTreeList_result" id="userDeptMgmtTree_result"></td>
+                        </tr>
+                        <tr>
+                            <td colspan="4">
+                                <a href="#" class="la-button" id="btn_userDeptMgmtTree">
+                                    <span class="text">부서 목록 Tree형</span>
+                                </a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- 코너 조회 -->
+            <!-- 달력 -->
+            <div class="search">
+                <div class="search-body">
+                    <table class="search-table">
+                        <colgroup>
+                            <col style="width:15%;" />
+                            <col style="width:35%;" />
+                            <col style="width:15%;" />
+                            <col style="width:35%;" />
+                        </colgroup>
+                        <tbody>
+                        <tr>
+                            <td class="label" th:text="달력"></td>
+                            <td colspan="3">
+                            	<input class="la-input" type="text" id="datePicker"/>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- 달력 -->
+            <!-- Create Thumnail -->
+            <div class="search">
+                <div class="search-body">
+                    <form action="upload" id="uploadForm" method="post" enctype="multipart/form-data">
+                        <table class="search-table">
+                            <colgroup>
+                                <col style="width:15%;" />
+                                <col style="width:35%;" />
+                                <col style="width:15%;" />
+                                <col style="width:35%;" />
+                            </colgroup>
+                            <tbody>
+                            <tr>
+                                <td class="label" th:text="기본파일"></td>
+                                <td>
+                                	<input type="file" name="file" id="file" style="display:none"/>
+                                    <input type="button" id="mbrList_btn" onClick="document.all.file.click();" value="파일찾기">
+                                </td>
+                                <td class="label" th:text="실행"></td>
+                                <td>
+                                	<input type="hidden" name="type" value="resize"><!-- 이미지 타입 -->
+                                	가로 <input class="la-input" type="text" style="width:40px" name="wThumnail" id="wThumnail" value="100">px<br>
+                                	세로 <input class="la-input" type="text" style="width:40px" name="hThumnail" id="hThumnail" value="100">px<br><br>
+                                    <input type="button" id="upload_btn" onclick="resizeImage();" value="실행">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label" th:text="원본"></td>
+                                <td>
+                                	<div id="originalFile"></div>
+                                </td>
+                                <td class="label" th:text="Thumnail"></td>
+                                <td>
+                                	<div id="thumnailFile"></div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+            </div>
+            <!-- //Create Thumnail -->
+            <!-- 스마트 에디터 -->
+            <div class="search">
+                <div class="search-body">
+                    <form id="smartEditerForm" name="smartEditerForm">
+                        <table class="search-table">
+                            <colgroup>
+                                <col style="width:15%;" />
+                                <col style="width:85%;" />
+                            </colgroup>
+                            <tbody>
+                            <tr>
+                                <td class="label" th:text="에디터내용"></td>
+                                <td>
+                                    <input type="button" id="viewEditer" value="내용보기">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                	<textarea name="se2" id="se2" style="display: none;"></textarea>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+            </div>
+            <!-- 스마트 에디터 -->
+            <!-- 마스킹 처리 -->
+            <div class="search">
+                <div class="search-body">
+                    <form id="smartEditerForm" name="smartEditerForm">
+                        <table class="search-table">
+                            <colgroup>
+                                <col style="width:5%;" />
+                                <col style="width:30%;" />
+                                <col style="width:20%;" />
+                                <col style="width:30%;" />
+                            </colgroup>
+                            <tbody>
+                            <tr>
+                                <td class="label" th:text="마스킹" colspan="4" style="text-align: center; "></td>
+                            </tr>
+                            <tr>
+                                <td class="label" th:text="한글명"></td>
+                                <td>홍길동만만세</td>
+                                <td>
+                                	<div>@MaskString(type = MaskingType.NAME_KR)</div>
+                                </td>
+                                <td>
+                                	<div id="maskingNameKr"></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label" th:text="영문명"></td>
+                                <td>William</td>
+                                <td>
+                                	<div>@MaskString(type = MaskingType.NAME_EN)</div>
+                                </td>
+                                <td>
+                                	<div id="maskingNameEn"></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label" th:text="생년월일"></td>
+                                <td>20210318</td>
+                                <td>
+                                	<div>@MaskString(type = MaskingType.BIRTH)</div>
+                                </td>
+                                <td>
+                                	<div id="maskingBirth"></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label" th:text="주민번호"></td>
+                                <td>0011034168233</td>
+                                <td>
+                                	<div>@MaskString(type = MaskingType.RRN)</div>
+                                </td>
+                                <td>
+                                	<div id="maskingRrn"></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label" th:text="전화번호"></td>
+                                <td>567</td>
+                                <td>
+                                	<div>@MaskString(type = MaskingType.PHONE_NUM)</div>
+                                </td>
+                                <td>
+                                	<div id="maskingPhoneNum"></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label" th:text="핸드폰"></td>
+                                <td>1234</td>
+                                <td>
+                                	<div>@MaskString(type = MaskingType.PHONE_NUM)</div>
+                                </td>
+                                <td>
+                                	<div id="maskingMobileNum"></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label" th:text="주소"></td>
+                                <td>서울특별시 종로구 사직로8길 60 (세종로)</td>
+                                <td>
+                                	<div>@MaskString(type = MaskingType.ADDRESS)</div>
+                                </td>
+                                <td>
+                                	<div id="maskingAddress"></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label" th:text="주소상세"></td>
+                                <td>3층 304호</td>
+                                <td>
+                                	<div>@MaskString(type = MaskingType.ADDRESS_DTL)</div>
+                                </td>
+                                <td>
+                                	<div id="maskingAddressDtl"></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label" th:text="IP_IPv4"></td>
+                                <td>192.168.2.31</td>
+                                <td>
+                                	<div>@MaskString(type = MaskingType.IP)</div>
+                                </td>
+                                <td>
+                                	<div id="maskingIP"></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label" th:text="IP_IPv6"></td>
+                                <td>2001:0DB8:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF</td>
+                                <td>
+                                	<div>@MaskString(type = MaskingType.IP)</div>
+                                </td>
+                                <td>
+                                	<div id="maskingIP2"></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label" th:text="이메일"></td>
+                                <td>kimdd@naver.com</td>
+                                <td>
+                                	<div>@MaskString(type = MaskingType.EMAIL)</div>
+                                </td>
+                                <td>
+                                	<div id="maskingEmail"></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label" th:text="ID"></td>
+                                <td>N.J.Kim</td>
+                                <td>
+                                	<div>@MaskString(type = MaskingType.ID)</div>
+                                </td>
+                                <td>
+                                	<div id="maskingID"></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label" th:text="계좌번호"></td>
+                                <td>1234567890</td>
+                                <td>
+                                	<div>@MaskString(type = MaskingType.ACTN)</div>
+                                </td>
+                                <td>
+                                	<div id="maskingActn"></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label" th:text="카드번호"></td>
+                                <td>1234567890123456</td>
+                                <td>
+                                	<div>@MaskString(type = MaskingType.CARD)</div>
+                                </td>
+                                <td>
+                                	<div id="maskingCard"></div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+            </div>
+            <!-- 마스킹 처리 -->
+            <!-- 암호화 처리 -->
+            <div class="search">
+                <div class="search-body">
+                    <form id="smartEditerForm" name="smartEditerForm">
+                        <table class="search-table">
+                            <colgroup>
+                                <col style="width:5%;" />
+                                <col style="width:30%;" />
+                                <col style="width:20%;" />
+                                <col style="width:30%;" />
+                            </colgroup>
+                            <tbody>
+                            <tr>
+                                <td class="label" th:text="암호화" style="text-align: center; "></td>
+                                <td colspan="3">
+                                    <input type="button" id="saveEncrypt" value="저장">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label">한글명:암복호화</td>
+                                <td>
+                                	<div id="encryptNameKr"></div>
+                                </td>
+                                <td>
+                                	<div>@Encrypt</div>
+                                </td>
+                                <td>
+                                	<div>Bhh2286IUx7Zu+ArILz/GzbnOgbixcX/XBzp5Ayib0o=</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label">영문명:암복호화</td>
+                                <td>
+                                	<div id="encryptNameEn"></div>
+                                </td>
+                                <td>
+                                	<div>@Encrypt</div>
+                                </td>
+                                <td>
+                                	<div>+paIGZZLWqOOnWE982Wt+g==</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label">비밀번호:단방향암호화</td>
+                                <td>
+                                	<div>1q2w3e4r!</div>
+                                </td>
+                                <td>
+                                	<div>@Encrypt(type = EncryptType.CRYPTO)</div>
+                                </td>
+                                <td>
+                                	<div id="encryptPW"></div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+            </div>
+            <!-- 암호화 처리 -->
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $.namespace("common.DisplayCategoryControl");
+    common.DisplayCategoryControl = {
+        popupDisplayCategory : function() {
+            var pin = {
+                 argSelectType: $("#displayCategoryForm [name='argSelectType']:checked").val()
+               , argDispYn: $("#displayCategoryForm [name='argDispYn']:checked").val()
+               , argSiteNo: $('#dcList_argSiteNo').val()
+               , argShopType: $('#dcList_argShopType').val()
+            };
+            var POP_DATA = {
+                  url: 'popup/displayCategoryMgmtPopup.displayCategoryListPopup.do'
+                , winName: 'displayCategoryPopup'
+                , title: '전시 카테고리 조회'
+                , _title: '전시 카테고리 조회'
+                , left: 20
+                , top: 20
+                , width: 1000
+                , height: 700
+                , scrollbars: true
+                , autoresize: false
+            };
+            popCommon(pin, POP_DATA, this.popupDisplayCategoryCallback);
+        },
+        popupDisplayCategoryCallback : function(e) {
+            $('#dcList_result').text(e.data);
+        }
+    };
+    $.namespace("common.DisplayCategoryTreeControl");
+    common.DisplayCategoryTreeControl = {
+        popupDisplayCategoryTree : function() {
+            var pin = {};
+            var POP_DATA = {
+                  url: 'popup/displayCategoryMgmtPopup.displayCategoryTreeListPopup.do'
+                , winName: 'displayCategoryTreePopup'
+                , title: '전시 카테고리 Tree 조회'
+                , _title: '전시 카테고리 Tree 조회'
+                , left: 20
+                , top: 20
+                , width: 300
+                , height: 400
+                , scrollbars: false
+                , autoresize: false
+            };
+            popCommon(pin, POP_DATA, this.popupDisplayCategoryTreeCallback);
+        },
+        popupDisplayCategoryTreeCallback : function(e) {
+            $('#dcTreeList_result').text(e.data);
+        }
+    };
+
+    $.namespace("common.UserDeptMgmtControl");
+    common.UserDeptMgmtControl = {
+        popupUserDeptMgmtTree : function() {
+            var pin = {};
+            var POP_DATA = {
+                  url: 'popup/userMgmtPopup.userDeptMgmtListPopup.do'
+                , winName: 'userDeptMgmtListPopup'
+                , title: '부서목록 Tree 조회'
+                , _title: '부서목록 Tree 조회'
+                , left: 20
+                , top: 20
+                , width: 300
+                , height: 400
+                , scrollbars: false
+                , autoresize: false
+            };
+            popCommon(pin, POP_DATA, this.popupUserDeptMgmtTreeCallback);
+        },
+        popupUserDeptMgmtTreeCallback : function(e) {
+            $('#userDeptMgmtTree_result').text(e.data);
+        }
+    };
+
+    $.namespace("common.TemplateControl");
+    common.TemplateControl = {
+        popupTemplate: function () {
+            var pin = {
+                argSelectType: $("#templateForm [name='argSelectType']:checked").val()
+                , argTmplTypCd : $("#templateForm [name='argTmplTypCd']:checked").val()
+            };
+            var POP_DATA = {
+                url: 'popup/templateMgmtPopup.templateListPopup.do'
+                , winName: 'templatePopup'
+                , title: '템플릿 조회'
+                , _title: '템플릿 조회'
+                , left: 20
+                , top: 20
+                , width: 1000
+                , height: 700
+                , scrollbars: false
+                , autoresize: false
+            };
+            popCommon(pin, POP_DATA, this.popupTemplateCallback);
+        },
+        popupTemplateCallback: function (e) {
+            $('#tmplList_result').text(e.data);
+        }
+    };
+
+    $.namespace("common.ChannelControl");
+    common.ChannelControl = {
+        popupChannel: function () {
+            var pin = {
+                argSelectType: $("#channelForm [name='argSelectType']:checked").val(),
+                argChlClssCd: $("#channelForm [name='argChlClssCd']").val()
+            };
+            var POP_DATA = {
+                url: 'channel/channelMgmt.channelList.do'
+                , winName: 'channelPopup'
+                , title: '채널 조회'
+                , _title: '채널 조회'
+                , left: 20
+                , top: 20
+                , width: 750
+                , height: 550
+                , scrollbars: false
+                , autoresize: false
+            };
+            popCommon(pin, POP_DATA, this.popupChannelCallback);
+        },
+        popupChannelCallback: function (e) {
+            $('#chlList_result').text(e.data);
+        }
+    };
+
+    $.namespace("common.MdListControl");
+    common.MdListControl = {
+        popupMdList : function() {
+            var pin = {
+                argSelectType: $("#mdListForm [name='argSelectType']:checked").val()
+                , argWorkStatCd: $("#mdListForm [name='argWorkStatCd']:checked").val()
+                , argUseYn: $("#mdListForm [name='argUseYn']:checked").val()
+            };
+            var POP_DATA = {
+                url: 'popup/userMgmtPopup.mdListPopup.do'
+                , winName: 'mdListPopup'
+                , title: 'MD 조회 팝업'
+                , _title: 'MD 조회 팝업'
+                , left: 20
+                , top: 20
+                , width: 690
+                , height: 600
+                , scrollbars: false
+                , autoresize: false
+            };
+            popCommon(pin, POP_DATA, this.popupMdListCallback);
+        },
+        popupMdListCallback : function(e) {
+            $('#mdList_result').text(e.data);
+        }
+    };
+
+    $.namespace("common.gnlcListControl")
+    common.gnlcListControl = {
+        popupGnlcList : function(){
+            var pin = {};
+            var POP_DATA = {
+                url: 'popup/goodsMgmtPopup.goodsNotiLisartCdListPopup.do'
+                , winName: 'goodsNotiLisartCdListPopup'
+                , title: '상품고시품목 조회 팝업'
+                , _title: '상품고시품목 조회 팝업'
+                , left: 20
+                , top: 20
+                , width: 527
+                , height: 530
+                , scrollbars: false
+                , autoresize: false
+            };
+            popCommon(pin, POP_DATA, this.popupGnlcListCallback);
+        },
+        popupGnlcListCallback : function(e) {
+            $('#goodsNotiLisartCdList_result').text(e.data);
+        }
+    };
+
+    $.namespace("common.brandListControl")
+    common.brandListControl = {
+        popupBrandList : function(){
+            var pin = {
+                argSelectType: $("#brandListForm [name='argSelectType']:checked").val()
+            };
+            var POP_DATA = {
+                url: 'popup/brandMgmt.brandListPopup.do'
+                , winName: 'brandListPopup'
+                , title: '브랜드조회팝업'
+                , _title: '브랜드조회팝업'
+                , left: 20
+                , top: 20
+                , width: 790
+                , height: 590
+                , scrollbars: false
+                , autoresize: false
+            };
+            popCommon(pin, POP_DATA, this.popupBrandListCallback);
+        },
+        popupBrandListCallback : function(e) {
+            $('#brandList_result').text(e.data);
+        }
+    };
+
+    $.namespace("common.prStdCtgListControl")
+    common.prStdCtgListControl = {
+        popupPrStdCtgList : function(){
+            var pin = {};
+            var POP_DATA = {
+                url: 'popup/standardCategory.prStdCtgListPopup.do'
+                , winName: 'prStdCtgListPopup'
+                , title: '상품표준분류팝업'
+                , _title: '상품표준분류팝업'
+                , left: 20
+                , top: 20
+                , width: 400
+                , height: 500
+                , scrollbars: false
+                , autoresize: false
+            };
+            popCommon(pin, POP_DATA, this.popupPrStdCtgListCallback);
+        },
+        popupPrStdCtgListCallback : function(e) {
+            $('#prStdCtgList_result').text(e.data);
+        }
+    };
+
+    $.namespace("common.etEntrListControl")
+    common.etEntrListControl = {
+        popupEtEntrList : function(){
+            var pin = {
+                  argSelectType: $("#etEntrListForm [name='argSelectType']:checked").val()
+                , argEntrGbCd: $("#etEntrListForm [name='argEntrGbCd']:checked").val()
+                , argTrdStatCd: $("#etEntrListForm [name='argTrdStatCd']:checked").val()
+            };
+            var POP_DATA = {
+                url: 'popup/enteranceMgmt.etEntrBaseListPopup.do'
+                , winName: 'etEntrListPopup'
+                , title: '협력사조회'
+                , _title: '협력사조회'
+                , left: 20
+                , top: 20
+                , width: 741
+                , height: 700
+                , scrollbars: false
+                , autoresize: false
+            };
+            popCommon(pin, POP_DATA, this.popupEtEntrListCallback);
+        },
+        popupEtEntrListCallback : function(e) {
+            $('#etEntrList_result').text(e.data);
+        }
+    };
+
+    $.namespace("common.userListControl")
+    common.userListControl = {
+        popupUserList : function(){
+            var pin = {
+                  argSelectType: $("#userListForm [name='argSelectType']:checked").val()
+                , argWorkStatCd: $("#userListForm [name='argWorkStatCd']:checked").val()
+                , argUseYn: $("#userListForm [name='useYn']:checked").val()
+            };
+            var POP_DATA = {
+                url: 'popup/userMgmtPopup.userListPopup.do'
+                , winName: 'userListPopup'
+                , title: '사용자조회'
+                , _title: '사용자조회'
+                , left: 20
+                , top: 20
+                , width: 810
+                , height: 700
+                , scrollbars: false
+                , autoresize: false
+            };
+            popCommon(pin, POP_DATA, this.popupUserListCallback);
+        },
+        popupUserListCallback : function(e) {
+            $('#userList_result').text(e.data);
+        }
+    };
+
+    $.namespace("common.menuListControl")
+    common.menuListControl = {
+        popupMenuList : function(){
+            var pin = {
+                sysGbCd: $("#menuListForm [name='sysGbCd']:checked").val()
+            };
+            var POP_DATA = {
+                url: 'popup/menuMgmt.menuListPopup.do'
+                , winName: 'menuListPopup'
+                , title: '메뉴조회'
+                , _title: '메뉴조회'
+                , left: 20
+                , top: 20
+                , width: 515
+                , height: 490
+                , scrollbars: false
+                , autoresize: false
+            };
+            popCommon(pin, POP_DATA, this.popupMenuListCallback);
+        },
+        popupMenuListCallback : function(e) {
+            $('#menuList_result').text(e.data);
+        }
+    };
+
+    $.namespace("common.zipNoListControl")
+    common.zipNoListControl = {
+        popupZipNoList : function(){
+            var pin = {
+                argSelectType: $("#zipNoListForm [name='argSelectType']:checked").val()
+            };
+            var POP_DATA = {
+                url: 'popup/zipCodeMgmtPopup.zipNoListPopup.do'
+                , winName: 'zipNoListPopup'
+                , title: '우편번호 조회'
+                , _title: '우편번호 조회'
+                , left: 20
+                , top: 20
+                , width: 505
+                , height: 700
+                , scrollbars: false
+                , autoresize: false
+            };
+            popCommon(pin, POP_DATA, this.popupZipNoListCallback);
+        },
+        popupZipNoListCallback : function(e) {
+            $('#zipNoList_result').text(e.data);
+        }
+    };
+
+    $.namespace("common.goodsListControl")
+    common.goodsListControl = {
+        popupGoodsList : function(){
+            // 판매상태 체크박스 리스트
+            var argSaleState = '';
+            var chkbox = $("#goodsListForm [name='argSaleState']:checked");
+            for(i=0;i<chkbox.length;i++) {
+                if(i == 0) {
+                    argSaleState += chkbox[i].value;
+                } else {
+                    argSaleState += "," + chkbox[i].value;
+                }
+            }
+
+            var pin = {
+                argSelectType: $("#goodsListForm [name='argSelectType']:checked").val(),
+                argSaleState: argSaleState,
+                argGoodsType: $("#goodsListForm [name='argGoodsType']:checked").val()
+            };
+            var POP_DATA = {
+                url: 'popup/goodsMgmtPopup.goodsListPopup.do'
+                , winName: 'goodsListPopup'
+                , title: '상품 조회'
+                , _title: '상품 조회'
+                , left: 20
+                , top: 20
+                , width: 1000
+                , height: 700
+                , scrollbars: false
+                , autoresize: false
+            };
+            popCommon(pin, POP_DATA, this.popupGoodsListCallback);
+        },
+        popupGoodsListCallback : function(e) {
+            $('#goodsList_result').text(e.data);
+        }
+    };
+
+    $.namespace("common.MbrListControl");
+    common.MbrListControl = {
+        popupMbrList : function() {
+            var pin = {
+                argSelectType: $("#mbrListForm [name='argSelectType']:checked").val()
+                , argMbrStatCd: $("#mbrListForm [name='argMbrStatCd']:checked").val()
+            };
+            var POP_DATA = {
+                url: 'popup/memberSearch.memberSearchPopup.do'
+                , winName: 'mbrListPopup'
+                , title: '회원 조회 팝업'
+                , _title: '회원 조회 팝업'
+                , left: 20
+                , top: 20
+                , width: 1000
+                , height: 700
+                , scrollbars: false
+                , autoresize: false
+            };
+            popCommon(pin, POP_DATA, this.popupMbrListCallback);
+        },
+        popupMbrListCallback : function(e) {
+            $('#mbrList_result').text(e.data);
+        }
+    };
+
+    $.namespace("common.MkdpListControl");
+    common.MkdpListControl = {
+    	popupMkdpList : function() {
+            // 기획전 상태 체크박스 리스트
+            var argDispStat = '';
+            var chkbox = $("#mkdpListForm [name='argDispStat']:checked");
+            for(i=0;i<chkbox.length;i++) {
+                if(i == 0) {
+                    argDispStat += chkbox[i].value;
+                } else {
+                    argDispStat += "," + chkbox[i].value;
+                }
+            }
+
+            var pin = {
+                argSelectType : $("#mkdpListForm [name='argSelectType']:checked").val(),
+                argDispStat : argDispStat
+            };
+            var POP_DATA = {
+                url: 'display/displayExhibitionGroupMgmt.marketDisplayListPopup.do'
+                , winName: 'mkdpListPopup'
+                , title: '기획전 조회 팝업'
+                , _title: '기획전 조회 팝업'
+                , left: 20
+                , top: 20
+                , width: 1000
+                , height: 700
+                , scrollbars: false
+                , autoresize: false
+            };
+            popCommon(pin, POP_DATA, this.popupMkdpListCallback);
+        },
+        popupMkdpListCallback : function(e) {
+            $('#mkdpList_result').text(e.data);
+        }
+    };
+
+    $.namespace("common.cnslTypeListControl");
+    common.cnslTypeListControl = {
+        popupCnslTypeList : function() {
+            var pin = {
+                custCnslGbCd : $("#cnslTypeListForm [name='custCnslGbCd']:checked").val()
+            };
+            var POP_DATA = {
+                url: 'customerservice/counselingTypeMgmt.counselingTypeListPopup.do'
+                , winName: 'popupCnslTypeListPopup'
+                , title: '상담유형조회 팝업'
+                , _title: '상담유형조회 팝업'
+                , left: 20
+                , top: 20
+                , width: 800
+                , height: 670
+                , scrollbars: false
+                , autoresize: false
+            };
+            popCommon(pin, POP_DATA, this.popupCnslTypeListCallback);
+        },
+        popupCnslTypeListCallback : function(e) {
+            $('#cnslTypeList_result').text(e.data);
+        }
+    };
+
+    $.namespace("common.CnslTmplListControl");
+    common.CnslTmplListControl = {
+    	popupCnslTmplList : function() {
+            var pin = {
+                argSelectType : $("#cnslTmplListForm [name='argSelectType']:checked").val(),
+            };
+            var POP_DATA = {
+                url: 'customerservice/counselingTemplateMgmt.counselingTemplatePopup.do'
+                , winName: 'counselingTemplateListPopup'
+                , title: '상담 템플릿 조회 팝업'
+                , _title: '상담 템플릿 조회 팝업'
+                , left: 20
+                , top: 20
+                , width: 700
+                , height: 605
+                , scrollbars: false
+                , autoresize: false
+            };
+            popCommon(pin, POP_DATA, this.popupCounselingTemplateListCallback);
+        },
+        popupCounselingTemplateListCallback : function(e) {
+            $('#cnslTmplList_result').text(e.data);
+        }
+    };
+
+    $.namespace("common.csCpnsTypCdListControl");
+    common.csCpnsTypCdListControl = {
+        popupCsCpnsTypCdList : function() {
+            var pin = {};
+            var POP_DATA = {
+                url: 'customerservice/rewardTypeMgmt.rewardTypeListPopup.do'
+                , winName: 'popupCsCpnsTypCdListPopup'
+                , title: '보상유형조회 팝업'
+                , _title: '보상유형조회 팝업'
+                , left: 20
+                , top: 20
+                , width: 520
+                , height: 600
+                , scrollbars: false
+                , autoresize: false
+            };
+            popCommon(pin, POP_DATA, this.popupCsCpnsTypCdListCallback);
+        },
+        popupCsCpnsTypCdListCallback : function(e) {
+            $('#csCpnsTypCdList_result').text(e.data);
+        }
+    };
+
+    $.namespace("common.PrGoodsRevInfoListControl");
+    common.PrGoodsRevInfoListControl = {
+    	popupPrGoodsRevInfoList : function() {
+            var POP_DATA = {
+                url: 'display/displayConnectMgmt.displayGoodsReviewListPopup.do'
+                , winName: 'displayGoodsReviewListPopup'
+                , title: '전시대상 상품리뷰 조회 팝업'
+                , _title: '전시대상 상품리뷰 조회 팝업'
+                , left: 20
+                , top: 20
+                , width: 790
+                , height: 605
+                , scrollbars: false
+                , autoresize: false
+            };
+            popCommon('', POP_DATA, this.popupPrGoodsRevInfoListCallback);
+        },
+        popupPrGoodsRevInfoListCallback : function(e) {
+            $('#prGoodsRevInfoList_result').text(e.data);
+        }
+    };
+
+    $.namespace("common.PrConrBaseListControl");
+    common.PrConrBaseListControl = {
+    	popupPrConrBaseList : function() {
+            var POP_DATA = {
+                url: 'display/displayTemplateMgmt.displayTemplateMgmtCornerPopup.do'
+                , winName: 'displayCornerListPopup'
+                , title: '코너 조회 팝업'
+                , _title: '코너 조회 팝업'
+                , left: 20
+                , top: 20
+                , width: 790
+                , height: 605
+                , scrollbars: false
+                , autoresize: false
+            };
+            popCommon(null, POP_DATA, this.popupPrConrBaseListCallback);
+        },
+        popupPrConrBaseListCallback : function(e) {
+            $('#prConrBaseList_result').text(e.data);
+        }
+    };
+
+    $(document.body).ready(function(){
+    	var oEditors = [];
+
+        $('#btn_displayCategory').click(function () {
+            common.DisplayCategoryControl.popupDisplayCategory();
+        });
+
+        $('#mdList_btn').click(function () {
+            common.MdListControl.popupMdList();
+        });
+
+        $('#goodsNotiLisartCdList_btn').click(function () {
+            common.gnlcListControl.popupGnlcList();
+        });
+
+        $('#btn_template').click(function () {
+            common.TemplateControl.popupTemplate();
+        });
+
+        $('#brandList_btn').click(function () {
+            common.brandListControl.popupBrandList();
+        });
+
+        $('#etEntrList_btn').click(function () {
+            common.etEntrListControl.popupEtEntrList();
+        });
+
+        $('#userList_btn').click(function () {
+            common.userListControl.popupUserList();
+        });
+
+        $('#menuList_btn').click(function () {
+            common.menuListControl.popupMenuList();
+        });
+
+        $('#btn_channel').click(function () {
+            common.ChannelControl.popupChannel();
+        });
+
+        $('#zipNoList_btn').click(function () {
+            common.zipNoListControl.popupZipNoList();
+        });
+
+        $('#btn_displayCategoryTree').click(function () {
+            common.DisplayCategoryTreeControl.popupDisplayCategoryTree();
+        });
+
+        $('#btn_userDeptMgmtTree').click(function () {
+            common.UserDeptMgmtControl.popupUserDeptMgmtTree();
+        });
+
+        $('#prStdCtgList_btn').click(function () {
+            common.prStdCtgListControl.popupPrStdCtgList();
+        });
+
+        $('#goodsList_btn').click(function () {
+            common.goodsListControl.popupGoodsList();
+        });
+
+        $('#mbrList_btn').click(function () {
+            common.MbrListControl.popupMbrList();
+        });
+
+        $('#mkdpList_btn').click(function () {
+            common.MkdpListControl.popupMkdpList();
+        });
+
+        $('#cnslTypeList_btn').click(function () {
+            common.cnslTypeListControl.popupCnslTypeList();
+        });
+
+        $('#cnslTmplList_btn').click(function () {
+            common.CnslTmplListControl.popupCnslTmplList();
+        });
+
+        $('#csCpnsTypCdList_btn').click(function () {
+            common.csCpnsTypCdListControl.popupCsCpnsTypCdList();
+        });
+
+        $('#prGoodsRevInfoList_btn').click(function () {
+            common.PrGoodsRevInfoListControl.popupPrGoodsRevInfoList();
+        });
+
+        $('#prConrBaseList_btn').click(function () {
+            common.PrConrBaseListControl.popupPrConrBaseList();
+        });
+
+
+
+        $('#viewEditer').click(function () {
+        	oEditors.getById["se2"].exec("UPDATE_CONTENTS_FIELD", []);
+        	alert($('#se2').val());
+        });
+
+        $('#saveEncrypt').click(function () {
+            $.ajax({
+                url:"/customerservice/integratedCounselMgmt.saveCustomerCompens.do"
+                , method: "POST"
+    			, data: {
+    				custCpnsAplyNo:'10000240'
+    				, ccnNo:'10000310'
+    				, cpnsTypNo:'2'
+    				, cpnsMeanCd:'30'
+    				, rspnGbCd:'10'
+    				, cpnsAprvStatCd:'10'
+    				, cpnsPayStatCd:'10'
+    				, mbrNo:'100000001'
+    				, accpCont:'승인요청메모'
+    				, acptmnId:'testadmin'
+    				, cpnsAmt:'1'
+    				, payBankCd:'02'
+    				, payActnNo:'1234567890'
+    				, payDepositorNm:'예금주'
+    				, ordNo:'20210603000002'
+    				, goodsNo:'10000022'
+    			},
+                success:function(data){
+                }
+            });
+        });
+
+    	$("#file").on('change',showImage);
+
+		//내용 에디터
+		nhn.husky.EZCreator.createInIFrame({
+			oAppRef: oEditors,
+			elPlaceHolder: "se2",
+			sSkinURI: "/static/js/libs/smartEditor/SmartEditor2Skin.html",
+			fCreator: "createSEditor2"
+      	});
+
+
+        $.ajax({
+            url:"/marketing/getMaskingCUD.do",
+            dataType:'json',
+            cache:false,
+            success:function(data){
+            	var user = data.val;
+            	console.log("DT:{}", user);
+            	$("#maskingNameKr").text(user.userNmKr);
+            	$("#maskingNameEn").text(user.userNmEn);
+            	$("#maskingBirth").text(user.userBirth);
+            	$("#maskingRrn").text(user.userRrn);
+            	$("#maskingPhoneNum").text(user.userPhoneNum);
+            	$("#maskingMobileNum").text(user.userMobileNum);
+            	$("#maskingAddress").text(user.userAddress);
+            	$("#maskingAddressDtl").text(user.userAddressDtl);
+            	$("#maskingIP").text(user.userIP);
+            	$("#maskingIP2").text(user.userIP2);
+            	$("#maskingEmail").text(user.userEmail);
+            	$("#maskingID").text(user.userID);
+            	$("#maskingActn").text(user.userActn);
+            	$("#maskingCard").text(user.userCard);
+            }
+        });
+
+        common.Ajax.sendRequestSync("GET", "/encrypt/getEncryptCUD.do", null, function(data) {
+        	var user = data.val;
+        	console.log("DT:{}", user);
+        	$("#encryptNameKr").text(user.userNmKr);
+        	$("#encryptNameEn").text(user.userNmEn);
+        	$("#encryptPW").text(user.userPw);
+        }, true, false);
+
+        /*
+        $.ajax({
+            url:"/encrypt/getEncryptCUD.do",
+            dataType:'json',
+            cache:false,
+            success:function(data){
+            	var user = data.val;
+            	console.log("DT:{}", user);
+            	$("#encryptNameKr").text(user.userNmKr);
+            	$("#encryptNameEn").text(user.userNmEn);
+            	$("#encryptPW").text(user.userPw);
+            }
+        });
+        */
+
+    });
+
+    //업로드 미리보기
+    function showImage(event){
+    	for (var image of event.target.files) {
+    		var reader = new FileReader();
+
+    		reader.onload = function(event) {
+    			var img = document.createElement("img");
+    			img.setAttribute("src", event.target.result);
+    			document.querySelector("div#originalFile").appendChild(img);
+    		};
+
+    		console.log(image); reader.readAsDataURL(image);
+    	}
+    }
+
+    //이미지 등록 & 사이즈 변경
+    function resizeImage(){
+        // 등록할 파일 리스트를 formData로 데이터 입력
+        var form = $('#uploadForm')[0];
+        var formData = new FormData(form);
+        formData.append('file', $('#file')[0].files[0]);
+        $.ajax({
+            url:"/common/file/resizeImage.do",
+            data:formData,
+            type:'POST',
+            enctype:'multipart/form-data',
+            processData:false,
+            contentType:false,
+            dataType:'json',
+            cache:false,
+            success:function(data){
+            	alert('이클립스 resource - F5 이미지 파일 로딩 하세요.');
+    			var img = document.createElement("img");
+    			img.setAttribute("src", data.imgUrl);
+    			document.querySelector("div#thumnailFile").appendChild(img);
+
+                console.log("[data]", data);
+            }
+        });
+    }
+
+    $(function() {
+		$('#datePicker').datepicker({
+		    format: "yyyy-mm-dd",	//데이터 포맷 형식(yyyy : 년 mm : 월 dd : 일 )
+		    startDate: '-10d',	//달력에서 선택 할 수 있는 가장 빠른 날짜. 이전으로는 선택 불가능 ( d : 일 m : 달 y : 년 w : 주)
+		    endDate: '+10d',	//달력에서 선택 할 수 있는 가장 느린 날짜. 이후로 선택 불가 ( d : 일 m : 달 y : 년 w : 주)
+		    autoclose : true,	//사용자가 날짜를 클릭하면 자동 캘린더가 닫히는 옵션
+		    calendarWeeks : false, //캘린더 옆에 몇 주차인지 보여주는 옵션 기본값 false 보여주려면 true
+		    clearBtn : false, //날짜 선택한 값 초기화 해주는 버튼 보여주는 옵션 기본값 false 보여주려면 true
+		    datesDisabled : ['2019-06-24','2019-06-26'],//선택 불가능한 일 설정 하는 배열 위에 있는 format 과 형식이 같아야함.
+		    //daysOfWeekDisabled : [0,6],	//선택 불가능한 요일 설정 0 : 일요일 ~ 6 : 토요일
+		    //daysOfWeekHighlighted : [0], //강조 되어야 하는 요일 설정
+		    disableTouchKeyboard : false,	//모바일에서 플러그인 작동 여부 기본값 false 가 작동 true가 작동 안함.
+		    immediateUpdates: false,	//사용자가 보는 화면으로 바로바로 날짜를 변경할지 여부 기본값 :false
+		    multidate : false, //여러 날짜 선택할 수 있게 하는 옵션 기본값 :false
+		    multidateSeparator :",", //여러 날짜를 선택했을 때 사이에 나타나는 글짜 2019-05-01,2019-06-01
+		    templates : {
+		        leftArrow: '&laquo;',
+		        rightArrow: '&raquo;'
+		    }, //다음달 이전달로 넘어가는 화살표 모양 커스텀 마이징
+		    showWeekDays : true ,// 위에 요일 보여주는 옵션 기본값 : true
+		    title: "테스트",	//캘린더 상단에 보여주는 타이틀
+		    todayHighlight : true ,	//오늘 날짜에 하이라이팅 기능 기본값 :false
+		    toggleActive : true,	//이미 선택된 날짜 선택하면 기본값 : false인경우 그대로 유지 true인 경우 날짜 삭제
+		    weekStart : 0 ,//달력 시작 요일 선택하는 것 기본값은 0인 일요일
+		    language : "ko"	//달력의 언어 선택, 그에 맞는 js로 교체해줘야한다.
+
+		})
+		.on("changeDate", function(e) {
+            //이벤트의 종류
+            //show : datePicker가 보이는 순간 호출
+            //hide : datePicker가 숨겨지는 순간 호출
+            //clearDate: clear 버튼 누르면 호출
+            //changeDate : 사용자가 클릭해서 날짜가 변경되면 호출 (개인적으로 가장 많이 사용함)
+            //changeMonth : 월이 변경되면 호출
+            //changeYear : 년이 변경되는 호출
+            //changeCentury : 한 세기가 변경되면 호출 ex) 20세기에서 21세기가 되는 순간
+
+            console.log(e);// 찍어보면 event 객체가 나온다.
+            //간혹 e 객체에서 date 를 추출해야 하는 경우가 있는데
+            // e.date를 찍어보면 Thu Jun 27 2019 00:00:00 GMT+0900 (한국 표준시)
+            // 위와 같은 형태로 보인다.
+            // 추후에 yyyy-mm-dd 형태로 변경하는 코드를 업로드 하겠습니다.
+       });//datepicker end
+	});//ready end
+</script>
+</body>
+</html>

@@ -1,0 +1,194 @@
+<!--
+* 프로그램명 : 상품이미지
+* 작 성 일 : 2021.04.08
+* 작 성 자 : 홍혜리
+* 수 정 자 : 홍혜리
+* 버    전 : 1.0
+* 개    요 : 상품이미지
+* 이    력 : 2021.10.12 프레임워크 이전
+-->
+<!DOCTYPE html>
+<html lang="ko-KR"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<body>
+<th:block layout:fragment="goods-imageInfo">
+    <div class="data">
+        <div class="data-head">
+            <div class="left">
+                <span class="title" th:text="${#messages.msg('generalGoods.imageInfo.title')}"></span>
+            </div>
+            <div class="right">
+                  <span class="data-toggle">
+                    <button type="button" class="toggle-button"><span>닫힘</span></button>
+                  </span>
+            </div>
+        </div>
+        <div class="data-body">
+            <table class="data-table fixed">
+                <colgroup>
+                    <col width="38%">
+                    <col>
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td colspan="2">
+                        <div class="button-group">
+                            <a href="#" class="button inside" id="btn_add_sub_image"><span class="text" th:text="${#messages.msg('adminCommon.button.add')}"></span></a>
+                            <a href="#" class="button inside" id="btn_remove_sub_image"><span class="text" th:text="${#messages.msg('adminCommon.button.delete')}"></span></a>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="top">
+                        <a class="original_la" target="_blank">
+                        <img id="baseImageView">
+                        <div class="born">
+                            <img id="baseImageView">
+                        </div>
+                        </a>
+                        <div class="input-group file-upload block mt20 center">
+                            <input type="text" class="input disabled mr5" style="width: 212px;" readonly id="baseImageFileName">
+                            <a href="#" class="button small gray" id="btn_base_image_upload"><span class="text" th:text="${#messages.msg('adminCommon.button.select.file')}"></span></a>
+                            <input type="file" style="display:none" name="files" id="baseImageFile"/>
+                            <input type="hidden" class="imageFileSize" id="baseImageFileSize"/>
+                            <span id="baseImageSize" style="display: block;padding: 5px 0px 5px 0px;"></span><!--이미지크기-->
+                        </div>
+                    </td>
+                    <td class="center top">
+                        <div class="comment mb10">
+                            <p class="title">[이미지 등록 시 유의사항]</p>
+                            <p class="tip">이미지 사이즈(<em>880*880픽셀</em>)과 용량(<em>800KB</em>)을 권장하며, 등록된 이미지의 총 합이 <em>6MB</em>를 초과할 수 없습니다.</p>
+                            <p class="tip">이미지 포멧은 <em>jpg만 등록 가능</em> 합니다</p>
+                        </div>
+                        <table class="data-table inbox">
+                            <colgroup>
+                                <col width="80">
+                                <col>
+                            </colgroup>
+                            <thead>
+                                <th th:text="${#messages.msg('generalGoods.imageInfo.label.imageNo')}"></th>
+                                <th th:text="${#messages.msg('generalGoods.imageInfo.label.imageInfo')}"></th>
+                            </thead>
+                            <tbody id="subImageList">
+                                <!-- 이미지 등록 템플릿 -->
+                                <tr type="sub_image_tmpl" style="display:none">
+                                    <td class="center"><em class="imageNo">0</em></td>
+                                    <td>
+                                        <div class="image-upload">
+                                            <a class="original" target="_blank">
+                                            <img class="image imageView noimg" style="width:100px; height:100px;">
+                                            <div class="born">
+                                                <img class="image imageView noimg"></div>
+                                        </a>
+                                            <div class="input-group file-upload ml10">
+                                                <input type="text" class="w30 input disabled imageFileName mr5" readonly>
+                                                <a href="#" class="button small gray btn_image_upload"><span class="text" th:text="${#messages.msg('adminCommon.button.select.file')}"></span></a>
+                                                <input type="file" style="display:none" name="files" class="imageFile"/>
+                                                <input type="hidden" class="imageFileSize">
+                                                <span class="imageSize" style="display: block;padding-top: 8px;"></span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <!--// 이미지 등록 템플릿 -->
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</th:block>
+<th:block layout:fragment="pkg-goods-imageInfo">
+    <div class="data">
+        <div class="data-head">
+            <div class="left">
+                <span class="title" th:text="${#messages.msg('packageGoods.imageInfo.title')}"></span>
+            </div>
+            <div class="right">
+                  <span class="data-toggle">
+                    <button type="button" class="toggle-button"><span>닫힘</span></button>
+                  </span>
+            </div>
+        </div>
+        <div class="data-body">
+            <table class="data-table fixed">
+                <colgroup>
+                    <col width="38%">
+                    <col>
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td colspan="2">
+                        <div class="button-group">
+                            <a href="#" class="button inside" id="btn_add_sub_image"><span class="text" th:text="${#messages.msg('adminCommon.button.add')}"></span></a>
+                            <a href="#" class="button inside" id="btn_remove_sub_image"><span class="text" th:text="${#messages.msg('adminCommon.button.delete')}"></span></a>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="top">
+                        <a class="original_la" target="_blank">
+                            <img id="baseImageView">
+                            <div class="born">
+                                <img id="baseImageView">
+                            </div>
+                        </a>
+                        <div class="input-group file-upload block mt20 center">
+                            <input type="text" class="input disabled mr5" style="width: 212px;" readonly id="baseImageFileName">
+                            <a href="#" class="button small gray" id="btn_base_image_upload"><span class="text" th:text="${#messages.msg('adminCommon.button.select.file')}"></span></a>
+                            <input type="file" style="display:none" name="files" id="baseImageFile"/>
+                            <input type="hidden" class="imageFileSize" id="baseImageFileSize"/>
+                            <span id="baseImageSize" style="display: block;padding: 5px 0px 5px 0px;"></span><!--이미지크기-->
+                        </div>
+                    </td>
+                    <td class="center top">
+                        <div class="comment mb10">
+                            <p class="title">[이미지 등록 시 유의사항]</p>
+                            <p class="tip">이미지 사이즈(<em>880*880픽셀</em>)과 용량(<em>800KB</em>)을 권장하며, 등록된 이미지의 총 합이 <em>6MB</em>를 초과할 수 없습니다.</p>
+                            <p class="tip">이미지 포멧은 <em>jpg만 등록 가능</em> 합니다</p>
+                        </div>
+                        <table class="data-table inbox">
+                            <colgroup>
+                                <col width="80">
+                                <col>
+                            </colgroup>
+                            <thead>
+                            <th th:text="${#messages.msg('packageGoods.imageInfo.label.imageNo')}"></th>
+                            <th th:text="${#messages.msg('packageGoods.imageInfo.label.imageInfo')}"></th>
+                            </thead>
+                            <tbody id="subImageList">
+                            <!-- 이미지 등록 템플릿 -->
+                            <tr type="sub_image_tmpl" style="display:none">
+                                <td class="center"><em class="imageNo">0</em></td>
+                                <td>
+                                    <div class="image-upload">
+                                        <a class="original" target="_blank">
+                                            <img class="image imageView noimg" style="width:100px; height:100px;">
+                                            <div class="born">
+                                                <img class="image imageView noimg"></div>
+                                        </a>
+                                        <div class="input-group file-upload ml10">
+                                            <input type="text" class="w30 input disabled imageFileName" readonly>
+                                            <a href="#" class="button small gray btn_image_upload"><span class="text" th:text="${#messages.msg('adminCommon.button.select.file')}"></span></a>
+                                            <input type="file" style="display:none" name="files" class="imageFile"/>
+                                            <input type="hidden" class="imageFileSize">
+                                            <span class="imageSize" style="display: block;padding-top: 8px;"></span>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <!--// 이미지 등록 템플릿 -->
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</th:block>
+</body>
+</html>

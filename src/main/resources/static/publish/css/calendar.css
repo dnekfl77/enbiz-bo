@@ -1,0 +1,76 @@
+@charset "utf-8";
+/************************************/
+/*	Name: X2CO Back Office	*/
+/*	PART: COMMON STYLE     	        */
+/*	Version: 1.0                    */
+/*	Author: [써냐]BLUEWEBD™        */
+/************************************/
+
+.layer{position:relative;border-radius:3px;border:1px solid rgba(0, 0, 0, 0.15);  background:#fff;}
+
+
+.layer .layer_lb {margin:10px;}
+.layer_rt {margin:0 !important;}
+.layer_rb {margin:0 !important;}
+.layer .header {position:absolute; width:18px; height:18px; top:0; right:0;}
+.layer .tCenter {height:20px;color:#333;font-size:12px;text-align:center;}
+.layer .tCenter img {vertical-align:middle; }
+.layer .tCenter span {display:inline-block;}
+.layer .input_box {text-align:center;}
+.layer .input_box input {height:14px; padding-top:2px; font-size:11px; color:#8e8e8e; text-align:center;}
+.layer .mr10 {margin-right:5px;}
+.layer .ml10 {margin-left:5px;}
+.layer .v_md {vertical-align:middle;}
+.layer .btn_pop {text-align:center;}
+
+.layer_rb #table td{vertical-align:top;}
+.grid_calendar{text-align:center;}
+.grid_calendar table {width:100%;table-layout:fixed;margin:0 auto; border-collapse:collapse;}
+.grid_calendar table i{font-style:normal;}
+.grid_calendar table tbody th {background:#f3f3f3; font-weight:normal; text-align:center;height:25px;}
+.grid_calendar table tbody th.red {color:#ed1f8f !important;}
+.grid_calendar table tbody th.blue {color:#0a5cd1 !important;}
+.grid_calendar table tbody td {text-align:center;color:#8e8e8e;font-family:'Helvetica Neue', Helvetica, Arial, sans-serif}
+/*.grid_calendar table tbody td.red a {color:#ed1f8f !important;}
+.grid_calendar table tbody td.blue a {color:#0a5cd1 !important;} */
+.grid_calendar table tbody td.bg_blue a {background:#303641;color:#fff;}
+.grid_calendar table tbody td.bg_blue a:hover{background:#303641;}
+.grid_calendar table tbody td a {display:block; width:28px;line-height:25px;color:#8e8e8e; text-decoration:none;border-radius:3px;margin:0 auto}
+.grid_calendar table tbody td a:hover{background-color:#f2f2f2}
+.grid_calendar table tbody td .note_s {}
+.newCalendar  .month{height:25px;position:relative;padding-top:10px;text-align:center}
+.newCalendar:after{content:'';display:block;clear:both;}
+.loat-left{position:relative;width:210px;float:left;margin-top:32px;border: 1px solid #ebebeb;padding-bottom:6px;
+    background: #fdfdfd;
+    -webkit-background-clip: padding-box;
+    -moz-background-clip: padding;
+    background-clip: padding-box;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;}
+.loat-right{position:relative;width:210px;float:right;margin-top:32px;border: 1px solid #ebebeb;padding-bottom:6px;
+    background: #fdfdfd;
+    -webkit-background-clip: padding-box;
+    -moz-background-clip: padding;
+    background-clip: padding-box;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;}
+
+.btn_area:before{contnet:'';display:block;clear:both}
+.i-prev,
+.i-next{position:absolute;top:10px;display:block;font-size:0;width:20px;height:20px;border-radius:3px;}
+.i-prev{left:5px;}
+.i-next{right:5px;}
+.i-prev:before,
+.i-next:before{width:20px;height:20px;display:inline-block;color:#333;font-size:12px;font-family:FontAwesome;vertical-align:middle;}
+.i-prev:before{content:'\f060';font-family:FontAwesome;}
+.i-next:before{content:'\f061';font-family:FontAwesome;}
+.i-prev:hover, .newCalendar .i-next:hover{opacity:0.7;background-color:#000;}
+.i-prev:hover:before,.newCalendar .i-next:hover:before{opacity:1;color:#fff}
+.newCalendar .day-send{position:absolute;top:-32px;left:-1px;width:100%;height:32px;background-color:#303641;border:1px solid #303641;border-radius:3px 3px 0 0;color:#fff;text-align:center;line-height:32px;}
+.newCalendar .day-send input{height:18px;border:0;background-color:#303641;color:#fff}
+.newCalendar .day-send{position:absolute;top:-32px;left:-1px;width:100%;height:32px;background-color:#303641;border:1px solid #303641;border-radius:3px 3px 0 0;color:#fff;text-align:center;line-height:32px;}
+.newCalendar .day-send input{height:18px;border:0;background-color:#303641;color:#fff}
+.cal_time{width:20px;margin:0 2px;width:30px;height:20px}
+.newCalendar .btn_area{clear:both}

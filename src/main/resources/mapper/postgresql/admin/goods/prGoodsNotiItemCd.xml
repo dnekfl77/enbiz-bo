@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enbiz.bo.app.repository.goods.PrGoodsNotiItemCdMapper">
+    <select id="getGoodsNotiItemCdList" parameterType="java.lang.String" resultType="PrGoodsNotiItemCd">
+        SELECT B.GOODS_NOTI_ITEM_CD  /* prGoodsNotiItemCd.getGoodsNotiItemCdList */
+             , B.INSRT_METH_CD
+             , B.NOTI_ITEM_NM
+             , B.NOTI_ITEM_DESC
+          FROM PR_GOODS_NOTI_LISART_ITEM_INFO A
+             , PR_GOODS_NOTI_ITEM_CD B
+         WHERE 1 = 1
+           AND A.GOODS_NOTI_ITEM_CD = B.GOODS_NOTI_ITEM_CD
+           AND A.GOODS_NOTI_LISART_CD = #{goodsNotiLisartCd}
+           AND A.USE_YN = 'Y'
+           AND B.USE_YN = 'Y'
+         ORDER BY A.SORT_SEQ
+    </select>
+</mapper>

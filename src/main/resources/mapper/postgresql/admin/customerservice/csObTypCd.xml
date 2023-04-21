@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.customerservice.CsObTypCdMapper">
+
+    <sql id="paginatedBase">
+        LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+    </sql>
+
+    <sql id="obTypeList">
+        SELECT 				/* csObTypCd.obTypeList */
+                      COTC.OB_TYP_NO
+                    , COTC.OB_TYP_NM
+                    , COTC.OB_TYP_DESC
+                    , COTC.USE_YN
+                    , COTC.CNSL_TYP_NO
+                    , (SELECT TEMP.CNSL_TYP_NM FROM CS_CNSL_TYP_INFO AS TEMP WHERE CNSL_TYP_NO = CSTI.CNSL_LRG_TYP_NO)  || ' > ' ||
+                      (SELECT TEMP.CNSL_TYP_NM FROM CS_CNSL_TYP_INFO AS TEMP WHERE CNSL_TYP_NO = CSTI.CNSL_MID_TYP_NO)  || ' > ' ||
+                      (SELECT TEMP.CNSL_TYP_NM FROM CS_CNSL_TYP_INFO AS TEMP WHERE CNSL_TYP_NO = CSTI.CNSL_SML_TYP_NO)  AS CNSL_TYP_NM
+                    , COTC.SYS_MOD_ID
+                    , TO_CHAR(COTC.SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+        FROM 	  	  CS_OB_TYP_CD COTC
+                    , CS_CNSL_TYP_INFO CSTI
+        WHERE 	  	  CSTI.CNSL_TYP_NO = COTC.CNSL_TYP_NO
+        AND           COTC.USE_YN LIKE #{useYn} || '%'
+        ORDER BY 	  COTC.OB_TYP_NO
+    </sql>
+
+    <select id="getObTypeList" parameterType="CsObTypCdRequest" resultType="CsObTypCdResponse">
+        <include refid="obTypeList" />
+        <include refid="paginatedBase" />
+    </select>
+
+    <select id="getObTypeListCount" parameterType="CsObTypCdRequest" resultType="java.lang.Integer">
+        SELECT   /* csObTypCd.getObTypeListCount */
+                COUNT(*)
+        FROM (
+                <include refid="obTypeList" />
+        ) T1
+    </select>
+
+    <select id="checkObTypNm" parameterType="CsObTypCdRequest" resultType="java.lang.Integer">
+        SELECT 				/* csObTypCd.checkObTypNm */
+                      COUNT(OB_TYP_NM)
+        FROM 	  	  CS_OB_TYP_CD
+        WHERE 	  	  OB_TYP_NM = #{obTypNm}
+    </select>
+
+    <select id="getObTypeNoPagingList" parameterType="CsObTypCdRequest" resultType="CsObTypCdResponse">
+        SELECT  /* csObTypCd.getObTypeNoPagingList */
+               COTC.OB_TYP_NO
+             , COTC.OB_TYP_NM
+             , COTC.OB_TYP_DESC
+             , COTC.USE_YN
+             , COTC.CNSL_TYP_NO
+             , (SELECT TEMP.CNSL_TYP_NM FROM CS_CNSL_TYP_INFO AS TEMP WHERE CNSL_TYP_NO = CSTI.CNSL_LRG_TYP_NO)  || ' > ' ||
+               (SELECT TEMP.CNSL_TYP_NM FROM CS_CNSL_TYP_INFO AS TEMP WHERE CNSL_TYP_NO = CSTI.CNSL_MID_TYP_NO)  || ' > ' ||
+               (SELECT TEMP.CNSL_TYP_NM FROM CS_CNSL_TYP_INFO AS TEMP WHERE CNSL_TYP_NO = CSTI.CNSL_SML_TYP_NO)  AS CNSL_TYP_NM
+             , COTC.SYS_MOD_ID
+             , TO_CHAR(COTC.SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+          FROM CS_OB_TYP_CD COTC
+             , CS_CNSL_TYP_INFO CSTI
+         WHERE CSTI.CNSL_TYP_NO = COTC.CNSL_TYP_NO
+           AND COTC.USE_YN LIKE #{useYn} || '%'
+         ORDER BY COTC.OB_TYP_NO
+    </select>
+</mapper>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.delivery.EtDeliRegnByZipCdTrxMapper">
+
+	<insert id="insertDeliRegnByZipCd" parameterType="EtDeliRegnByZipCdRequest">
+		INSERT INTO ET_DELI_REGN_BY_ZIP_CD( /* etDeliRegnByZipCdTrx.insertDeliRegnByZipCd */
+			DELI_REGN_GB_CD,
+			ZIP_NO,
+			SYS_REG_ID,
+			SYS_REG_DTM,
+			SYS_MOD_ID,
+			SYS_MOD_DTM
+		) VALUES (
+			#{deliRegnGbCd},
+			#{zipNo},
+			#{sysRegId},
+			now(),
+			#{sysModId},
+			now()
+		)
+	</insert>
+
+	<delete id="deleteDeliRegnByZipCd" parameterType="EtDeliRegnByZipCdRequest">
+		DELETE /* etDeliRegnByZipCdTrx.deleteDeliRegnByZipCd */
+		  FROM ET_DELI_REGN_BY_ZIP_CD
+		 WHERE DELI_REGN_GB_CD = #{deliRegnGbCd}
+		   AND ZIP_NO = #{zipNo}
+	</delete>
+</mapper>
+
+

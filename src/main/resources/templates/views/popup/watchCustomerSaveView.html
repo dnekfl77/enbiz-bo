@@ -1,0 +1,128 @@
+<!--
+* 프로그램명 : 관심고객 등록/수정 팝업
+* 작 성 일 : 2021.02.24
+* 작 성 자 : 박남훈
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 관심고객 등록/수정 팝업
+* 이    력 :
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-update-layout}">
+<body>
+<th:block layout:fragment="header-area">
+    <div class="header">
+        <h1 class="title" th:text="${#messages.msg('watchCustomerMgmt.watchCustomerRegisterPopup.title')}">관심고객등록/수정</h1>
+    </div>
+</th:block>
+<th:block layout:fragment="data-area">
+<form name="watchCustomerRegisterForm" id="watchCustomerRegisterForm">
+    <div class="data-cont">
+        <!-- 회원정보 -->
+        <div class="data">
+            <div class="data-head">
+                <div class="left"><span class="title" th:text="${#messages.msg('watchCustomerMgmt.watchCustomerRegisterPopup.customer.title')}">회원정보</span>
+                </div>
+            </div>
+            <div class="data-body">
+                <table class="data-table">
+                    <colgroup>
+                        <col width="140">
+                        <col>
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <td class="label" th:text="${#messages.msg('watchCustomerMgmt.watchCustomerRegisterPopup.customer.label.loginId')}">회원ID</td>
+                        <td>
+                            <div class="input-group">
+                                <input type="hidden" name="mbrNo" id="mbrNo">
+                                <input type="text" class="input disabled" name="loginId" id="loginId" readonly>
+                                <a href="#" class="button small" id="btnMbrSearchPopup"><i class="icon-sarch"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label"><strong th:text="${#messages.msg('watchCustomerMgmt.watchCustomerRegisterPopup.customer.label.mbrNm')}">회원명</strong></td>
+                        <td id="mbrNm"></td>
+                    </tr>
+                    <tr>
+                        <td class="label" th:text="${#messages.msg('watchCustomerMgmt.watchCustomerRegisterPopup.customer.label.emailAddr')}">회원이메일주소</td>
+                        <td id="emailAddr"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- //회원정보 -->
+        <!-- 관심고객 유형 정보 등록 -->
+        <div class="data">
+            <div class="data-head">
+                <div class="left"><span class="title" th:text="${#messages.msg('watchCustomerMgmt.watchCustomerRegisterPopup.watchCustomer.title')}">관심고객 유형 정보 등록</span>
+                </div>
+            </div>
+            <div class="data-body">
+                <table class="data-table">
+                    <colgroup>
+                        <col width="140">
+                        <col>
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <td class="label">
+                            <strong th:text="${#messages.msg('watchCustomerMgmt.watchCustomerRegisterPopup.watchCustomer.label.mgrGbNm')}">관리구분</strong>&nbsp;/&nbsp;
+                            <strong th:text="${#messages.msg('watchCustomerMgmt.watchCustomerRegisterPopup.watchCustomer.label.mgrTypNm')}">관리유형</strong></td>
+                        <td>
+                            <select class="form-control" name="mgrGbCd" id="mgrGbCd">
+                                <option value=""
+                                        th:text="${#messages.msg('watchCustomerMgmt.watchCustomerManagementView.search.option.full')}">
+                                </option>
+                                <option th:each="list : ${codeList.ME019}"
+                                        th:value="${list?.cd}" th:utext="${list?.cdNm}"></option>
+                            </select>
+                            <select class="form-control" name="mgrTypCd" id="mgrTypCd">
+                                <option value=""
+                                        th:text="${#messages.msg('watchCustomerMgmt.watchCustomerManagementView.search.option.full')}">
+                                </option>
+                                <option th:each="list : ${codeList.ME009}"
+                                        th:value="${list?.cd}" th:utext="${list?.cdNm}"></option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label" th:text="${#messages.msg('watchCustomerMgmt.watchCustomerRegisterPopup.watchCustomer.label.ordNo')}">관련주문번호</td>
+                        <td><input type="text" class="input" name="ordNo" id="ordNo"></td>
+                    </tr>
+                    <tr>
+                        <td class="label"><strong th:text="${#messages.msg('watchCustomerMgmt.watchCustomerRegisterPopup.watchCustomer.label.regCausCont')}">등록사유</strong></td>
+                        <td><input type="text" class="input w100" name="regCausCont" id="regCausCont"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- //관심고객 유형 정보 등록 -->
+    </div>
+</form>
+</th:block>
+<th:block layout:fragment="button-area">
+    <th:block layout:insert="~{fragments/popup/popup-btn :: popup-dtl-btn}"/>
+</th:block>
+
+<!-- Additional Script -->
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+    /*<![CDATA[*/
+    /*]]>*/
+    </script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'popup/watchCustomerRegister.eventHandler.js'" ></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            watchCustomerRegister.eventhandler.initialize();
+        });
+    </script>
+</th:block>
+</body>
+</html>

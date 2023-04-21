@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.customerservice.CsCcnTransReqInfoMapper">
+
+    <sql id="paginatedBase">
+        LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+    </sql>
+
+    <sql id="csTransferManagementBase">
+        WITH CS_CCN_ORD_GOODS_INFO_LIMIT1 AS (
+             SELECT CCN_NO , ORD_NO , GOODS_NO , GOODS_NM
+               FROM (
+                      SELECT TEMP1.CCN_NO
+                           , TEMP1.ORD_NO
+                           , TEMP1.GOODS_NO
+                           , TEMP2.GOODS_NM
+                           , ROW_NUMBER() OVER (PARTITION BY TEMP1.CCN_NO ORDER BY TEMP1.CUST_CNSL_SEQ DESC) AS INDEX
+                        FROM CS_CCN_ORD_GOODS_INFO TEMP1
+                        LEFT OUTER JOIN PR_GOODS_BASE TEMP2
+                                     ON TEMP1.GOODS_NO = TEMP2.GOODS_NO
+               ) TEMP
+              WHERE TEMP.INDEX = 1
+        )
+        SELECT /* CsCcnTransReqInfo.getCsTransferManagement */
+               CCTRI.CCN_NO
+             , CCTRI.CNSL_PROC_SEQ
+             , CCTRI.CS_MVOT_TYP_NO
+             , ( SELECT CS_MVOT_TYP_NM FROM CS_MVOT_TYP_CD CMTC WHERE CMTC.CS_MVOT_TYP_NO = CCTRI.CS_MVOT_TYP_NO )
+             , CCTRI.MVOT_REQ_CONT
+             , FN_GET_CODENAME('CS006',CCTRI.MVOT_PROC_STAT_CD) AS MVOT_PROC_STAT_CD
+             , CCTRI.EMERG_MVOT_YN
+             , CCOGI.ORD_NO
+             , CCOGI.GOODS_NO
+             , CCOGI.GOODS_NM
+             , EMB.LOGIN_ID AS MBR_ID
+             , EMB.MBR_NM
+             , (SELECT CONCAT_WS('>', B.CNSL_TYP_NM, C.CNSL_TYP_NM, A.CNSL_TYP_NM ) AS CNSL_TYP_NM
+                  FROM CS_CNSL_TYP_INFO A,
+                       CS_CNSL_TYP_INFO B,
+                       CS_CNSL_TYP_INFO C
+                 WHERE A.CNSL_LRG_TYP_NO = B.CNSL_TYP_NO
+                   AND A.CNSL_MID_TYP_NO = C.CNSL_TYP_NO
+                   AND A.CNSL_TYP_NO = CCCI.CNSL_TYP_NO)
+             , (SELECT USER_NM FROM ST_USER_BASE SUB WHERE SUB.USER_ID = CCTRI.MVOT_REQMN_ID) AS REQMN_NM
+             , TO_CHAR(CCTRI.MVOT_REQ_DTM,'YYYY-MM-DD HH24:MI:SS') AS MVOT_REQ_DTM
+             , (SELECT USER_NM FROM ST_USER_BASE SUB WHERE SUB.USER_ID = CCTRI.MVOT_AF_AEMP_ID) AS QUOT_NM
+             , TO_CHAR(CCTRI.QUOT_DTM,'YYYY-MM-DD HH24:MI:SS') AS QUOT_DTM
+             , (SELECT USER_NM FROM ST_USER_BASE SUB WHERE SUB.USER_ID = CCTRI.FNSHMN_ID) AS FNSHMN_NM
+             , TO_CHAR(CCTRI.FNSH_DTM,'YYYY-MM-DD HH24:MI:SS') AS FNSH_DTM
+          FROM CS_CUST_CNSL_INFO CCCI
+             , CS_CCN_TRANS_REQ_INFO CCTRI
+             , ET_MBR_BASE EMB
+             , CS_CCN_ORD_GOODS_INFO_LIMIT1 CCOGI
+         WHERE CCCI.CCN_NO = CCTRI.CCN_NO
+           AND CCCI.MBR_NO = EMB.MBR_NO
+           AND CCCI.CCN_NO = CCOGI.CCN_NO
+       <if test='periodType != null and periodType eq "0"'>
+           AND CCTRI.MVOT_REQ_DTM &gt;= TO_TIMESTAMP(#{startDate}||'000000', 'YYYYMMDDHH24MISS')
+           AND CCTRI.MVOT_REQ_DTM &lt;= TO_TIMESTAMP(#{endDate}||'235959', 'YYYYMMDDHH24MISS')
+       </if>
+       <if test='periodType != null and periodType eq "1"'>
+           AND CCTRI.QUOT_DTM &gt;= TO_TIMESTAMP(#{startDate}||'000000', 'YYYYMMDDHH24MISS')
+           AND CCTRI.QUOT_DTM &lt;= TO_TIMESTAMP(#{endDate}||'235959', 'YYYYMMDDHH24MISS')
+       </if>
+       <if test='periodType != null and periodType eq "1"'>
+           AND CCTRI.FNSH_DTM &gt;= TO_TIMESTAMP(#{startDate}||'000000', 'YYYYMMDDHH24MISS')
+           AND CCTRI.FNSH_DTM &lt;= TO_TIMESTAMP(#{endDate}||'235959', 'YYYYMMDDHH24MISS')
+       </if>
+           AND CCTRI.MVOT_PROC_STAT_CD LIKE #{mvotProcStatCd} || '%'
+           AND CCTRI.CS_MVOT_TYP_NO LIKE #{csMvotTypNo} || '%'
+       <if test='mbrType != null and mbrType eq "0"'>
+           AND EMB.LOGIN_ID LIKE #{mbrText} || '%'
+       </if>
+       <if test='mbrType != null and mbrType eq "1"'>
+           AND EMB.MBR_NM LIKE #{mbrText} || '%'
+       </if>
+       <if test='userType != null and userType eq "0" and userText !=null and userText != ""'>
+           AND CCTRI.MVOT_REQMN_ID LIKE #{userText} || '%'
+       </if>
+       <if test='userType != null and userType eq "1" and userText !=null and userText != ""'>
+           AND CCTRI.MVOT_AF_AEMP_ID LIKE #{userText} || '%'
+       </if>
+       <if test='userType != null and userType eq "1" and userText !=null and userText != ""'>
+           AND CCTRI.FNSHMN_ID LIKE #{userText} || '%'
+       </if>
+       <if test='ordNoCcnNoType != null and ordNoCcnNoType eq "0" and ordNoCcnNoText !=null and ordNoCcnNoText != ""'>
+           AND EXISTS (SELECT *
+                         FROM CS_CCN_ORD_GOODS_INFO CCOGI
+                        WHERE CCOGI.CCN_NO = CCCI.CCN_NO
+                          AND CCOGI.ORD_NO = #{ordNoCcnNoText}
+           )
+       </if>
+       <if test='ordNoCcnNoType != null and ordNoCcnNoType eq "1" and ordNoCcnNoText !=null and ordNoCcnNoText != ""'>
+           AND CCCI.CCN_NO LIKE #{ordNoCcnNoText}
+       </if>
+           AND CCTRI.EMERG_MVOT_YN LIKE #{emergMvotYn} || '%'
+    </sql>
+
+    <select id="getCsTransferManagement" parameterType="CsTransferInfoRequest" resultType="CsTransferInfoResponse">
+        <include refid="csTransferManagementBase" />
+        <include refid="paginatedBase" />
+    </select>
+
+    <select id="getCsTransferManagementCount" parameterType="CsTransferInfoRequest" resultType="java.lang.Integer">
+        SELECT /* CsCcnTransReqInfo.getPhoneAppointManagementCount */
+        COUNT(*)
+        FROM (
+        <include refid="csTransferManagementBase" />
+        ) v
+    </select>
+
+    <select id="csTransferHistory" parameterType="CsTransferInfoDetailRequest" resultType="CsTransferInfoDetailResponse">
+        SELECT /*CsCcnTransReqInfo.csTransferHistory*/
+               CCCI.CCN_NO
+             , (SELECT USER_NM FROM ST_USER_BASE SUB WHERE SUB.USER_ID = CCCI.ACPTMN_ID) || ' / ' || TO_CHAR(ACCP_DTM,'YYYY-MM-DD HH24:MI:SS') AS ACP_DATA
+             , EMB.MBR_NM
+             , EMB.EMAIL_ADDR
+             , FN_GET_CODENAME('CS001', CCCI.CUST_CNSL_GB_CD ) || ' / ' || FN_GET_CODENAME('CS002', CCCI.ACCP_MEDIA_CD ) AS GBCD_MEDIA
+             , ACCP_TYP_CD
+             , FN_GET_CODENAME('CS003', CCCI.ACCP_TYP_CD ) AS ACCP_TYP_NM
+             , CCCI.TEL_RGN_NO
+             , CCCI.TEL_TXNO_NO
+             , CCCI.TEL_END_NO
+             , CCN_PRGS_STAT_CD
+             , FN_GET_CODENAME('CS005', CCCI.CCN_PRGS_STAT_CD ) AS CCN_PRGS_STAT_NM
+             , (SELECT CNSL_TYP_NM FROM CS_CNSL_TYP_INFO TEMP WHERE TEMP.CNSL_TYP_NO = CCCI.CNSL_LRG_TYP_NO) || '>' ||
+               (SELECT CNSL_TYP_NM FROM CS_CNSL_TYP_INFO TEMP WHERE TEMP.CNSL_TYP_NO = CCCI.CNSL_MID_TYP_NO) || '>' ||
+               (SELECT CNSL_TYP_NM FROM CS_CNSL_TYP_INFO TEMP WHERE TEMP.CNSL_TYP_NO = CCCI.CNSL_TYP_NO) AS CNSL_TYP_TEXT
+             , CASE WHEN CUST_CNSL_GB_CD = '20' THEN (SELECT OB_TYP_NM FROM CS_OB_TYP_CD COTC WHERE COTC.OB_TYP_NO = CCCI.OB_TYP_NO)
+                                                ELSE '' END AS OB_TYP_NM
+             , CCCI.ACCP_CONT
+             , (SELECT CS_MVOT_TYP_NM FROM CS_MVOT_TYP_CD CMTC WHERE CMTC.CS_MVOT_TYP_NO = CCTRI.CS_MVOT_TYP_NO)
+             , CCTRI.MVOT_PROC_STAT_CD
+             , FN_GET_CODENAME('CS006', CCTRI.MVOT_PROC_STAT_CD ) AS MVOT_PROC_STAT_NM
+             , CCTRI.EMERG_MVOT_YN
+             , (SELECT USER_NM FROM ST_USER_BASE SUB WHERE SUB.USER_ID = CCTRI.MVOT_REQMN_ID) AS REQMN_NM
+             , TO_CHAR(CCTRI.MVOT_REQ_DTM,'YYYY-MM-DD HH24:MI:SS') AS MVOT_REQ_DTM
+             , (SELECT USER_NM FROM ST_USER_BASE SUB WHERE SUB.USER_ID = CCTRI.MVOT_AF_AEMP_ID) AS QUOT_NM
+             , MVOT_AF_AEMP_ID
+             , TO_CHAR(CCTRI.QUOT_DTM,'YYYY-MM-DD HH24:MI:SS') AS QUOT_DTM
+             , (SELECT USER_NM FROM ST_USER_BASE SUB WHERE SUB.USER_ID = CCTRI.FNSHMN_ID) AS FNSHMN_NM
+             , TO_CHAR(CCTRI.FNSH_DTM,'YYYY-MM-DD HH24:MI:SS') AS FNSH_DTM
+             , CCTRI.MVOT_REQ_CONT
+             , CCTRI.MVOT_ANS_PROC_CONT
+             , CCCI.CELL_NO_YN
+             , CCTRI.CNSL_PROC_SEQ
+          FROM CS_CUST_CNSL_INFO CCCI
+             , CS_CCN_TRANS_REQ_INFO CCTRI
+             , ET_MBR_BASE EMB
+        WHERE CCCI.CCN_NO = CCTRI.CCN_NO
+          AND CCCI.MBR_NO = EMB.MBR_NO
+          AND CCCI.CCN_NO = #{ccnNo}
+          AND CCTRI.CNSL_PROC_SEQ = #{cnslProcSeq}
+    </select>
+
+    <select id="csTransferDetailHistoryPop" parameterType="CsTransferInfoDetailRequest" resultType="CsCcnTransInfoDtlPopResponse">
+        WITH  CS_CCN_ORD_GOODS_INFO_LIMIT AS (
+            SELECT CCN_NO , ORD_NO , GOODS_NO , GOODS_NM , ENTR_NO
+              FROM (
+                     SELECT TEMP1.CCN_NO
+                          , TEMP1.ORD_NO
+                          , TEMP1.GOODS_NO
+                          , TEMP2.GOODS_NM
+                          , TEMP2.ENTR_NO
+                          , ROW_NUMBER() OVER (PARTITION BY TEMP1.CCN_NO ORDER BY TEMP1.CUST_CNSL_SEQ DESC) AS INDEX
+                       FROM CS_CCN_ORD_GOODS_INFO TEMP1
+                       LEFT OUTER JOIN PR_GOODS_BASE TEMP2
+                                    ON TEMP1.GOODS_NO = TEMP2.GOODS_NO
+                      WHERE TEMP1.CCN_NO = #{ccnNo}
+                   ) TEMP
+            WHERE TEMP.INDEX = 1
+        )
+        SELECT  /*CsCcnTransReqInfo.csTransferDetailHistoryPop*/
+               EMB.MBR_NM
+             , EMB.EMAIL_ADDR
+             , CCCI.TEL_RGN_NO
+             , CCCI.TEL_TXNO_NO
+             , CCCI.TEL_END_NO
+             , CCOGIL.ORD_NO
+             , CCOGIL.CCN_NO
+             , CCOGIL.GOODS_NO
+             , CCOGIL.GOODS_NM
+             , OOD.ITM_NO
+             , OOD.ITM_NM
+             , EEB.ENTR_NM
+             , CCCI.CUST_CNSL_GB_CD
+             , FN_GET_CODENAME('CS001',CCCI.CUST_CNSL_GB_CD) AS CUST_CNSL_GB_NM
+             , CCCI.CCN_PRGS_STAT_CD
+             , FN_GET_CODENAME('CS005',CCCI.CCN_PRGS_STAT_CD) AS CCN_PRGS_STAT_NM
+             , (SELECT CONCAT_WS('>', B.CNSL_TYP_NM, C.CNSL_TYP_NM, A.CNSL_TYP_NM ) AS CNSL_TYP_NM
+                  FROM CS_CNSL_TYP_INFO A,
+                       CS_CNSL_TYP_INFO B,
+                       CS_CNSL_TYP_INFO C
+                 WHERE A.CNSL_LRG_TYP_NO = B.CNSL_TYP_NO
+                   AND A.CNSL_MID_TYP_NO = C.CNSL_TYP_NO
+                   AND A.CNSL_TYP_NO = CCCI.CNSL_TYP_NO)
+             , TO_CHAR(CCCI.ACCP_DTM,'YYYY-MM-DD HH24:MI:SS') AS ACCP_DTM
+             , (SELECT USER_NM FROM ST_USER_BASE SUB WHERE SUB.USER_ID = CCCI.ACPTMN_ID) AS ACPTMN_NM
+             , CCCI.ACCP_CONT
+             , CMTC.CS_MVOT_TYP_NM
+             , CCTRI.MVOT_PROC_STAT_CD
+             , FN_GET_CODENAME('CS006',CCTRI.MVOT_PROC_STAT_CD) AS MVOT_PROC_STAT_NM
+             , CCTRI.EMERG_MVOT_YN
+             , CCTRI.MVOT_REQMN_ID
+             , (SELECT USER_NM FROM ST_USER_BASE SUB WHERE SUB.USER_ID = CCTRI.MVOT_REQMN_ID) AS MVOT_REQMN_NM
+             , TO_CHAR(CCTRI.MVOT_REQ_DTM,'YYYY-MM-DD HH24:MI:SS') AS MVOT_REQ_DTM
+             , CCTRI.MVOT_REQ_CONT
+             , TO_CHAR(CCTRI.QUOT_DTM,'YYYY-MM-DD HH24:MI:SS') AS QUOT_DTM
+             , CCTRI.MVOT_AF_AEMP_ID
+             , (SELECT USER_NM FROM ST_USER_BASE SUB WHERE SUB.USER_ID = CCTRI.MVOT_AF_AEMP_ID) AS MVOT_AF_AEMP_NM
+             , (SELECT USER_NM FROM ST_USER_BASE SUB WHERE SUB.USER_ID = CCTRI.FNSHMN_ID) AS FNSHMN_NM
+             , TO_CHAR(CCTRI.FNSH_DTM,'YYYY-MM-DD HH24:MI:SS') AS FNSH_DTM
+             , CCTRI.MVOT_ANS_PROC_CONT
+             , CCTRI.CNSL_PROC_SEQ
+          FROM CS_CUST_CNSL_INFO CCCI
+             , CS_CCN_TRANS_REQ_INFO CCTRI
+             , ET_MBR_BASE EMB
+             , CS_MVOT_TYP_CD CMTC
+             , CS_CCN_ORD_GOODS_INFO_LIMIT CCOGIL
+          LEFT OUTER JOIN OP_ORD_DTL OOD
+                       ON CCOGIL.ORD_NO = OOD.ORD_NO
+          LEFT OUTER JOIN ET_ENTR_BASE EEB
+                       ON CCOGIL.ENTR_NO = EEB.ENTR_NO
+         WHERE CCCI.CCN_NO = CCTRI.CCN_NO
+           AND CCCI.MBR_NO = EMB.MBR_NO
+           AND CCCI.CCN_NO = CCOGIL.CCN_NO
+           AND CCTRI.CS_MVOT_TYP_NO = CMTC.CS_MVOT_TYP_NO
+           AND CCCI.CCN_NO = #{ccnNo}
+           AND CCTRI.CNSL_PROC_SEQ = #{cnslProcSeq}
+    </select>
+</mapper>

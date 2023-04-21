@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.system.StDeptCdMapper">
+
+	<!-- 부서 계층구조 목록 조회 -->
+	<select id="getStDeptCdListWithHierarchy" resultType="UserDeptResponse">
+		/* StDeptCdMapper.getStDeptCdListWithHierarchy */
+		WITH RECURSIVE ST_DEPT_CD_HIERARCHY AS(
+			SELECT
+				1 AS LEVEL		-- 부서 레벨
+				, DEPT_CD 		-- 부서코드 varchar(15) NOT NULL
+				, DEPT_NM 		-- 부서명 varchar(300) NOT NULL
+				, SORT_SEQ 		-- 정렬순서 numeric(5) NOT NULL
+				, USE_YN 		-- 사용여부 varchar(1) NOT NULL
+				, UPR_DEPT_CD 	-- 상위부서코드 varchar(15) NULL
+				, SYS_REG_ID 	-- 시스템등록자ID varchar(30) NOT NULL
+				, SYS_REG_DTM 	-- 시스템등록일시 timestamp NOT NULL
+				, SYS_MOD_ID 	-- 시스템수정자ID varchar(30) NOT NULL
+				, SYS_MOD_DTM 	-- 시스템수정일시 timestamp NOT NULL
+				, CONCAT('\',SORT_SEQ||DEPT_CD)  AS HIERARCHY
+				, CONCAT('',DEPT_NM) AS HIERARCHY_TEXT
+			FROM ST_DEPT_CD A
+			WHERE USE_YN = 'Y'
+			AND (UPR_DEPT_CD ISNULL or UPR_DEPT_CD = '')
+			UNION ALL
+			SELECT
+				LEVEL + 1			-- 부서 레벨
+				, T1.DEPT_CD 		-- 부서코드 varchar(15) NOT NULL
+				, T1.DEPT_NM 		-- 부서명 varchar(300) NOT NULL
+				, T1.SORT_SEQ 		-- 정렬순서 numeric(5) NOT NULL
+				, T1.USE_YN 		-- 사용여부 varchar(1) NOT NULL
+				, T1.UPR_DEPT_CD 	-- 상위부서코드 varchar(15) NULL
+				, T1.SYS_REG_ID 	-- 시스템등록자ID varchar(30) NOT NULL
+				, T1.SYS_REG_DTM 	-- 시스템등록일시 timestamp NOT NULL
+				, T1.SYS_MOD_ID 	-- 시스템수정자ID varchar(30) NOT NULL
+				, T1.SYS_MOD_DTM 	-- 시스템수정일시 timestamp NOT NULL
+				, CONCAT_WS('\', T2.HIERARCHY, TRIM(TO_CHAR(T1.SORT_SEQ,'000'))||T1.DEPT_CD) AS HIERARCHY
+				, CONCAT('',T2.HIERARCHY_TEXT,'>'||T1.DEPT_NM) AS HIERARCHY_TEXT
+			FROM
+				ST_DEPT_CD T1,
+				ST_DEPT_CD_HIERARCHY T2
+			WHERE T2.DEPT_CD = T1.UPR_DEPT_CD
+		)
+		SELECT
+			LEVEL			-- 부서 레벨
+			, DEPT_CD 		-- 부서코드 varchar(15) NOT NULL
+			, DEPT_NM 		-- 부서명 varchar(300) NOT NULL
+			, SORT_SEQ 		-- 정렬순서 numeric(5) NOT NULL
+			, USE_YN 		-- 사용여부 varchar(1) NOT NULL
+			, UPR_DEPT_CD 	-- 상위부서코드 varchar(15) NULL
+			, SYS_REG_ID 	-- 시스템등록자ID varchar(30) NOT NULL
+			, SYS_REG_DTM 	-- 시스템등록일시 timestamp NOT NULL
+			, SYS_MOD_ID 	-- 시스템수정자ID varchar(30) NOT NULL
+			, SYS_MOD_DTM 	-- 시스템수정일시 timestamp NOT NULL
+			, HIERARCHY
+			, HIERARCHY_TEXT
+		FROM ST_DEPT_CD_HIERARCHY
+		ORDER BY HIERARCHY, SORT_SEQ
+	</select>
+
+	<!-- 하위부서 목록 수 조회 -->
+	<select id="getStDeptCdListCount" parameterType="UserDeptRequest" resultType="java.lang.Integer">
+		/* StDeptCdMapper.getStDeptCdListCount */
+		SELECT
+			COUNT(*)
+		FROM
+			ST_DEPT_CD
+		<where>
+			<if test="deptCd != null and deptCd != '' ">
+			UPR_DEPT_CD = #{deptCd}
+			</if>
+		</where>
+	</select>
+	<!-- 부서 목록 조회 -->
+	<select id="getStDeptCdList" parameterType="UserDeptRequest" resultType="UserDeptResponse" >
+		/* StDeptCdMapper.getStDeptCdList */
+		SELECT
+			DEPT_CD 		-- 부서코드 varchar(15) NOT NULL
+			, DEPT_NM 		-- 부서명 varchar(300) NOT NULL
+			, SORT_SEQ 		-- 정렬순서 numeric(5) NOT NULL
+			, USE_YN 		-- 사용여부 varchar(1) NOT NULL
+			, UPR_DEPT_CD 	-- 상위부서코드 varchar(15) NULL
+			, JOB_GRP_CD	-- 업무그룹 varchar(10) NULL
+			, SYS_REG_ID
+			, TO_CHAR(SYS_REG_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_REG_DTM
+			, SYS_MOD_ID
+			, TO_CHAR(SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+		FROM ST_DEPT_CD
+		WHERE UPR_DEPT_CD = #{deptCd}
+		ORDER BY SORT_SEQ , SYS_REG_DTM DESC
+	</select>
+
+	<!-- 부서 계층구조 목록 조회 -->
+	<select id="getSpecificGroupDeptCd" resultType="UserDeptResponse">
+		WITH RECURSIVE ST_DEPT_CD_HIERARCHY AS( /* StDeptCd.getStDeptCdListWithHierarchy */
+			    SELECT
+				       1 AS LEVEL
+				     , DEPT_CD
+				     , DEPT_NM
+				     , SORT_SEQ
+				     , USE_YN
+				     , UPR_DEPT_CD
+			         , JOB_GRP_CD
+				     , SYS_REG_ID
+				     , SYS_REG_DTM
+				     , SYS_MOD_ID
+				     , SYS_MOD_DTM
+				     , CONCAT('\',SORT_SEQ||DEPT_CD)  AS HIERARCHY
+				     , CONCAT('',DEPT_NM) AS HIERARCHY_TEXT
+			      FROM ST_DEPT_CD A
+			     WHERE USE_YN = 'Y'
+			       AND (UPR_DEPT_CD IS NULL OR UPR_DEPT_CD = '')
+			 UNION ALL
+			    SELECT
+				       LEVEL + 1
+				     , T1.DEPT_CD
+				     , T1.DEPT_NM
+				     , T1.SORT_SEQ
+				     , T1.USE_YN
+				     , T1.UPR_DEPT_CD
+			         , T1.JOB_GRP_CD
+				     , T1.SYS_REG_ID
+				     , T1.SYS_REG_DTM
+				     , T1.SYS_MOD_ID
+				     , T1.SYS_MOD_DTM
+				     , CONCAT_WS('\', T2.HIERARCHY, TRIM(TO_CHAR(T1.SORT_SEQ,'000'))||T1.DEPT_CD) AS HIERARCHY
+				     , CONCAT('',T2.HIERARCHY_TEXT,'>'||T1.DEPT_NM) AS HIERARCHY_TEXT
+			      FROM ST_DEPT_CD T1
+				     , ST_DEPT_CD_HIERARCHY T2
+			     WHERE T2.DEPT_CD = T1.UPR_DEPT_CD
+		           AND T1.JOB_GRP_CD = #{jobGrpCd}
+		)
+		SELECT
+			   LEVEL
+			 , DEPT_CD
+			 , DEPT_NM
+			 , SORT_SEQ
+			 , USE_YN
+			 , UPR_DEPT_CD
+		     , JOB_GRP_CD
+			 , SYS_REG_ID
+			 , SYS_REG_DTM
+			 , SYS_MOD_ID
+			 , SYS_MOD_DTM
+			 , HIERARCHY
+			 , HIERARCHY_TEXT
+		  FROM ST_DEPT_CD_HIERARCHY
+		 ORDER BY HIERARCHY, SORT_SEQ
+	</select>
+</mapper>

@@ -1,0 +1,401 @@
+<!--
+* 프로그램명 : 브랜드 관리
+* 작 성 일 : 2021.04.08
+* 작 성 자 : 윤성원
+* 수 정 자 : 홍혜리
+* 버    전 : 1.0
+* 개    요 : 브랜드 관리 UI
+* 이    력 : 2021.09.02 프레임워크 이전
+-->
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layouts/page-realgrid-layout}">
+<body>
+	<th:block layout:fragment="page-title-area">
+		<div class="page-title">
+			<div class="left">
+				<h1 th:text="${#messages.msg('brandMgmt.title')}"></h1>
+			</div>
+		</div>
+	</th:block>
+
+	<th:block layout:fragment="page-contents">
+		<div class="page-fixed with-title">
+			<div class="search-cont">
+
+				<!-- 검색 -->
+				<div class="search">
+					<div class="search-body">
+						<form name="brandMgmtListGridForm" id="brandMgmtListGridForm">
+							<table class="search-table">
+								<colgroup>
+									<col width="120">
+									<col>
+									<col width="120">
+									<col>
+								</colgroup>
+								<tbody>
+									<tr>
+										<td class="label" th:text="${#messages.msg('brandMgmt.search.label.brandNoNm')}"></td>
+										<td colspan="3">
+											<div class="input-group">
+												<input type="text" class="input w20 only-no" maxlength="15" name="brandNo">
+												<input type="text" class="input w40 not-special-char" maxlength="150" name="brandNm">
+											</div>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</form>
+					</div>
+				</div>
+				<!-- //검색 -->
+
+				<!-- 검색버튼 -->
+				<div class="button-group search-btn">
+					<a href="#" class="btn_gblue button white" id="btn_brand_init">
+						<span class="text"
+						th:text="${#messages.msg('adminCommon.button.init')}"></span>
+					</a> <a href="#" class="btn_blue button dark" id="btn_brand_list">
+						<span class="text"
+						th:text="${#messages.msg('adminCommon.button.search')}"></span>
+					</a>
+				</div>
+				<!-- //검색버튼 -->
+
+				<!-- 데이터 -->
+				<div class="data-cont col-30">
+					<!-- 그리드 -->
+					<div class="grid">
+						<div class="grid-head">
+							<div class="title-area">
+								<h2 class="title"
+									th:text="${#messages.msg('brandMgmt.grid.title')}"></h2>
+							</div>
+						</div>
+						<div class="grid-body vh6">
+							<div class="rg-root rg-grid vh6" id="brandMgmtListGrid" realgrid></div>
+						</div>
+					</div>
+					<!-- //그리드 -->
+
+					<!--상세정보-->
+					<div class="data-cont" style="margin-top: 25px;">
+						<form id="brandDetailForm">
+							<div class="data">
+								<div class="data-head">
+									<div class="left">
+										<span class="title"
+											th:text="${#messages.msg('brandMgmt.info.title')}"></span>
+										<div>
+											<a href="#" id="btn_brand_regist" class="button inside">
+												<span class="text"
+												th:text="${#messages.msg('brandMgmt.info.btn.add.brand')}"></span>
+											</a> <a href="#" id="btn_brand_delete" class="button inside">
+												<span class="text"
+												th:text="${#messages.msg('adminCommon.button.delete')}"></span>
+											</a> <a href="#" id="btn_brand_save" class="button inside"> <span
+												class="text"
+												th:text="${#messages.msg('adminCommon.button.save')}"></span>
+											</a>
+										</div>
+									</div>
+								</div>
+								<div class="data-body">
+									<table class="data-table">
+										<colgroup>
+											<col width="120">
+											<col>
+											<col width="120">
+											<col>
+										</colgroup>
+										<tbody>
+											<tr>
+												<td class="label" th:text="${#messages.msg('brandMgmt.info.label.brandNo')}">
+												</td>
+												<td>
+													<input type="text" maxlength="15" class="input disabled" id="brandNo" name="brandNo" disabled="disabled"></td>
+												<td class="label">
+													<strong th:text="${#messages.msg('brandMgmt.info.label.brandNm')}"></strong>
+												</td>
+												<td>
+													<input type="text" maxlength="400" class="input not-special-char" id="brandNm" name="brandNm">
+												</td>
+											</tr>
+											<tr>
+												<td class="label">
+													<strong th:text="${#messages.msg('brandMgmt.info.label.korBrandNm')}"></strong></td>
+												<td>
+													<input type="text" maxlength="300" class="input not-special-char" id="korBrandNm" name="korBrandNm"></td>
+												<td class="label">
+													<strong th:text="${#messages.msg('brandMgmt.info.label.engBrandNm')}"></strong>
+												</td>
+												<td>
+													<input type="text" maxlength="300" class="input not-special-char" id="engBrandNm" name="engBrandNm"
+													></td>
+											</tr>
+											<tr>
+												<td class="label">
+													<strong th:text="${#messages.msg('brandMgmt.info.label.useYn')}"></strong>
+												</td>
+												<td>
+													<label class="radio-inline">
+														<input type="radio" name="brand-useYn" value="Y" checked="checked" th:text="${#messages.msg('adminCommon.use')}">
+													</label>
+													<label class="radio-inline">
+														<input type="radio" name="brand-useYn" value="N" th:text="${#messages.msg('adminCommon.disuse')}">
+													</label>
+												</td>
+												<td class="label">
+													<strong th:text="${#messages.msg('brandMgmt.info.label.dispOptnCd')}"></strong>
+												</td>
+												<td>
+													<label class="radio-inline">
+														<input type="radio" name="disp-opt" value="01" checked="checked" th:text="${#messages.msg('brandMgmt.info.label.dispKor')}">
+													</label>
+													<label class="radio-inline">
+														<input type="radio" name="disp-opt" value="02" th:text="${#messages.msg('brandMgmt.info.label.dispEng')}">
+													</label>
+												</td>
+											</tr>
+											<tr>
+												<td class="label"><strong
+													th:text="${#messages.msg('brandMgmt.info.label.korSchNm')}"></strong>
+												</td>
+												<td colspan="3">
+													<div class="input-group block">
+														<input type="text" class="input sch only-ko chk-len" size=1 maxlength="1"
+															   name="korSchNm" id="korSchNm" disabled="disabled">
+														<label class="radio-box"> <input type="radio"
+															name="kor-sch" value="ㄱ" checked="checked"><span>ㄱ</span>
+														</label> <label class="radio-box"> <input type="radio"
+															name="kor-sch" value="ㄲ"><span>ㄲ</span>
+														</label> <label class="radio-box"> <input type="radio"
+															name="kor-sch" value="ㄴ"><span>ㄴ</span>
+														</label> <label class="radio-box"> <input type="radio"
+															name="kor-sch" value="ㄷ"><span>ㄷ</span>
+														</label> <label class="radio-box"> <input type="radio"
+															name="kor-sch" value="ㄹ"><span>ㄹ</span>
+														</label> <label class="radio-box"> <input type="radio"
+															name="kor-sch" value="ㅁ"><span>ㅁ</span>
+														</label> <label class="radio-box"> <input type="radio"
+															name="kor-sch" value="ㅂ"><span>ㅂ</span>
+														</label> <label class="radio-box"> <input type="radio"
+															name="kor-sch" value="ㅃ"><span>ㅃ</span>
+														</label> <label class="radio-box"> <input type="radio"
+															name="kor-sch" value="ㅅ"><span>ㅅ</span>
+														</label> <label class="radio-box"> <input type="radio"
+															name="kor-sch" value="ㅆ"><span>ㅆ</span>
+														</label> <label class="radio-box"> <input type="radio"
+															name="kor-sch" value="ㅇ"><span>ㅇ</span>
+														</label> <label class="radio-box"> <input type="radio"
+															name="kor-sch" value="ㅈ"><span>ㅈ</span>
+														</label> <label class="radio-box"> <input type="radio"
+															name="kor-sch" value="ㅊ"><span>ㅊ</span>
+														</label> <label class="radio-box"> <input type="radio"
+															name="kor-sch" value="ㅋ"><span>ㅋ</span>
+														</label> <label class="radio-box"> <input type="radio"
+															name="kor-sch" value="ㅌ"><span>ㅌ</span>
+														</label> <label class="radio-box"> <input type="radio"
+															name="kor-sch" value="ㅍ"><span>ㅍ</span>
+														</label> <label class="radio-box"> <input type="radio"
+															name="kor-sch" value="ㅎ"><span>ㅎ</span>
+														</label> <input class="checkbox-inline etc ml5" type="checkbox"
+															id="kor-etc" th:text="기타">
+													</div>
+												</td>
+											</tr>
+											<tr>
+												<td class="label"><strong
+													th:text="${#messages.msg('brandMgmt.info.label.engSchNm')}"></strong>
+												</td>
+												<td colspan="3">
+													<div class="input-group block">
+														<input type="text" class="input sch only-en chk-len" size=1 maxlength="1"
+															name="engSchNm" id="engSchNm" disabled="disabled">
+														<label class="radio-box"> <input type="radio"
+															name="eng-sch" value="A" checked="checked"><span>A</span>
+														</label> <label class="radio-box"> <input type="radio"
+															name="eng-sch" value="B"><span>B</span>
+														</label> <label class="radio-box"> <input type="radio"
+															name="eng-sch" value="C"><span>C</span>
+														</label> <label class="radio-box"> <input type="radio"
+															name="eng-sch" value="D"><span>D</span>
+														</label> <label class="radio-box"> <input type="radio"
+															name="eng-sch" value="E"><span>E</span>
+														</label> <label class="radio-box"> <input type="radio"
+															name="eng-sch" value="F"><span>F</span>
+														</label> <label class="radio-box"> <input type="radio"
+															name="eng-sch" value="G"><span>G</span>
+														</label> <label class="radio-box"> <input type="radio"
+															name="eng-sch" value="H"><span>H</span>
+														</label> <label class="radio-box"> <input type="radio"
+															name="eng-sch" value="I"><span>I</span>
+														</label> <label class="radio-box"> <input type="radio"
+															name="eng-sch" value="J"><span>J</span>
+														</label> <label class="radio-box"> <input type="radio"
+															name="eng-sch" value="K"><span>K</span>
+														</label> <label class="radio-box"> <input type="radio"
+															name="eng-sch" value="L"><span>L</span>
+														</label> <label class="radio-box"> <input type="radio"
+															name="eng-sch" value="M"><span>M</span>
+														</label> <label class="radio-box"> <input type="radio"
+															name="eng-sch" value="N"><span>N</span>
+														</label> <label class="radio-box"> <input type="radio"
+															name="eng-sch" value="O"><span>O</span>
+														</label> <label class="radio-box"> <input type="radio"
+															name="eng-sch" value="P"><span>P</span>
+														</label> <label class="radio-box"> <input type="radio"
+															name="eng-sch" value="Q"><span>Q</span>
+														</label> <label class="radio-box"> <input type="radio"
+															name="eng-sch" value="R"><span>R</span>
+														</label> <label class="radio-box"> <input type="radio"
+															name="eng-sch" value="S"><span>S</span>
+														</label> <label class="radio-box"> <input type="radio"
+															name="eng-sch" value="T"><span>T</span>
+														</label> <label class="radio-box"> <input type="radio"
+															name="eng-sch" value="U"><span>U</span>
+														</label> <label class="radio-box"> <input type="radio"
+															name="eng-sch" value="V"><span>V</span>
+														</label> <label class="radio-box"> <input type="radio"
+															name="eng-sch" value="W"><span>W</span>
+														</label> <label class="radio-box"> <input type="radio"
+															name="eng-sch" value="X"><span>X</span>
+														</label> <label class="radio-box"> <input type="radio"
+															name="eng-sch" value="Y"><span>Y</span>
+														</label> <label class="radio-box"> <input type="radio"
+															name="eng-sch" value="Z"><span>Z</span>
+														</label> <input class="checkbox-inline etc ml5" type="checkbox"
+															id="eng-etc" th:text="기타">
+													</div>
+												</td>
+											</tr>
+											<tr>
+												<td class="label"
+													th:text="${#messages.msg('brandMgmt.info.label.scw')}"></td>
+												<td colspan="3">
+													<div class="input-group block">
+														<input type="text" class="input w10 mr5" maxlength="100" name="scw1Nm" id="scw1Nm">
+														<input type="text" class="input w10 mr5" maxlength="100" name="scw2Nm" id="scw2Nm">
+														<input type="text" class="input w10" maxlength="100" name="scw3Nm" id="scw3Nm">
+													</div>
+												</td>
+											</tr>
+											<tr>
+												<td class="label" th:text="${#messages.msg('brandMgmt.info.label.brandDescCmt')}"></td>
+												<td colspan="3">
+													<input type="text" class="input w70" maxlength="150" id="brandDescCmt" name="brandDescCmt">
+												</td>
+											</tr>
+											<tr>
+												<td class="label"
+													th:text="${#messages.msg('adminCommon.label.sys.mod.id')}"></td>
+												<td><span id="sysModId" name="sysModId"></span></td>
+												<td class="label"
+													th:text="${#messages.msg('adminCommon.label.sys.mod.date')}"></td>
+												<td><span id="sysModDtm" name="sysModDtm"></span></td>
+											</tr>
+											<tr>
+												<td class="label"><strong
+													th:text="${#messages.msg('brandMgmt.info.label.img1')}"></strong></td>
+												<td colspan="3">
+													<div class="image-upload">
+														<div class="input-group file-upload ml10">
+															<input type="text" class="input disabled imageFileName"
+																name="image1" readonly> <a href="#"
+																class="button small gray btn_image_upload"><span
+																class="text"
+																th:text="${#messages.msg('adminCommon.button.select.file')}"></span></a>
+															<a href="#" class="button small gray btn_image_clear"><span
+																class="text" th:text="삭제"></span></a> <input type="file"
+																style="display: none" name="files" class="imageFile" />
+															<input type="hidden" class="imageFilePath"> <span
+																class="imageSize"></span>
+															<!-- 이미지 크기 -->
+														</div>
+														<div>
+															<a class="original_r fl-right" target="_blank"> <img
+																class="image noimg imageView" accept="image/jpg"
+																style="width: 100px; height: 100px;"></a>
+														</div>
+													</div>
+												</td>
+											</tr>
+											<tr>
+												<td class="label"
+													th:text="${#messages.msg('brandMgmt.info.label.img2')}"></td>
+												<td colspan="3">
+													<div class="image-upload">
+														<div class="input-group file-upload ml10">
+															<input type="text" class="input disabled imageFileName"
+																name="image2" readonly> <a href="#"
+																class="button small gray btn_image_upload"><span
+																class="text"
+																th:text="${#messages.msg('adminCommon.button.select.file')}"></span></a>
+															<a href="#" class="button small gray btn_image_clear"><span
+																class="text" th:text="삭제"></span></a> <input type="file"
+																style="display: none" name="files" class="imageFile" />
+															<input type="hidden" class="imageFilePath"> <span
+																class="imageSize"></span>
+															<!-- 이미지 크기 -->
+														</div>
+														<div>
+															<a class="original_r fl-right" target="_blank"> <img
+																class="image noimg imageView" accept="image/jpg"
+																style="width: 100px; height: 100px;"></a>
+														</div>
+													</div>
+												</td>
+											</tr>
+											<tr>
+												<td class="label"
+													th:text="${#messages.msg('brandMgmt.info.label.img3')}"></td>
+												<td colspan="3">
+													<div class="image-upload">
+														<div class="input-group file-upload ml10">
+															<input type="text" class="input disabled imageFileName"
+																name="image3" readonly> <a href="#"
+																class="button small gray btn_image_upload"><span
+																class="text"
+																th:text="${#messages.msg('adminCommon.button.select.file')}"></span></a>
+															<a href="#" class="button small gray btn_image_clear"><span
+																class="text" th:text="삭제"></span></a> <input type="file"
+																style="display: none" name="files" class="imageFile" />
+															<input type="hidden" class="imageFilePath"> <span
+																class="imageSize"></span>
+															<!-- 이미지 크기 -->
+														</div>
+														<div>
+															<a class="original_r fl-right" target="_blank"> <img
+																class="image noimg imageView" accept="image/jpg"
+																style="width: 100px; height: 100px;"></a>
+														</div>
+													</div>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</form>
+					</div>
+					<!-- //상세정보-->
+				</div>
+				<!--// 데이터 -->
+
+			</div>
+		</div>
+	</th:block>
+
+	<th:block layout:fragment="add-script">
+		<script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/brandMgmtListGrid.provider.js?20210909'"></script>
+		<script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/brandMgmtListGrid.eventHandler.js?20210909'"></script>
+		<script type="text/javascript">
+			$(function() {
+				brandMgmtListGrid.eventhandler.init();
+			});
+		</script>
+	</th:block>
+</body>
+</html>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enbiz.bo.app.repository.goods.PrPregItmOptnInfoMapper">
+    <select id="getClassifiedPregItmOptnInfoList" parameterType="java.lang.String" resultType="PrPregItmOptnInfo">
+        SELECT OPTN_CAT_NO /* prPregItmOptnInfo.getClassifiedPregItmOptnInfoList */
+             , OPTN_CAT_NM
+             , STRING_AGG(OPTN_NO,'/') AS OPTN_NO
+             , STRING_AGG(OPTN_NM,'/') AS OPTN_NM
+          FROM PR_PREG_ITM_OPTN_INFO
+         WHERE PREG_GOODS_NO = #{pregGoodsNo}
+         GROUP BY OPTN_CAT_NO, OPTN_CAT_NM
+         ORDER BY OPTN_CAT_NO
+    </select>
+</mapper>

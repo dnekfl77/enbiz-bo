@@ -1,0 +1,128 @@
+<!--
+* 프로그램명 : 전시대상 상품리뷰 조회 팝업
+* 작 성 일 : 2021.05.26
+* 작 성 자 : 권다솜
+* 수 정 자 : 홍혜리
+* 버    전 : 1.0
+* 개    요 : 전시대상 상품리뷰 조회 팝업
+* 이    력 : 2021.09.23 프레임워크 이전 - 메세지 정의 변경
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-layout}">
+<body>
+    <!--Title Area-->
+    <th:block layout:fragment="popup-title-area">
+        <th:block layout:insert="~{fragments/popup/popup-title :: popup-title}"
+                  th:with="title=${#messages.msg('displayConnectManagement.displayGoodsReviewPopup.title')}"></th:block>
+    </th:block>
+    <!--Title Area-->
+
+    <!--Search Area-->
+    <th:block layout:fragment="popup-search-area">
+        <div class="search">
+            <form name="displayGoodsReviewGridForm" id="displayGoodsReviewGridForm">
+                <table class="search-table">
+                    <colgroup>
+                        <col width="120">
+                        <col>
+                        <col width="120">
+                        <col>
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <td class="label" th:text="${#messages.msg('displayConnectManagement.displayGoodsReviewPopup.search.label.sysRegDtm')}"></td>
+                        <td>
+                            <div class="input-group">
+                                <div class="picker-group" data-lopicker="basic" id="input-2-1">
+                                    <input type="text" class="input disabled" name="startDate" id="startDate" disabled="disabled">
+                                    <span class="input-group-addon">~</span>
+                                    <input type="text" class="input disabled" name="endDate" id="endDate" disabled="disabled">
+                                    <span class="input-group-addon"><i class="icon-calendar" id="calendarButton"></i></span>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="label" th:text="${#messages.msg('displayConnectManagement.displayGoodsReviewPopup.search.label.md')}"></td>
+                        <td>
+                            <div class="input-group">
+                                <input class="input disabled w60" type="text" id="mdNm" th:readonly="true"/>
+                                <input type="hidden" id="mdId" name="mdId"/>
+                                <a href="#" class="button small" id="btn_call_md_popup"><i class="icon-sarch"></i></a>
+                                <a href="#" class="button small" id="btn_reset_md_popup"><i class="icon-clear"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label" th:text="${#messages.msg('displayConnectManagement.displayGoodsReviewPopup.search.label.goodsSearch')}"></td>
+                        <td>
+                            <div class="input-group">
+                                <select class="form-control" id="goodsSearch" name="goodsSearch">
+                                    <option value="00" th:text="상품명"></option>
+                                    <option value="01" th:text="회원ID"></option>
+                                    <option value="02" th:text="회원명"></option>
+                                </select>
+                                <input class="input inputtxt" type="text" name="goodsSearchText" id="goodsSearchText" maxlength="100"/>
+                            </div>
+                        </td>
+                        <td class="label" th:text="${#messages.msg('displayConnectManagement.displayGoodsReviewPopup.search.label.revScrVal')}"></td>
+                        <td>
+                            <select class="form-control w60" id="revScrVal" name="revScrVal">
+                                <option value="" th:text="${#messages.msg('adminCommon.entirety')}"></option>
+                                <option th:each="num : ${#numbers.sequence(1,5)}" th:value="${num}" th:text="${num}"></option>
+                            </select>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </th:block>
+    <!--Search Area-->
+
+    <!--Search Button Area-->
+    <th:block layout:fragment="popup-search-button-area">
+        <th:block layout:insert="~{fragments/popup/popup-btn :: popup-search-btn}"/>
+    </th:block>
+    <!--Search Button Area-->
+
+    <!--List Area-->
+    <th:block layout:fragment="popup-List-area">
+        <div class="grid">
+            <div class="grid-head" style="overflow: hidden;">
+                <div class="title-area">
+                    <h2 class="title" th:text="${#messages.msg('displayConnectManagement.displayGoodsReviewPopup.grid.title')}"></h2>
+                </div>
+                <div class="option-area">
+                    <div class="page-option" grid-id="displayGoodsReviewGrid"></div>
+                </div>
+            </div>
+            <div class="grid-body with-head">
+                <div class="rg-root rg-grid" id="displayGoodsReviewGrid" realgrid></div>
+            </div>
+        </div>
+    </th:block>
+    <!--List Area-->
+
+    <!--List Button Area-->
+    <th:block layout:fragment="popup-List-button-area">
+        <th:block layout:insert="~{fragments/popup/popup-btn :: popup-List-btn}"/>
+    </th:block>
+
+    <!-- Additional Script -->
+    <th:block layout:fragment="add-script">
+        <script th:inline="javascript">
+            var _defaultPage    = 0;
+            var _gridType       = 'N'
+        </script>
+        <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/displayGoodsReviewGrid.eventHandler.js?20210923'" ></script>
+        <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/displayGoodsReviewGrid.provider.js?20210923'" ></script>
+
+        <script type="text/javascript">
+            $(function() {
+                 displayGoodsReviewGrid.eventhandler.init();
+            });
+        </script>
+    </th:block>
+</body>
+</html>

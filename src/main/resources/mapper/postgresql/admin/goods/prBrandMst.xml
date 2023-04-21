@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.goods.PrBrandMstMapper">
+
+    <sql id="paginatedBase">
+        LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+    </sql>
+
+    <select id="getBrandList" parameterType="PrBrandMstRequest" resultType="PrBrandMstResponse">
+        SELECT /* PrBrandMst.getBrandList */
+               BRAND_NO
+             , BRAND_NM
+             , DISP_OPTN_CD
+             , FN_GET_CODENAME('PR025', DISP_OPTN_CD) AS DISP_OPTN_CD_NM
+             , KOR_BRAND_NM
+             , ENG_BRAND_NM
+             , KOR_SCH_NM
+             , ENG_SCH_NM
+             , SCW_1_NM
+             , SCW_2_NM
+             , SCW_3_NM
+             , CASE USE_YN WHEN 'Y' THEN '사용' ELSE '사용안함' END AS USE_YN
+             , BRAND_DESC_CMT
+             , SYS_REG_ID
+             , TO_CHAR(SYS_REG_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_REG_DTM
+             , SYS_MOD_ID
+             , TO_CHAR(SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+          FROM PR_BRAND_MST
+         WHERE BRAND_NO LIKE #{brandNo} || '%'
+           AND BRAND_NM LIKE #{brandNm} || '%'
+           AND USE_YN LIKE #{useYn} || '%'
+        <include refid="paginatedBase" />
+    </select>
+
+    <select id="getBrandListCount" parameterType="PrBrandMstRequest" resultType="java.lang.Integer">
+        SELECT /* PrBrandMst.getBrandListCount */
+            COUNT(*)
+        FROM PR_BRAND_MST
+        WHERE BRAND_NO LIKE #{brandNo} || '%'
+          AND BRAND_NM LIKE #{brandNm} || '%'
+          AND USE_YN LIKE #{useYn} || '%'
+    </select>
+
+
+    <select id="getBrandMstList" parameterType="BrandMgmtRequest" resultType="BrandMgmtResponse">
+        SELECT /* PrBrandMst.getBrandMstList */
+               BRAND_NO
+             , BRAND_NM
+             , DISP_OPTN_CD
+             , FN_GET_CODENAME('PR025', DISP_OPTN_CD) AS DISP_OPTN_CD_NM
+             , KOR_BRAND_NM
+             , ENG_BRAND_NM
+             , KOR_SCH_NM
+             , ENG_SCH_NM
+             , SCW_1_NM
+             , SCW_2_NM
+             , SCW_3_NM
+             , USE_YN
+             , CASE USE_YN WHEN 'Y' THEN '사용' ELSE '사용안함' END AS USE_YN_NM
+             , BRAND_DESC_CMT
+             , SYS_REG_ID
+             , TO_CHAR(SYS_REG_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_REG_DTM
+             , SYS_MOD_ID
+             , TO_CHAR(SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+          FROM PR_BRAND_MST
+         WHERE BRAND_NO LIKE #{brandNo} || '%'
+           AND BRAND_NM LIKE #{brandNm} || '%'
+         ORDER BY SYS_MOD_DTM DESC
+    </select>
+
+    <select id="getBrandImgList" parameterType="BrandMgmtRequest" resultType="BrandMgmtImageResponse">
+        SELECT /* PrBrandMst.getBrandImgList */
+               BRAND_NO
+             , IMG_NO
+             , IMG_SIZE_CD
+             , IMG_ROUTE_NM
+             , IMG_FILE_NM
+          FROM PR_BRAND_IMG
+         WHERE BRAND_NO LIKE #{brandNo} || '%'
+    </select>
+
+</mapper>

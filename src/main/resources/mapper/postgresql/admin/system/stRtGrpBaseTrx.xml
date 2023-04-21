@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.system.StRtGrpBaseTrxMapper">
+
+	<insert id="insertStRtGrpBase"  parameterType="stRtGrpBase">
+		INSERT INTO ST_RT_GRP_BASE ( /* StRtGrpBase.insertStRtGrpBase */
+				  RT_GRP_NO
+				, SYS_GB_CD
+				, RT_GRP_NM
+				, APLY_STR_DT
+				, APLY_END_DT
+				, USE_YN
+				, SYS_REG_ID
+				, SYS_REG_DTM
+				, SYS_MOD_ID
+				, SYS_MOD_DTM
+		) VALUES (
+				  NEXTVAL('ST_RT_GRP_BASE_SQ01')
+				, #{sysGbCd}
+				, #{rtGrpNm}
+				, TO_CHAR(TO_TIMESTAMP(#{aplyStrDt}, 'YYYY-MM-DD'), 'YYYYMMDD')
+				, TO_CHAR(TO_TIMESTAMP(#{aplyEndDt}, 'YYYY-MM-DD'), 'YYYYMMDD')
+				, #{useYn}
+				, #{sysRegId}
+				, now()
+				, #{sysRegId}
+				, now()
+		)
+	</insert>
+
+	<update id="updateStRtGrpBase"  parameterType="stRtGrpBase">
+		UPDATE ST_RT_GRP_BASE  /*  StRtGrpBase.updateStRtGrpBase */
+		SET
+			  SYS_GB_CD = #{sysGbCd}
+			, RT_GRP_NM = #{rtGrpNm}
+			, APLY_STR_DT = TO_CHAR(TO_TIMESTAMP(#{aplyStrDt}, 'YYYY-MM-DD'), 'YYYYMMDD')
+			, APLY_END_DT = TO_CHAR(TO_TIMESTAMP(#{aplyEndDt}, 'YYYY-MM-DD'), 'YYYYMMDD')
+			, USE_YN = #{useYn}
+			, SYS_MOD_ID = #{sysModId}
+			, SYS_MOD_DTM = now()
+		WHERE RT_GRP_NO = #{rtGrpNo}
+	</update>
+
+</mapper>

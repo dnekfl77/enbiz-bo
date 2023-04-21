@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enbiz.bo.app.repository.goods.PrOptnCdTrxMapper">
+    <insert id="insertPrOptnCd" parameterType="PrOptnCd">
+        <selectKey keyProperty="optnNo" resultType="String" order="BEFORE">
+            SELECT COALESCE(MAX(OPTN_NO::INTEGER), 0) + 1 as optnNo
+            FROM PR_OPTN_CD
+            WHERE OPTN_CAT_NO = #{optnCatNo}
+        </selectKey>
+        INSERT INTO PR_OPTN_CD /* prOptnCdTrs.insertPrOptnCd */
+        (
+              OPTN_CAT_NO
+            , OPTN_NO
+            , OPTN_NM
+            , SORT_SEQ
+            , USE_YN
+            , SYS_REG_ID
+            , SYS_REG_DTM
+            , SYS_MOD_ID
+            , SYS_MOD_DTM
+        )
+        VALUES(
+              #{optnCatNo}
+            , #{optnNo}
+            , #{optnNm}
+            , #{sortSeq}
+            , #{useYn}
+            , #{sysRegId}
+            , now()
+            , #{sysRegId}
+            , now()
+        )
+    </insert>
+
+    <update id="updatePrOptnCd" parameterType="PrOptnCd">
+        UPDATE PR_OPTN_CD /* prOptnCdTrs.updatePrOptnCd */
+           SET OPTN_NM		= #{optnNm}
+             , SORT_SEQ		= #{sortSeq}
+             , USE_YN		= #{useYn}
+             , SYS_MOD_ID	= #{sysModId}
+             , SYS_MOD_DTM	= now()
+         WHERE OPTN_CAT_NO	= #{optnCatNo}
+           AND OPTN_NO		= #{optnNo}
+    </update>
+</mapper>
+
+

@@ -1,0 +1,152 @@
+<!--
+* 프로그램명 : 배송정보
+* 작 성 일 : 2021.03.25
+* 작 성 자 : 홍혜리
+* 수 정 자 : 홍혜리
+* 버    전 : 1.0
+* 개    요 : 배송정보
+* 이    력 : 2021.10.12 프레임워크 이전
+-->
+<!DOCTYPE html>
+<html lang="ko-KR"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<body>
+    <th:block layout:fragment="goods-deliveryInfo">
+        <div class="data">
+            <div class="data-head">
+                <div class="left">
+                    <span class="title" th:text="${#messages.msg('generalGoods.deliveryInfo.title')}"></span>
+                </div>
+                <div class="right">
+                  <span class="data-toggle">
+                    <button type="button" class="toggle-button"><span>닫힘</span></button>
+                  </span>
+                </div>
+            </div>
+
+            <div class="data-body">
+                <form id="deliveryInfo" name="deliveryInfo">
+                    <table class="data-table fixed">
+                        <colgroup>
+                            <col width="130">
+                            <col>
+                            <col width="130">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                        <tr>
+                            <!-- 배송처리유형 -->
+                            <td class="label" th:text="${#messages.msg('generalGoods.deliveryInfo.label.deliProcType')}"></td>
+                            <td>
+                                <select class="form-control w30" name="deliProcTypCd" id="deliProcTypCd" disabled>
+                                    <option value="" th:text="${#messages.msg('adminCommon.select')}"/>
+                                    <option th:each="code : ${codeList.PR008}" th:value="${code?.cd}" th:utext="${code?.cdNm}"></option>
+                                </select>
+                            </td>
+                            <!-- 배송상품구분 -->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.deliveryInfo.label.deliGoodsGubun')}"></strong></td>
+                            <td>
+                                <select class="form-control w30" id="deliGoodsGbCd" name="deliGoodsGbCd">
+                                    <option value="" th:text="${#messages.msg('adminCommon.select')}"/>
+                                    <option th:each="code : ${codeList.PR010}" th:value="${code?.cd}" th:utext="${code?.cdNm}"></option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <!-- 배송수단 -->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.deliveryInfo.label.deliWay')}"></strong></td>
+                            <td>
+                                <select class="form-control w30" name="deliWayCd" id="deliWayCd">
+                                    <option value="" th:text="${#messages.msg('adminCommon.select')}"/>
+                                    <option th:each="code : ${codeList.PR009}" th:value="${code?.cd}" th:utext="${code?.cdNm}"></option>
+                                </select>
+                            </td>
+                            <!-- 배송비/반품비 -->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.deliveryInfo.label.dlvRtnEx')}"></strong></td>
+                            <td>
+                                <select class="form-control w30" name="deliPolcNo" id="deliPolcNo">
+                                    <option value="" th:text="${#messages.msg('adminCommon.select')}"/>
+                                    <option th:if="${deliPolcList != null }" th:each="deliPolc : ${deliPolcList}" th:value="${deliPolc?.deliPolcNo}" th:utext="${deliPolc?.dispDlexAmt}"></option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <!-- 발송예정일 -->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.deliveryInfo.label.sndFcstDd')}"></strong></td>
+                            <td colspan="3">
+                                <select class="form-control w10" id="deliDday" name="deliDday">
+                                    <option value="" th:text="${#messages.msg('adminCommon.select')}"/>
+                                </select>
+                                <section id="deliDdayDetail" style="display:none">
+                                    <input type="hidden" name="tdaySndPsbYn" id="tdaySndPsbYn" value="N">
+                                    <div class="input-group mt5 block">
+                                        <em>평일</em>
+                                        <th:block th:with="time=${T(com.enbiz.bo.base.util.BindingUtil).selectTimeUtil()}">
+                                            <select class="form-control" id="tdaySndHour">
+                                                <option th:each="list : ${time[0]}" th:value="${list}" th:utext="${list}"></option>
+                                            </select>
+                                            <em>시</em>
+                                            <select class="form-control" id="tdaySndMinute">
+                                                <option th:each="list : ${time[1]}" th:value="${list}" th:utext="${list}"></option>
+                                            </select>
+                                        </th:block>
+                                        <em>분까지 주문완료건 당일 발송 처리</em>
+                                    </div>
+                                    <div class="input-group block">
+                                        <em>토요일 발송 가능 여부</em>
+                                        <label class="radio-inline"><input type="radio" name="sdaySndPsbYn" value="Y" th:text="${#messages.msg('adminCommon.possible.y')}"></label>
+                                        <label class="radio-inline"><input type="radio" name="sdaySndPsbYn" value="N" th:text="${#messages.msg('adminCommon.possible.n')}" checked="checked"></label>
+                                    </div>
+                                    <div class="input-group block" id="sdaySndDetail" style="display:none">
+                                        <em>토요일</em>
+                                        <th:block th:with="time=${T(com.enbiz.bo.base.util.BindingUtil).selectTimeUtil()}">
+                                            <select class="form-control" id="sdaySndHour">
+                                                <option th:each="list : ${time[0]}" th:value="${list}" th:utext="${list}"></option>
+                                            </select>
+                                            <em>시</em>
+                                            <select class="form-control" id="sdaySndMinute">
+                                                <option th:each="list : ${time[1]}" th:value="${list}" th:utext="${list}"></option>
+                                            </select>
+                                            <em>분</em>
+                                        </th:block>
+                                    </div>
+                                </section>
+                            </td>
+                        </tr>
+                        <tr>
+                            <!-- 묶음배송여부 -->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.deliveryInfo.label.bdlDeliPsbYn')}"></strong></td>
+                            <td>
+                                <label class="radio-inline"><input type="radio" name="bdlDeliPsbYn" value="Y" th:text="${#messages.msg('adminCommon.possible.y')}" checked="checked"></label>
+                                <label class="radio-inline"><input type="radio" name="bdlDeliPsbYn" value="N" th:text="${#messages.msg('adminCommon.possible.n')}" ></label>
+                            </td>
+                            <!-- 묶음반품가능여부 -->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.deliveryInfo.label.bdlRtnPsbYn')}"></strong></td>
+                            <td>
+                                <label class="radio-inline"><input type="radio" name="bdlRtnPsbYn" value="Y" th:text="${#messages.msg('adminCommon.possible.y')}" checked="checked"></label>
+                                <label class="radio-inline"><input type="radio" name="bdlRtnPsbYn" value="N" th:text="${#messages.msg('adminCommon.possible.n')}" ></label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <!-- 반품가능여부 -->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.deliveryInfo.label.rtnPsbYn')}"></strong></td>
+                            <td>
+                                <label class="radio-inline"><input type="radio" name="rtnPsbYn" value="Y" th:text="${#messages.msg('adminCommon.possible.y')}" checked="checked"></label>
+                                <label class="radio-inline"><input type="radio" name="rtnPsbYn" value="N" th:text="${#messages.msg('adminCommon.possible.n')}"></label>
+                            </td>
+                            <!-- 교환가능여부 -->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.deliveryInfo.label.exchPsbYn')}"></strong></td>
+                            <td>
+                                <label class="radio-inline"><input type="radio" name="exchPsbYn" value="Y" th:text="${#messages.msg('adminCommon.possible.y')}" checked="checked"></label>
+                                <label class="radio-inline"><input type="radio" name="exchPsbYn" value="N" th:text="${#messages.msg('adminCommon.possible.n')}"></label>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </div>
+    </th:block>
+</body>
+</html>

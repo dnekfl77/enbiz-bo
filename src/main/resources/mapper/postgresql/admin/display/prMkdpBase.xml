@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.display.PrMkdpBaseMapper">
+
+	<sql id="prMkdpBaseList">
+		<![CDATA[
+		SELECT 				/* PrMkdpBaseMapper.prMkdpBaseList */
+				  PMB.MKDP_NO
+				, PMB.MKDP_NM
+				, PMB.SITE_NO
+				, PMB.MKDP_TYP_CD
+				, FN_GET_CODENAME( 'DP008', PMB.MKDP_TYP_CD ) AS  MKDP_TYP_NM
+				, PMB.TMPL_NO
+				, PMB.DISP_YN
+				, CASE
+						WHEN PMB.DISP_STR_DTM >  NOW()	AND PMB.DISP_END_DTM > 	NOW() 	THEN '10'
+						WHEN PMB.DISP_STR_DTM <= NOW()	AND PMB.DISP_END_DTM >= NOW() 	THEN '20'
+						WHEN PMB.DISP_STR_DTM <	 NOW() 	AND PMB.DISP_END_DTM <	NOW()	THEN '30'
+					END AS DISP_STAT
+				, CASE
+						WHEN PMB.DISP_STR_DTM >  NOW()	AND PMB.DISP_END_DTM > 	NOW() 	THEN '준비중'
+						WHEN PMB.DISP_STR_DTM <= NOW()	AND PMB.DISP_END_DTM >= NOW() 	THEN '진행중'
+						WHEN PMB.DISP_STR_DTM <	 NOW() 	AND PMB.DISP_END_DTM <	NOW()	THEN '종료'
+					END AS DISP_STAT_NAME
+				, PMB.DISP_SEQ
+				, TO_CHAR(PMB.DISP_STR_DTM,'YYYY-MM-DD HH24:MI:SS') AS DISP_STR_DTM
+				, TO_CHAR(PMB.DISP_END_DTM,'YYYY-MM-DD HH24:MI:SS') AS DISP_END_DTM
+				, PMB.MKDP_LIST_PRT_CNT
+				, PMB.MD_ID
+				, SUB2.USER_NM AS MD_NM
+				, PMB.MKDP_TTL_HTML
+				, PMB.KWD_1_NM
+				, PMB.KWD_2_NM
+				, PMB.KWD_3_NM
+				, PMB.SYS_REG_ID
+				, TO_CHAR(PMB.SYS_REG_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_REG_DTM
+				, PMB.SYS_MOD_ID
+				, TO_CHAR(PMB.SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+		FROM 	  PR_MKDP_BASE PMB
+				, ST_USER_BASE SUB1
+				, ST_USER_BASE SUB2
+		]]>
+		<where>
+			AND SUB1.USER_ID = PMB.SYS_REG_ID
+			AND SUB2.USER_ID = PMB.MD_ID
+			<if test="dispStat == '10'"><!-- 준비중 -->
+				AND PMB.DISP_STR_DTM <![CDATA[ > ]]> NOW()	-- 전시시작일시
+				AND PMB.DISP_END_DTM <![CDATA[ > ]]> NOW()	-- 전시종료일시
+			</if>
+			<if test="dispStat == '20'"><!-- 진행중 -->
+				AND PMB.DISP_STR_DTM <![CDATA[ <= ]]> NOW()	-- 전시시작일시
+				AND PMB.DISP_END_DTM <![CDATA[ >= ]]> NOW()	-- 전시종료일시
+			</if>
+			<if test="dispStat == '30'"><!-- 종료 -->
+				AND PMB.DISP_STR_DTM <![CDATA[ < ]]> NOW()	-- 전시시작일시
+				AND PMB.DISP_END_DTM <![CDATA[ < ]]> NOW()	-- 전시종료일시
+			</if>
+			AND PMB.DISP_STR_DTM <![CDATA[ >= ]]> TO_TIMESTAMP(#{startDate}||'000000', 'YYYYMMDDHH24MISS')
+			AND	PMB.DISP_END_DTM <![CDATA[ <= ]]> TO_TIMESTAMP(#{endDate}||'235959', 'YYYYMMDDHH24MISS')
+			AND PMB.MKDP_TYP_CD	LIKE 	#{mkdpTypCd}  	|| '%'
+			AND PMB.MKDP_NO		LIKE 	#{mkdpNo}  		|| '%'
+			AND PMB.MKDP_NM		LIKE  	#{mkdpNm}		|| '%'
+			AND PMB.MD_ID		LIKE 	#{mdId}  		|| '%'
+			AND PMB.SYS_REG_ID	LIKE 	#{userId}  		|| '%'
+			AND PMB.DISP_YN		LIKE 	#{dispYn}  		|| '%'
+
+		</where>
+		ORDER BY PMB.DISP_SEQ ASC
+
+	</sql>
+
+	<select id="getPrMkdpBaseList" parameterType="PrMkdpBaseRequest" resultType="PrMkdpBaseResponse">
+		<include refid="prMkdpBaseList" />
+	</select>
+
+	<select id="getPrMkdpBaseListCount" parameterType="PrMkdpBaseRequest" resultType="java.lang.Integer">
+		SELECT   /* PrMkdpBaseMapper.getPrMkdpBaseListCount */
+		COUNT(*)
+		FROM (
+		<include refid="prMkdpBaseList" />
+		) T1
+	</select>
+
+	<insert id="insertPrMkdpBase" parameterType="PrMkdpBase">
+		<selectKey keyProperty="mkdpNo" resultType="String" order="BEFORE">
+			SELECT NEXTVAL('PR_MKDP_BASE_SQ01') AS mkdpNo
+		</selectKey>
+		INSERT INTO PR_MKDP_BASE (  /* PrMkdpBaseMapper.insertPrMkdpBase */
+				  MKDP_NO
+				, MKDP_NM
+				, SITE_NO
+				, MKDP_TYP_CD
+				, TMPL_NO
+				, DISP_YN
+				, DISP_SEQ
+				, DISP_STR_DTM
+				, DISP_END_DTM
+				, MKDP_LIST_PRT_CNT
+				, MD_ID
+				, MKDP_TTL_HTML
+				, KWD_1_NM
+				, KWD_2_NM
+				, KWD_3_NM
+				, SYS_REG_ID
+				, SYS_REG_DTM
+				, SYS_MOD_ID
+				, SYS_MOD_DTM
+		) VALUES (
+				  #{mkdpNo}
+				, #{mkdpNm}
+				, #{siteNo}
+				, #{mkdpTypCd}
+				, #{tmplNo}
+				, #{dispYn}
+				, #{dispSeq}
+				, TO_TIMESTAMP(#{dispStrDtm}, 'YYYY-MM-DD HH24:MI:SS')
+				, TO_TIMESTAMP(#{dispEndDtm}, 'YYYY-MM-DD HH24:MI:SS')
+				, #{mkdpListPrtCnt}
+				, #{mdId}
+				, #{mkdpTtlHtml}
+				, #{kwd1Nm}
+				, #{kwd2Nm}
+				, #{kwd3Nm}
+				, #{sysRegId}
+				, now()
+				, #{sysModId}
+				, now()
+		)
+	</insert>
+
+	<update id="updatePrMkdpBase" parameterType="PrMkdpBase">
+		UPDATE 	PR_MKDP_BASE                  /* PrMkdpBaseMapper.updatePrMkdpBase */
+		SET 	  MKDP_NM            	= #{mkdpNm}
+				, SITE_NO            	= #{siteNo}
+				, MKDP_TYP_CD        	= #{mkdpTypCd}
+				, TMPL_NO            	= #{tmplNo}
+				, DISP_YN            	= #{dispYn}
+				, DISP_SEQ           	= #{dispSeq}
+				, DISP_STR_DTM          = TO_TIMESTAMP(#{dispStrDtm}, 'YYYY-MM-DD HH24:MI:SS')
+				, DISP_END_DTM          = TO_TIMESTAMP(#{dispEndDtm}, 'YYYY-MM-DD HH24:MI:SS')
+				, MKDP_LIST_PRT_CNT     = #{mkdpListPrtCnt}
+				, MD_ID                 = #{mdId}
+				, MKDP_TTL_HTML         = #{mkdpTtlHtml}
+				, KWD_1_NM              = #{kwd1Nm}
+				, KWD_2_NM              = #{kwd2Nm}
+				, KWD_3_NM              = #{kwd3Nm}
+				, SYS_MOD_ID 	= #{sysModId}
+				, SYS_MOD_DTM 	= now()
+		WHERE 	MKDP_NO = #{mkdpNo}
+	</update>
+
+	<update id="updatePrMkdpBaseList" parameterType="PrMkdpBase">
+		UPDATE 	PR_MKDP_BASE                  /* PrMkdpBaseMapper.updatePrMkdpBaseList */
+		SET
+				  DISP_YN            	= #{dispYn}
+				, DISP_SEQ           	= #{dispSeq}
+				, DISP_STR_DTM          = TO_TIMESTAMP(#{dispStrDtm}, 'YYYY-MM-DD HH24:MI:SS')
+				, DISP_END_DTM          = TO_TIMESTAMP(#{dispEndDtm}, 'YYYY-MM-DD HH24:MI:SS')
+				, SYS_MOD_ID 	= #{sysModId}
+				, SYS_MOD_DTM 	= now()
+		WHERE 	MKDP_NO = #{mkdpNo}
+	</update>
+
+	<delete id="deletePrMkdpBase" parameterType="PrMkdpBase">
+		DELETE                  /* PrMkdpBaseMapper.deletePrMkdpBase */
+		FROM 	PR_MKDP_BASE
+		WHERE 	MKDP_NO = #{mkdpNo}
+	</delete>
+
+	<insert id="insertPrDispImgInfo" parameterType="PrDispImgInfo">
+		<selectKey keyProperty="imgSn" resultType="String" order="BEFORE">
+			SELECT COALESCE(MAX(IMG_SN::INTEGER), 0) + 1 AS imgSn
+			FROM PR_DISP_IMG_INFO
+		</selectKey>
+		INSERT INTO PR_DISP_IMG_INFO (  /* PrMkdpBaseMapper.insertPrDispImgInfo */
+				  DISP_SHOP_GB_CD
+				, SHOP_CTG_NO
+				, IMG_TYP_CD
+				, IMG_SN
+				, BNR_IMG_PATH_NM
+				, BNR_IMG_FILE_NM
+				, LINK_URL_ADDR
+				, SYS_REG_ID
+				, SYS_REG_DTM
+				, SYS_MOD_ID
+				, SYS_MOD_DTM
+		) VALUES (
+				  #{dispShopGbCd}
+				, #{shopCtgNo}
+				, #{imgTypCd}
+				, #{imgSn}
+				, #{bnrImgPathNm}
+				, #{bnrImgFileNm}
+				, #{linkUrlAddr}
+				, #{sysRegId}
+				, now()
+				, #{sysModId}
+				, now()
+		)
+	</insert>
+
+	<delete id="deletePrDispImgInfo" parameterType="PrDispImgInfo">
+		DELETE                  /* PrMkdpBaseMapper.deletePrDispImgInfo */
+		FROM 	PR_DISP_IMG_INFO
+		WHERE 	DISP_SHOP_GB_CD = #{dispShopGbCd}
+		AND 	SHOP_CTG_NO = #{shopCtgNo}
+		AND 	IMG_TYP_CD = #{imgTypCd}
+	</delete>
+
+	<delete id="deletePrMkdpDivobjInfoForPrMkdpBase" parameterType="PrMkdpBase">
+		DELETE                  /* PrMkdpBaseMapper.deletePrMkdpDivobjInfoForPrMkdpBase */
+		FROM 	PR_MKDP_DIVOBJ_INFO
+		WHERE 	MKDP_NO = #{mkdpNo}
+	</delete>
+
+	<delete id="deletePrMkdpGoodsInfoForPrMkdpBase" parameterType="PrMkdpBase">
+		DELETE                  /* PrMkdpBaseMapper.deletePrMkdpGoodsInfoForPrMkdpBase */
+		FROM 	PR_MKDP_GOODS_INFO
+		WHERE 	MKDP_NO = #{mkdpNo}
+	</delete>
+
+	<delete id="deletePrDispGrpMappInfoForPrMkdpBase" parameterType="PrMkdpBase">
+		DELETE                  /* PrMkdpBaseMapper.deletePrDispGrpMappInfoForPrMkdpBase */
+		FROM 	PR_DISP_GRP_MAPP_INFO
+		WHERE 	DISP_GRP_TYP_CD = '01'
+		AND 	DISP_SHOP_GB_CD = '02'
+		AND 	SHOP_CTG_NO = #{mkdpNo}
+	</delete>
+
+	<delete id="deletePrDispImgInfoForPrMkdpBase" parameterType="PrMkdpBase">
+		DELETE                  /* PrMkdpBaseMapper.deletePrDispImgInfoForPrMkdpBase */
+		FROM 	PR_DISP_IMG_INFO
+		WHERE 	DISP_SHOP_GB_CD = '01'
+		AND 	SHOP_CTG_NO = #{mkdpNo}
+	</delete>
+
+	<select id="getPrMkdpBaseDetail" parameterType="PrMkdpBaseRequest" resultType="PrMkdpBaseResponse">
+		<![CDATA[
+		SELECT   			/* PrMkdpBaseMapper.getPrMkdpBaseDetail */
+				  PMB.MKDP_NO
+				, PMB.SITE_NO
+				, PMB.MKDP_TYP_CD
+				, PMB.MKDP_NM
+				, PMB.MD_ID
+				, SUB.USER_NM AS MD_NM
+				, PMB.DISP_SEQ
+				, PMB.MKDP_LIST_PRT_CNT
+				, PMB.DISP_YN
+				, PMB.TMPL_NO
+				, PTB.TMPL_NM
+				, PTB.TMPL_PATH_NM
+				, CASE
+						WHEN PMB.DISP_STR_DTM >  NOW()	AND PMB.DISP_END_DTM > 	NOW() 	THEN '10'
+						WHEN PMB.DISP_STR_DTM <= NOW()	AND PMB.DISP_END_DTM >= NOW() 	THEN '20'
+						WHEN PMB.DISP_STR_DTM <	 NOW() 	AND PMB.DISP_END_DTM <	NOW()	THEN '30'
+					END AS DISP_STAT
+				, TO_CHAR(PMB.DISP_STR_DTM,'YYYY-MM-DD HH24:MI:SS') AS DISP_STR_DTM
+				, TO_CHAR(PMB.DISP_END_DTM,'YYYY-MM-DD HH24:MI:SS') AS DISP_END_DTM
+				, PMB.MKDP_TTL_HTML
+				, PMB.KWD_1_NM
+				, PMB.KWD_2_NM
+				, PMB.KWD_3_NM
+				, PMB.SYS_MOD_ID
+				, TO_CHAR(PMB.SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+		FROM 	  PR_MKDP_BASE PMB
+				, ST_USER_BASE SUB
+				, PR_TMPL_BASE PTB
+		]]>
+		WHERE 	SUB.USER_ID = PMB.MD_ID
+		AND 	PTB.TMPL_NO = PMB.TMPL_NO
+		AND 	PMB.MKDP_NO = #{mkdpNo}
+	</select>
+
+	<select id="getPrDispImgInfoDetail" parameterType="PrMkdpBaseRequest" resultType="PrDispImgInfoResponse">
+		SELECT /* PrMkdpBaseMapper.getPrDispImgInfoDetail */
+				  DISP_SHOP_GB_CD
+				, SHOP_CTG_NO
+				, IMG_TYP_CD
+				, BNR_IMG_PATH_Nm
+				, BNR_IMG_FILE_Nm
+				, IMG_SN
+		FROM 	PR_DISP_IMG_INFO
+		WHERE 	SHOP_CTG_NO = #{mkdpNo}
+		AND 	DISP_SHOP_GB_CD = '01'
+	</select>
+
+	<select id="getPrTmplBase" resultType="PrMkdpDivobjInfoResponse">
+		SELECT   			/* PrMkdpBaseMapper.getPrTmplBase */
+				  TMPL_NO AS CD
+				, TMPL_NM AS CD_NM
+		FROM 	  PR_TMPL_BASE
+		WHERE     TMPL_TYP_CD = '09'
+	</select>
+
+	<sql id="prMkdpDivObjInfoList">
+		SELECT 				/* PrMkdpBaseMapper.prMkdpDivObjInfoList */
+				  PMDI.MKDP_NO
+				, PMDI.DIVOBJ_NO
+				, PMDI.DIVOBJ_NM
+				, PMDI.DISP_YN
+				, PMDI.DISP_SEQ
+				, PMDI.TMPL_NO
+		FROM 	  PR_MKDP_DIVOBJ_INFO PMDI
+		WHERE 	  PMDI.MKDP_NO = #{mkdpNo}
+		ORDER BY  PMDI.DISP_SEQ ASC
+	</sql>
+
+	<select id="getPrMkdpDivObjInfoList" parameterType="PrMkdpBaseRequest" resultType="PrMkdpDivobjInfoResponse">
+		<include refid="prMkdpDivObjInfoList" />
+	</select>
+
+	<select id="getPrMkdpDivObjInfoListCount" parameterType="PrMkdpBaseRequest" resultType="java.lang.Integer">
+		SELECT   /* PrMkdpBaseMapper.getPrMkdpDivObjInfoListCount */
+		COUNT(*)
+		FROM (
+		<include refid="prMkdpDivObjInfoList" />
+		) T1
+	</select>
+
+</mapper>
+
+

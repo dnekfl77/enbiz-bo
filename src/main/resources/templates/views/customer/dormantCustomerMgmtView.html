@@ -1,0 +1,148 @@
+<!--
+* 프로그램명 : 휴면회원관리
+* 작 성 일 : 2021.02.23
+* 작 성 자 : 박남훈
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 휴면회원관리 UI
+* 이    력 :
+-->
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/page-realgrid-layout}">
+<head>
+    <title>휴면 회원 관리</title>
+</head>
+<body>
+<th:block layout:fragment="page-title-area">
+    <div class="page-title">
+        <div class="left">
+            <h1 th:text="${#messages.msg('dormantCustomerInquiry.dormantCustomerManagementView.title')}">휴면회원 조회</h1>
+        </div>
+    </div>
+</th:block>
+
+<th:block layout:fragment="page-contents">
+    <!-- page-fixed -->
+    <div class="page-fixed with-title">
+        <!-- search-cont -->
+        <!-- page-title 가 있을경우 with-title 클래스 추가 -->
+        <div class="search-cont full-height">
+            <!-- search -->
+            <div class="search">
+<form name="dormantCustomerSearchGridForm" id="dormantCustomerSearchGridForm">
+    <table class="search-table">
+    <colgroup>
+        <col width="120">
+        <col>
+        <col width="120">
+        <col>
+        <col width="120">
+        <col>
+    </colgroup>
+    <tbody>
+    <tr>
+        <td class="label">
+            <strong th:text="${#messages.msg('dormantCustomerInquiry.dormantCustomerManagementView.search.label.sysRegDtmFromTo')}">휴면전환일자</strong>
+        </td>
+        <td>
+            <div class="input-group">
+                <div class="picker-group">
+                    <input type="text" class="form-control disabled" readonly
+                           name="condxSysRegDtmStt" id="condxSysRegDtmStt">
+                    <span class="input-group-addon">~</span>
+                    <input type="text" class="form-control disabled" readonly
+                           name="condxSysRegDtmEnd" id="condxSysRegDtmEnd">
+                    <span class="input-group-addon"><i class="icon-calendar" id="btnCalendar"></i></span>
+                </div>
+                <label>
+                    <input class="checkbox-inline ml10" type="checkbox"
+                           name="condxSysRegDtmAll" id="condxSysRegDtmAll"
+                           th:text="${#messages.msg('dormantCustomerInquiry.dormantCustomerManagementView.search.label.sysRegDtmAll')}">
+                </label>
+            </div>
+
+        </td>
+        <td class="label"
+            th:text="${#messages.msg('dormantCustomerInquiry.dormantCustomerManagementView.search.label.loginId')}">회원ID
+        </td>
+        <td><input type="text" class="input" name="condxLoginId" id="condxLoginId"></td>
+        <td class="label"
+            th:text="${#messages.msg('dormantCustomerInquiry.dormantCustomerManagementView.search.label.mbrNm')}">회원명
+        </td>
+        <td><input type="text" class="input" name="condxMbrNm" id="condxMbrNm"></td>
+    </tr>
+    <tr>
+        <td class="label"
+            th:text="${#messages.msg('dormantCustomerInquiry.dormantCustomerManagementView.search.label.telNo')}">전화번호</td>
+        <td>
+            <input type="text" value="" class="input" name="condxTelNo" id="condxTelNo">
+        </td>
+        <td class="label"
+            th:text="${#messages.msg('dormantCustomerInquiry.dormantCustomerManagementView.search.label.cellNo')}">휴대폰번호
+        </td>
+        <td>
+            <input type="text" value="" class="input" name="condxCellNo" id="condxCellNo">
+        </td>
+        <td></td>
+    </tr>
+</table>
+</form>
+            </div>
+            <!-- //search -->
+
+            <!-- search-btn -->
+            <div class="button-group search-btn">
+<a href="#" class="button white" id="btnInitialize">
+    <span class="text" th:text="${#messages.msg('dormantCustomerInquiry.dormantCustomerManagementView.search.button.initialize')}"></span>
+</a>
+<a href="#" class="button dark" id="btnSearch">
+    <span class="text" th:text="${#messages.msg('dormantCustomerInquiry.dormantCustomerManagementView.search.button.search')}"></span>
+</a>
+            </div>
+            <!-- //search-btn -->
+
+            <!-- grid -->
+            <div class="grid-cont">
+<div class="grid" style="overflow: hidden;">
+    <div class="grid-head">
+        <div class="title-area">
+            <h2 class="title" th:text="${#messages.msg('dormantCustomerInquiry.dormantCustomerManagementView.result.title')}">휴면회원 목록</h2>
+        </div>
+        <div class="option-area">
+            <div class="page-option" grid-id="dormantCustomerSearchResultGrid" />
+        </div>
+    </div>
+    <div class="grid-body with-head">
+        <div class="rg-root rg-grid" id="dormantCustomerSearchResultGrid" realgrid></div>
+    </div>
+</div>
+            </div>
+            <!-- //grid -->
+        </div>
+        <!-- //search-cont -->
+    </div>
+    <!-- //page-fixed -->
+</th:block>
+
+<th:block layout:fragment="add-script">
+
+    <script th:inline="javascript">
+    /*<![CDATA[*/
+    /*]]>*/
+    </script>
+
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'customer/dormantCustomerSearchResultGrid.provider.js'"></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'customer/dormantCustomerSearchResultGrid.eventHandler.js'"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            dormantCustomerSearchResultGrid.eventhandler.initialize();
+        });
+    </script>
+
+</th:block>
+</body>
+</html>

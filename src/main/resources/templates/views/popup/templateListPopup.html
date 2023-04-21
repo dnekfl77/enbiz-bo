@@ -1,0 +1,119 @@
+<!--
+* 프로그램명 : 템플릿 조회 팝업
+* 작 성 일 : 2021.02.22
+* 작 성 자 : 권다솜
+* 수 정 자 : 홍혜리
+* 버    전 : 1.0
+* 개    요 : 템플릿 조회 팝업 UI
+* 이    력 : 2021.08.02 단일선택시 적용방식 수정
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-layout}">
+<body>
+    <!--Title Area-->
+    <th:block layout:fragment="popup-title-area">
+        <th:block layout:insert="~{fragments/popup/popup-title :: popup-title}"
+                  th:with="title=${#messages.msg('baseInfoMgmt.label.popup.templateListPopup.title')}"></th:block>
+    </th:block>
+    <!--Title Area-->
+
+    <!--Search Area-->
+    <th:block layout:fragment="popup-search-area">
+            <div class="search">
+                <form name="tmplGridForm" id="tmplGridForm">
+                    <table class="search-table">
+                        <colgroup>
+                            <col style="width:15%;" />
+                            <col style="width:35%;" />
+                            <col style="width:15%;" />
+                            <col style="width:35%;" />
+                        </colgroup>
+                        <tbody>
+                        <tr>
+                            <td class="label" th:text="${#messages.msg('baseInfoMgmt.label.popup.templateListPopup.search.label.tmplNumNo')}"></td>
+                            <td>
+                                <div class="input-group w100">
+                                    <input class="input w30" type="text" name="tmplNo" id="tmplNo" maxlength="7"/>
+                                    <input class="input w60" type="text" name="tmplNm" id="tmplNm" maxlength="200"/>
+                                </div>
+                            </td>
+                            <td class="label" th:text="${#messages.msg('baseInfoMgmt.label.popup.templateListPopup.search.label.tmplTypCd')}"></td>
+                            <td>
+                                <select class="form-control w80" id="tmplTypCd" name="tmplTypCd">
+                                    <th:block th:if="${requestData.argTmplTypCd} == '' ">
+                                        <option value="" th:text="${#messages.msg('baseInfoMgmt.label.full')}"></option>
+                                        <option th:each="list : ${codeList.DP004}"
+                                                th:value="${list.cd}"
+                                                th:text="${list.cdNm}"></option>
+                                    </th:block>
+                                    <th:block th:unless="${requestData.argTmplTypCd} == '' ">
+                                        <option th:each="list : ${codeList.DP004}"
+                                                th:value="${list.cd}"
+                                                th:text="${list.cdNm}"
+                                                th:if="${list.cd}==${requestData.argTmplTypCd}"></option>
+                                    </th:block>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label" th:text="${#messages.msg('baseInfoMgmt.label.popup.templateListPopup.search.label.use_yn')}"></td>
+                            <td colspan="3">
+                                <select class="form-control w20" id="useYn" name="useYn">
+                                    <option value="" th:text="${#messages.msg('baseInfoMgmt.label.full')}"></option>
+                                    <option value="Y" th:text="${#messages.msg('baseInfoMgmt.label.use')}"></option>
+                                    <option value="N" th:text="${#messages.msg('baseInfoMgmt.label.disuse')}"/></option>
+                                </select>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+    </th:block>
+    <!--Search Area-->
+
+    <!--Search Button Area-->
+    <th:block layout:fragment="popup-search-button-area">
+        <th:block layout:insert="~{fragments/popup/popup-btn :: popup-search-btn}"/>
+    </th:block>
+    <!--Search Button Area-->
+
+    <!--List Area-->
+    <th:block layout:fragment="popup-List-area">
+        <div class="grid">
+          <div class="grid-head" style="overflow: hidden;">
+              <div class="title-area">
+                  <h2 class="title" th:text="${#messages.msg('baseInfoMgmt.label.popup.templateListPopup.grid.title')}"></h2>
+              </div>
+               <div class="option-area"></div>
+          </div>
+          <div class="grid-body with-head">
+                <div id="tmplGrid" class="rg-root rg-grid" realgrid></div>
+          </div>
+        </div>
+    </th:block>
+    <!--List Area-->
+
+<!--List Button Area-->
+<th:block layout:fragment="popup-List-button-area">
+    <th:block layout:insert="~{fragments/popup/popup-btn :: popup-List-btn}"/>
+</th:block>
+
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        var _gridType       = [[${requestData.argSelectType}]]; // 선택구분값이 있을경우 필수값
+    </script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'popup/popup.TemplatePopup.tmplGrid.eventHandler.js?2021080201'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'popup/popup.TemplatePopup.tmplGrid.provider.js'" ></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            tmplGrid.eventhandler.init();
+        });
+    </script>
+</th:block>
+
+</body>
+</html>

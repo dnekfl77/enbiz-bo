@@ -1,0 +1,50 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.system.StBbAtchFileTrxMapper">
+
+    <!--
+        제 목 :시스템 공지 첨부파일 등록
+        작성자 : 이광진
+        작성일 : 2021.03.10
+        params : String
+        설 명 :
+	-->
+    <insert id="insertStBbAtchFile" parameterType="StBbAtchFile">
+        INSERT /* StBbAtchFileTrxMapper.insertStBbAtchFile */
+        INTO ST_BB_ATCH_FILE(
+            BBC_NO,
+            FILE_SEQ,
+            ATCH_FILE_ROUTE_NM,
+            ATCH_FILE_NM,
+            SYS_REG_ID,
+            SYS_REG_DTM,
+            SYS_MOD_ID,
+            SYS_MOD_DTM,
+            ATCH_FILE_DNLD_CNT
+        ) VALUES (
+            #{bbcNo},
+            #{fileSeq},
+            #{atchFileRouteNm},
+            #{atchFileNm},
+            #{sysRegId},
+            now(),
+            #{sysModId},
+            now(),
+            COALESCE(#{atchFileDnldCnt}, 0)
+        )
+    </insert>
+
+    <!--
+        제 목 :시스템 공지 첨부파일 삭제
+        작성자 : 이광진
+        작성일 : 2021.03.10
+        params : String
+        설 명 :
+	-->
+    <delete id="deleteStBbAtchFile" parameterType="StBbAtchFile">
+        DELETE /* StBbAtchFileTrxMapper.deleteStBbAtchFile */
+        FROM ST_BB_ATCH_FILE
+        WHERE BBC_NO = #{bbcNo}
+          AND FILE_SEQ = #{fileSeq}
+    </delete>
+</mapper>

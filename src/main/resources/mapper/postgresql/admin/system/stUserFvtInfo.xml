@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.system.StUserFvtInfoMapper">
+	
+	<sql id="paginatedBase">
+		LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+	</sql>
+	
+	<sql id="getUserFavoriteMenuListBase">
+		SELECT 				/* stUserFvtInfo.getUserFavoriteMenuListBase */
+				  FVT.RT_TGT_SEQ
+				, TGT.RT_TGT_NM
+				, FVT.SORT_SEQ
+				, TO_CHAR(FVT.SYS_MOD_DTM, 'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+				, FVT.USE_YN
+		FROM 	  ST_USER_FVT_INFO FVT
+				, ST_RT_TGT_BASE TGT 	-- 권한대상기본
+				, ST_USER_BASE SUB 		-- 사용자기본
+		WHERE 	  FVT.RT_TGT_SEQ = TGT.RT_TGT_SEQ
+		AND 	  TGT.USE_YN = 'Y'
+		AND 	  FVT.USER_ID = SUB.USER_ID
+		AND 	  ( SELECT 	INFO.USE_YN
+				 	FROM 	ST_RT_INFO INFO
+					WHERE 	SUB.RT_GRP_NO = INFO.RT_GRP_NO
+					AND 	INFO.RT_TGT_SEQ = FVT.RT_TGT_SEQ
+				  ) = 'Y'
+		AND 	  FVT.USER_ID = #{userId}
+		AND 	  RT_TGT_NM LIKE #{rtTgtNm} || '%'
+		ORDER BY  FVT.SORT_SEQ
+	</sql>
+
+	<select id="getUserFavoriteMenuList" parameterType="UserFavoriteMenuRequest" resultType="UserFavoriteMenuResponse">
+		<include refid="getUserFavoriteMenuListBase" />
+		<include refid="paginatedBase" />
+	</select>
+
+	<select id="getUserFavoriteMenuListCount" parameterType="UserFavoriteMenuRequest" resultType="java.lang.Integer">
+		SELECT 			/* stUserFvtInfo.getUserFavoriteMenuListCount */
+		       COUNT(*)
+		FROM (
+		  	   <include refid="getUserFavoriteMenuListBase" />
+		) T1
+	</select>
+
+	<select id="getFvtMenuList" parameterType="TopMenuRequest" resultType="LeftMenuResponse">
+		SELECT 				/* stUserFvtInfo.getFvtMenuList */
+				  FVT.RT_TGT_SEQ
+				, TGT.RT_TGT_NM
+				, TGT.UPR_RT_TGT_SEQ
+				, TGT.CALL_URL
+				, FVT.SORT_SEQ
+				, FVT.USE_YN
+		FROM 	  ST_USER_FVT_INFO FVT
+				, ST_RT_TGT_BASE TGT 	-- 권한대상기본
+				, ST_USER_BASE SUB 		-- 사용자기본
+		WHERE 	  FVT.RT_TGT_SEQ = TGT.RT_TGT_SEQ
+		AND 	  FVT.USE_YN = 'Y'
+		AND 	  TGT.USE_YN = 'Y'
+		AND 	  FVT.USER_ID = SUB.USER_ID
+		AND 	  ( SELECT 	INFO.USE_YN
+					FROM 	ST_RT_INFO INFO
+					WHERE 	SUB.RT_GRP_NO = INFO.RT_GRP_NO
+					AND 	INFO.RT_TGT_SEQ = FVT.RT_TGT_SEQ
+				  ) = 'Y'
+		AND 	  FVT.USER_ID = #{userId}
+		ORDER BY  FVT.SORT_SEQ, FVT.RT_TGT_SEQ
+	</select>
+
+	<select id="checkDuplicateUserFavoriteMenu" parameterType="UserFavoriteMenuRequest" resultType="java.lang.Integer">
+		SELECT 			/* stUserFvtInfo.checkDuplicateUserFavoriteMenu */
+				COUNT(*)
+		FROM 	ST_USER_FVT_INFO
+		WHERE 	USER_ID = #{userId}
+		AND 	RT_TGT_SEQ = #{rtTgtSeq}
+	</select>
+</mapper>
+
+

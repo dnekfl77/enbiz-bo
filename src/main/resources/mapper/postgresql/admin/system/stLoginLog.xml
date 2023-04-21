@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.system.StLoginLogMapper">
+
+	<sql id="paginatedBase">
+		LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+	</sql>
+
+	<sql id="getLastLoginInfoListBase">
+		SELECT 					/* StLoginLog.getLastLoginInfoListBase */
+				  FN_GET_CODENAME('UR005', SLL.SYS_GB_CD) AS SYS_GB_NM
+		      	, SUB.USER_ID
+		      	, SUB.USER_NM
+		      	, TO_CHAR(MAX(SLL.LOGIN_DTM), 'YYYY-MM-DD HH24:MI:SS') AS LOGIN_DTM
+		      	, TO_CHAR(MAX(SLL.LOUT_DTM), 'YYYY-MM-DD HH24:MI:SS') AS LOUT_DTM
+		      	, SUB.PWD_LOCK_YN
+		      	, COUNT(SLL.USER_ID) AS LOGIN_CNT
+	  	  FROM 	  ST_USER_BASE SUB
+	      	  	, ST_LOGIN_LOG SLL
+		 WHERE 	  SUB.USER_ID = SLL.USER_ID
+		 AND 	  SLL.SYS_GB_CD LIKE #{sysGbCd} ||'%'
+		 AND 	  SUB.USER_ID 	LIKE #{userIdConditionParam} ||'%'
+		 AND 	  SUB.USER_NM 	LIKE #{userNmConditionParam} ||'%'
+		 GROUP BY SLL.SYS_GB_CD, SUB.USER_ID, SUB.USER_NM, SUB.PWD_LOCK_YN
+		 ORDER BY MAX(SLL.LOGIN_DTM) DESC
+	</sql>
+
+	<select id="getLastLoginInfoList" parameterType="LoginLogRequest" resultType="LoginLogResponse">
+		<include refid="getLastLoginInfoListBase" />
+		<include refid="paginatedBase" />
+	</select>
+
+	<select id="getLastLoginInfoListCount" parameterType="LoginLogRequest" resultType="java.lang.Integer">
+		SELECT 				/* StLoginLog.getLastLoginInfoListCount */
+				COUNT(*)
+		FROM (
+		  			<include refid="getLastLoginInfoListBase" />
+		) T1
+	</select>
+
+	<sql id="getDetailLoginHistoryListBase">
+		SELECT  		/* StLoginLog.getDetailLoginHistoryListBase */
+				TO_CHAR(SLL.LOGIN_DTM, 'YYYY-MM-DD HH24:MI:SS') AS LOGIN_DTM
+	      	  , TO_CHAR(SLL.LOUT_DTM, 'YYYY-MM-DD HH24:MI:SS') AS LOUT_DTM
+		      , SLL.LOGIN_IP_ADDR
+		FROM 	ST_LOGIN_LOG SLL
+		WHERE 	SLL.USER_ID = #{userId}
+		ORDER BY SLL.LOGIN_DTM DESC
+	</sql>
+
+	<select id="getDetailLoginHistoryList" parameterType="LoginLogRequest" resultType="LoginLogResponse">
+		<include refid="getDetailLoginHistoryListBase" />
+		<include refid="paginatedBase" />
+	</select>
+
+	<select id="getDetailLoginHistoryListCount" parameterType="LoginLogRequest" resultType="java.lang.Integer">
+		SELECT /* StLoginLog.getDetailLoginHistoryListCount */
+			   COUNT(*)
+		FROM (
+		  		<include refid="getDetailLoginHistoryListBase" />
+		) T1
+	</select>
+
+</mapper>
+
+

@@ -1,0 +1,702 @@
+<!--
+* 프로그램명 : 수기주문접수
+* 작 성 일 : 2021.07.09
+* 작 성 자 : 윤성원
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 주문관리 > 주문관리 > 수기주문접수
+* 이    력 :
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/page-realgrid-layout}">
+
+<head>
+    <title>sub title</title>
+</head>
+<body>
+<th:block layout:fragment="page-title-area">
+    <div class="page-title">
+        <div class="left">
+            <h1><th:block th:text="${#messages.msg('orderReception.manualOrder.title')}"/></h1>
+        </div>
+    </div>
+</th:block>
+<th:block layout:fragment="page-contents">
+    <div class="page-fixed with-title">
+        <!-- page-title 가 있을경우 with-title 클래스 추가 -->
+        <div class="search-cont">
+
+            <!-- 01. 주문자 정보 -->
+            <div class="data">
+                <div class="data-head">
+                    <div class="left">
+                        <span class="title">
+                            <th:block th:text="${#messages.msg('orderReception.manualOrder.orderInfo.title')}"/>
+                        </span>
+                    </div>
+                    <div class="right">
+							<span class="data-toggle">
+								<button type="button" class="toggle-button"><span>닫힘</span></button>
+							</span>
+                    </div>
+                </div>
+
+                <div class="data-body">
+                    <table class="data-table fixed">
+                        <colgroup>
+                            <col width="120">
+                            <col>
+                            <col width="120">
+                            <col>
+                            <col width="120">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                        <tr>
+                            <td class="label">
+                                <th:block th:text="${#messages.msg('orderReception.manualOrder.orderInfo.member')}"/>
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <input type="text" class="input disabled w30" id="mbrNm" readonly="">
+                                    <input type="text" class="input disabled w40" id="loginId" readonly="">
+                                    <input type="hidden" class="input" id="mbrNo"/>
+                                    <a href="javascript:;" class="button small" id="btn_mbr_popup_call"><i class="icon-sarch"></i></a>
+                                    <label class="chk"><input type="checkbox" id="chkNoMember"><span>비회원</span></label>
+                                </div>
+                            </td>
+                            <td class="label">
+                                <strong><th:block th:text="${#messages.msg('orderReception.manualOrder.orderInfo.ordManNm')}"/></strong>
+                            </td>
+                            <td>
+                                <input type="text" id="ordManNm" class="input">
+                            </td>
+                            <td class="label">
+                                <th:block th:text="${#messages.msg('orderReception.manualOrder.orderInfo.memberType')}"/>
+                            </td>
+                            <td>
+                                <span id="memberType" class="memberData"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">
+                                <th:block th:text="${#messages.msg('orderReception.manualOrder.orderInfo.telNo')}"/>
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <input type="text" class="input memberData tagHideShow" maxlength="4" id="telRgnNo"
+                                           oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                                           style="width:50px;">
+                                    <span>-</span>
+                                    <input type="text" class="input memberData tagHideShow" maxlength="4" id="telTxnoNo"
+                                           oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                                           style="width:50px;">
+                                    <span>-</span>
+                                    <input type="text" class="input memberData tagHideShow" maxlength="4" id="telEndNo"
+                                           oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                                           style="width:50px;">
+                                </div>
+                            </td>
+                            <td class="label">
+                                <th:block th:text="${#messages.msg('orderReception.manualOrder.orderInfo.phoneNo')}"/>
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <select class="form-control tagHideShow" id="cellSctNo">
+                                        <option th:each="list : ${codeList.CM013}"
+                                                th:value="${list?.cd}" th:utext="${list?.cdNm}">
+                                        </option>
+                                    </select>
+                                    <span>-</span>
+                                    <input type="text" class="input memberData tagHideShow" maxlength="4" id="cellTxnoNo"
+                                           oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                                           style="width:50px;">
+                                    <span>-</span>
+                                    <input type="text" class="input memberData tagHideShow" maxlength="4" id="cellEndNo"
+                                           oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                                           style="width:50px;">
+                                </div>
+                            </td>
+                            <td class="label"></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="label">
+                                <th:block th:text="${#messages.msg('orderReception.manualOrder.orderInfo.email')}"/>
+                            </td>
+                            <td colspan="5">
+                                <div class="input-group">
+                                    <input type="text" class="input memberData tagHideShow" maxlength="100" id="emailId">
+                                    <span>@</span>
+                                    <input type="text" class="input memberData tagHideShow" maxlength="100"
+                                           id="emailDomain">
+                                    <select class="form-control tagHideShow" id="domainSelectBox">
+                                        <option value="" th:text="${#messages.msg('userMgmt.label.data.domain.write')}"></option>
+                                        <option th:each="list : ${codeList.CM012}"th:value="${list?.cdNm}" th:utext="${list?.cdNm}"></option>
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">
+                                <th:block th:text="${#messages.msg('orderReception.manualOrder.orderInfo.zipNo')}"/>
+                            </td>
+                            <td colspan="5">
+                                <div class="input-group w100">
+                                    <a href="#" class="button inside" id="callZipPopup"><span class="text">우편번호</span></a>
+                                    <input type="hidden" class="input memberData" id="umemZipNoSeq"/>
+                                    <input type="text" class="input disabled w10 memberData tagHideShow" id="umemZipNo" readonly="">
+                                    <input type="text" class="input disabled w40 memberData tagHideShow" id="umemZipAddr" readonly="">
+                                    <input type="text" class="input w20 memberData tagHideShow" id="umemDtlAddr">
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- //01. 주문자 정보 -->
+
+            <!-- 02. 상품 선택 -->
+            <div class="data">
+                <div class="data-head">
+                    <div class="left">
+                        <span class="title">
+                             <th:block th:text="${#messages.msg('orderReception.manualOrder.goodsInfo.title')}"/>
+                        </span>
+                    </div>
+                    <div class="right">
+						<span class="data-toggle">
+                            <input type="hidden" id="goodsCheck" class="checkValue" th:value="N"/>
+							<button type="button" class="toggle-button"><span>닫힘</span></button>
+						</span>
+                    </div>
+                </div>
+
+                <div class="data-body">
+                    <div class="grid mb0">
+                        <div class="grid-head">
+                            <div class="option-area bo-none">
+                                <div class="edit-option">
+                                    <div class="button-group">
+                                        <a href="#" class="button inside" id="goodsAdd">
+                                            <span class="text"><th:block th:text="${#messages.msg('orderReception.manualOrder.goodsInfo.goodsAdd')}"/></span>
+                                        </a>
+                                        <a href="#" class="button inside" id="goodsDelete">
+                                            <span class="text"><th:block th:text="${#messages.msg('orderReception.manualOrder.goodsInfo.goodsDelete')}"/></span>
+                                        </a>
+                                        <a href="#" class="button inside" id="dlvpSeleted">
+                                            <span class="text"><th:block th:text="${#messages.msg('orderReception.manualOrder.goodsInfo.dlvpSeleted')}"/></span>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="page-option">
+                                    <p style="display: inline-block;margin-right: 15px;">선택:</p>
+                                    <select class="form-control w30" id="goodsTextType">
+                                        <option value="0" th:text="수취인"></option>
+                                        <option value="1" th:text="배송메시지"></option>
+                                    </select>
+                                    <input type="text" class="input w40" id="btn_goodsText">
+                                    <a href="#" class="button inside" id="btn_goodsTextApply">
+                                        <span class="text">
+                                            <th:block th:text="${#messages.msg('orderReception.manualOrder.goodsInfo.goodsTextApply')}"/>
+                                        </span>
+                                    </a>
+                                </div>
+                            </div>
+                            <!-- //option-area -->
+                        </div>
+                        <!-- //grid-head -->
+
+                        <!-- 주문상품 Grid -->
+                        <div class="grid-body with-head bo-none" id="goodsGrid" realgrid>
+                        </div>
+                    </div>
+                    <!-- //grid -->
+                </div>
+            </div>
+            <!-- //02. 상품 선택 -->
+
+            <div class="button-group search-btn">
+                <a href="#" class="button dark" id="goodsRevise">
+                    <span class="text"><th:block th:text="${#messages.msg('orderReception.manualOrder.revise')}"/></span>
+                </a>
+                <a href="#" class="button dark" id="goodsCompleted">
+                    <span class="text"><th:block th:text="${#messages.msg('orderReception.manualOrder.next')}"/></span>
+                </a>
+            </div>
+
+            <!-- 03. 사은품 선택 -->
+            <div class="data">
+                <div class="data-head">
+                    <div class="left">
+                        <span class="title"
+                              th:text="${#messages.msg('orderReception.manualOrder.orderGiftInfo.title')}">
+                        </span>
+                        <div class="tooltip">
+                            <a href="#" class="trigger">설명</a>
+                            <div class="cont">
+                                <h3 class="title">사은품안내</h3>
+                                <div class="text">
+                                    <ul class="list-dotted">
+                                        <li>고객님을 위한 사은품입니다. 원하는 사은품을 선택해 주세요.</li>
+                                        <li>사은행사의 사은품은 한정수령으로 조기 소진될 수 있습니다.</li>
+                                        <li>사은행사는 당사 사정에 의해 변경 및 조기 종료될 수 있습니다.</li>
+                                    </ul>
+                                </div>
+                                <a href="#" class="close">닫기</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="right">
+						<span class="data-toggle" id="aeToggle">
+                            <input type="hidden" id="aeCheck" class="checkValue" th:value="N"/>
+							<button type="button" class="toggle-button"><span>닫힘</span></button>
+						</span>
+                    </div>
+                </div>
+
+                <div class="data-body">
+                    <div class="grid mb0">
+                        <div class="grid-head">
+                            <div class="option-area bo-none">
+                                <div class="edit-option">
+                                </div>
+                            </div>
+                            <!-- //option-area -->
+                        </div>
+                        <!-- //grid-head -->
+
+                        <!-- 사은품 Grid -->
+                        <div class="grid-body with-head bo-none" id="orderGiftGrid" realgrid></div>
+                        <!--// grid body -->
+                    </div>
+                    <!-- //grid -->
+                </div>
+            </div>
+
+            <div class="button-group search-btn">
+                <a href="#" class="button dark" id="orderGiftRevise">
+                    <span class="text"><th:block th:text="${#messages.msg('orderReception.manualOrder.revise')}"/></span>
+                </a>
+                <a href="#" class="button dark" id="orderGiftCompleted">
+                    <span class="text"><th:block th:text="${#messages.msg('orderReception.manualOrder.next')}"/></span>
+                </a>
+            </div>
+
+            <!-- //03. 사은품 선택 -->
+
+
+            <!-- 04. 혜택적용 -->
+            <div class="data">
+                <div class="data-head">
+                    <div class="left">
+                        <span class="title"
+                              th:text="${#messages.msg('orderReception.manualOrder.promotionInfo.title')}">
+                        </span>
+                        <div class="tooltip">
+                            <a href="#" class="trigger">설명</a>
+                            <div class="cont">
+                                <h3 class="title">헤택안내</h3>
+                                <div class="text">
+                                    <ul class="list-dotted">
+                                        <li>초기 보여지는 헤택은 선택 가능한 모든 혜택을 보여줍니다.</li>
+                                        <li>선택을 눌렀을 경우 선택한 혜택을 기준으로 다시 계산하게 됩니다.</li>
+                                        <li>선택을 누른후 초기 화면과 달라질 수 있습니다.</li>
+                                    </ul>
+                                </div>
+                                <a href="#" class="close">닫기</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="right">
+						<span class="data-toggle">
+                            <input type="hidden" id="promotionCheck" class="checkValue" th:value="N"/>
+							<button type="button" class="toggle-button"><span>닫힘</span></button>
+						</span>
+                    </div>
+                </div>
+
+                <div class="data-body">
+                    <div class="grid mb0">
+                        <div class="grid-head">
+                            <div class="option-area bo-none">
+                                <div class="edit-option">
+                                </div>
+                            </div>
+                            <!-- //option-area -->
+                        </div>
+                        <!-- //grid-head -->
+
+                        <div class="grid-body with-head bo-none" id="benefitGrid" realgrid></div><!-- 혜택적용 그리드 -->
+                    </div>
+                    <!-- //grid -->
+                </div>
+            </div>
+
+            <div class="button-group search-btn">
+                <a href="#" class="button dark" id="promotionRevise">
+                    <span class="text"><th:block th:text="${#messages.msg('orderReception.manualOrder.revise')}"/></span>
+                </a>
+                <a href="#" class="button dark" id="promotionCompleted">
+                    <span class="text"><th:block th:text="${#messages.msg('orderReception.manualOrder.next')}"/></span>
+                </a>
+            </div>
+
+            <!-- //04. 혜택적용 -->
+
+            <!-- 05. 배송비 적용 -->
+            <div class="data">
+                <div class="data-head">
+                    <div class="left">
+                        <span class="title"
+                              th:text="${#messages.msg('orderReception.manualOrder.dlvAmtGrid.title')}">
+                        </span>
+                    </div>
+                    <div class="right">
+						<span class="data-toggle">
+                            <input type="hidden" id="dlvAmtCheck" class="checkValue" th:value="N"/>
+							<button type="button" class="toggle-button"><span>닫힘</span></button>
+						</span>
+                    </div>
+                </div>
+
+                <div class="data-body">
+                    <div class="grid mb0">
+                        <div class="grid-head">
+                            <div class="option-area bo-none">
+                                <div class="edit-option">
+                                </div>
+                            </div>
+                            <!-- //option-area -->
+                        </div>
+                        <!-- //grid-head -->
+
+                        <div class="grid-body with-head bo-none" id="dlvAmtGrid" realgrid></div><!-- 혜택적용 그리드 -->
+                    </div>
+                    <!-- //grid -->
+                </div>
+            </div>
+
+            <div class="button-group search-btn">
+                <a href="#" class="button dark" id="dlvAmtRevise">
+                    <span class="text"><th:block th:text="${#messages.msg('orderReception.manualOrder.revise')}"/></span>
+                </a>
+                <a href="#" class="button dark" id="dlvAmtCompleted">
+                    <span class="text"><th:block th:text="${#messages.msg('orderReception.manualOrder.next')}"/></span>
+                </a>
+            </div>
+            <!-- //05. 배송비 적용 -->
+
+            <!-- 06. 결제 적용 -->
+            <div class="data-cont">
+                <div class="data">
+                    <div class="data-head">
+                        <div class="left">
+                            <span class="title"
+                                  th:text="${#messages.msg('orderReception.manualOrder.pay.title')}">
+                            </span>
+                        </div>
+                        <div class="right">
+                            <span class="data-toggle">
+                                    <button type="button" class="toggle-button" depth-name="goodsDisplay"><span>닫힘</span></button>
+                            </span>
+                        </div>
+                    </div>
+                    <!-- //data-head -->
+
+                    <div class="data-body">
+                        <table class="data-table bo-btm">
+                            <colgroup>
+                                <col width="120">
+                                <col>
+                                <col width="120">
+                                <col>
+                                <col width="120">
+                                <col>
+                            </colgroup>
+                            <tbody>
+                            <tr>
+                                <td class="label">상품금액</td>
+                                <td>
+                                    <span id="salePrcAmt" class="price">
+                                    </span>
+                                </td>
+                                <td class="label">총배송비</td>
+                                <td>
+                                    <span id="shippingFee" class="price">
+                                    </span>
+                                </td>
+                                <td class="label">할인금액</td>
+                                <td>
+                                    <span id="discountAmt" class="price">
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label">결제대상금액</td>
+                                <td>
+                                    <span id="payAmt" class="price">
+                                    </span>
+                                </td>
+                                <td class="label">입력금액</td>
+                                <td>
+                                    <span id="inputAmt" class="price">
+                                    </span>
+                                </td>
+                                <td class="label">남은금액</td>
+                                <td>
+                                    <span id="remainingAmt" class="price">
+                                    </span>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <table class="data-table bo-top mt10">
+                            <colgroup>
+                                <col width="120">
+                                <col width="150">
+                                <col width="100">
+                                <col width="500">
+                                <col width="">
+                            </colgroup>
+                            <tbody>
+<!--                            <tr>-->
+<!--                                <td class="label center">선택</td><td class="label">결제수단</td><td class="label" colspan="2">보유금액</td><td class="label">결제예정금액</td>-->
+<!--                            </tr>-->
+<!--                            <tr>-->
+<!--                                <td class="center" rowspan="3">-->
+<!--                                    <label class="radio-inline"><input type="radio" name="" value=""></label></td><td rowspan="3">무통장입금</td><td>입금은행</td><td>-->
+<!--                                <select class="form-control">-->
+<!--                                    <option value="0">신한은행</option>-->
+<!--                                    <option value="1">카카오뱅크</option>-->
+<!--                                    <option value="2"></option>-->
+<!--                                </select>-->
+<!--                            </td>-->
+<!--                                <td>-->
+<!--                                    <div class="input-group">-->
+<!--                                        <input type="text" id="la-lang-2" class="input price" style="width:100px;"><em>원</em>-->
+<!--                                    </div>-->
+<!--                                </td>-->
+<!--                            </tr>-->
+<!--                            <tr>-->
+<!--                                <td>입금자명</td>-->
+<!--                                <td>-->
+<!--                                    <input type="text" name="" value="" class="input">-->
+<!--                                    <div class="ml5 tooltip">-->
+<!--                                        <p class="tip" style="">무통장  입금은 당일 24:00 이내 까지만 유효합니다</p>-->
+<!--                                    </div>-->
+<!--                                </td>-->
+<!--                                <td>-->
+<!--                                    <div class="input-group">-->
+<!--                                        <input type="text" id="la-lang-2" class="input price" style="width:100px;"><em>원</em>-->
+<!--                                    </div>-->
+<!--                                </td>-->
+<!--                            </tr>-->
+<!--                            <tr>-->
+<!--                                <td>입금기한</td><td>2020-12-22</td><td><div class="input-group"><input type="text" id="la-lang-2" class="input price" style="width:100px;"><em>원</em></div></td>-->
+<!--                            </tr>-->
+                            <tr>
+                                <td class="center">
+                                    <input type="checkbox" class="payKinds cashBillPayType">
+                                </td>
+                                <td>예치금</td>
+                                <td>보유금액</td>
+                                <td>
+                                    <input type="text" id="deposit" class="input disabled price myPrice" readonly="">
+                                </td>
+                                <td>
+                                    <div class="input-group">
+                                        <input type="text" id="inputDeposit" class="input price priceValue" style="width:100px;"><em>원</em>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="center">
+                                    <input type="checkbox" class="payKinds cashBillPayType">
+                                </td>
+                                <td>적립금</td>
+                                <td>보유금액</td>
+                                <td>
+                                    <input type="text" id="reserves" class="input disabled price myPrice" value="" readonly="">
+                                    <div class="ml5 tooltip">
+                                        <p class="tip" style="">10원 이상 사용가능합니다</p>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-group">
+                                        <input type="text" id="inputReserves" class="input price priceValue" style="width:100px;"><em>원</em>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- //data-body -->
+                </div>
+            </div>
+
+            <!-- 06. 결제 적용 -->
+
+            <!-- 07. 현금영수증 발급신청 start-->
+            <div class="data">
+                <div class="data-head">
+                    <div class="left">
+                        <span class="title">07. 현금영수증 발급신청</span>
+                    </div>
+                    <div class="right">
+						<span class="data-toggle">
+							<button type="button" class="toggle-button"><span>닫힘</span></button>
+						</span>
+                    </div>
+                </div>
+
+                <div class="data-body">
+                    <table class="data-table">
+                        <colgroup>
+                            <col width="120">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                        <tr class="cashBill" style="display: none">
+                            <td class="label">신청구분</td>
+                            <td>
+                                <label class="radio-inline"><input type="radio" name="cashBillType" value="0" checked="checked">소득공제용(개인)</label>
+                                <label class="radio-inline"><input type="radio" name="cashBillType" value="1">지출증빙용(사업자)</label>
+                                <label class="radio-inline"><input type="radio" name="cashBillType" value="2">신청안함</label>
+                            </td>
+                        </tr>
+                        <tr class="cashBill" style="display: none">
+                            <td class="label">인증수단</td>
+                            <td id="personal" class="cashBillTypeForm">
+                                <div class="input-group">
+                                    <select class="form-control authMethod">
+                                        <option value="0">휴대전화번호</option>
+                                        <option value="1">신용카드번호</option>
+                                        <option value="2">현금영수증번호</option>
+                                    </select>
+                                    <input type="text" name="" value="" class="price input w10">
+                                    <em>-</em>
+                                    <input type="text" name="" value="" class="price input w10">
+                                    <em>-</em>
+                                    <input type="text" name="" value="" class="price input w10">
+                                    <em class="fourType" style="display: none">-</em>
+                                    <input type="text" name="" value="" class="price input w10 fourType" style="display: none">
+                                </div>
+                            </td>
+                            <td id="company" class="cashBillTypeForm" style="display: none">
+                                <div class="input-group">
+                                    <select class="form-control authMethod">
+                                        <option value="0">사업자 등록번호</option>
+                                    </select>
+                                    <input type="text" name="" value="" class="price input w10">
+                                    <em>-</em>
+                                    <input type="text" name="" value="" class="price input w10">
+                                    <em>-</em>
+                                    <input type="text" name="" value="" class="price input w10">
+                                </div>
+                            </td>
+                            <td id="noCashBill" class="cashBillTypeForm" style="display: none">
+                                <span>고객직접발급</span>
+                            </td>
+                        </tr>
+                        <tr class="noCashBill">
+                            <td class="label center" colspan="2">현금영수증 발급대상이 아닙니다.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- 07. 현금영수증 발급신청 end-->
+
+
+        </div>
+
+
+        <div class="button-group search-btn">
+            <a href="#" class="button dark" id="btn_cancel">
+                <span class="text" th:text="${#messages.msg('orderReception.manualOrder.init')}" />
+            </a>
+            <a href="#" class="button dark" id="btn_pay">
+                <span class="text" th:text="${#messages.msg('orderReception.manualOrder.newOrder')}" />
+            </a>
+        </div>
+
+    </div>
+</th:block>
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+
+        var _commonMsg = x2coMessage.getMessage( {
+            delete : "orderReception.message.delete",
+            save : "orderReception.message.save",
+            next : "orderReception.message.next",
+        });
+
+        var noMember = [[${T(com.enbiz.bo.app.enums.common.CommonCode).NO_MEMBER.getCd()}]];
+        var orderChannel = [[${T(com.enbiz.bo.app.enums.common.OrderCommonCode).AGENT_ORDER_CHANNEL.getCd()}]];
+        var orderSite = [[${T(com.enbiz.bo.app.enums.common.OrderCommonCode).AGENT_ORDER_SITE.getCd()}]];
+        var backOfficeCode = [[${T(com.enbiz.bo.app.enums.MK004).BO.getCd()}]];
+
+        var save_ordMediaCd = [[${T(com.enbiz.bo.app.enums.OM007).CALL.getCd()}]];
+        var save_noMemberMgrCd = [[${T(com.enbiz.bo.app.enums.ME002).NO_MEMBER.getCd()}]];
+        var save_ordStatus = [[${T(com.enbiz.bo.app.enums.OM016).TEMP_SAVE.getCd()}]];
+
+        var indInfodealYn = [[${indInfodealYn}]];
+        var memberData = [[${memberData}]];
+        var orderDlvpInfo = ([[${memberDlvpInfo}]] === null ? [] : [[${memberDlvpInfo}]]);
+
+        console.log(noMember);
+        console.log(indInfodealYn);
+        console.log(memberData);
+        console.log(orderDlvpInfo);
+
+        /*]]>*/
+    </script>
+
+    <!-- 페이지 처리 JS -->
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'order/orderreception/receiveManualOrder.js?20210901000024'"></script>
+
+    <!-- 01. 주문자 정보 -->
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'order/orderreception/orderCustomerInfo.js?20210901000024'"></script>
+
+    <!-- 02. 상품 선택 그리드 -->
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'order/orderreception/goodsGrid.provider.js?20210901000006'"></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'order/orderreception/goodsGrid.eventHandler.js?20210901000006'"></script>
+
+    <!-- 03. 사은품 선택 그리드 -->
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'order/orderreception/orderGiftGrid.provider.js?20210901000005'"></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'order/orderreception/orderGiftGrid.eventHandler.js?20210901000005'"></script>
+
+    <!-- 04. 해택적용 그리드 -->
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'order/orderreception/benefitGrid.provider.js?20210901000003'"></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'order/orderreception/benefitGrid.eventHandler.js?20210901000003'"></script>
+
+    <!-- 05. 배송비 그리드 -->
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'order/orderreception/dlvAmtGrid.provider.js?20210901000016'"></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'order/orderreception/dlvAmtGrid.eventHandler.js?20210901000016'"></script>
+
+    <!-- 06. 결제   -->
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'order/orderreception/orderPay.js?20210902000043'"></script>
+
+    <!-- 07. 현금영수증 발급신청 -->
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'order/orderreception/cashBill.js?20210902000043'"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            receiveManualOrder.init();			// 주문 수기등록 페이지 초기화
+            orderCustomerInfo.init();			// 01. 주문자 정보 초기화
+            goodsGrid.eventhandler.init();		// 02. 상품 선택 그리드 초기화
+            orderGiftGrid.eventhandler.init();	// 03. 사은품 선택 그리드 초기화
+            benefitGrid.eventhandler.init();	// 04. 혜택적용 그리드 초기화
+            dlvAmtGrid.eventhandler.init();     // 05. 배송비 그리드 초기화
+            orderPay.init();                    // 06. 결제 초기화
+            cashBill.init();                    // 06. 현금영수증 초기화
+        });
+    </script>
+</th:block>
+</body>
+</html>

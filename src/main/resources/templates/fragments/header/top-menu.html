@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ko-KR"
+      xmlns:th="http://www.thymeleaf.org">
+
+<th:block th:fragment="menu-bar-cont">
+    <nav id="gnb">
+        <ul id="gnbBar">
+            <th:block th:if="${not #lists.isEmpty(topMenuResponseList)}"
+                      th:each="topMenuResponse, iter : ${topMenuResponseList}">
+                <li class="menu-item" th:id="${topMenuResponse.rtTgtSeq}">
+                    <a class="cell"><th:block th:text="${topMenuResponse.rtTgtNm}"/></a>
+                </li>
+            </th:block>
+        </ul>
+    </nav>
+
+    <script type="text/javascript">
+        $(document.body).ready(function(){
+            $('.menu-item').click(function () {
+                var _that = this;
+
+                // menu-item > a class active remove and add
+                $('.menu-item > a').each(function(){
+                    if (_that.firstElementChild.innerText === this.firstChild.nodeValue) {
+                        // menu-item current class active add
+                        $(this).addClass('active');
+                    } else {
+                        $(this).removeClass('active');
+                    }
+                });
+
+                //마이메뉴 로딩
+                var url = _baseUrl + 'fvtMenu.do';
+                common.Ajax.sendRequestSync("GET", url, '', function(data) {
+                    $("#fvtMenu").replaceWith(data)
+                }, true, false);
+
+                //기본메뉴 로딩
+                var rtTgtSeq = $(this).attr('id');
+                url = _baseUrl + 'leftMenu.do';
+                var param = {
+                    rtTgtSeq : rtTgtSeq
+                };
+                common.Ajax.sendRequestSync("GET", url, param, function(data) {
+                    $("#baseMenu").replaceWith(data)
+                }, true, false);
+
+                //새로고침 하면 기본메뉴 탭하도록
+                $('.tabs-area').children('.tabs').children('li:first').click();
+
+                // 좌측 매뉴 클릭 이벤트
+                com.x2commerce.common.menuUtil.menuAction();
+
+                //iframe 제어
+                com.x2commerce.common.menuUtil.iframeAction();
+
+                //VIEW-TABS 제어
+                $('#VIEW-TABS').on('click', '.item', function() {
+                    let tabId = $(this).attr('id');
+                    let page = $('#VIEW-PAGE iframe');
+
+                    $(this).addClass('active').siblings().removeClass('active');
+
+                    for (var i =0; i < page.length; i++ ) {
+                      if($(page[i]).data('id') == tabId) {
+                        $('#VIEW-PAGE [data-id="'+tabId+'"]').addClass('active').siblings().removeClass('active');
+                        $('#snb .depth2 li').removeClass('active');
+                        $('#snb .depth2 li [data-id="'+tabId+'"]').parent().addClass('active');
+                      }
+                    }
+                });
+
+                //VIEW-TABS 닫기
+                $('#VIEW-TABS').on('click', '.tab-close', function() {
+                    let removeTab = $(this).parent();
+                    let removeId = removeTab.attr('id');
+
+                    removeTab.remove();
+                    $('#VIEW-PAGE [data-id="'+removeId+'"]').remove();
+                    $('#snb .depth2 li [data-id="'+removeId+'"]').parent().removeClass('active');
+
+                    if($('#VIEW-TABS .item.active').length == 0) {
+                        $('#VIEW-TABS .item:last-child').addClass('active');
+                        $('#VIEW-PAGE iframe:last-child').addClass('active');
+
+                        let activeId = $('#VIEW-TABS .active').attr('id');
+                        $('#snb .depth2 li [data-id="'+activeId+'"]').parent().addClass('active');
+                    }
+                });
+            });
+        });
+
+        function openIframeByManual(paramId, paramTitle, paramLink) {
+            let getLink = paramLink;
+            let getId = paramId;
+            let getText = paramTitle;
+            let tab = $('#VIEW-TABS .item');
+            let iframe = $('#VIEW-PAGE iframe');
+
+            if($('#VIEW-TABS #' + paramId).length == 0 ) { //같은게 없다면
+                if(tab.length < 10) { //열린탭이 10개 이하
+                    $('#snb .depth2 li').removeClass('active');
+                    $(this).parent().addClass('active');
+                    tab.removeClass('active');
+                    iframe.removeClass('active');
+
+                    $('#VIEW-TABS').append("<a href='javascript:void(0)' class='item active' id=\'"+ getId +"\'><span>" + getText + "</span> <span class='tab-close'><i class='icon icon-circle-with-cross'></i></span></a>");
+                    $('#VIEW-PAGE').append("<iframe src='"+ getLink +"' width='100%' height='100%' data-id='"+ getId +"' class='active'></iframe>");
+                } else {
+                    alert('최대 10개까지만 화면을 열 수 있습니다. \n열린 화면을 닫고 진행해 주세요.')
+                }
+            } else {
+                $(this).parent().addClass('active').siblings('li').removeClass('active');
+                $('#VIEW-TABS #' + getId).addClass('active').siblings().removeClass('active');
+                $('#VIEW-PAGE [data-id="'+getId+'"]' ).addClass('active').siblings().removeClass('active');
+            }
+        }
+    </script>
+</th:block>
+
+</html>

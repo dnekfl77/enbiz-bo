@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.display.CcCmAgmtPolcInfoTrxMapper">
+
+	<insert id="insertCcCmAgmtPolcInfo" parameterType="ccCmAgmtPolcInfo">
+		INSERT INTO CC_CM_AGMT_POLC_INFO (   /* ccCmAgmtPolcInfo.insertCcCmAgmtPolcInfo */
+			CM_AGMT_SEQ,
+			SITE_NO,
+			AGMT_POLC_CD,
+			APLY_STR_DT,
+			APLY_END_DT,
+			CM_AGMT_POLC_GB_CD,
+			TITLE,
+			WRD_CONT,
+			SYS_REG_ID,
+			SYS_REG_DTM,
+			SYS_MOD_ID,
+			SYS_MOD_DTM
+		) VALUES (
+			 NEXTVAL('CC_CM_AGMT_POLC_INFO_SQ01'),
+			 #{siteNo},
+			 #{agmtPolcCd},
+			 REPLACE(#{aplyStrDt}, '-', ''),
+			 REPLACE(#{aplyEndDt}, '-', ''),
+			 #{cmAgmtPolcGbCd},
+			 #{title},
+			 #{wrdCont},
+			 #{sysRegId},
+			 NOW(),
+			 #{sysModId},
+			 NOW()
+		 )
+	</insert>
+
+	<update id="updateCcCmAgmtPolcInfo" parameterType="ccCmAgmtPolcInfo">
+		UPDATE CC_CM_AGMT_POLC_INFO   /* ccCmAgmtPolcInfo.updateCcCmAgmtPolcInfo */
+		SET
+				SITE_NO = #{siteNo},
+				AGMT_POLC_CD = #{agmtPolcCd},
+				APLY_STR_DT = REPLACE(#{aplyStrDt}, '-', ''),
+				APLY_END_DT = REPLACE(#{aplyEndDt}, '-', ''),
+				CM_AGMT_POLC_GB_CD = #{cmAgmtPolcGbCd},
+				TITLE = #{title},
+				WRD_CONT = #{wrdCont},
+				SYS_MOD_ID = #{sysModId},
+				SYS_MOD_DTM = NOW()
+		WHERE 	CM_AGMT_SEQ = #{cmAgmtSeq}
+	</update>
+</mapper>
+
+

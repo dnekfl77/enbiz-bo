@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.payment.OpClmDcGdBaseMapper">
+
+	<sql id="paginatedBase">
+		LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+	</sql>
+
+	<sql id="claimDiscountInfo">
+		<![CDATA[
+		SELECT DISTINCT  				/* OpClmDcGdBase.claimDiscountInfo */
+				  OCDGB.CLM_DC_GD_NO
+				, FN_GET_CODENAME('OM028', OCDGB.ACQR_CD) AS ACQR_CD
+				, (
+						SELECT 	MIN(SUBMI.MERS_NO)
+						FROM 	OP_CLM_DC_GD_MERS_INFO SUBMI
+						WHERE 	OCDGB.CLM_DC_GD_NO = SUBMI.CLM_DC_GD_NO
+				  ) AS MERS_NO
+				, TO_CHAR(OCDGB.APLY_STR_DTM,'YYYY-MM-DD HH24:MI') AS APLY_STR_DTM
+				, TO_CHAR(OCDGB.APLY_END_DTM,'YYYY-MM-DD HH24:MI') AS APLY_END_DTM
+				, OCDGB.PAY_STD_AMT
+				, FN_GET_CODENAME('MK005', OCDGB.FIXAMT_FXRT_GB_CD) AS FIXAMT_FXRT_GB_CD
+				, OCDGB.DC_RATE_AMT
+				, OCDGB.SYS_MOD_ID
+				, TO_CHAR(OCDGB.SYS_MOD_DTM,'YYYY-MM-DD HH24:MI') AS SYS_MOD_DTM
+		FROM 	  OP_CLM_DC_GD_BASE OCDGB
+				, OP_CLM_DC_GD_MERS_INFO OCDGMI
+		]]>
+
+		WHERE 	  OCDGB.CLM_DC_GD_NO = OCDGMI.CLM_DC_GD_NO
+		AND 	  OCDGMI.MERS_NO 	LIKE 	#{mersNo} 	|| '%'
+		AND 	  OCDGB.ACQR_CD 	LIKE 	#{acqrCd} 	|| '%'
+		<if test='aplyStrTotal != "Y"'><!-- 적용시작일자 : 전체조회가 아닌 경우 -->
+			<![CDATA[
+			AND OCDGB.APLY_STR_DTM 	>= #{startDate}::TIMESTAMP
+			AND OCDGB.APLY_STR_DTM  <= #{endDate}::TIMESTAMP
+			]]>
+		</if>
+		<if test='state == "1"'><!-- 대기 -->
+			<![CDATA[
+			AND OCDGB.APLY_STR_DTM > NOW()
+			AND OCDGB.APLY_END_DTM > NOW()
+			]]>
+		</if>
+		<if test='state == "2"'><!-- 진행 -->
+			<![CDATA[
+			AND OCDGB.APLY_STR_DTM <= NOW()
+			AND OCDGB.APLY_END_DTM >= NOW()
+			]]>
+		</if>
+		<if test='state == "3"'><!-- 종료 -->
+			<![CDATA[
+			AND OCDGB.APLY_STR_DTM < NOW()
+			AND OCDGB.APLY_END_DTM < NOW()
+			]]>
+		</if>
+	</sql>
+
+	<select id="getClaimDiscountInfoList" parameterType="OpClmDcGdBaseRequest" resultType="OpClmDcGdBaseResponse">
+		<include refid="claimDiscountInfo" />
+		<include refid="paginatedBase" />
+	</select>
+
+	<select id="getClaimDiscountInfoListCount" parameterType="OpClmDcGdBaseRequest" resultType="java.lang.Integer">
+		SELECT   /* OpClmDcGdBase.getClaimDiscountInfoListCount */
+				COUNT(*)
+		FROM (
+				<include refid="claimDiscountInfo"/>
+		) T1
+	</select>
+
+	<select id="getMersList" resultType="OpClmDcGdBaseResponse">
+		WITH MERS AS (				/* OpClmDcGdBase.getMersList */
+			SELECT
+					  OMI.MERS_NO
+					, (CASE WHEN OMI.ONOFF_LINE_GB_CD = 'ON' THEN '온라인' ELSE '오프라인' END) AS ONOFF_GB
+					, FN_GET_CODENAME('OM036', OMI.APLY_SITE_GB_CD) ||
+						CASE WHEN OMI.APLY_SITE_GB_CD = '20'
+						THEN
+						'(' ||
+								(	 	SELECT 	  ARRAY_TO_STRING(ARRAY_AGG(CSB.SITE_NM),',')
+										FROM 	  OP_APLY_SITE_MERS_INFO OASMI
+												, CC_SITE_BASE CSB
+										WHERE 	  OASMI.SITE_NO  = CSB.SITE_NO
+										AND 	  OMI.MERS_NO = OASMI.MERS_NO
+								)
+						|| ')'
+						ELSE ''
+						END
+					AS APLY_SITE
+			FROM 	OP_MERS_INFO OMI
+		)
+		SELECT
+				   OCDGMI.CLM_DC_GD_NO AS PARENT_CD
+				,  OCDGMI.MERS_NO AS CODE
+				, (OCDGMI.MERS_NO || '(' || MERS.ONOFF_GB || ', ' || MERS.APLY_SITE || ')' ) AS CODE_NAME
+		FROM 	   OP_CLM_DC_GD_MERS_INFO OCDGMI
+				, MERS
+		WHERE 	  OCDGMI.MERS_NO = MERS.MERS_NO
+	</select>
+
+	<select id="getMappingMersList" parameterType="OpClmDcGdBaseRequest" resultType="OpClmDcGdBaseResponse">
+		SELECT 			/* OpClmDcGdBase.getMappingMersList */
+		ARRAY_TO_STRING(ARRAY_AGG(MERS_NO),',') AS MERS_LIST
+		FROM 	    OP_CLM_DC_GD_MERS_INFO
+		WHERE 	    CLM_DC_GD_NO = #{clmDcGdNo}
+	</select>
+
+	<select id="getClaimDiscountInfoDetail" parameterType="OpClmDcGdBaseRequest" resultType="OpClmDcGdBaseResponse">
+		<![CDATA[
+		SELECT   				/* OpClmDcGdBase.getClaimDiscountInfoDetail */
+				  ACQR_CD
+				, CLM_DC_GD_NO
+				, TO_CHAR(APLY_STR_DTM,'YYYY-MM-DD HH24:MI') AS APLY_STR_DTM
+				, TO_CHAR(APLY_END_DTM,'YYYY-MM-DD HH24:MI') AS APLY_END_DTM
+				, PAY_STD_AMT
+				, FIXAMT_FXRT_GB_CD
+				, DC_RATE_AMT
+				, MAX_DC_AMT
+				, SYS_MOD_ID
+				, TO_CHAR(SYS_MOD_DTM,'YYYY-MM-DD HH24:MI') AS SYS_MOD_DTM
+				, CASE  WHEN APLY_STR_DTM >  NOW()	AND APLY_END_DTM >   NOW() THEN '1'
+						WHEN APLY_STR_DTM <= NOW()	AND APLY_END_DTM >=  NOW() THEN '2'
+						WHEN APLY_STR_DTM <  NOW() 	AND APLY_END_DTM <   NOW() THEN '3'
+				  END AS STATE
+		FROM 	  OP_CLM_DC_GD_BASE
+		]]>
+		WHERE 	  CLM_DC_GD_NO = #{clmDcGdNo}
+	</select>
+
+	<select id="getAcqrCheck" parameterType="OpClmDcGdBaseRequest" resultType="java.lang.Integer">
+		<![CDATA[
+		SELECT   /* OpClmDcGdBase.getAcqrCheck */
+				COUNT(ACQR_CD)
+		FROM 	OP_CLM_DC_GD_BASE
+		WHERE
+		(		(APLY_STR_DTM 	>= #{startDate}::TIMESTAMP   AND 	APLY_STR_DTM	<= #{endDate}::TIMESTAMP)
+		OR 		(APLY_END_DTM 	>= #{startDate}::TIMESTAMP   AND 	APLY_END_DTM	<= #{endDate}::TIMESTAMP)
+		)
+		AND 	ACQR_CD = #{acqrCd}
+		]]>
+	</select>
+
+	<select id="getAcqrCheckNo" parameterType="OpClmDcGdBaseRequest" resultType="java.lang.String">
+		<![CDATA[
+		SELECT   /* OpClmDcGdBase.getAcqrCheckNo */
+				CLM_DC_GD_NO
+		FROM 	OP_CLM_DC_GD_BASE
+		WHERE
+		(		(APLY_STR_DTM 	>= #{startDate}::TIMESTAMP   AND 	APLY_STR_DTM	<= #{endDate}::TIMESTAMP)
+		OR 		(APLY_END_DTM 	>= #{startDate}::TIMESTAMP   AND 	APLY_END_DTM	<= #{endDate}::TIMESTAMP)
+		)
+		AND 	ACQR_CD = #{acqrCd}
+		]]>
+	</select>
+
+</mapper>
+
+

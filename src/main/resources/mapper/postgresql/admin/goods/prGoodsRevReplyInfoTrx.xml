@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enbiz.bo.app.repository.goods.PrGooodRevReplyInfoTrxMapper">
+
+    <update id="updateReplySeqDispStatCd" parameterType="PrGoodsRevReplyInfo">
+        UPDATE PR_GOODS_REV_REPLY_INFO /* prGoodsRevReplyInfoTrx.updateReplySeqDispStatCd */
+           SET REPLY_SEQ_DISP_STAT_CD = #{replySeqDispStatCd}
+             , SYS_MOD_ID = #{sysModId}
+             , SYS_MOD_DTM = now()
+         WHERE REV_NO = #{revNo}
+           AND REPLY_SEQ =  #{replySeq}
+    </update>
+
+    <insert id="insertReviewReply" parameterType="PrGoodsRevReplyInfo">
+        INSERT INTO PR_GOODS_REV_REPLY_INFO ( /* prGoodsRevReplyInfoTrx.insertReviewReply */
+                    REV_NO
+                  , REPLY_SEQ
+                  , WRTMN_GB_CD
+                  , WRTMN_ID
+                  , REPLY_CONT
+                  , REPLY_SEQ_DISP_STAT_CD
+                  , SYS_REG_ID
+                  , SYS_REG_DTM
+                  , SYS_MOD_ID
+                  , SYS_MOD_DTM
+        ) VALUES(
+                    #{revNo}
+                  , (SELECT COALESCE(MAX(REPLY_SEQ),0)+1 FROM PR_GOODS_REV_REPLY_INFO WHERE REV_NO = #{revNo})
+                  , #{wrtmnGbCd}
+                  , #{wrtmnId}
+                  , #{replyCont}
+                  , #{replySeqDispStatCd}
+                  , #{sysRegId}
+                  , now()
+                  , #{sysRegId}
+                  , now()
+        )
+    </insert>
+</mapper>

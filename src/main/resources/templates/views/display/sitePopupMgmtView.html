@@ -1,0 +1,145 @@
+<!--
+* 프로그램명 : 사이트 팝업 관리
+* 작 성 일 : 2021.03.02
+* 작 성 자 : 권다솜
+* 수 정 자 : 권다솜
+* 버    전 : 1.0
+* 개    요 : 전시관리 > 사이트관리 > 팝업관리
+* 이    력 :
+-->
+<html lang="ko-KR"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/page-realgrid-layout}">
+
+<head>
+    <title>sub title</title>
+</head>
+<body>
+<th:block layout:fragment="page-title-area">
+    <div class="page-title">
+        <div class="left">
+            <h1><th:block th:text="${#messages.msg('sitePopupMgmt.title')}"/></h1>
+        </div>
+    </div>
+</th:block>
+<th:block layout:fragment="page-contents">
+    <div class="page-fixed with-title">
+        <div class="search-cont">
+            <!-- 조회테이블 -->
+            <div class="search">
+                <form name="sitePopupGridForm" id="sitePopupGridForm">
+                <table class="search-table">
+                    <colgroup>
+                        <col width="120">
+                        <col>
+                        <col width="120">
+                        <col>
+                        <col width="120">
+                        <col>
+                    </colgroup>
+                    <tbody>
+                        <tr>
+                            <td class="label" th:text="${#messages.msg('sitePopupMgmt.search.label.popupTerm')}" />
+                            <td colspan="5">
+                                <div class="input-group">
+                                    <div class="picker-group" data-lopicker="basic">
+                                        <input type="text" class="input disabled" name="startDate" id="startDate" disabled="disabled">
+                                        <span class="input-group-addon">~</span>
+                                        <input type="text" class="input disabled" name="endDate" id="endDate" disabled="disabled">
+                                        <span class="input-group-addon"><i class="icon-calendar" id="calendarButton"></i></span>
+                                    </div>
+                                    <select class="form-control" id="calendar-term">
+                                        <option value="7" th:selected="true">최근 일주일</option>
+                                        <option value="30">최근 한달</option>
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label" th:text="${#messages.msg('sitePopupMgmt.search.label.site')}" />
+                            <td>
+                                <select class="form-control w50" id="siteNo" name="siteNo">
+                                    <option value="" th:text="${#messages.msg('adminCommon.entirety')}"></option>
+                                    <option th:each="list : ${siteList}" th:value="${list.siteNo}" th:text="${list.siteNm}"></option>
+                                </select>
+                            <td class="label" th:text="${#messages.msg('sitePopupMgmt.search.label.displayMedia')}" />
+                            <td>
+                                <select class="form-control w30" id="dispMediaCd" name="dispMediaCd">
+                                    <option value="" th:text="${#messages.msg('adminCommon.entirety')}"></option>
+                                    <option th:each="list : ${codeList.DP015}" th:value="${list.cd}" th:text="${list.cdNm}"></option>
+                                </select>
+                            </td>
+                            <td class="label" th:text="${#messages.msg('sitePopupMgmt.search.label.chlNumNo')}"></td>
+                            <td>
+                                <div class="input-group w100">
+                                    <input class="input w30" type="text" name="chlNo" id="chlNo" maxlength="7" onKeyup="number(this)"/>
+                                    <input class="input w60" type="text" name="chlNm" id="chlNm" maxlength="200"/>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                </form>
+            </div>
+            <!-- //조회테이블 -->
+            <!-- 검색버튼 -->
+            <div class="button-group search-btn">
+                <a href="#" class="btn_gblue button white" id="btn_init">
+                    <span class="text" th:text="${#messages.msg('adminCommon.button.init')}" />
+                </a>
+                <a href="#" class="btn_blue button dark" id="btn_search">
+                    <span class="text" th:text="${#messages.msg('adminCommon.button.search')}" />
+                </a>
+            </div>
+            <!-- //검색버튼 -->
+            <!-- 리얼그리드 -->
+            <div class="grid-cont">
+                <div class="grid" style="overflow: hidden;">
+                    <div class="grid-head">
+                        <div class="title-area">
+                            <h2 class="title" th:text="${#messages.msg('sitePopupMgmt.grid.title')}" />
+                        </div>
+                        <div class="option-area">
+                            <div class="edit-option">
+                                <div class="button-group">
+                                    <a href="#" class="button inside" id="btn_grid_insert">
+                                        <span class="text" th:text="${#messages.msg('sitePopupMgmt.grid.btn.insert')}" />
+                                    </a>
+                                    <a href="#" class="button inside" id="btn_grid_delete">
+                                        <span class="text" th:text="${#messages.msg('sitePopupMgmt.grid.btn.delete')}" />
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="page-option" grid-id="sitePopupGrid" />
+                        </div>
+                    </div>
+                    <div class="grid-body with-head">
+                        <div id="sitePopupGrid" realgrid></div>
+                    </div>
+                </div>
+            </div>
+            <!-- //리얼그리드 -->
+        </div>
+    </div>
+</th:block>
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+            var msg = x2coMessage.getMessage( {
+                    messageNotCheckedData : 'adminCommon.grid.alert.no.selected.row'
+                  , deleteQuestionMessage: 'adminCommon.alert.delete'
+            });
+    </script>
+
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/sitePopupGrid.eventHandler.js?2021100801'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/sitePopupGrid.provider.js?2021100801'" ></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            sitePopupGrid.eventhandler.init();
+        });
+    </script>
+</th:block>
+
+</body>
+</html>

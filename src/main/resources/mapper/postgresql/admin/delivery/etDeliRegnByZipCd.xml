@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.delivery.EtDeliRegnByZipCdMapper">
+
+	<sql id="paginatedBase">
+		LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+	</sql>
+	
+	<sql id="getRgnAddr">
+		SELECT  /* etDeliRegnByZipCd.getRegnPostNoList */
+				T.ZIP_NO
+				, COALESCE(T.CTP_NM,'') ||' '|| COALESCE(T.SIG_NM,'')  ||' '||  COALESCE(T.EMD_NM,'') ||' '|| COALESCE(T.ROAD_NM,'') AS BASE_ADDR
+		  FROM  (
+			SELECT  SZN.*
+			  FROM mv_post SZN
+		     WHERE 1=1
+			<if test="deliRegnGbNm != null and deliRegnGbNm!= ''">
+				AND CTP_NM = #{deliRegnGbNm}
+			</if>
+			<if test="searchWord != null and searchWord!= ''">
+				AND EMD_NM LIKE #{searchWord}||'%'
+			</if>
+			) T
+		WHERE NOT EXISTS (
+				SELECT 1 FROM ET_DELI_REGN_BY_ZIP_CD EDRBZC
+				WHERE EDRBZC.ZIP_NO = T.ZIP_NO
+		)
+	</sql>
+
+	<!--
+	제 목 : 추가가능배송지역 그리드 목록
+	작성자 : 박슬기
+	작성일 : 2021.02.10
+	params : EtDeliRegnByZipCdRequest
+	설 명 : 추가가능배송지역 그리드 목록
+	-->
+	<select id="getRegnPostNoList" parameterType="EtDeliRegnByZipCdRequest" resultType="EtDeliRegnByZipCdResponse">
+		<include refid="getRgnAddr" />
+		<include refid="paginatedBase" />
+	</select>
+
+	<!--
+	제 목 : 추가가능배송지역 목록 count
+	작성자 : 박슬기
+	작성일 : 2021.02.10
+	params : EtDeliRegnByZipCdRequest
+	설 명 : 추가가능배송지역 목록 Count
+	-->
+	<select id="getRegnPostNoListCount" parameterType="EtDeliRegnByZipCdRequest" resultType="java.lang.Integer">
+		SELECT   /* etDeliRegnByZipCd.getRegnPostNoListCount */
+				COUNT(*)
+		FROM (
+				<include refid="getRgnAddr" />
+		) T1
+	</select>
+
+	<!--
+	제 목 : 배송지역그룹 드롭다운 리스트
+	작성자 : 박슬기
+	작성일 : 2021.02.10
+	params :
+	설 명 : 배송지역그룹 드롭다운 리스트
+	-->
+	<select id="getRgnGrpList" resultType="string">
+		SELECT /* etDeliRegnByZipCd.getRgnGrpList */
+		       CTP_NM
+		  FROM ST_ZIP_NO
+		 GROUP BY CTP_NM
+	</select>
+
+	<!--
+	제 목 : 해당 배송지역 그리드 목록
+	작성자 : 박슬기
+	작성일 : 2021.02.10
+	params : EtDeliRegnByZipCdRequest
+	설 명 : 해당 배송지역 그리드 목록
+	-->
+	<select id="getDeliRegnByZipCdList" parameterType="EtDeliRegnByZipCdRequest" resultType="EtDeliRegnByZipCdResponse">
+		<include refid="deliRegnByZipCdListBase" />
+		<include refid="paginatedBase" />
+	</select>
+
+	<sql id="deliRegnByZipCdListBase">
+		 SELECT  /* etDeliRegnByZipCd.getRgnGrpList */
+		        EDRBZC.ZIP_NO
+			  , EDRBZC.DELI_REGN_GB_CD
+		 	  , COALESCE(MP.CTP_NM,'') ||' '|| COALESCE(MP.SIG_NM,'')  ||' '||  COALESCE(MP.EMD_NM,'') ||' '|| COALESCE(MP.ROAD_NM,'') AS BASE_ADDR
+		   FROM ET_DELI_REGN_BY_ZIP_CD EDRBZC , MV_POST MP
+		  WHERE EDRBZC.ZIP_NO = MP.ZIP_NO
+		<if test="deliRegnGbCd != null and deliRegnGbCd!= ''">
+			AND DELI_REGN_GB_CD = #{deliRegnGbCd}
+		</if>
+	</sql>
+
+	<!--
+	제 목 : 해당 배송지역 그리드 목록 count
+	작성자 : 박슬기
+	작성일 : 2021.02.10
+	params : EtDeliRegnByZipCdRequest
+	설 명 : 해당 배송지역 그리드 목록 count
+	-->
+	<select id="getDeliRegnByZipCdListCount" parameterType="EtDeliRegnByZipCdRequest" resultType="java.lang.Integer">
+		SELECT   /* etDeliRegnByZipCd.getDeliRegnByZipCdListCount */
+				COUNT(*)
+		  FROM ET_DELI_REGN_BY_ZIP_CD
+		 WHERE 1=1
+			<if test="deliRegnGbCd != null and deliRegnGbCd!= ''">
+				AND DELI_REGN_GB_CD = #{deliRegnGbCd}
+			</if>
+	</select>
+
+</mapper>
+
+

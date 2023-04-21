@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.display.PrConrSetInfoMapper">
+
+	<select id="checkPrDispConrInfo" parameterType="prConrSetInfoRequest" resultType="java.lang.Integer">
+		SELECT   /* prConrSetInfo.checkPrDispConrInfo */
+				COUNT(*)
+		FROM 	PR_DISP_CONR_INFO
+		WHERE 	DISP_CTG_NO = #{dispCtgNo}
+		AND 	CONR_NO = #{conrNo}
+	</select>
+
+	<insert id="prDispConrInfoInsert" parameterType="prConrSetInfo">
+		INSERT INTO PR_DISP_CONR_INFO (  /* PrConrSetInfo.prDispConrInfoInsert */
+			  DISP_CTG_NO
+			, CONR_NO
+			, SYS_REG_ID
+			, SYS_REG_DTM
+			, SYS_MOD_ID
+			, SYS_MOD_DTM
+		) VALUES (
+			  #{dispCtgNo}
+			, #{conrNo}
+			, #{sysRegId}
+			, now()
+			, #{sysModId}
+			, now()
+		)
+	</insert>
+
+	<select id="getConrTgtNoList" parameterType="prConrSetInfoRequest" resultType="java.lang.String">
+		SELECT  CONR_TGT_NO      			  	/* prConrSetInfo.getConrTgtNoList */
+		FROM 	PR_CONR_TGT_INFO
+		WHERE   CONR_NO = #{conrNo}
+		AND 	DPTH_NO = '2'
+	</select>
+
+	<select id="checkPrConrSetInfo" parameterType="prConrSetInfoRequest" resultType="java.lang.Integer">
+		SELECT   /* prConrSetInfo.checkPrConrSetInfo */
+		COUNT(*)
+		FROM 	PR_CONR_SET_INFO
+		WHERE 	DISP_CTG_NO = #{dispCtgNo}
+		AND 	CONR_NO = #{conrNo}
+		AND 	CONR_TGT_NO = #{conrTgtNo}
+	</select>
+
+	<select id="getPrConrSetInfo" parameterType="prConrSetInfoRequest" resultType="PrConrTgtInfoResponse">
+		SELECT   /* prConrSetInfo.getPrConrSetInfo */
+				  CONR_NO
+				, CONR_TGT_NO
+				, CONR_TGT_CNT
+				, DISP_SEQ
+				, DPTH_NO
+				, UPR_CONR_TGT_NO
+		FROM 	PR_CONR_TGT_INFO
+		WHERE 	CONR_NO = #{conrNo}
+		AND 	CONR_TGT_NO = #{conrTgtNo}
+		AND 	DPTH_NO = '2'
+	</select>
+
+	<insert id="prConrSetInfoInsert_dpthNo2" parameterType="prConrSetInfoRequest">
+		INSERT INTO PR_CONR_SET_INFO (  /* prConrSetInfo.prConrSetInfoInsert_dpthNo2 */
+				DISP_CTG_NO
+				, CONR_NO
+				, CONR_TGT_NO
+				, DPTH_NO
+				, DISP_SEQ
+				, DISP_YN
+				, GRP_TGT_NO
+				, UPR_CONR_TGT_NO
+				, SYS_REG_ID
+				, SYS_REG_DTM
+				, SYS_MOD_ID
+				, SYS_MOD_DTM
+		) VALUES (
+				  #{dispCtgNo}
+				, #{conrNo}
+				, #{conrTgtNo}
+				, #{dpthNo}
+				, #{dispSeq}
+				, 'Y'
+				, #{uprConrTgtNo}
+				, #{uprConrTgtNo}
+				, #{sysRegId}
+				, now()
+				, #{sysModId}
+				, now()
+		)
+	</insert>
+
+	<insert id="prConrSetInfoInsert_dpthNo1" parameterType="prConrSetInfoRequest">
+		INSERT INTO PR_CONR_SET_INFO (  /* prConrSetInfo.prConrSetInfoInsert_dpthNo1 */
+				  DISP_CTG_NO
+				, CONR_NO
+				, CONR_TGT_NO
+				, DPTH_NO
+				, SET_NM
+				, DISP_SEQ
+				, DISP_YN
+				, SET_DESC
+				, GRP_TGT_NO
+				, UPR_CONR_TGT_NO
+				, SYS_REG_ID
+				, SYS_REG_DTM
+				, SYS_MOD_ID
+				, SYS_MOD_DTM
+		) VALUES (
+				  #{dispCtgNo}
+				, #{conrNo}
+				, #{conrTgtNo}
+				, #{dpthNo}
+				, #{setNm}
+				, #{dispSeq}
+				, #{dispYn}
+				, #{setDesc}
+				, #{grpTgtNo}
+				, null
+				, #{sysRegId}
+				, now()
+				, #{sysModId}
+				, now()
+		)
+	</insert>
+
+	<update id="prConrSetInfoUpdate" parameterType="prConrSetInfoRequest">
+		UPDATE 		PR_CONR_SET_INFO  /* prConrSetInfo.prConrSetInfoUpdate */
+		SET
+				  DPTH_NO             = #{dpthNo}
+				, SET_NM              = #{setNm}
+				, DISP_SEQ            = #{dispSeq}
+				, DISP_YN             = #{dispYn}
+				, SET_DESC            = #{setDesc}
+				, GRP_TGT_NO          = #{grpTgtNo}
+				, UPR_CONR_TGT_NO     = null
+				, SYS_MOD_ID          = #{sysModId}
+				, SYS_MOD_DTM         = now()
+		WHERE 	DISP_CTG_NO = #{dispCtgNo}
+		AND 	CONR_NO = #{conrNo}
+		AND 	CONR_TGT_NO = #{conrTgtNo}
+	</update>
+
+	<select id="getConrTgtCdList_setY" parameterType="PrConrTgtInfoRequest" resultType="PrConrTgtInfoResponse">
+		SELECT  				/* prConrSetInfo.getConrTgtCdList_setY */
+		PCSI.CONR_TGT_NO
+		, FN_GET_CODENAME('DP005',PCTI.CONR_TGT_CD) AS CONR_TGT_NAME
+		, PCTI.CONR_TGT_CD
+		, PCTI.CONR_TGT_CNT
+		FROM 	  PR_CONR_SET_INFO PCSI
+		, PR_CONR_TGT_INFO PCTI
+		WHERE     PCSI.CONR_NO = PCTI.CONR_NO
+		AND   	  PCSI.CONR_TGT_NO = PCTI.CONR_TGT_NO
+		AND    	  PCSI.CONR_NO = #{conrNo}
+		AND   	  PCSI.UPR_CONR_TGT_NO = #{conrTgtNo}
+		AND 	  PCSI.DISP_CTG_NO = #{dispCtgNo}
+		AND 	  PCSI.DPTH_NO = '2'
+		ORDER BY  PCSI.DISP_SEQ
+	</select>
+
+	<select id="getConrTgtCdList_setN" parameterType="PrConrTgtInfoRequest" resultType="PrConrTgtInfoResponse">
+		SELECT  				/* prConrSetInfo.getConrTgtCdList_setN */
+		PCSI.CONR_TGT_NO
+		, FN_GET_CODENAME('DP005',PCTI.CONR_TGT_CD) AS CONR_TGT_NAME
+		, PCTI.CONR_TGT_CD
+		, PCTI.CONR_TGT_CNT
+		FROM 	  PR_CONR_SET_INFO PCSI
+		, PR_CONR_TGT_INFO PCTI
+		WHERE     PCSI.CONR_NO = PCTI.CONR_NO
+		AND   	  PCSI.CONR_TGT_NO = PCTI.CONR_TGT_NO
+		AND    	  PCSI.CONR_NO = #{conrNo}
+		AND 	  PCSI.DISP_CTG_NO = #{dispCtgNo}
+		AND 	  PCSI.DPTH_NO = '2'
+		ORDER BY  PCSI.DISP_SEQ
+	</select>
+
+</mapper>
+
+

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.customerservice.CsCnslTmplInfoMapper">
+
+	<sql id="paginatedBase">
+		LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+	</sql>
+
+	<sql id="csCnslTmplInfoList">
+		SELECT 				/* csCnslTmplInfo.csCnslTmplInfoList */
+							  CCTI.CNSL_AEMP_ID
+							, CCTI.CNSL_TMPL_NO
+							, FN_GET_CODENAME( 'CS015', CCTI.CNSL_GB_CD ) AS  CNSL_GB_CD
+							, FN_GET_CODENAME( 'CS016', CCTI.CNSL_TYP_CD ) AS  CNSL_TYP_CD
+							, CCTI.TMPL_NM
+							, CCTI.TMPL_CONT
+							, CCTI.SYS_REG_ID
+							, TO_CHAR(CCTI.SYS_REG_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_REG_DTM
+							, CCTI.SYS_MOD_ID
+							, TO_CHAR(CCTI.SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+		FROM 	  			CS_CNSL_TMPL_INFO CCTI
+		LEFT OUTER JOIN 	ST_USER_BASE SUB 			ON (SUB.USER_ID = CCTI.CNSL_AEMP_ID)
+		WHERE 	  			CCTI.CNSL_GB_CD		LIKE 	#{cnslGbCd}  	|| '%'
+		AND 	  			CCTI.CNSL_TYP_CD	LIKE 	#{cnslTypCd}  	|| '%'
+		AND 	  			CCTI.TMPL_NM		LIKE  	#{tmplNm} 		|| '%'
+		AND 	  			CCTI.SYS_REG_ID		LIKE 	#{userId}  		|| '%'
+		AND 				CCTI.CNSL_AEMP_ID = #{cnslAempId}
+		ORDER BY 			CCTI.CNSL_GB_CD, CCTI.CNSL_TYP_CD, CCTI.TMPL_NM
+	</sql>
+
+	<select id="getCsCnslTmplInfoList" parameterType="CsCounselTemplateInfoRequest" resultType="CsCounselTemplateInfoResponse">
+		<include refid="csCnslTmplInfoList" />
+		<include refid="paginatedBase" />
+	</select>
+
+	<select id="getCsCnslTmplInfoPopupList" parameterType="CsCounselTemplateInfoRequest" resultType="CsCounselTemplateInfoResponse">
+		<include refid="csCnslTmplInfoList" />
+	</select>
+
+	<select id="getCsCnslTmplInfoListCount" parameterType="CsCounselTemplateInfoRequest" resultType="java.lang.Integer">
+		SELECT   /* csCnslTmplInfo.getCsCnslTmplInfoListCount */
+		COUNT(*)
+		FROM (
+		<include refid="csCnslTmplInfoList" />
+		) T1
+	</select>
+
+	<select id="getCsCnslTmplInfoDetail" parameterType="CsCounselTemplateInfoRequest" resultType="CsCounselTemplateInfoResponse">
+		SELECT 				/* csCnslTmplInfo.getCsCnslTmplInfoDetail */
+					  CCTI.CNSL_AEMP_ID
+					, CCTI.CNSL_TMPL_NO
+					, CCTI.CNSL_GB_CD
+					, CCTI.CNSL_TYP_CD
+					, CCTI.TMPL_NM
+					, CCTI.TMPL_CONT
+		FROM 	  	  CS_CNSL_TMPL_INFO CCTI
+		WHERE 		  CCTI.CNSL_AEMP_ID = #{cnslAempId}
+		AND 		  CCTI.CNSL_TMPL_NO = #{cnslTmplNo}
+	</select>
+
+	<select id="csCnslTmplInfoDataCheck" parameterType="CsCounselTemplateInfoRequest" resultType="java.lang.Integer">
+		SELECT   										/* csCnslTmplInfo.csCnslTmplInfoDataCheck */
+					  COUNT(*)
+		FROM 	  	  CS_CNSL_TMPL_INFO CCTI
+		WHERE 		  CCTI.CNSL_GB_CD = #{cnslGbCd}
+		AND 		  CCTI.CNSL_TYP_CD = #{cnslTypCd}
+		AND 		  CCTI.TMPL_NM = #{tmplNm}
+	</select>
+
+	<select id="getCsCnslTmplInfoSelectBoxList" parameterType="CsCounselTemplateInfoRequest" resultType="CsCounselTemplateInfoResponse">
+		SELECT /* csCnslTmplInfo.getCsCnslTmplInfoSelectBoxList */
+		       CNSL_AEMP_ID
+			 , CNSL_TMPL_NO
+			 , FN_GET_CODENAME( 'CS015', CNSL_GB_CD ) AS  CNSL_GB_CD
+			 , FN_GET_CODENAME( 'CS016', CNSL_TYP_CD ) AS  CNSL_TYP_CD
+			 , TMPL_NM
+			 , TMPL_CONT
+		  FROM CS_CNSL_TMPL_INFO
+		 WHERE CNSL_AEMP_ID = #{cnslAempId}
+	</select>
+
+</mapper>
+
+

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.customerservice.CsCnslTypInfoTrxMapper">
+    <insert id="insertConsultationType" parameterType="CsCnslTypInfo">
+        INSERT INTO CS_CNSL_TYP_INFO (/* csCnslTypInfoTrx.insertConsultationType */
+                    CNSL_TYP_NO
+                  , CNSL_TYP_NM
+                  , USE_YN
+                  , SORT_SEQ
+                  , CUST_CNSL_GB_CD
+                  , GOODS_SEL_MDTY_YN
+                  , RESP_BASE_MEMO
+                  , CNSL_LRG_TYP_NO
+                  , CNSL_MID_TYP_NO
+                  , CNSL_SML_TYP_NO
+                  , UPR_CNSL_TYP_NO
+                  , SYS_REG_ID
+                  , SYS_REG_DTM
+                  , SYS_MOD_ID
+                  , SYS_MOD_DTM
+                  )
+             VALUES (
+                    #{cnslTypNo}
+                  , #{cnslTypNm}
+                  , #{useYn}
+                  , #{sortSeq}
+                  , #{custCnslGbCd}
+                  , #{goodsSelMdtyYn}
+                  , #{respBaseMemo}
+                  , #{cnslLrgTypNo}
+                  , #{cnslMidTypNo}
+                  , #{cnslSmlTypNo}
+                  , #{uprCnslTypNo}
+                  , #{sysRegId}
+                  , now()
+                  , #{sysModId}
+                  , now()
+                  )
+    </insert>
+    <update id="updateConsultationType" parameterType="CsCnslTypInfo">
+        UPDATE CS_CNSL_TYP_INFO
+           SET /* csCnslTypInfoTrx.updateConsultationType */
+               CNSL_TYP_NM = #{cnslTypNm}
+             , USE_YN = #{useYn}
+             , SORT_SEQ = #{sortSeq}
+             , CUST_CNSL_GB_CD = #{custCnslGbCd}
+             , GOODS_SEL_MDTY_YN = #{goodsSelMdtyYn}
+             , RESP_BASE_MEMO = #{respBaseMemo}
+             , SYS_MOD_ID = #{sysModId}
+             , SYS_MOD_DTM = NOW()
+         WHERE CNSL_TYP_NO = #{cnslTypNo}
+    </update>
+</mapper>

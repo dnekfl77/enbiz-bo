@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enbiz.bo.app.repository.goods.PrPregGoodsSafeCertiHistTrxMapper">
+
+    <insert id="insertPregGoodsSafeCertiHist" parameterType="PrPregGoodsSafeCertiHist">
+        INSERT INTO PR_PREG_GOODS_SAFE_CERTI_HIST ( /* prPregGoodsSafeCertiHistTrx.insertPregGoodsSafeCertiHist */
+               PREG_GOODS_NO
+             , SAFE_CERTI_GB_CD
+             , SAFE_CERTI_NO
+             , APLY_STR_DT
+             , APLY_END_DT
+             , SAFE_CERTI_ORN_NM
+             , SYS_REG_ID
+             , SYS_REG_DTM
+             , SYS_MOD_ID
+             , SYS_MOD_DTM
+        ) VALUES (
+               #{pregGoodsNo}
+             , #{safeCertiGbCd}
+             , #{safeCertiNo}
+             , #{aplyStrDt}
+             , #{aplyEndDt}
+             , #{safeCertiOrnNm}
+             , #{sysRegId}
+             , now()
+             , #{sysRegId}
+             , now()
+        )
+    </insert>
+
+    <insert id="applyPregGoodsSafeCertiHist" parameterType="PrPregGoodsBase">
+        INSERT INTO PR_GOODS_SAFE_CERTI_HIST( /* prPregGoodsSafeCertiHistTrx.applyPregGoodsSafeCertiHist */
+               GOODS_NO
+             , SAFE_CERTI_GB_CD
+             , SAFE_CERTI_NO
+             , APLY_STR_DT
+             , APLY_END_DT
+             , SAFE_CERTI_ORN_NM
+             , SYS_REG_ID
+             , SYS_REG_DTM
+             , SYS_MOD_ID
+             , SYS_MOD_DTM
+        )
+        SELECT #{goodsNo}
+             , SAFE_CERTI_GB_CD
+             , SAFE_CERTI_NO
+             , APLY_STR_DT
+             , APLY_END_DT
+             , SAFE_CERTI_ORN_NM
+             , #{sysRegId}
+             , now()
+             , #{sysModId}
+             , now()
+          FROM PR_PREG_GOODS_SAFE_CERTI_HIST
+         WHERE PREG_GOODS_NO = #{pregGoodsNo}
+    </insert>
+
+    <delete id="deletePregGoodsSafeCertiHist" parameterType="java.lang.String">
+        DELETE /* prPregGoodsSafeCertiHist.prPregGoodsSafeCertiHistTrx */
+          FROM PR_PREG_GOODS_SAFE_CERTI_HIST
+         WHERE PREG_GOODS_NO = #{pregGoodsNo}
+    </delete>
+</mapper>

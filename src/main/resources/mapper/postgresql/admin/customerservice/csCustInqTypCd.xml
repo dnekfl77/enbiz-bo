@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.customerservice.CsCustInqTypCdMapper">
+
+    <sql id="paginatedBase">
+        LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+    </sql>
+
+    <sql id="inquiryTypeLargeBase">
+        SELECT /* CsCustInqTypCdMapper.getInquiryTypeL */
+               CUST_INQ_TYP_CD
+             , CUST_INQ_TYP_NM
+             , SORT_SEQ
+             , USE_YN
+             , ORD_GOODS_MDTY_YN
+             , ANS_SUB_CD
+             , CNSL_TYP_NO
+             , UPR_CUST_INQ_TYP_CD
+             , SYS_MOD_ID
+          FROM CS_CUST_INQ_TYP_CD
+         WHERE USE_YN LIKE #{useYn} || '%'
+           AND UPR_CUST_INQ_TYP_CD IS NULL
+    </sql>
+
+    <select id="getInquiryTypeLarge" parameterType="InquireTypeRequest" resultType="InquireTypeResponse">
+        <include refid="inquiryTypeLargeBase" />
+        <include refid="paginatedBase" />
+    </select>
+
+    <select id="getInquiryTypeLargeCount" parameterType="InquireTypeRequest" resultType="java.lang.Integer">
+        SELECT /* CsCustInqTypCdMapper.getInquiryTypeLargeCount */
+        COUNT(*)
+        FROM (
+        <include refid="inquiryTypeLargeBase" />
+        ) v
+    </select>
+
+    <sql id="inquiryTypeSmallBase">
+        SELECT /* CsCustInqTypCdMapper.inquiryTypeSmallBase */
+               CCITC.CUST_INQ_TYP_CD
+             , CCITC.CUST_INQ_TYP_NM
+             , CCITC.SORT_SEQ
+             , CCITC.USE_YN
+             , CCITC.ORD_GOODS_MDTY_YN
+             , CCITC.ANS_SUB_CD
+             , (SELECT CNSL_TYP_NM FROM CS_CNSL_TYP_INFO TEMP WHERE TEMP.CNSL_TYP_NO = CSTI.CNSL_LRG_TYP_NO) || '>' ||
+               (SELECT CNSL_TYP_NM FROM CS_CNSL_TYP_INFO TEMP WHERE TEMP.CNSL_TYP_NO = CSTI.CNSL_MID_TYP_NO) || '>' ||
+               (SELECT CNSL_TYP_NM FROM CS_CNSL_TYP_INFO TEMP WHERE TEMP.CNSL_TYP_NO = CSTI.CNSL_SML_TYP_NO) AS CNSL_TYP_TEXT
+             , CCITC.CNSL_TYP_NO
+             , CCITC.UPR_CUST_INQ_TYP_CD
+             , CCITC.SYS_MOD_ID
+             , TO_CHAR(CCITC.SYS_MOD_DTM,'yyyy-mm-dd hh24:mi:ss') AS SYS_MOD_DTM
+         FROM CS_CUST_INQ_TYP_CD CCITC
+         LEFT OUTER JOIN CS_CNSL_TYP_INFO CSTI
+                      ON CCITC.CNSL_TYP_NO = CSTI.CNSL_TYP_NO
+        WHERE CCITC.USE_YN LIKE #{useYn} || '%'
+          AND CCITC.UPR_CUST_INQ_TYP_CD = #{uprCustInqTypCd}
+    </sql>
+
+    <select id="getInquiryTypeSmall" parameterType="InquireTypeRequest" resultType="InquireTypeResponse">
+        <include refid="inquiryTypeSmallBase" />
+        <include refid="paginatedBase" />
+    </select>
+
+    <select id="getInquiryTypeSmallCount" parameterType="InquireTypeRequest" resultType="java.lang.Integer">
+        SELECT /* CsCustInqTypCdMapper.getInquiryTypeSmallCount */
+               COUNT(*)
+          FROM (
+            <include refid="inquiryTypeSmallBase" />
+          ) v
+    </select>
+
+    <select id="getInquiryTypeSmallNoPaging" parameterType="InquireTypeRequest" resultType="InquireTypeResponse">
+        SELECT /* CsCustInqTypCdMapper.getInquiryTypeSmallNoPaging */
+            CCITC.CUST_INQ_TYP_CD
+             , CCITC.CUST_INQ_TYP_NM
+             , CCITC.SORT_SEQ
+             , CCITC.USE_YN
+             , CCITC.ORD_GOODS_MDTY_YN
+             , CCITC.ANS_SUB_CD
+             , (SELECT CNSL_TYP_NM FROM CS_CNSL_TYP_INFO TEMP WHERE TEMP.CNSL_TYP_NO = CSTI.CNSL_LRG_TYP_NO) || '>' ||
+               (SELECT CNSL_TYP_NM FROM CS_CNSL_TYP_INFO TEMP WHERE TEMP.CNSL_TYP_NO = CSTI.CNSL_MID_TYP_NO) || '>' ||
+               (SELECT CNSL_TYP_NM FROM CS_CNSL_TYP_INFO TEMP WHERE TEMP.CNSL_TYP_NO = CSTI.CNSL_SML_TYP_NO) AS CNSL_TYP_TEXT
+             , CCITC.CNSL_TYP_NO
+             , CCITC.UPR_CUST_INQ_TYP_CD
+             , CCITC.SYS_MOD_ID
+             , TO_CHAR(CCITC.SYS_MOD_DTM,'yyyy-mm-dd hh24:mi:ss') AS SYS_MOD_DTM
+        FROM CS_CUST_INQ_TYP_CD CCITC
+                 LEFT OUTER JOIN CS_CNSL_TYP_INFO CSTI
+                                 ON CCITC.CNSL_TYP_NO = CSTI.CNSL_TYP_NO
+        WHERE CCITC.USE_YN LIKE #{useYn} || '%'
+          AND CCITC.UPR_CUST_INQ_TYP_CD IS NULL
+    </select>
+</mapper>

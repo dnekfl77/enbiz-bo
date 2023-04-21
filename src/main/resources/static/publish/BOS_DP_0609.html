@@ -1,0 +1,186 @@
+<html lang="ko-KR">
+<head>
+  <title>x2</title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+  <link type="text/css" rel="stylesheet" href="../css/reset.css">
+  <link type="text/css" rel="stylesheet" href="../css/layout.css">
+  <link type="text/css" rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" type="text/css" href="../css/realgrid-style.css">
+  <script src="../js/libs/jquery/jquery-3.4.1.min.js"></script>
+  <script src="../js/contents.js"></script>
+</head>
+
+<body>
+  <div class="win-popup page-root">
+    <div class="page-fixed">
+      <!-- page-title 가 있을경우 with-title 클래스 추가 -->
+      <div class="search-cont">
+        <!-- 높이갚 최대일때 full-height 클래스 추가 -->
+        <div class="header">
+          <h1 class="title" id="">전시 카테고리 등록/수정</h1>
+        </div>
+
+        <div class="data-cont">
+          <div class="data">
+            <div class="data-body">
+              <table class="data-table">
+                <colgroup>
+                  <col width="120">
+                  <col>
+                  <col width="120">
+                  <col>
+                </colgroup>
+                <tbody>
+                  <tr>
+                    <td class="label">사이트 구분</td>
+                    <td colspan="3">X2 COMMERCE</td>
+                  </tr>
+                  <tr>
+                    <td class="label">매장 유형</td>
+                    <td>카테고리 매장</td>
+                    <td class="label"><strong>전시 카테고리 번호</strong></td>
+                    <td>00</td>
+                  </tr>
+                  <tr>
+                    <td class="label"><strong>전시 카테고리명</strong></td>
+                    <td><input type="text" name="" value="" class="input"></td>
+                    <td class="label"><strong>전시 순서</strong></td>
+                    <td>
+                      <input type="text" name="" value="" class="input">
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="label"><strong>전시여부</strong></td>
+                    <td>
+                      <select class="form-control">
+                        <option value="">전시</option>
+                        <option value="">전시안함</option>
+                      </select>
+                    </td>
+                    <td class="label"><strong>사용여부</strong></td>
+                    <td>
+                      <select class="form-control">
+                        <option value="">사용</option>
+                        <option value="">사용안함</option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="label"><strong>전시시작일자</strong></td>
+                    <td>
+                      <div class="picker-group">
+                        <input type="text" class="form-control" disabled>
+                        <span class="input-group-addon">~</span>
+                        <input type="text" class="form-control" disabled>
+                        <span class="input-group-addon"><i class="icon-calendar"></i></span>
+                      </div>
+                    </td>
+                    <td class="label"><strong>전시종료일자</strong></td>
+                    <td>
+                      <div class="picker-group">
+                        <input type="text" class="form-control" disabled>
+                        <span class="input-group-addon">~</span>
+                        <input type="text" class="form-control" disabled>
+                        <span class="input-group-addon"><i class="icon-calendar"></i></span>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="label"><strong>최하위 카테고리 여부</strong></td>
+                    <td>
+                      <select class="form-control">
+                        <option value="">선택</option>
+                        <option value="">Yes</option>
+                        <option value="">No</option>
+                      </select>
+                    </td>
+                    <td class="label"><strong>출력유형</strong></td>
+                    <td>
+                      <select class="form-control">
+                        <option value="">선택</option>
+                        <option value="">템플릿지정</option>
+                        <option value="">URL이동</option>
+                        <option value="">매장이동</option>
+                        <option value="">연결없음</option>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="label">전시 템플릿</td>
+                    <td colspan="3">
+                      <input type="text" name="" value="" class="input">
+                      <a href="#" class="button small"><span class="text">검색</span></a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="label">대상 URL</td>
+                    <td colspan="3">
+                      <table class="data-table inbox fixed">
+                        <colgroup>
+                          <col width="120">
+                          <col>
+                          <col width="120">
+                          <col>
+                        </colgroup>
+                        <tbody>
+                          <tr>
+                            <td class="label">이동방법</td>
+                            <td>
+                              <select class="form-control">
+                                <option value="">새창</option>
+                                <option value="">내부이동</option>
+                              </select>
+                            </td>
+                            <td class="label">연결 URL</td>
+                            <td><input type="text" name="" value="" class="input"></td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="label">매장번호</td>
+                    <td colspan="3">
+                      <table class="data-table inbox fixed">
+                        <colgroup>
+                          <col width="120">
+                          <col>
+                          <col width="120">
+                          <col>
+                        </colgroup>
+                        <tbody>
+                          <tr>
+                            <td class="label">이동방법</td>
+                            <td>
+                              <select class="form-control">
+                                <option value="">새창</option>
+                                <option value="">내부이동</option>
+                              </select>
+                            </td>
+                            <td class="label">연결 URL</td>
+                            <td><input type="text" name="" value="" class="input"></td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <!-- //search-cont -->
+
+      <div class="button-group">
+        <a href="#" class="button"><span class="text">저장</span></a>
+        <a href="#" class="button"><span class="text">취소</span></a>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

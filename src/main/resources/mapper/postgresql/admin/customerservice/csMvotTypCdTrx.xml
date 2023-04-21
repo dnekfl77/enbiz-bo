@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.customerservice.CsMvotTypCdTrxMapper">
+    <insert id="insertCsMvotTypCd" parameterType="CsMvotTypCd">
+        <selectKey keyProperty="csMvotTypNo" resultType="String" order="BEFORE">
+            SELECT NEXTVAL('CS_MVOT_TYP_CD_SQ01') AS csMvotTypNo
+        </selectKey>
+        INSERT INTO CS_MVOT_TYP_CD (  /* csMvotTypCd.insertCsMvotTypCd */
+                  CS_MVOT_TYP_NO
+                , CS_MVOT_TYP_NM
+                , CS_TYP_DESC
+                , TMPL_MEMO
+                , USE_YN
+                , SYS_REG_ID
+                , SYS_REG_DTM
+                , SYS_MOD_ID
+                , SYS_MOD_DTM
+        ) VALUES (
+                  #{csMvotTypNo}
+                , #{csMvotTypNm}
+                , #{csTypDesc}
+                , #{tmplMemo}
+                , #{useYn}
+                , #{sysRegId}
+                , now()
+                , #{sysModId}
+                , now()
+        )
+    </insert>
+
+    <update id="updateCsMvotTypCd" parameterType="CsMvotTypCd">
+        UPDATE    CS_MVOT_TYP_CD  /* csMvotTypCd.updateCsMvotTypCd */
+        SET
+                  CS_MVOT_TYP_NM = #{csMvotTypNm}
+                , CS_TYP_DESC    = #{csTypDesc}
+                , TMPL_MEMO      = #{tmplMemo}
+                , USE_YN         = #{useYn}
+                , SYS_MOD_ID 	 = #{sysModId}
+                , SYS_MOD_DTM 	 = now()
+        WHERE     CS_MVOT_TYP_NO = #{csMvotTypNo}
+    </update>
+</mapper>

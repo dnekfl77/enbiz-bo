@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enbiz.bo.app.repository.goods.PrPrestHistTrxMapper">
+    <insert id="insertPrPrestHist" parameterType="PrPrestHist">
+        INSERT INTO PR_PREST_HIST (/* PrPrestHistTrx.insertCoupon */
+                    GOODS_NO
+                  , APLY_STR_DT
+                  , APLY_END_DT
+                  , PREST_NM
+                  , USE_YN
+                  , SYS_REG_ID
+                  , SYS_REG_DTM
+                  , SYS_MOD_ID
+                  , SYS_MOD_DTM
+             )
+             VALUES (
+                    #{goodsNo}
+                  , REPLACE(#{aplyStrDt},'-','')
+                  , REPLACE(#{aplyEndDt},'-','')
+                  , #{prestNm}
+                  , #{useYn}
+                  , #{sysRegId}
+                  , NOW()
+                  , #{sysModId}
+                  , NOW()
+             )
+    </insert>
+
+    <update id="updatePrPrestHist" parameterType="PrPrestHist">
+        UPDATE PR_PREST_HIST /* PrPrestHistTrx.updatePrPrestHist */
+           SET PREST_NM = #{prestNm}
+             , USE_YN = #{useYn}
+             , SYS_MOD_ID = #{sysModId}
+             , SYS_MOD_DTM = NOW()
+         WHERE GOODS_NO = #{goodsNo}
+           AND APLY_STR_DT = REPLACE(#{aplyStrDt},'-','')
+           AND APLY_END_DT = REPLACE(#{aplyEndDt},'-','')
+    </update>
+
+    <delete id="deletePrPrestHist" parameterType="PrPrestHist">
+        DELETE /* PrPrestHistTrx.deletePrPrestHist */
+          FROM PR_PREST_HIST
+         WHERE GOODS_NO = #{goodsNo}
+           AND APLY_STR_DT = REPLACE(#{aplyStrDt},'-','')
+           AND APLY_END_DT = REPLACE(#{aplyEndDt},'-','')
+    </delete>
+
+    <delete id="deleteAllPrPrestHist" parameterType="java.lang.String">
+        DELETE /* PrPrestHistTrx.deleteAllPrPrestHist */
+          FROM PR_PREST_HIST
+         WHERE GOODS_NO = #{goodsNo}
+    </delete>
+</mapper>
+
+

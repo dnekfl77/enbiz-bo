@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.customerservice.CsObTypCdTrxMapper">
+    <insert id="insertCsObTypeCode" parameterType="CsObTypCd">
+        <selectKey keyProperty="obTypNo" resultType="String" order="BEFORE">
+            SELECT NEXTVAL('CS_OB_TYP_CD_SQ01') AS obTypNo
+        </selectKey>
+        INSERT INTO CS_OB_TYP_CD (  /* csObTypCd.insertCsObTypCd */
+                  OB_TYP_NO
+                , OB_TYP_NM
+                , OB_TYP_DESC
+                , USE_YN
+                , CNSL_TYP_NO
+                , SYS_REG_ID
+                , SYS_REG_DTM
+                , SYS_MOD_ID
+                , SYS_MOD_DTM
+        ) VALUES (
+                  #{obTypNo}
+                , #{obTypNm}
+                , #{obTypDesc}
+                , #{useYn}
+                , #{cnslTypNo}
+                , #{sysRegId}
+                , now()
+                , #{sysModId}
+                , now()
+        )
+    </insert>
+    <update id="updateCsObTypeCode" parameterType="CsObTypCd">
+        UPDATE    CS_OB_TYP_CD  /* csObTypCd.CsObTypCd */
+        SET
+                  OB_TYP_NM    	 = #{obTypNm}
+                , OB_TYP_DESC    = #{obTypDesc}
+                , USE_YN       	 = #{useYn}
+                , CNSL_TYP_NO    = #{cnslTypNo}
+                , SYS_MOD_ID 	 = #{sysModId}
+                , SYS_MOD_DTM 	 = now()
+        WHERE     OB_TYP_NO = #{obTypNo}
+    </update>
+</mapper>

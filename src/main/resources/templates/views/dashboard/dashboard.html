@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="ko-KR"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <title>enbiz Solution</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+
+    <!--css-->
+    <link type="text/css" rel="stylesheet" th:href="${@domainConfig.getProperty('cssUrl')} + 'reset.css?202102260000'">
+    <link type="text/css" rel="stylesheet" th:href="${@domainConfig.getProperty('cssUrl')} + 'layout.css?202102260000'">
+    <link type="text/css" rel="stylesheet" th:href="${@domainConfig.getProperty('cssUrl')} + 'common.css?202103080003'">
+    <link type="text/css" rel="stylesheet" th:href="${@domainConfig.getProperty('cssUrl')} + 'main.css?20210804000'">
+    <!--//css-->
+
+    <!--js libs-->
+    <script th:src="${@domainConfig.getProperty('jsUrl')} + 'libs/jquery/jquery-3.4.1.min.js?202102260000'"></script>
+    <script th:src="${@domainConfig.getProperty('jsUrl')} + 'contents.js?202108111500'"></script>
+    <!--//js libs-->
+
+    <!--js dev-->
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'common/common.js?202108131241'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'common/ajax.js?202102260000'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'common/util.js?202102260000'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'common/main.js?202102260000'"></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'common/form.js?202102260000'"></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'common/validate.js?202102260000'"></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'common/cookie.js?202102260000'"></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'common/message.js?202102260001'"></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'common/popup.js?202108121250'"></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'common/text.js?202103080001'"></script>
+    <!--//js dev-->
+
+    <!--js current page-->
+    <!--//js current page-->
+    <style>
+	  .win-popup.account {
+		border: 1px;
+		border-style: solid;
+	  }
+	</style>
+</head>
+<body>
+<div class="page-root mbg">
+    <div class="page-fixed with-title pd40">
+    	<!--layer Popop-->
+        <div class="notice-layer-popup open" th:id="'pop-notice-'+${popupNotice.bbcNo}" th:each="popupNotice : ${popupNotice}" th:attr="style=|top:${50 * popupNoticeStat.index}px;left:${50 * popupNoticeStat.index}px;|">
+            <div class="notice-scroll-wrap">
+                <div class="win-popup account white">
+                    <div class="login-wrap  editor">
+                        <div class="box">
+                            <h1 class="memo">
+                            <th:block th:utext="${popupNotice.title}"></th:block>
+                            </h1>
+                            <span id="sub-title" class="category"></span>
+                            <button class="btn-close">×</button>
+                            <div class="cont">
+                                <th:block th:utext="${popupNotice.bbcCont}"></th:block>
+                            </div>
+                            <div class="file-upload" th:if="${not #lists.isEmpty(popupNotice.fileList)}">
+                        		<ul class="file-list">
+                            		<li
+                            		th:attr="onclick=|com.x2commerce.common.Util.downloadfile('${file.atchFileRouteNm}','${file.atchFileNm}')|"
+                            		th:each="file : ${popupNotice.fileList}"
+                            		th:text="${file.atchFileNm}"></li>
+                            	</ul>
+                        	</div>
+                        </div>
+                    </div>
+                    <div class="stop-today">
+					<a th:attr="onclick=|javascript:noticeLayerPopCloseToday('pop-notice-${popupNotice.bbcNo}')|"><th:block th:text="${#messages.msg('dashboard.label.sysnotice.stopToday')}"></th:block></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--layer Popop-->
+        <!-- 상품 -->
+        <div class="service-link">
+            <p class="cont-tt"><th:block th:text="${#messages.msg('dashboard.label.center.goods.state')}"></th:block></p>
+            <ul class="service-list">
+                <li>
+                    <a href="javascript:void(0);" id="btn_goodsTodayNewCnt">
+                        <span class="dayboxred"><th:block th:text="${#messages.msg('dashboard.label.center.today')}"></th:block></span>
+                        <h3><th:block th:text="${#messages.msg('dashboard.label.center.new.goods')}"></th:block></h3>
+                        <p class="red" th:text="${goodsTodayNewCnt}"></p><em><th:block th:text="${#messages.msg('adminCommon.label.unit')}"></th:block></em>
+                    </a>
+                </li>
+                <li>
+                    <a href="javascript:void(0);" id="btn_goodsTodaySoldOutCnt">
+                        <span class="daybox"><th:block th:text="${#messages.msg('dashboard.label.center.thisday')}"></th:block></span>
+                        <h3><th:block th:text="${#messages.msg('dashboard.label.center.soldout.goods')}"></th:block></h3>
+                        <p th:text="${goodsTodaySoldOutCnt}"></p><em><th:block th:text="${#messages.msg('adminCommon.label.unit')}"></th:block></em>
+                    </a>
+                </li>
+                <li>
+                    <a href="javascript:void(0);" id="btn_goods2WeekSellingCnt">
+                        <span class="daybox2"><th:block th:text="${#messages.msg('dashboard.label.center.2week')}"></th:block></span>
+                        <h3><th:block th:text="${#messages.msg('dashboard.label.center.sale.goods')}"></th:block></h3>
+                        <p th:text="${goods2WeekSellingCnt}"></p><em><th:block th:text="${#messages.msg('adminCommon.label.unit')}"></th:block></em>
+                    </a>
+                </li>
+                <li>
+                    <a href="javascript:void(0);" id="btn_goods2WeekSoldOutCnt">
+                        <span class="daybox2"><th:block th:text="${#messages.msg('dashboard.label.center.recent.2week')}"></th:block></span>
+                        <h3><th:block th:text="${#messages.msg('dashboard.label.center.soldout.goods')}"></th:block></h3>
+                        <p th:text="${goods2WeekSoldOutCnt}"></p><em><th:block th:text="${#messages.msg('adminCommon.label.unit')}"></th:block></em>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <!-- 상품end-->
+        <!--공지사항 및 현황 -->
+        <div class="grid-cont col-50">
+            <div>
+            <!--공지사항그리드-->
+            <div class="noti">
+                <div class="grid-head">
+                    <div class="title-area">
+                        <h2 class="title"><th:block th:text="${#messages.msg('dashboard.label.sysnotice.notice')}"></th:block></h2>
+                        <a class="btn-more" id="btn_noticeMore"><th:block th:text="${#messages.msg('dashboard.label.commom.more')}"></th:block></a></div>
+                </div>
+                <div class="grid-body with-head" id="noti-list">
+                    <table th:with="nl=${noticeList.isEmpty()} ? 0 : ${#lists.size(noticeList)}">
+                        <colgroup>
+                            <col>
+                            <col width="100">
+                            <col width="90">
+                        </colgroup>
+                        <tr class="label">
+                            <td><th:block th:utext="${#messages.msg('dashboard.label.sysnotice.subject')}"></th:block></td><!--제목 -->
+                            <td><th:block th:text="${#messages.msg('dashboard.label.sysnotice.regDtm')}"></th:block></td><!--등록일 -->
+                            <td><th:block th:text="${#messages.msg('dashboard.label.sysnotice.qryCnt')}"></th:block></td><!--조회수 -->
+                        </tr>
+                        <tr class="cont" th:classappend="${notice.fxdcYn == 'Y' ? 'fixed' : ''}" th:each="notice, noticeIndex : ${noticeList}">
+                            <td class="bold" >
+                            	<a th:attr="onclick=|javascript:dashboard.eventhandler.openSysNtcPopup('${notice.bbcNo}')|">
+                            	<th:block th:text="${notice.title}"></th:block>
+                            	</a>
+                            </td><!--제목 -->
+                            <td class="center ls0" th:text="${notice.sysRegDte}"></td><!--등록일 -->
+                            <td class="right ls0" th:text="${notice.qryCnt}"></td><!--조회수 -->
+                        </tr>
+                        <tr class="cont" th:if="${nl} < 4" th:each="num: ${#numbers.sequence(1,4 - nl)}">
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <!--공지사항 그리드 end-->
+            <!--업무알림그리드-->
+            <div class="noti mt20">
+                <div class="grid-head">
+                    <div class="title-area">
+                        <h2 class="title"><th:block th:text="${#messages.msg('dashboard.label.workalarm')}"></th:block></h2>
+                        <a class="btn-more" id="btn_alarmMore"><th:block th:text="${#messages.msg('dashboard.label.commom.more')}"></th:block></a></div>
+                </div>
+                <div class="grid-body with-head" id="alarm-list">
+                    <table th:with="al=${alarmList.isEmpty()} ? 0 : ${#lists.size(alarmList)}">
+                        <colgroup>
+                            <col>
+                            <col width="90">
+                        </colgroup>
+                        <tr class="label">
+                            <td><th:block th:text="${#messages.msg('dashboard.label.workalarm.subject')}"></th:block></td><!--제목 -->
+                            <td><th:block th:text="${#messages.msg('dashboard.label.workalarm.emergency.yn')}"></th:block></td><!--등록일 -->
+                        </tr>
+                        <tr class="cont" th:each="alarm, alarmIndex : ${alarmList}">
+                            <td th:text="${alarm.title}"></td>  <!--제목 -->
+                            <td th:text="${alarm.emergYn}" class="center"></td> <!--긴급여부 -->
+                        </tr>
+                        <tr class="cont" th:if="${al} < 2" th:each="num: ${#numbers.sequence(1,2 - al)}">
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <!--업무알림 그리드 end-->
+        </div>
+            <!--오른쪽-->
+            <div class="grid-cont">
+                <!--상품q&a 미처리현황 -->
+                <div class="data-cont">
+                    <span class="m-tip"><th:block th:text="${#messages.msg('dashboard.label.goodsqna.approve.request.recent.30day')}"></th:block></span>
+                    <div class="data">
+                        <div class="data-head">
+                            <div class="left">
+                                <span class="title"><th:block th:text="${#messages.msg('dashboard.label.goodsqna.subject')}"></th:block></span>
+                            </div>
+                            <div class="right"><a class="f11" id="btn_goodsQnaIngMore"><th:block th:text="${#messages.msg('dashboard.label.commom.more')}"></th:block></a></div>
+                        </div>
+                        <div class="data-body">
+                            <table class="m-table">
+                                <colgroup>
+                                    <col width="120px">
+                                    <col>
+                                    <col>
+                                    <col>
+                                </colgroup>
+                                <tbody>
+                                <tr>
+                                    <td class="label" th:text="${#messages.msg('dashboard.label.goodsqna.contract.type')}"></td>
+                                    <td class="label" th:text="${#messages.msg('dashboard.label.goodsqna.24hour.within')}"></td>
+                                    <td class="label" th:text="${#messages.msg('dashboard.label.goodsqna.24hour.72hour')}"></td>
+                                    <td class="label" th:text="${#messages.msg('dashboard.label.goodsqna.72hour.1month')}"></td>
+                                </tr>
+                                <tr th:each="goodsQna, qnaIndex : ${goodsQnaList}">
+                                    <td class="label fc" th:text="${#messages.msg('dashboard.label.goodsqna.direct.buying')}"></td>
+                                    <td class="temp"><th:block th:text="${goodsQna.fstCnt}"></th:block><em th:text="${#messages.msg('adminCommon.label.unit')}"></em></td>
+                                    <td><th:block th:text="${goodsQna.secCnt}"></th:block><em th:text="${#messages.msg('adminCommon.label.unit')}"></em></td>
+                                    <td><th:block th:text="${goodsQna.thdCnt}"></th:block><em th:text="${#messages.msg('adminCommon.label.unit')}"></em></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!--상품q&a 미처리현황 end -->
+                <!--위탁업체상품승인현황 -->
+                <div class="data-cont">
+                    <div class="data">
+                        <div class="data-head">
+                            <div class="left">
+                                <span class="title"><th:block th:text="${#messages.msg('dashboard.label.consignationdealer.goods.status')}"></th:block></span>
+                            </div>
+                            <div class="right"><a class="f11" id="btn_approvalMore"><th:block th:text="${#messages.msg('dashboard.label.commom.more')}"></th:block></a></div>
+                        </div>
+                        <!-- //data-head -->
+                        <div class="data-body">
+                            <table class="m-table">
+                                <colgroup>
+                                    <col width="200px">
+                                    <col>
+                                </colgroup>
+                                <tbody>
+                                <tr th:each="approval, approvalIndex : ${approvalList}">
+                                    <td class="label-b" th:text="${#messages.msg('dashboard.label.consignationdealer.approve.goods.cnt')}"></td>
+                                    <td class="right"><th:block th:text="${approval.cnt}"></th:block><em th:text="${#messages.msg('adminCommon.label.unit')}"></em></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!--위탁업체상품승인현황 end -->
+            </div>
+            <!--오른쪽 end-->
+        </div>
+        <!--공지사항 및 현황 end -->
+    </div>
+</div>
+</body>
+<script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'dashboard/dashboard.eventHandler.js?20210805001'" ></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+        var _baseUrl 		        = [[${@domainConfig.getProperty('baseUrl')}]];
+        var _jsUrl 			        = [[${@domainConfig.getProperty('jsUrl')}]];
+        var _currentLocaleLanguage  = [[${@environmentConfig.getProperty('defaultLocale')}]];
+        var _dbLocaleLanguage       = [[${@environmentConfig.getProperty('defaultLocale')}]];
+    /*]]>*/
+    
+    $(document).ready(function() {
+    	dashboard.eventhandler.init();
+    });
+</script>
+
+</html>

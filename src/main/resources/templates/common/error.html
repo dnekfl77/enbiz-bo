@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+
+<html lang="ko-KR" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>Error</title>
+	</head>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+	const _baseUrl 		        = [[${@domainConfig.getProperty('baseUrl')}]];
+	const _defaultSystemLanguage  = [[${@environmentConfig.getProperty('defaultLocale')}]];
+
+	var _isInIframe = (window.location != window.parent.location);
+
+    [# th:with="ex=${_ExceptioN_KEY_}"]
+		const message = /*[[${ex.message}]]*/;
+		const isValidationException = /*[[${ex instanceof T(com.enbiz.common.base.exception.ValidationException)}]]*/;
+		const isAppException = /*[[${ex instanceof T(com.enbiz.common.base.exception.AppException)}]]*/;
+		const isInstanceAuthException = /*[[${ex instanceof T(com.enbiz.bo.base.exception.AuthException)}]]*/;
+		const isRestApiException = /*[[${ex instanceof T(org.springframework.web.reactive.function.client.WebClientResponseException)}]]*/;
+		const isNotOpener = typeof opener == "undefined" || opener == null;
+     	
+     	if(isValidationException || isAppException) {
+     		alert(message);
+	   		isNotOpener ? history.go(-1) : window.close();
+     	} else if(isInstanceAuthException) {
+     		alert("ERROR->권한없음 : " + message);
+     	} else if(isRestApiException) {
+			alert("API 호출중 시스템 오류가 발생하였습니다.");
+		} else {
+     		alert(/*[[${#messages.msg('adminCommon.system.error')}]]*/);
+     	}     	
+	[/]
+   /*]]>*/
+</script>
+</html>

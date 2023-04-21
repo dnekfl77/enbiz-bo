@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enbiz.bo.app.repository.goods.PrPregAssocGoodsInfoTrxMapper">
+    <insert id="insertPregAssocGoods" parameterType="PrPregAssocGoodsInfo">
+        INSERT INTO PR_PREG_ASSOC_GOODS_INFO ( /* prPregAssocGoodsInfoTrx.insertPregAssocGoods */
+                PREG_GOODS_NO
+              , ASCT_GOODS_NO
+              , ASCT_GB_CD
+              , SORT_SEQ
+              , SYS_REG_ID
+              , SYS_REG_DTM
+              , SYS_MOD_ID
+              , SYS_MOD_DTM
+       ) VALUES (
+                #{pregGoodsNo}
+              , #{asctGoodsNo}
+              , #{asctGbCd}
+              , #{sortSeq}
+              , #{sysRegId}
+              , now()
+              , #{sysRegId}
+              , now()
+        )
+    </insert>
+
+    <update id="updatePregAssocGoodsInfo" parameterType="PrPregAssocGoodsInfo">
+        UPDATE PR_PREG_ASSOC_GOODS_INFO /* prPregAssocGoodsInfoTrx.updatePregAssocGoodsInfo */
+           SET SORT_SEQ = #{sortSeq}
+             , SYS_MOD_ID = #{sysModId}
+             , SYS_MOD_DTM = now()
+         WHERE PREG_GOODS_NO = #{pregGoodsNo}
+           AND ASCT_GOODS_NO = #{asctGoodsNo}
+    </update>
+
+    <delete id="deletePregAssocGoods" parameterType="PrPregAssocGoodsInfo">
+        DELETE  /* prPregAssocGoodsInfoTrx.deletePregAssocGoods */
+          FROM PR_PREG_ASSOC_GOODS_INFO
+         WHERE PREG_GOODS_NO = #{pregGoodsNo}
+           AND ASCT_GOODS_NO = #{asctGoodsNo}
+    </delete>
+
+    <insert id="applyPregAssocGoodsInfo" parameterType="PrPregGoodsBase">
+        INSERT INTO PR_ASSOC_GOODS_INFO( /* prPregAssocGoodsInfoTrx.applyPregAssocGoodsInfo */
+               GOODS_NO
+             , ASCT_GOODS_NO
+             , ASCT_GB_CD
+             , SORT_SEQ
+             , SYS_REG_ID
+             , SYS_REG_DTM
+             , SYS_MOD_ID
+             , SYS_MOD_DTM
+        )
+        SELECT #{goodsNo}
+             , ASCT_GOODS_NO
+             , ASCT_GB_CD
+             , SORT_SEQ
+             , #{sysRegId}
+             , now()
+             , #{sysRegId}
+             , now()
+          FROM PR_PREG_ASSOC_GOODS_INFO
+         WHERE PREG_GOODS_NO = #{pregGoodsNo}
+    </insert>
+
+    <delete id="deleteAllPregAssocGoods" parameterType="java.lang.String">
+        DELETE /* prPregAssocGoodsInfoTrx.deleteAllPregAssocGoods */
+          FROM PR_PREG_ASSOC_GOODS_INFO
+         WHERE PREG_GOODS_NO = #{pregGoodsNo}
+    </delete>
+</mapper>

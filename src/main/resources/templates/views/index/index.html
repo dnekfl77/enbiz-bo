@@ -1,0 +1,12 @@
+<html lang="ko-kr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    var _baseUrl 		        = [[${@domainConfig.getProperty('baseUrl')}]];
+
+    location.replace(_baseUrl + "loginForm.do");
+    /*]]>*/
+</script>
+
+</html>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enbiz.bo.app.repository.goods.PrPregGoodsItemInfoTrxMapper">
+
+    <insert id="insertPregGoodsItem" parameterType="PrPregGoodsItemInfo">
+        INSERT INTO PR_PREG_GOODS_ITEM_INFO ( /* prPregGoodsItemInfoTrx.insertPregGoodsItem */
+                    PREG_GOODS_NO
+                  , GOODS_NOTI_LISART_CD
+                  , GOODS_NOTI_ITEM_CD
+                  , NOTI_ITEM_CMT
+                  , SYS_REG_ID
+                  , SYS_REG_DTM
+                  , SYS_MOD_ID
+                  , SYS_MOD_DTM
+        ) VALUES (
+                    #{pregGoodsNo}
+                  , #{goodsNotiLisartCd}
+                  , #{goodsNotiItemCd}
+                  , #{notiItemCmt}
+                  , #{sysRegId}
+                  , now()
+                  , #{sysRegId}
+                  , now()
+        )
+    </insert>
+
+    <update id="updatePregGoodsItemInfo" parameterType="PrPregGoodsItemInfo">
+        UPDATE PR_PREG_GOODS_ITEM_INFO /* prPregGoodsItemInfoTrx.updatePregGoodsItem */
+           SET NOTI_ITEM_CMT        = #{notiItemCmt}
+             , SYS_MOD_ID           = #{sysModId}
+             , SYS_MOD_DTM          = now()
+         WHERE PREG_GOODS_NO        = #{pregGoodsNo}
+           AND GOODS_NOTI_LISART_CD = #{goodsNotiLisartCd}
+           AND GOODS_NOTI_ITEM_CD   = #{goodsNotiItemCd}
+    </update>
+
+    <insert id="applyPregGoodsItemInfo" parameterType="PrPregGoodsBase">
+        INSERT INTO PR_GOODS_ITEM_INFO( /* prPregGoodsItemInfoTrx.applyPregGoodsItemInfo */
+               GOODS_NO
+             , GOODS_NOTI_LISART_CD
+             , GOODS_NOTI_ITEM_CD
+             , NOTI_ITEM_CMT
+             , SYS_REG_ID
+             , SYS_REG_DTM
+             , SYS_MOD_ID
+             , SYS_MOD_DTM
+	    )
+        SELECT #{goodsNo}
+             , GOODS_NOTI_LISART_CD
+             , GOODS_NOTI_ITEM_CD
+             , NOTI_ITEM_CMT
+             , #{sysRegId}
+             , now()
+             , #{sysRegId}
+             , now()
+          FROM PR_PREG_GOODS_ITEM_INFO
+         WHERE PREG_GOODS_NO = #{pregGoodsNo}
+    </insert>
+
+    <delete id="deletePregGoodsItemInfo" parameterType="java.lang.String">
+        DELETE /* prPregGoodsItemInfoTrx.deletePregGoodsItemInfo */
+          FROM PR_PREG_GOODS_ITEM_INFO
+         WHERE PREG_GOODS_NO = #{pregGoodsNo}
+    </delete>
+</mapper>

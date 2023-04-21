@@ -1,0 +1,83 @@
+<!--
+* 프로그램명 : 마케팅/서비스 동의 이력 조회 팝업
+* 작 성 일 : 2021.02.24
+* 작 성 자 : 박남훈
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 마케팅/서비스 동의 이력 조회 팝업
+* 이    력 :
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-update-layout}">
+<body>
+<th:block layout:fragment="header-area">
+    <div class="header">
+        <h1 class="title" th:text="${#messages.msg('customerMgmt.customerTermsAgreeHistoryPopup.title')}">회원등급이력조회</h1>
+    </div>
+</th:block>
+<th:block layout:fragment="data-area">
+<form name="customerTermsAgreeHistoryGridForm" id="customerTermsAgreeHistoryGridForm">
+    <input type="hidden" name="mbrNo" id="mbrNo" th:value="${customerDetail.mbrNo}">
+    <input type="hidden" name="siteNo" id="siteNo" th:value="${customerDetail.siteNo}">
+    <div class="search">
+        <table class="search-table">
+            <colgroup>
+                <col width="120">
+                <col>
+                <col width="120">
+                <col>
+            </colgroup>
+            <tbody>
+            <tr>
+                <td class="label" th:text="${#messages.msg('customerMgmt.customerTermsAgreeHistoryPopup.label.mbrNo')}">회원번호</td>
+                <td th:text="${customerDetail.mbrNo}"></td>
+                <td class="label" th:text="${#messages.msg('customerMgmt.customerTermsAgreeHistoryPopup.label.mbrNm')}">회원명</td>
+                <td th:text="${customerDetail.mbrNm}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="grid-cont">
+        <div class="grid">
+            <div class="grid-head">
+                <div class="title-area">
+                    <h2 class="title"
+                        th:text="${#messages.msg('customerMgmt.customerTermsAgreeHistoryPopup.termsAgreeHistory.title')}">조회목록</h2>
+                </div>
+                <div class="option-area">
+                    <div class="page-option" grid-id="customerTermsAgreeHistoryGrid">
+                        <span class='total'>총 <span id='customerTermsAgreeHistoryGrid-totalcount'>0</span>건</span>
+                    </div>
+                </div>
+            </div>
+            <!-- //grid-head -->
+
+            <div class="grid-body with-head" id="customerTermsAgreeHistoryGrid" realgrid></div>
+            <!-- //grid-body -->
+        </div>
+    </div>
+</form>
+</th:block>
+<th:block layout:fragment="button-area">
+    <th:block layout:insert="~{fragments/popup/popup-btn :: popup-bottom-btn}"/>
+</th:block>
+
+<!-- Additional Script -->
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+    /*<![CDATA[*/
+    /*]]>*/
+    </script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'popup/customerTermsAgreeHistoryGrid.eventHandler.js'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'popup/customerTermsAgreeHistoryGrid.provider.js'" ></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            customerTermsAgreeHistoryGrid.eventhandler.initialize();
+        });
+    </script>
+</th:block>
+</body>
+</html>

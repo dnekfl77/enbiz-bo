@@ -1,0 +1,724 @@
+<!--
+* 프로그램명 : 상품정보
+* 작 성 일 : 2021.03.17
+* 작 성 자 : 홍혜리
+* 수 정 자 : 홍혜리
+* 버    전 : 1.0
+* 개    요 : 상품정보
+* 이    력 : 2021.10.12 프레임워크 이전
+-->
+<!DOCTYPE html>
+<html lang="ko-KR"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<body>
+    <th:block layout:fragment="goods-regist-goodsInfo">
+        <div class="data">
+            <div class="data-head">
+                <div class="left">
+                    <span class="title" th:text="${#messages.msg('generalGoods.goodsInfo.title')}"></span>
+                </div>
+                <div class="right">
+                  <span class="data-toggle">
+                    <button type="button" class="toggle-button"><span>닫힘</span></button>
+                  </span>
+                </div>
+            </div>
+            <div class="data-body">
+                <form name="goodsInfo" id="goodsInfo">
+                    <table class="data-table fixed">
+                        <colgroup>
+                            <col width="130">
+                            <col>
+                            <col width="130">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                        <tr>
+                            <!-- 상품명 -->
+                            <td class="label w80"><strong th:text="${#messages.msg('generalGoods.goodsInfo.label.goodsNm')}"></strong></td>
+                            <td colspan="3">
+                                <input class="input w20" type="text" id="goodsNm" name="goodsNm" maxlength="400">
+                                <a href="#" data-bs-toggle="tooltip" title="Some tooltip text!"></a>
+                                <div class="tooltip">
+                                    <a href="#" class="trigger">설명</a>
+                                    <div class="cont">
+                                        <p class="text">온라인몰에 노출할 상품명을 입력해주세요.</p>
+                                        </p>
+                                        <a href="#" class="close">닫기</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <!-- 단축 온라인 상품명 -->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.goodsInfo.label.shrtGoodsNm')}"></strong></td>
+                            <td colspan="3">
+                                <input class="input w20" type="text" id="shrtGoodsNm" name="shrtGoodsNm" maxlength="100">
+                                <a href="#" data-bs-toggle="tooltip" title="Some tooltip text!"></a>
+                                <div class="tooltip">
+                                    <a href="#" class="trigger">설명</a>
+                                    <div class="cont">
+                                        <p class="text"></p>배송 및 SMS 발송 시 사용할 단축 온라인 상품명을 입력해주세요.</p>
+                                        </p>
+                                        <a href="#" class="close">닫기</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <!-- 승인상태 -->
+                            <td class="label" th:text="${#messages.msg('generalGoods.goodsInfo.label.pregState')}"></td>
+                            <td>
+                                <select class="form-control w30 disabled" id="pregStatCd" name="pregStatCd" disabled>
+                                    <option value="" th:text="${#messages.msg('adminCommon.select')}"/>
+                                    <option th:each="code : ${codeList.PR024}" th:value="${code?.cd}" th:utext="${code?.cdNm}"></option>
+                                </select>
+                                <!-- 반려 사유 -->
+                                <select id="retnCausCd" class="form-control w30" style="display: none" disabled>
+                                    <option value="">없음</option>
+                                    <option th:each="code : ${codeList.PR042}" th:value="${code?.cd}" th:utext="${code?.cdNm}"></option>
+                                </select>
+                                <textarea class="textarea mt5 w70" style="display: none" rows="2" cols="50" id="retnCaus" readonly></textarea>
+                            </td>
+                            <!-- 브랜드 -->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.goodsInfo.label.brandNm')}"></strong></td>
+                            <td>
+                                <div class="input-group w100">
+                                    <input type="text" class="input disabled mr5" id="brandNm" readonly>
+                                    <input type="hidden" id="brandNo" name="brandNo">
+                                    <a href="javascript:;" class="button small" id="btn_brand_popup_call"><i class="icon-sarch"></i></a>
+                                    <a href="javascript:;" class="button small" id="btn_brand_popup_reset"><i class="icon-clear"></i></a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <!-- 모델명 -->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.goodsInfo.label.modlNm')}"></strong></td>
+                            <td>
+                                <input class="input w50" type="text" id="modlNm" name="modlNm" numberCharacterOnly maxlength="300">
+                            </td>
+                            <!-- 원산지 -->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.goodsInfo.label.homeNm')}"></strong></td>
+                            <td>
+                                <input class="input" type="text" id="homeNm" name="homeNm" characterOnly maxlength="300">
+                                <a href="#" data-bs-toggle="tooltip" title="Some tooltip text!"></a>
+                                <div class="tooltip">
+                                    <a href="#" class="trigger">설명</a>
+                                    <div class="cont">
+                                        <p class="text">법률상 중요 정보이니 정확히 입력해주세요</p>
+                                        </p>
+                                        <a href="#" class="close">닫기</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <!-- 제조사 -->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.goodsInfo.label.mfcoNm')}"></strong></td>
+                            <td>
+                                <input class="input" type="text" id="mfcoNm" name="mfcoNm" maxlength="400">
+                                <a href="#" data-bs-toggle="tooltip" title="Some tooltip text!"></a>
+                                <div class="tooltip">
+                                    <a href="#" class="trigger">설명</a>
+                                    <div class="cont">
+                                        <p class="text">사업자등록증 상의 회사명을 입력해주세요.</p>
+                                        </p>
+                                        <a href="#" class="close">닫기</a>
+                                    </div>
+                                </div>
+                            </td>
+                            <!-- 수입자 -->
+                            <td class="label" th:text="${#messages.msg('generalGoods.goodsInfo.label.incomNm')}"></td>
+                            <td>
+                                <input class="input" type="text" id="incomNm" name="incomNm" maxlength="300">
+                                <a href="#" data-bs-toggle="tooltip" title="Some tooltip text!"></a>
+                                <div class="tooltip">
+                                    <a href="#" class="trigger">설명</a>
+                                    <div class="cont">
+                                        <p class="text">수입품의 경우 입력해주세요.</p><p class="text">사업자등록증 상의 회사명을 입력해주세요.</p>
+                                        </p>
+                                        <a href="#" class="close">닫기</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <!-- 판매자 -->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.goodsInfo.label.salemnNm')}"></strong></td>
+                            <td>
+                                <input class="input" type="text" id="salemnNm" name="salemnNm" maxlength="300">
+                            </td>
+                            <!-- 구입자 나이제한 -->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.goodsInfo.label.buyerAgeLimit')}"></strong></td>
+                            <td>
+                                <select class="form-control w30" id="buyrAgeLmtCd" name="buyrAgeLmtCd">
+                                    <option value="" th:text="${#messages.msg('adminCommon.select')}"/>
+                                    <option th:each="code : ${codeList.PR004}" th:value="${code?.cd}" th:utext="|만 ${code?.cdNm}세|"></option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <!-- 판매기간 -->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.goodsInfo.label.salePeriod')}"></strong></td>
+                            <td colspan="3">
+                                <div class="picker-group" data-lopicker="basic">
+                                    <input type="text" class="form-control disabled" id="saleStrDtm" name="saleStrDtm" readonly>
+                                    <span class="input-group-addon">~</span>
+                                    <input type="text" class="form-control disabled" id="saleEndDtm" name="saleEndDtm" readonly>
+                                    <span class="input-group-addon" name="btn_callCalender" data-option="01"><i class="icon-calendar"></i></span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <!-- 전시매장 노출여부 -->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.goodsInfo.label.dispYn')}"></strong></td>
+                            <td>
+                                <label class="radio-inline"><input type="radio" name="dispYn" value="Y" checked="checked" th:text="${#messages.msg('adminCommon.exposure.y')}"></label>
+                                <label class="radio-inline"><input type="radio" name="dispYn" value="N" th:text="${#messages.msg('adminCommon.exposure.n')}"></label>
+                            </td>
+                            <!-- 가격비교 노출여부 -->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.goodsInfo.label.prcCompaExpYn')}"></strong></td>
+                            <td>
+                                <label class="radio-inline"><input type="radio" name="prcCompaExpYn" value="Y" checked="checked" th:text="${#messages.msg('adminCommon.exposure.y')}"></label>
+                                <label class="radio-inline"><input type="radio" name="prcCompaExpYn" value="N" th:text="${#messages.msg('adminCommon.exposure.n')}"></label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <!-- 검색키워드 노출여부 -->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.goodsInfo.label.schPsbYn')}"></strong></td>
+                            <td>
+                                <label class="radio-inline"><input type="radio" name="schPsbYn" value="Y" checked="checked" th:text="${#messages.msg('adminCommon.exposure.y')}"></label>
+                                <label class="radio-inline"><input type="radio" name="schPsbYn" value="N" th:text="${#messages.msg('adminCommon.exposure.n')}"></label>
+                            </td>
+                            <!-- 검색키워드 -->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.goodsInfo.label.schKwd')}"></strong></td>
+                            <td>
+                                <input type="text" name="schKwd1Nm" id="schKwd1Nm" class="input w20" maxlength="300">
+                                <input type="text" name="schKwd2Nm" id="schKwd2Nm" class="input w20" maxlength="300">
+                                <input type="text" name="schKwd3Nm" id="schKwd3Nm" class="input w20" maxlength="300">
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </div>
+    </th:block>
+    <th:block layout:fragment="goods-detail-goodsInfo">
+        <div class="data">
+            <div class="data-head">
+                <div class="left">
+                    <span class="title" th:text="${#messages.msg('generalGoods.goodsInfo.title')}"></span>
+                </div>
+                <div class="right">
+                  <span class="data-toggle">
+                    <button type="button" class="toggle-button"><span>닫힘</span></button>
+                  </span>
+                </div>
+            </div>
+            <div class="data-body">
+                <form name="goodsInfo" id="goodsInfo">
+                    <table class="data-table fixed">
+                        <colgroup>
+                            <col width="130">
+                            <col>
+                            <col width="130">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                        <tr>
+                            <!-- 상품명 -->
+                            <td class="label w80"><strong th:text="${#messages.msg('generalGoods.goodsInfo.label.goodsNm')}"></strong></td>
+                            <td colspan="3">
+                                <input class="input w20" type="text" id="goodsNm" name="goodsNm" maxlength="400">
+                                <a href="#" data-bs-toggle="tooltip" title="Some tooltip text!"></a>
+                                <div class="tooltip">
+                                    <a href="#" class="trigger">설명</a>
+                                    <div class="cont">
+                                        <p class="text">온라인몰에 노출할 상품명을 입력해주세요.</p>
+                                        </p>
+                                        <a href="#" class="close">닫기</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <!-- 단축 온라인 상품명 -->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.goodsInfo.label.shrtGoodsNm')}"></strong></td>
+                            <td colspan="3">
+                                <input class="input w20" type="text" id="shrtGoodsNm" name="shrtGoodsNm" maxlength="100">
+                                <a href="#" data-bs-toggle="tooltip" title="Some tooltip text!"></a>
+                                <div class="tooltip">
+                                    <a href="#" class="trigger">설명</a>
+                                    <div class="cont">
+                                        <p class="text"></p>배송 및 SMS 발송 시 사용할 단축 온라인 상품명을 입력해주세요.</p>
+                                        </p>
+                                        <a href="#" class="close">닫기</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <!-- 판매상태 -->
+                            <td class="label" th:text="${#messages.msg('generalGoods.goodsInfo.label.saleStatCd')}"></td>
+                            <td>
+                                <select class="form-control w30" id="saleStatCd" name="saleStatCd">
+                                    <option value="" th:text="${#messages.msg('adminCommon.select')}"/>
+                                    <option th:each="code : ${codeList.PR005}" th:value="${code?.cd}" th:utext="${code?.cdNm}"></option>
+                                </select>
+                            </td>
+                            <!-- 브랜드 -->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.goodsInfo.label.brandNm')}"></strong></td>
+                            <td>
+                                <div class="input-group w100">
+                                    <input type="text" class="input disabled mr5" id="brandNm" readonly>
+                                    <input type="hidden" id="brandNo" name="brandNo">
+                                    <a href="javascript:;" class="button small" id="btn_brand_popup_call"><i class="icon-sarch"></i></a>
+                                    <a href="javascript:;" class="button small" id="btn_brand_popup_reset"><i class="icon-clear"></i></a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <!-- 모델명 -->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.goodsInfo.label.modlNm')}"></strong></td>
+                            <td>
+                                <input class="input w50" type="text" id="modlNm" name="modlNm" numberCharacterOnly maxlength="300">
+                            </td>
+                            <!-- 원산지 -->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.goodsInfo.label.homeNm')}"></strong></td>
+                            <td>
+                                <input class="input" type="text" id="homeNm" name="homeNm" characterOnly maxlength="300">
+                                <a href="#" data-bs-toggle="tooltip" title="Some tooltip text!"></a>
+                                <div class="tooltip">
+                                    <a href="#" class="trigger">설명</a>
+                                    <div class="cont">
+                                        <p class="text">법률상 중요 정보이니 정확히 입력해주세요</p>
+                                        </p>
+                                        <a href="#" class="close">닫기</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <!-- 제조사 -->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.goodsInfo.label.mfcoNm')}"></strong></td>
+                            <td>
+                                <input class="input" type="text" id="mfcoNm" name="mfcoNm" maxlength="400">
+                                <a href="#" data-bs-toggle="tooltip" title="Some tooltip text!"></a>
+                                <div class="tooltip">
+                                    <a href="#" class="trigger">설명</a>
+                                    <div class="cont">
+                                        <p class="text">사업자등록증 상의 회사명을 입력해주세요.</p>
+                                        </p>
+                                        <a href="#" class="close">닫기</a>
+                                    </div>
+                                </div>
+                            </td>
+                            <!-- 수입자 -->
+                            <td class="label" th:text="${#messages.msg('generalGoods.goodsInfo.label.incomNm')}"></td>
+                            <td>
+                                <input class="input" type="text" id="incomNm" name="incomNm" maxlength="300">
+                                <a href="#" data-bs-toggle="tooltip" title="Some tooltip text!"></a>
+                                <div class="tooltip">
+                                    <a href="#" class="trigger">설명</a>
+                                    <div class="cont">
+                                        <p class="text">수입품의 경우 입력해주세요.</p><p class="text">사업자등록증 상의 회사명을 입력해주세요.</p>
+                                        </p>
+                                        <a href="#" class="close">닫기</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <!-- 판매자 -->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.goodsInfo.label.salemnNm')}"></strong></td>
+                            <td>
+                                <input class="input" type="text" id="salemnNm" name="salemnNm" maxlength="300">
+                            </td>
+                            <!-- 구입자 나이제한 -->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.goodsInfo.label.buyerAgeLimit')}"></strong></td>
+                            <td>
+                                <select class="form-control w30" id="buyrAgeLmtCd" name="buyrAgeLmtCd">
+                                    <option value="" th:text="${#messages.msg('adminCommon.select')}"/>
+                                    <option th:each="code : ${codeList.PR004}" th:value="${code?.cd}" th:utext="|만 ${code?.cdNm}세|"></option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <!-- 판매기간 -->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.goodsInfo.label.salePeriod')}"></strong></td>
+                            <td colspan="3">
+                                <div class="picker-group" data-lopicker="basic">
+                                    <input type="text" class="form-control disabled" id="saleStrDtm" name="saleStrDtm" readonly>
+                                    <span class="input-group-addon">~</span>
+                                    <input type="text" class="form-control disabled" id="saleEndDtm" name="saleEndDtm" readonly>
+                                    <span class="input-group-addon" name="btn_callCalender"><i class="icon-calendar"></i></span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <!-- 전시매장 노출여부 -->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.goodsInfo.label.dispYn')}"></strong></td>
+                            <td>
+                                <label class="radio-inline"><input type="radio" name="dispYn" value="Y" checked="checked" th:text="${#messages.msg('adminCommon.exposure.y')}"></label>
+                                <label class="radio-inline"><input type="radio" name="dispYn" value="N" th:text="${#messages.msg('adminCommon.exposure.n')}"></label>
+                            </td>
+                            <!-- 가격비교 노출여부 -->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.goodsInfo.label.prcCompaExpYn')}"></strong></td>
+                            <td>
+                                <label class="radio-inline"><input type="radio" name="prcCompaExpYn" value="Y" checked="checked" th:text="${#messages.msg('adminCommon.exposure.y')}"></label>
+                                <label class="radio-inline"><input type="radio" name="prcCompaExpYn" value="N" th:text="${#messages.msg('adminCommon.exposure.n')}"></label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <!-- 검색키워드 노출여부 -->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.goodsInfo.label.schPsbYn')}"></strong></td>
+                            <td>
+                                <label class="radio-inline"><input type="radio" name="schPsbYn" value="Y" checked="checked" th:text="${#messages.msg('adminCommon.exposure.y')}"></label>
+                                <label class="radio-inline"><input type="radio" name="schPsbYn" value="N" th:text="${#messages.msg('adminCommon.exposure.n')}"></label>
+                            </td>
+                            <!-- 검색키워드 -->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.goodsInfo.label.schKwd')}"></strong></td>
+                            <td>
+                                <input type="text" name="schKwd1Nm" id="schKwd1Nm" class="input w20" maxlength="300">
+                                <input type="text" name="schKwd2Nm" id="schKwd2Nm" class="input w20" maxlength="300">
+                                <input type="text" name="schKwd3Nm" id="schKwd3Nm" class="input w20" maxlength="300">
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </div>
+    </th:block>
+    <th:block layout:fragment="pkg-goods-regist-goodsInfo">
+        <div class="data">
+            <div class="data-head">
+                <div class="left">
+                    <span class="title" th:text="${#messages.msg('packageGoods.goodsInfo.title')}"></span>
+                </div>
+                <div class="right">
+                  <span class="data-toggle">
+                    <button type="button" class="toggle-button"><span>닫힘</span></button>
+                  </span>
+                </div>
+            </div>
+            <div class="data-body">
+                <form name="pkgGoodsInfo" id="pkgGoodsInfo">
+                    <table class="data-table fixed">
+                        <colgroup>
+                            <col width="130">
+                            <col>
+                            <col width="130">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                        <tr>
+                            <!-- 상품명 -->
+                            <td class="label w80"><strong th:text="${#messages.msg('packageGoods.goodsInfo.label.goodsNm')}"></strong></td>
+                            <td colspan="3">
+                                <input class="input w20" type="text" id="goodsNm" name="goodsNm" checkByte data-limitByte="100">
+                                <a href="#" data-bs-toggle="tooltip" title="Some tooltip text!"></a>
+                                <div class="tooltip">
+                                    <a href="#" class="trigger">설명</a>
+                                    <div class="cont">
+                                        <p class="text">온라인몰에 노출할 상품명을 입력해주세요.</p>
+                                        </p>
+                                        <a href="#" class="close">닫기</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <!-- 승인상태 -->
+                            <td class="label" th:text="${#messages.msg('packageGoods.goodsInfo.label.pregState')}"></td>
+                            <td>
+                                <select class="form-control w30 disabled" id="pregStatCd" name="pregStatCd" disabled>
+                                    <option value="" th:text="${#messages.msg('adminCommon.select')}"/>
+                                    <option th:each="code : ${codeList.PR024}" th:value="${code?.cd}" th:utext="${code?.cdNm}"></option>
+                                </select>
+                                <!-- 반려 사유 -->
+                                <select id="retnCausCd" class="form-control w30" style="display: none" disabled>
+                                    <option value="">없음</option>
+                                    <option th:each="code : ${codeList.PR042}" th:value="${code?.cd}" th:utext="${code?.cdNm}"></option>
+                                </select>
+                                <textarea class="textarea mt5 w70" style="display: none" rows="2" cols="50" id="retnCaus" readonly></textarea>
+                            </td>
+                            <!-- 브랜드 -->
+                            <td class="label"><strong th:text="${#messages.msg('packageGoods.goodsInfo.label.brandNm')}"></strong></td>
+                            <td>
+                                <div class="input-group w100">
+                                    <input type="text" class="input disabled mr5" id="brandNm" readonly>
+                                    <input type="hidden" id="brandNo" name="brandNo">
+                                    <a href="javascript:;" class="button small" id="btn_brand_popup_call"><i class="icon-sarch"></i></a>
+                                    <a href="javascript:;" class="button small" id="btn_brand_popup_reset"><i class="icon-clear"></i></a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <!-- 모델명 -->
+                            <td class="label"><strong th:text="${#messages.msg('packageGoods.goodsInfo.label.modlNm')}"></strong></td>
+                            <td>
+                                <input class="input w50" type="text" id="modlNm" name="modlNm" numberCharacterOnly checkByte data-limitByte="50">
+                            </td>
+                            <!-- 원산지 -->
+                            <td class="label"><strong th:text="${#messages.msg('packageGoods.goodsInfo.label.homeNm')}"></strong></td>
+                            <td>
+                                <input class="input" type="text" id="homeNm" name="homeNm" characterOnly maxlength="300">
+                                <a href="#" data-bs-toggle="tooltip" title="Some tooltip text!"></a>
+                                <div class="tooltip">
+                                    <a href="#" class="trigger">설명</a>
+                                    <div class="cont">
+                                        <p class="text">법률상 중요 정보이니 정확히 입력해주세요</p>
+                                        </p>
+                                        <a href="#" class="close">닫기</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <!-- 제조사 -->
+                            <td class="label"><strong th:text="${#messages.msg('packageGoods.goodsInfo.label.mfcoNm')}"></strong></td>
+                            <td>
+                                <input class="input" type="text" id="mfcoNm" name="mfcoNm" maxlength="400">
+                                <a href="#" data-bs-toggle="tooltip" title="Some tooltip text!"></a>
+                                <div class="tooltip">
+                                    <a href="#" class="trigger">설명</a>
+                                    <div class="cont">
+                                        <p class="text">사업자등록증 상의 회사명을 입력해주세요.</p>
+                                        </p>
+                                        <a href="#" class="close">닫기</a>
+                                    </div>
+                                </div>
+                            </td>
+                            <!-- 수입자 -->
+                            <td class="label" th:text="${#messages.msg('packageGoods.goodsInfo.label.incomNm')}"></td>
+                            <td>
+                                <input class="input" type="text" id="incomNm" name="incomNm" maxlength="300">
+                                <a href="#" data-bs-toggle="tooltip" title="Some tooltip text!"></a>
+                                <div class="tooltip">
+                                    <a href="#" class="trigger">설명</a>
+                                    <div class="cont">
+                                        <p class="text">수입품의 경우 입력해주세요.</p><p class="text">사업자등록증 상의 회사명을 입력해주세요.</p>
+                                        </p>
+                                        <a href="#" class="close">닫기</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <!-- 판매자 -->
+                            <td class="label"><strong th:text="${#messages.msg('packageGoods.goodsInfo.label.salemnNm')}"></strong></td>
+                            <td>
+                                <input class="input" type="text" id="salemnNm" name="salemnNm" maxlength="300">
+                            </td>
+                            <!-- 판매기간 -->
+                            <td class="label"><strong th:text="${#messages.msg('packageGoods.goodsInfo.label.salePeriod')}"></strong></td>
+                            <td>
+                                <div class="picker-group" data-lopicker="basic">
+                                    <input type="text" class="form-control disabled" id="saleStrDtm" name="saleStrDtm" readonly>
+                                    <span class="input-group-addon">~</span>
+                                    <input type="text" class="form-control disabled" id="saleEndDtm" name="saleEndDtm" readonly>
+                                    <span class="input-group-addon" id="btn_call_sale_calender" data-option="01"><i class="icon-calendar"></i></span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <!-- 전시매장 노출여부 -->
+                            <td class="label"><strong th:text="${#messages.msg('packageGoods.goodsInfo.label.dispYn')}"></strong></td>
+                            <td>
+                                <label class="radio-inline"><input type="radio" name="dispYn" value="Y" checked="checked" th:text="${#messages.msg('adminCommon.exposure.y')}"></label>
+                                <label class="radio-inline"><input type="radio" name="dispYn" value="N" th:text="${#messages.msg('adminCommon.exposure.n')}"></label>
+                            </td>
+                            <!-- 가격비교 노출여부 -->
+                            <td class="label"><strong th:text="${#messages.msg('packageGoods.goodsInfo.label.prcCompaExpYn')}"></strong></td>
+                            <td>
+                                <label class="radio-inline"><input type="radio" name="prcCompaExpYn" value="Y" checked="checked" th:text="${#messages.msg('adminCommon.exposure.y')}"></label>
+                                <label class="radio-inline"><input type="radio" name="prcCompaExpYn" value="N" th:text="${#messages.msg('adminCommon.exposure.n')}"></label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <!-- 검색키워드 노출여부 -->
+                            <td class="label"><strong th:text="${#messages.msg('packageGoods.goodsInfo.label.schPsbYn')}"></strong></td>
+                            <td>
+                                <label class="radio-inline"><input type="radio" name="schPsbYn" value="Y" checked="checked" th:text="${#messages.msg('adminCommon.exposure.y')}"></label>
+                                <label class="radio-inline"><input type="radio" name="schPsbYn" value="N" th:text="${#messages.msg('adminCommon.exposure.n')}"></label>
+                            </td>
+                            <!-- 검색키워드 -->
+                            <td class="label"><strong th:text="${#messages.msg('packageGoods.goodsInfo.label.schKwd')}"></strong></td>
+                            <td>
+                                <input type="text" name="schKwd1Nm" id="schKwd1Nm" class="input w20" maxlength="300">
+                                <input type="text" name="schKwd2Nm" id="schKwd2Nm" class="input w20" maxlength="300">
+                                <input type="text" name="schKwd3Nm" id="schKwd3Nm" class="input w20" maxlength="300">
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </div>
+    </th:block>
+    <th:block layout:fragment="pkg-goods-detail-goodsInfo">
+        <div class="data">
+            <div class="data-head">
+                <div class="left">
+                    <span class="title" th:text="${#messages.msg('packageGoods.goodsInfo.title')}"></span>
+                </div>
+                <div class="right">
+                  <span class="data-toggle">
+                    <button type="button" class="toggle-button"><span>닫힘</span></button>
+                  </span>
+                </div>
+            </div>
+            <div class="data-body">
+                <form name="pkgGoodsInfo" id="pkgGoodsInfo">
+                    <table class="data-table fixed">
+                        <colgroup>
+                            <col width="130">
+                            <col>
+                            <col width="130">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                        <tr>
+                            <!-- 상품명 -->
+                            <td class="label w80"><strong th:text="${#messages.msg('packageGoods.goodsInfo.label.goodsNm')}"></strong></td>
+                            <td colspan="3">
+                                <input class="input w20" type="text" id="goodsNm" name="goodsNm" checkByte data-limitByte="100">
+                                <a href="#" data-bs-toggle="tooltip" title="Some tooltip text!"></a>
+                                <div class="tooltip">
+                                    <a href="#" class="trigger">설명</a>
+                                    <div class="cont">
+                                        <p class="text">온라인몰에 노출할 상품명을 입력해주세요.</p>
+                                        </p>
+                                        <a href="#" class="close">닫기</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>`
+                        <tr>
+                            <!-- 판매상태 -->
+                            <td class="label" th:text="${#messages.msg('packageGoods.goodsInfo.label.saleStatCd')}"></td>
+                            <td>
+                                <select class="form-control w30" id="saleStatCd" name="saleStatCd">
+                                    <option value="" th:text="${#messages.msg('adminCommon.select')}"/>
+                                    <option th:each="code : ${codeList.PR005}" th:value="${code?.cd}" th:utext="${code?.cdNm}"></option>
+                                </select>
+                            </td>
+                            <!-- 브랜드 -->
+                            <td class="label"><strong th:text="${#messages.msg('packageGoods.goodsInfo.label.brandNm')}"></strong></td>
+                            <td>
+                                <div class="input-group w100">
+                                    <input type="text" class="input disabled mr5" id="brandNm" readonly>
+                                    <input type="hidden" id="brandNo" name="brandNo">
+                                    <a href="javascript:;" class="button small" id="btn_brand_popup_call"><i class="icon-sarch"></i></a>
+                                    <a href="javascript:;" class="button small" id="btn_brand_popup_reset"><i class="icon-clear"></i></a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <!-- 모델명 -->
+                            <td class="label"><strong th:text="${#messages.msg('packageGoods.goodsInfo.label.modlNm')}"></strong></td>
+                            <td>
+                                <input class="input w50" type="text" id="modlNm" name="modlNm" numberCharacterOnly checkByte data-limitByte="50">
+                            </td>
+                            <!-- 원산지 -->
+                            <td class="label"><strong th:text="${#messages.msg('packageGoods.goodsInfo.label.homeNm')}"></strong></td>
+                            <td>
+                                <input class="input" type="text" id="homeNm" name="homeNm" characterOnly maxlength="300">
+                                <a href="#" data-bs-toggle="tooltip" title="Some tooltip text!"></a>
+                                <div class="tooltip">
+                                    <a href="#" class="trigger">설명</a>
+                                    <div class="cont">
+                                        <p class="text">법률상 중요 정보이니 정확히 입력해주세요</p>
+                                        </p>
+                                        <a href="#" class="close">닫기</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <!-- 제조사 -->
+                            <td class="label"><strong th:text="${#messages.msg('packageGoods.goodsInfo.label.mfcoNm')}"></strong></td>
+                            <td>
+                                <input class="input" type="text" id="mfcoNm" name="mfcoNm" maxlength="400">
+                                <a href="#" data-bs-toggle="tooltip" title="Some tooltip text!"></a>
+                                <div class="tooltip">
+                                    <a href="#" class="trigger">설명</a>
+                                    <div class="cont">
+                                        <p class="text">사업자등록증 상의 회사명을 입력해주세요.</p>
+                                        </p>
+                                        <a href="#" class="close">닫기</a>
+                                    </div>
+                                </div>
+                            </td>
+                            <!-- 수입자 -->
+                            <td class="label" th:text="${#messages.msg('packageGoods.goodsInfo.label.incomNm')}"></td>
+                            <td>
+                                <input class="input" type="text" id="incomNm" name="incomNm" maxlength="300">
+                                <a href="#" data-bs-toggle="tooltip" title="Some tooltip text!"></a>
+                                <div class="tooltip">
+                                    <a href="#" class="trigger">설명</a>
+                                    <div class="cont">
+                                        <p class="text">수입품의 경우 입력해주세요.</p><p class="text">사업자등록증 상의 회사명을 입력해주세요.</p>
+                                        </p>
+                                        <a href="#" class="close">닫기</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <!-- 판매자 -->
+                            <td class="label"><strong th:text="${#messages.msg('packageGoods.goodsInfo.label.salemnNm')}"></strong></td>
+                            <td>
+                                <input class="input" type="text" id="salemnNm" name="salemnNm" maxlength="300">
+                            </td>
+                            <!-- 판매기간 -->
+                            <td class="label"><strong th:text="${#messages.msg('packageGoods.goodsInfo.label.salePeriod')}"></strong></td>
+                            <td>
+                                <div class="picker-group" data-lopicker="basic">
+                                    <input type="text" class="form-control disabled" id="saleStrDtm" name="saleStrDtm" readonly>
+                                    <span class="input-group-addon">~</span>
+                                    <input type="text" class="form-control disabled" id="saleEndDtm" name="saleEndDtm" readonly>
+                                    <span class="input-group-addon" id="btn_call_sale_calender" data-option="01"><i class="icon-calendar"></i></span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <!-- 전시매장 노출여부 -->
+                            <td class="label"><strong th:text="${#messages.msg('packageGoods.goodsInfo.label.dispYn')}"></strong></td>
+                            <td>
+                                <label class="radio-inline"><input type="radio" name="dispYn" value="Y" checked="checked" th:text="${#messages.msg('adminCommon.exposure.y')}"></label>
+                                <label class="radio-inline"><input type="radio" name="dispYn" value="N" th:text="${#messages.msg('adminCommon.exposure.n')}"></label>
+                            </td>
+                            <!-- 가격비교 노출여부 -->
+                            <td class="label"><strong th:text="${#messages.msg('packageGoods.goodsInfo.label.prcCompaExpYn')}"></strong></td>
+                            <td>
+                                <label class="radio-inline"><input type="radio" name="prcCompaExpYn" value="Y" checked="checked" th:text="${#messages.msg('adminCommon.exposure.y')}"></label>
+                                <label class="radio-inline"><input type="radio" name="prcCompaExpYn" value="N" th:text="${#messages.msg('adminCommon.exposure.n')}"></label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <!-- 검색키워드 노출여부 -->
+                            <td class="label"><strong th:text="${#messages.msg('packageGoods.goodsInfo.label.schPsbYn')}"></strong></td>
+                            <td>
+                                <label class="radio-inline"><input type="radio" name="schPsbYn" value="Y" checked="checked" th:text="${#messages.msg('adminCommon.exposure.n')}"></label>
+                                <label class="radio-inline"><input type="radio" name="schPsbYn" value="N" th:text="${#messages.msg('adminCommon.exposure.n')}"></label>
+                            </td>
+                            <!-- 검색키워드 -->
+                            <td class="label"><strong th:text="${#messages.msg('packageGoods.goodsInfo.label.schKwd')}"></strong></td>
+                            <td>
+                                <input type="text" name="schKwd1Nm" id="schKwd1Nm" class="input w20" maxlength="300">
+                                <input type="text" name="schKwd2Nm" id="schKwd2Nm" class="input w20" maxlength="300">
+                                <input type="text" name="schKwd3Nm" id="schKwd3Nm" class="input w20" maxlength="300">
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </div>
+    </th:block>
+</body>
+</html>

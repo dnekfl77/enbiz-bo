@@ -1,0 +1,231 @@
+<!--
+* 프로그램명 : 상품관리
+* 작 성 일 : 2021.05.11
+* 작 성 자 : 홍혜리
+* 수 정 자 : 홍혜리
+* 버    전 : 1.0
+* 개    요 : 상품관리 > 상품정보관리 > 상품관리
+* 이    력 : 2021.10.21 프레임워크 이전
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/page-realgrid-layout}">
+<body>
+<th:block layout:fragment="page-title-area">
+    <!-- title area -->
+    <div class="page-title">
+        <div class="left">
+            <h1 th:text="${#messages.msg('goodsMgmt.title')}"></h1>
+        </div>
+    </div>
+    <!--// title area -->
+</th:block>
+<th:block layout:fragment="page-contents">
+    <!-- content area -->
+    <div class="page-fixed with-title">
+        <!-- search -->
+        <div class="search-cont">
+            <div class="search nob">
+                <form id="goodsInfoGridForm" name="goodsInfoGridForm">
+                    <input type="hidden" id="goodsNoList" name="goodsNoList">
+                    <table class="search-table fixed">
+                        <colgroup>
+                            <col width="120">
+                            <col>
+                            <col width="120">
+                            <col>
+                            <col width="120">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                        <tr>
+                            <td class="label"><strong th:text="${#messages.msg('goodsMgmt.search.label.goodsRegDtm')}"></strong></td>
+                            <td>
+                                <div class="picker-group">
+                                    <input type="text" class="form-control" id="goodsRegStartDtm" name="goodsRegStartDtm"
+                                           th:value="${goodsMgmtRequest.goodsRegStartDtm}" readonly>
+                                    <span class="input-group-addon">~</span>
+                                    <input type="text" class="form-control" id="goodsRegEndDtm" name="goodsRegEndDtm"
+                                           th:value="${goodsMgmtRequest.goodsRegEndDtm}" readonly>
+                                    <span class="input-group-addon" id="btn_call_calender"><i class="icon-calendar"></i></span>
+                                </div>
+                            </td>
+                            <td class="label" th:text="${#messages.msg('goodsMgmt.search.label.mdId')}"></td>
+                            <td>
+                                <div class="input-group">
+                                    <input type="text" id="mdNm" class="input disabled mr5" readonly>
+                                    <input type="hidden" id="mdId" name="mdId">
+                                    <a href="javascript:;" class="button small" id="btn_call_md_popup"><i class="icon-sarch"></i></a>
+                                    <a href="javascript:;" class="button small" id="btn_reset_md_popup"><i class="icon-clear"></i></a>
+                                </div>
+                            </td>
+                            <td class="label" th:text="${#messages.msg('goodsMgmt.search.label.saleStatCd')}"></td>
+                            <td>
+                                <select class="form-control w60" name="saleStatCd">
+                                    <option value="" th:text="${#messages.msg('adminCommon.entirety')}"></option>
+                                    <option th:each="list : ${codeList.PR005}" th:value="${list?.cd}" th:utext="${list?.cdNm}"
+                                            th:selected="${list.cd} == (${goodsMgmtRequest == null} ? '' : ${goodsMgmtRequest.saleStatCd})"/>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label" th:text="${#messages.msg('goodsMgmt.search.label.entrNo')}"></td>
+                            <td>
+                                <div class="input-group">
+                                    <input type="text" class="input disabled w20" readonly id="entrNo" name="entrNo">
+                                    <input type="text" class="input disabled w50 mr5" readonly id="entrNm">
+                                    <a href="javascript:;" class="button small" id="btn_call_entr_popup"><i class="icon-sarch"></i></a>
+                                    <a href="javascript:;" class="button small" id="btn_reset_entr_popup"><i class="icon-clear"></i></a>
+                                </div>
+                            </td>
+                            <td class="label" th:text="${#messages.msg('goodsMgmt.search.label.stdCtgNo')}"></td>
+                            <td>
+                                <div class="input-group">
+                                    <input type="text" id="stdCtgHierarchy" class="input disabled mr5" readonly>
+                                    <input type="hidden" id="stdCtgNo" name="stdCtgNo">
+                                    <a href="javascript:;" class="button small" id="btn_call_stdctg_popup"><i class="icon-sarch"></i></a>
+                                    <a href="javascript:;" class="button small" id="btn_reset_stdctg_popup"><i class="icon-clear"></i></a>
+                                </div>
+                            </td>
+                            <td class="label" th:text="${#messages.msg('goodsMgmt.search.label.brandNo')}"></td>
+                            <td>
+                                <div class="input-group">
+                                    <input type="text" id="brandNm" class="input disabled mr5" readonly>
+                                    <input type="hidden" id="brandNo" name="brandNo">
+                                    <a href="javascript:;" class="button small" id="btn_call_brand_popup"><i class="icon-sarch"></i></a>
+                                    <a href="javascript:;" class="button small" id="btn_reset_brand_popup"><i class="icon-clear"></i></a>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="ch search toggle hide">
+                        <div class="aa">
+                            <a href="javascript:;" class="button inside toggle-button"><span class="text">상세조회</span></a></div>
+                        <table class="search-table fixed toggle-cont hide">
+                            <colgroup>
+                                <col width="120">
+                                <col>
+                                <col width="120">
+                                <col>
+                                <col width="120">
+                                <col>
+                            </colgroup>
+                            <tbody>
+                            <tr>
+                                <td class="label" th:text="${#messages.msg('goodsMgmt.search.label.goodsCompCd')}"></td>
+                                <td>
+                                    <select class="form-control w60" name="goodsCompCd">
+                                        <option value="" th:text="${#messages.msg('adminCommon.entirety')}"></option>
+                                        <option th:each="list : ${codeList.PR001}" th:value="${list?.cd}" th:utext="${list?.cdNm}"/>
+                                    </select>
+                                </td>
+                                <td class="label" th:text="${#messages.msg('goodsMgmt.search.label.goodsTypCd')}"></td>
+                                <td>
+                                    <select class="form-control w60" name="goodsTypCd">
+                                        <option value="" th:text="${#messages.msg('adminCommon.entirety')}"></option>
+                                        <option th:each="list : ${codeList.PR002}" th:value="${list?.cd}" th:utext="${list?.cdNm}"/>
+                                    </select>
+                                </td>
+                                <td class="label" rowspan="3" th:text="${#messages.msg('goodsMgmt.search.label.goodsNo')}"></td>
+                                <td rowspan="3">
+                                    <textarea class="textarea w100" rows="6" id="goodsNo"></textarea>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label" th:text="${#messages.msg('goodsMgmt.search.label.saleMethCd')}"></td>
+                                <td>
+                                    <select class="form-control w60" name="saleMethCd">
+                                        <option value="" th:text="${#messages.msg('adminCommon.entirety')}"></option>
+                                        <option th:each="list : ${codeList.PR003}" th:value="${list?.cd}" th:utext="${list?.cdNm}"/>
+                                    </select>
+                                </td>
+                                <td class="label" th:text="${#messages.msg('goodsMgmt.search.label.buyTypCd')}"></td>
+                                <td>
+                                    <select class="form-control w60" name="buyTypCd">
+                                        <option value="" th:text="${#messages.msg('adminCommon.entirety')}"></option>
+                                        <option th:each="list : ${codeList.PR006}" th:value="${list?.cd}" th:utext="${list?.cdNm}"/>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label" th:text="${#messages.msg('goodsMgmt.search.label.itmSoutNotiYn')}"></td>
+                                <td>
+                                    <select class="form-control w60" name="itmSoutNotiYn">
+                                        <option value="" th:text="${#messages.msg('adminCommon.entirety')}"></option>
+                                        <option value="Y" th:text="${#messages.msg('adminCommon.use')}">사용</option>
+                                        <option value="N" th:text="${#messages.msg('adminCommon.disuse')}">사용안함</option>
+                                    </select>
+                                </td>
+                                <td class="label" th:text="${#messages.msg('goodsMgmt.search.label.stkMgrYn')}"></td>
+                                <td>
+                                    <select class="form-control w60" name="stkMgrYn">
+                                        <option value="" th:text="${#messages.msg('adminCommon.entirety')}"></option>
+                                        <option value="Y">관리</option>
+                                        <option value="N">관리안함</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label" th:text="${#messages.msg('goodsMgmt.search.label.deliProcTypCd')}"></td>
+                                <td>
+                                    <select class="form-control w60" name="deliProcTypCd">
+                                        <option value="" th:text="${#messages.msg('adminCommon.entirety')}"></option>
+                                        <option th:each="list : ${codeList.PR008}" th:value="${list?.cd}" th:utext="${list?.cdNm}"/>
+                                    </select>
+                                </td>
+                                <td class="label" th:text="${#messages.msg('goodsMgmt.search.label.deliGoodsGbCd')}"></td>
+                                <td>
+                                    <select class="form-control w60" name="deliGoodsGbCd">
+                                        <option value="" th:text="${#messages.msg('adminCommon.entirety')}"></option>
+                                        <option th:each="list : ${codeList.PR010}" th:value="${list?.cd}" th:utext="${list?.cdNm}"/>
+                                    </select>
+                                </td>
+                                <td class="label" th:text="${#messages.msg('goodsMgmt.search.label.goodsNm')}"></td>
+                                <td>
+                                    <input type="text" name="goodsNm" class="input w100">
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- //search -->
+        <!-- search-btn -->
+        <div class="button-group search-btn">
+            <a href="#" class="button white" id="btn_reset"><span class="text" th:text="${#messages.msg('adminCommon.button.init')}"></span></a>
+            <a href="#" class="button dark" id="btn_search"><span class="text" th:text="${#messages.msg('adminCommon.button.search')}"></span></a>
+        </div>
+        <!-- //search-btn -->
+        <!-- grid -->
+        <div class="grid-cont">
+            <div class="grid">
+                <div class="grid-head">
+                    <div class="title-area">
+                        <h2 class="title" th:text="${#messages.msg('goodsMgmt.grid.title')}"></h2>
+                    </div>
+                    <div class="option-area">
+                        <div class="page-option" grid-id="goodsInfoListGrid"/>
+                    </div>
+                </div>
+                <div class="grid-body with-head" id="goodsInfoListGrid" realgrid></div>
+            </div>
+        </div>
+        <!-- //grid -->
+    </div>
+    <!--// content area -->
+</th:block>
+<th:block layout:fragment="add-script">
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/goodsInfoListGrid.provider.js?20211021'"></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/goodsInfoListGrid.eventHandler.js?20211021'"></script>
+    <script type="text/javascript">
+        $(function(){
+            goodsInfoListGrid.eventhandler.init();
+        });
+    </script>
+</th:block>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enbiz.bo.app.repository.goods.PrGoodsPrcHistTrxMapper">
+    <update id="stopGoodsPriceHist" parameterType="GoodsPriceHistoryRequest">
+        UPDATE PR_GOODS_PRC_HIST /* prGoodsPrcHistTrx.stopGoodsPriceHist */
+           SET HIST_END_DTM = TO_TIMESTAMP(#{histEndDtm}, 'YYYY-MM-DD HH24:MI:SS')
+             , SYS_MOD_ID = #{sysModId}
+             , SYS_MOD_DTM = now()
+         WHERE GOODS_NO = #{goodsNo}
+           AND HIST_END_DTM = TO_TIMESTAMP('2999-12-31 23:59:59', 'YYYY-MM-DD HH24:MI:SS')
+    </update>
+
+    <insert id="insertGoodsPriceHist" parameterType="GoodsPriceHistoryRequest">
+        INSERT INTO PR_GOODS_PRC_HIST( /* prGoodsPrcHistTrx.insertGoodsPriceHist */
+                GOODS_NO
+              , HIST_END_DTM
+              , HIST_STR_DTM
+              , SUP_PCOST
+              , NOR_PRC
+              , SALE_PRC
+              , MRGN_RATE
+              , PRC_CHG_CAUS_CD
+              , SYS_REG_ID
+              , SYS_REG_DTM
+              , SYS_MOD_ID
+              , SYS_MOD_DTM)
+        VALUES (
+                #{goodsNo}
+              , TO_TIMESTAMP('2999-12-31 23:59:59', 'YYYY-MM-DD HH24:MI:SS')
+              , TO_TIMESTAMP(#{histStrDtm}, 'YYYY-MM-DD HH24:MI:SS')
+              , #{supPcost}
+              , #{norPrc}
+              , #{salePrc}
+              , #{mrgnRate}
+              , #{prcChgCausCd}
+              , #{sysRegId}
+              , now()
+              , #{sysRegId}
+              , now()
+        )
+    </insert>
+</mapper>

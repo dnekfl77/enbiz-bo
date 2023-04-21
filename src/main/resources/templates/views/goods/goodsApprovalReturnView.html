@@ -1,0 +1,70 @@
+<!--
+* 프로그램명 : 반려사유등록팝업
+* 작 성 일 : 2021.05.07
+* 작 성 자 : 홍혜리
+* 수 정 자 : 홍혜리
+* 버    전 : 1.0
+* 개    요 : 상품관리  > 상품정보관리 > 상품승인관리 > 반려사유등록팝업
+* 이    력 : 2021.10.21 프레임워크 이전
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-update-layout}">
+<body>
+    <th:block layout:fragment="header-area">
+        <div style="margin-bottom: 20px;">
+            <h1><th:block th:text="${#messages.msg('goodsApprovalMgmt.returnPopup.title')}"/></h1>
+        </div>
+    </th:block>
+    <th:block layout:fragment="data-area">
+        <div class="search">
+            <table class="search-table">
+                <colgroup>
+                    <col width="100px">
+                    <col>
+                </colgroup>
+                <tbody>
+                    <tr>
+                        <td class="label" th:text="${#messages.msg('goodsApprovalMgmt.returnPopup.label.retnCausCdNm')}"></td>
+                        <td>
+                            <select class="form-control w100" id="retnCausCd">
+                                <option value="" th:text="${#messages.msg('adminCommon.select')}"></option>
+                                <option th:each="list : ${codeList.PR042}" th:value="${list?.cd}" th:utext="${list?.cdNm}"/>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label" th:text="${#messages.msg('goodsApprovalMgmt.returnPopup.label.retnCausDetail')}"></td>
+                        <td>
+                            <textarea class="w100" id="retnCaus" cols="30" rows="10" maxlength="2000"></textarea>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </th:block>
+    <th:block layout:fragment="button-area">
+        <div class="button-group search-btn">
+            <a href="#" class="button white" id="btn_popup_close">
+                <span class="text" th:text="${#messages.msg('adminCommon.button.close')}"></span>
+            </a>
+            <a href="#" class="button large" id="btn_popup_return">
+                <span class="text" th:text="${#messages.msg('goodsApprovalMgmt.returnPopup.btn.return')}"></span>
+            </a>
+        </div>
+    </th:block>
+    <th:block layout:fragment="add-script">
+        <script th:inline="javascript">
+            /*<![CDATA[*/
+            var pregGoodsNo = [[${pregGoodsNo}]];
+            /*]]>*/
+        </script>
+        <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/goodsApprovalReturnPopup.eventHandler.js?20211021'" ></script>
+        <script th:inline="javascript">
+            $(function(){
+                goodsApprovalReturnPopup.eventhandler.init();
+            });
+        </script>
+    </th:block>
+</body>

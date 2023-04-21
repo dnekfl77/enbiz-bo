@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ko-KR"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <title>X2-Commerce</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+
+    <link type="text/css" rel="stylesheet" th:href="${@domainConfig.getProperty('cssUrl')} + 'reset.css?202103080001'">
+    <link type="text/css" rel="stylesheet" th:href="${@domainConfig.getProperty('cssUrl')} + 'layout.css?202103080001'">
+    <link type="text/css" rel="stylesheet" th:href="${@domainConfig.getProperty('cssUrl')} + 'common.css?202103080001'">
+    <link type="text/css" rel="stylesheet" th:href="${@domainConfig.getProperty('cssUrl')} + 'calendar.css?202103080001'">
+    <link type="text/css" rel="stylesheet" th:href="${@domainConfig.getProperty('cssUrl')} + 'toastr.min.css?202103050001'">
+    <!--js libs-->
+    <script th:src="${@domainConfig.getProperty('jsUrl')} + 'libs/jquery/jquery-3.4.1.min.js?202103020000'"></script>
+    <script th:src="${@domainConfig.getProperty('jsUrl')} + 'common/popup.js?202108121247'"></script>
+    <script th:src="${@domainConfig.getProperty('jsUrl')} + 'libs/alertify/alertify-1.11.0.min.js?202103020000'"></script>
+    <script th:src="${@domainConfig.getProperty('jsUrl')} + 'libs/smartEditor/js/HuskyEZCreator.js?202103110001'"></script>
+    <script th:src="${@domainConfig.getProperty('jsUrl')} + 'contents.js?202102260001'"></script>
+    <!--//js libs-->
+
+    <!--js dev-->
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'common/common.js?202108131241?202103020000'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'common/ajax.js?202103020000'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'common/util.js?202103020002'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'common/calendar.js?202103020000'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'common/message.js?202103020000'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'common/popup.js?202108121247'"></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'common/toastr.min.js?202108121247'"></script>
+    <!--js dev-->
+</head>
+<body>
+    <div class="page-root">
+        <th:block layout:fragment="page-title-area" />
+        <th:block layout:fragment="page-contents" />
+    </div>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+            var _baseUrl 		        = [[${@domainConfig.getProperty('baseUrl')}]];
+            var _uploadDomain 		     = [[${@domainConfig.getProperty('uploadDomain')}]];
+            var _jsUrl 			        = [[${@domainConfig.getProperty('jsUrl')}]];
+            var _currentLocaleLanguage  = [[${@environmentConfig.getProperty('defaultLocale')}]];
+            var _dbLocaleLanguage       = [[${@environmentConfig.getProperty('defaultLocale')}]];
+            var _authorityCheck         = [[${@environmentConfig.getProperty('enableAuthorityCheck')}]];
+            if (_authorityCheck === 'true') {
+                var _hideElementList
+                    = [[${T(com.enbiz.bo.base.repository.CodeRepository).getButtonByPageRole()}]];
+            }
+            var _msg = x2coMessage.getMessage( {
+                 noSearchedDataMsg      : 'adminCommon.grid.alert.no.searched.data'       // 조회된 데이터가 없습니다.
+                ,noSelectedDataMsg      : 'adminCommon.alert.no.selected.item.for.apply'  // 적용할 항목을 선택해주세요.
+                ,invalidAccessMsg       : 'adminCommon.message.invaild.access'            // 잘못된 접근 경로입니다.
+                ,confirmSaveMsg         : 'adminCommon.alert.save'                        // 저장하시겠습니까?
+                ,noSelectedRowMsg       : 'adminCommon.grid.alert.no.selected.row'        // 선택된 행이 없습니다.
+                ,processError           : 'adminCommon.process.error'                     // 처리도중 오류가 발생했습니다.
+                ,systemError            : 'adminCommon.system.error'                      // 시스템 장애로인해 오류가 발생했습니다.담당자에게 문의 바랍니다.
+                ,inProcessMsg           : 'adminCommon.grid.alert.in.process'             // 처리중입니다.
+                ,processDoneMsg         : 'adminCommon.grid.alert.do.successfully'        // 처리되었습니다.
+                ,searchedDoneMsg        : 'adminCommon.grid.alert.do.searched'            // 조회되었습니다.
+                ,selectDeleteItemMsg    : 'adminCommon.alert.no.selected.item.for.delete' // 삭제할 대상을 선택해 주세요.
+                ,forbiddenMsg 			: 'adminCommon.system.forbidden'//권한없음오류
+                ,apiErrorMsg 			: 'adminCommon.restapi.internalServerError'//api error
+            });
+        /*]]>*/
+    </script>
+
+    <!-- autority check -->
+    <script type="text/javascript">
+        $(document).ready(function() {
+            if (_authorityCheck === 'true') {
+                $('a').each(function(){
+                    if($(this).hasClass('button') && $(this).attr('id') !== undefined){
+                        if(_hideElementList.includes('#'+$(this).attr('id'))){
+                            $(this).removeAttr("href")
+                                .removeAttr("id")
+                                .removeClass("white")
+                                .removeClass("dark")
+                                .off()
+                                .addClass("disabled");
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+    <!-- //autority check -->
+
+<th:blok layout:fragment="add-script" />
+</body>
+</html>

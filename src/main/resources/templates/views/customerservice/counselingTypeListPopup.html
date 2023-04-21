@@ -1,0 +1,128 @@
+<!--
+* 프로그램명 : 상담유형조회 팝업
+* 작 성 일 : 2021.05.10
+* 작 성 자 : 윤성원
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 상담유형조회 팝업
+* 이    력 :
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-layout}">
+<body>
+
+<!--Title Area-->
+<th:block layout:fragment="popup-title-area">
+    <th:block layout:insert="~{fragments/popup/popup-title :: popup-title}"
+              th:with="title=${#messages.msg('counselingTypeMgmt.pop.title')}"></th:block>
+</th:block>
+<!--Title Area-->
+
+<!--Search Area-->
+<th:block layout:fragment="popup-search-area">
+    <div class="search">
+        <form name="cnslTypeListPopupGridForm" id="cnslTypeListPopupGridForm">
+            <table class="search-table">
+                <colgroup>
+                    <col width="120">
+                    <col>
+                    <col width="120">
+                    <col>
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td class="label" th:text="${#messages.msg('counselingTypeMgmt.pop.search.label.cnsltypNo')}"></td>
+                    <td>
+                        <select class="form-control" id="cnslLrgTypNo" name="cnslLrgTypNo">
+                            <option value="" th:text="${#messages.msg('adminCommon.select')}"></option>
+                        </select>
+                        <select class="form-control cnslSelect" id="cnslMidTypNo" name="cnslMidTypNo">
+                            <option value="" th:text="${#messages.msg('adminCommon.select')}"></option>
+                        </select>
+                        <select class="form-control cnslSelect" id="cnslSmlTypNo" name="cnslSmlTypNo">
+                            <option value="" th:text="${#messages.msg('adminCommon.select')}"></option>
+                        </select>
+                    </td>
+                    <td class="label" th:text="${#messages.msg('counselingTypeMgmt.pop.search.label.custCnslGbCd')}"></td>
+                    <td>
+                        <select class="form-control" id="custCnslGbCd" name="custCnslGbCd">
+                            <th:block th:if="${custCnslGbCd} != null or ${custCnslGbCd} != ''" >
+                                <option th:each="list : ${codeList.CS001}"
+                                        th:value="${list?.cd}"
+                                        th:utext="${list?.cdNm}"
+                                        th:if="${custCnslGbCd} == ${list?.cd}">
+
+                                </option>
+                            </th:block>
+                            <th:block th:if="${custCnslGbCd} == null or ${custCnslGbCd} == ''">
+                                <option value="" th:text="${#messages.msg('adminCommon.entirety')}"></option>
+                                <option th:each="list : ${codeList.CS001}"
+                                        th:value="${list?.cd}"
+                                        th:utext="${list?.cdNm}">
+                                </option>
+                            </th:block>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label" th:text="${#messages.msg('counselingTypeMgmt.pop.search.label.cnslTypNm')}"></td>
+                    <td colspan="3">
+                        <input class="input inputtxt w40" type="text" name="cnslTypNm" id="cnslTypNm" maxlength="33"/>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+</th:block>
+<!--Search Area-->
+
+<!--Search Button Area-->
+<th:block layout:fragment="popup-search-button-area">
+    <th:block layout:insert="~{fragments/popup/popup-btn :: popup-search-btn}"/>
+</th:block>
+<!--Search Button Area-->
+
+<!--List Area-->
+<th:block layout:fragment="popup-List-area">
+    <div class="grid">
+        <div class="grid-head" style="overflow: hidden;">
+            <div class="title-area">
+                <h2 class="title" th:text="${#messages.msg('counselingTypeMgmt.pop.grid.title')}"></h2>
+            </div>
+            <div class="option-area">
+                <div class="page-option" grid-id="cnslTypeListPopupGrid"></div>
+            </div>
+        </div>
+        <div class="grid-body with-head">
+            <div id="cnslTypeListPopupGrid" class="rg-root rg-grid" realgrid></div>
+        </div>
+    </div>
+</th:block>
+<!--List Area-->
+
+<!--List Button Area-->
+<th:block layout:fragment="popup-List-button-area">
+    <th:block layout:insert="~{fragments/popup/popup-btn :: popup-List-btn}"/>
+</th:block>
+
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        var csCnslTypRoot = [[${T(com.enbiz.bo.app.enums.common.CommonCode).CS_CNSL_TYP_ROOT.getCd()}]];
+        var _gridType               = '1'; // 선택구분값이 있을경우 필수값
+        /*]]>*/
+    </script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'customerservice/cnslTypeListPopupGrid.eventHandler.js?20210802'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'customerservice/cnslTypeListPopupGrid.provider.js?20210512000005'" ></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            cnslTypeListPopupGrid.eventhandler.init();
+        });
+    </script>
+</th:block>
+</body>
+</html>

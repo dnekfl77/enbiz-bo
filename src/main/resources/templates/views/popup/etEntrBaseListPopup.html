@@ -1,0 +1,120 @@
+<!--
+* 프로그램명 : 협력사 조회
+* 작 성 일 : 2021.02.22
+* 작 성 자 : 윤성원
+* 수 정 자 : 홍혜리
+* 버    전 : 1.0
+* 개    요 : 협력사 조회 팝업
+* 이    력 : 2021.08.02 단일선택시 적용방식 수정
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-layout}">
+<body>
+
+    <!--Title Area-->
+    <th:block layout:fragment="popup-title-area">
+        <th:block layout:insert="~{fragments/popup/popup-title :: popup-title}"
+                  th:with="title=${#messages.msg('baseInfoMgmt.label.popup.etEntrBaseList.title')}"></th:block>
+    </th:block>
+    <!--Title Area-->
+
+    <!--Search Area-->
+    <th:block layout:fragment="popup-search-area">
+        <div class="search">
+                <form name="etEntrBaseListGridForm" id="etEntrBaseListGridForm">
+                    <table class="search-table">
+                        <colgroup>
+                            <col style="width:15%;" />
+                            <col style="width:35%;" />
+                            <col style="width:15%;" />
+                            <col style="width:35%;" />
+                        </colgroup>
+                        <tbody>
+                        <tr>
+                            <td class="label" th:text="${#messages.msg('baseInfoMgmt.label.popup.etEntrBaseList.entrGbCdNm')}"></td>
+                            <td>
+                                <select class="form-control w40" id="entrGbCd" name="entrGbCd">
+                                    <th:block th:if="${requestData.argEntrGbCd} != null or ${requestData.argEntrGbCd} != ''" >
+                                        <option th:each="list : ${codeList.VD001}" th:value="${list?.cd}" th:utext="${list?.cdNm}" th:if="${requestData.argEntrGbCd} == ${list?.cd}"></option>
+                                    </th:block>
+                                    <th:block th:if="${requestData.argEntrGbCd} == null or ${requestData.argEntrGbCd} == ''">
+                                        <option value="" th:text="${#messages.msg('baseInfoMgmt.label.full')}"></option>
+                                        <option th:each="list : ${codeList.VD001}" th:value="${list?.cd}" th:utext="${list?.cdNm}"></option>
+                                    </th:block>
+                                </select>
+                            </td>
+                            <td class="label" th:text="${#messages.msg('baseInfoMgmt.label.popup.etEntrBaseList.trdStatCdNm')}"></td>
+                            <td>
+                                <select class="form-control w50" id="trdStatCd" name="trdStatCd">
+                                    <th:block th:if="${requestData.argTrdStatCd} != null or ${requestData.argTrdStatCd} != ''" >
+                                        <option th:each="list : ${codeList.VD003}" th:value="${list?.cd}" th:utext="${list?.cdNm}" th:if="${requestData.argTrdStatCd} == ${list?.cd}"></option>
+                                    </th:block>
+                                    <th:block th:if="${requestData.argTrdStatCd} == null or ${requestData.argTrdStatCd} == ''">
+                                        <option value="" th:text="${#messages.msg('baseInfoMgmt.label.full')}"></option>
+                                        <option th:each="list : ${codeList.VD003}" th:value="${list?.cd}" th:utext="${list?.cdNm}"></option>
+                                    </th:block>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label" th:text="${#messages.msg('baseInfoMgmt.label.popup.etEntrBaseList.entrNoAndNm')}"></td>
+                            <td colspan="3">
+                                <input class="input inputtxt entrNoInput w10" type="text" name="entrNo" id="entrNo" maxlength="15"/>
+                                <input class="input inputtxt w30" type="text" name="entrNm" id="entrNm" maxlength="300"/>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </form>
+        </div>
+    </th:block>
+    <!--Search Area-->
+
+    <!--Search Button Area-->
+    <th:block layout:fragment="popup-search-button-area">
+        <th:block layout:insert="~{fragments/popup/popup-btn :: popup-search-btn}"/>
+    </th:block>
+    <!--Search Button Area-->
+
+    <!--List Area-->
+    <th:block layout:fragment="popup-List-area">
+        <div class="grid">
+            <div class="grid-head" style="overflow: hidden;">
+                <div class="title-area">
+                    <h2 class="title" th:text="${#messages.msg('baseInfoMgmt.label.popup.etEntrBaseList.list')}"></h2>
+                </div>
+                <div class="option-area">
+                    <div class="page-option" grid-id="etGrid"></div>
+                </div>
+            </div>
+            <div class="grid-body with-head">
+                <div id="etGrid" class="rg-root rg-grid" realgrid></div>
+            </div>
+        </div>
+    </th:block>
+    <!--List Area-->
+
+    <!--List Button Area-->
+    <th:block layout:fragment="popup-List-button-area">
+        <th:block layout:insert="~{fragments/popup/popup-btn :: popup-List-btn}"/>
+    </th:block>
+
+    <th:block layout:fragment="add-script">
+        <script th:inline="javascript">
+            /*<![CDATA[*/
+            var _gridType               = [[${requestData.argSelectType}]]; // 선택구분값이 있을경우 필수값
+            /*]]>*/
+        </script>
+        <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'popup/popup.etEntrBaseList.etGrid.eventHandler.js?20210802'" ></script>
+        <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'popup/popup.etEntrBaseList.etGrid.provider.js?202103080000'" ></script>
+
+        <script type="text/javascript">
+            $(document).ready(function() {
+                etGrid.eventhandler.init();
+            });
+        </script>
+    </th:block>
+</body>
+</html>

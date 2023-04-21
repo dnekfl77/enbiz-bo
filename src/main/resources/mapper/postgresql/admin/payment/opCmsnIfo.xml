@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.payment.OpCmsnInfoMapper">
+
+    <sql id="paginatedBase">
+        LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+    </sql>
+
+    <sql id="clearingCommissionList">
+        SELECT  				/* OpCmsnInfo.clearingCommissionList */
+                  PG_GB_CD AS PG_GB
+                , CMSN_TGT_LGRP_CD AS CMSN_TGT_LGRP
+                , CMSN_TGT_SGRP_CD AS CMSN_TGT_SGRP
+                , CMSN_GB_CD AS CMSN_GB
+                , CMSN_TYP_CD AS CMSN_TYP
+                , FN_GET_CODENAME('OM030', PG_GB_CD) AS PG_GB_CD
+                , FN_GET_CODENAME('OM037', CMSN_TGT_LGRP_CD) AS CMSN_TGT_LGRP_CD
+                , (	CASE WHEN CMSN_TGT_LGRP_CD = '11'
+                    THEN FN_GET_CODENAME('OM028', CMSN_TGT_SGRP_CD)
+                    ELSE FN_GET_CODENAME('OM026', CMSN_TGT_SGRP_CD) END
+                ) AS CMSN_TGT_SGRP_CD
+                , FN_GET_CODENAME('OM038', CMSN_TYP_CD) AS CMSN_TYP_CD
+                , TO_CHAR(APLY_STR_DTM,'YYYY-MM-DD') AS APLY_STR_DT
+                , TO_CHAR(APLY_END_DTM,'YYYY-MM-DD') AS APLY_END_DT
+                , TO_CHAR(APLY_STR_DTM,'YYYY-MM-DD HH24:MI:SS') AS APLY_STR_DTM
+                , TO_CHAR(APLY_END_DTM,'YYYY-MM-DD HH24:MI:SS') AS APLY_END_DTM
+                , (	CASE WHEN MERS_NO = '0' THEN NULL ELSE MERS_NO END) AS MERS_NO
+                , (	CASE WHEN INST_MON_CNT = 0 THEN NULL ELSE INST_MON_CNT END) AS INST_MON_CNT
+                , FN_GET_CODENAME('OM039', CMSN_GB_CD) AS CMSN_GB_CD
+                , (	CASE WHEN CMSN_RATE = 0 THEN NULL ELSE CMSN_RATE END) AS CMSN_RATE
+                , (	CASE WHEN CMSN_AMT = 0 THEN NULL ELSE CMSN_AMT END) AS CMSN_AMT
+                , (	CASE WHEN VAT_INCL_YN = 'Y' THEN '포함' ELSE '미포함' END) AS VAT_INCL_YN
+                , FN_GET_CODENAME('OM040', ADJ_GB_CD) AS ADJ_GB_CD
+                , RMK_CONT
+                , SYS_MOD_ID
+                , TO_CHAR(SYS_MOD_DTM,'YYYY-MM-DD HH24:MI') AS SYS_MOD_DTM
+        FROM      OP_CMSN_INFO
+        WHERE 	  MERS_NO 				LIKE 	#{mersNo} 	|| '%'
+        AND 	  PG_GB_CD 				LIKE 	#{pgGbCd} 	|| '%'
+        AND 	  CMSN_TGT_LGRP_CD 		LIKE 	#{cmsnTgtLgrpCd} 	|| '%'
+        AND 	  CMSN_TGT_SGRP_CD 		LIKE 	#{cmsnTgtSgrpCd} 	|| '%'
+        AND 	  CMSN_TYP_CD 			LIKE 	#{cmsnTypCd} 		|| '%'
+        ORDER BY PG_GB_CD, CMSN_TGT_LGRP_CD, CMSN_TGT_SGRP_CD, CMSN_GB_CD, CMSN_TYP_CD, APLY_STR_DTM, MERS_NO
+    </sql>
+
+    <select id="getClearingCommissionList" parameterType="OpCmsnInfoRequest" resultType="OpCmsnInfoResponse">
+        <include refid="clearingCommissionList" />
+        <include refid="paginatedBase" />
+    </select>
+
+    <select id="getClearingCommissionListCount" parameterType="OpCmsnInfoRequest" resultType="java.lang.Integer">
+        SELECT   /* OpCmsnInfo.getClearingCommissionListCount */
+                COUNT(*)
+        FROM (
+                <include refid="clearingCommissionList" />
+        ) T1
+    </select>
+
+    <select id="getClearingCommissionDetail" parameterType="OpCmsnInfoRequest" resultType="OpCmsnInfoResponse">
+        SELECT    DISTINCT                  /* OpCmsnInfo.getClearingCommissionDetail */
+                  PG_GB_CD
+                , CMSN_TGT_LGRP_CD
+                , CMSN_TGT_SGRP_CD
+                , CMSN_TYP_CD
+            <if test="cmsnTgtLgrpCd != '11'">
+                , (	CASE WHEN CMSN_RATE = 0 THEN NULL ELSE CMSN_RATE END) AS CMSN_RATE
+                , (	CASE WHEN CMSN_AMT = 0 THEN NULL ELSE CMSN_AMT END) AS CMSN_AMT
+            </if>
+            <if test="cmsnTgtLgrpCd == '11' and cmsnTypCd != '20'">
+                , (	CASE WHEN CMSN_RATE = 0 THEN NULL ELSE CMSN_RATE END) AS CMSN_RATE
+            </if>
+                , TO_CHAR(APLY_STR_DTM,'YYYY-MM-DD HH24:MI:SS') AS APLY_STR_DTM
+                , TO_CHAR(APLY_END_DTM,'YYYY-MM-DD HH24:MI:SS') AS APLY_END_DTM
+                , CMSN_GB_CD
+                , VAT_INCL_YN
+                , ADJ_GB_CD
+                , RMK_CONT
+        FROM      OP_CMSN_INFO
+        WHERE 	  PG_GB_CD = #{pgGbCd}
+        AND 	  CMSN_TGT_LGRP_CD = #{cmsnTgtLgrpCd}
+        AND 	  CMSN_TGT_SGRP_CD = #{cmsnTgtSgrpCd}
+        AND       APLY_STR_DTM = #{aplyStrDtm}::TIMESTAMP
+        AND       APLY_END_DTM = #{aplyEndDtm}::TIMESTAMP
+        AND 	  CMSN_TYP_CD = #{cmsnTypCd}
+    </select>
+
+    <select id="getMersTotalList" resultType="OpCmsnInfoResponse">
+        SELECT   /* OpCmsnInfo.getMersTotalList */
+                  MERS_NO AS CD
+                , MERS_NO AS CD_NM
+        FROM      OP_MERS_INFO
+        ORDER BY  MERS_NO
+    </select>
+
+    <select id="getMappingMersList" parameterType="OpCmsnInfoRequest" resultType="OpCmsnInfoResponse">
+        SELECT    DISTINCT              /* OpCmsnInfo.getMappingMersList */
+                  MERS_NO
+        FROM      OP_CMSN_INFO
+        WHERE 	  PG_GB_CD = #{pgGbCd}
+        AND 	  CMSN_TGT_LGRP_CD = #{cmsnTgtLgrpCd}
+        AND 	  CMSN_TGT_SGRP_CD = #{cmsnTgtSgrpCd}
+        AND       APLY_STR_DTM = #{aplyStrDtm}::TIMESTAMP
+        AND       APLY_END_DTM = #{aplyEndDtm}::TIMESTAMP
+        AND 	  CMSN_TYP_CD = #{cmsnTypCd}
+    </select>
+
+    <select id="getMonthList" parameterType="OpCmsnInfoRequest" resultType="OpCmsnInfoResponse">
+        SELECT    DISTINCT              /* OpCmsnInfo.getMonthList */
+                  INST_MON_CNT
+                , CMSN_RATE
+        FROM      OP_CMSN_INFO
+        WHERE 	  PG_GB_CD = #{pgGbCd}
+        AND 	  CMSN_TGT_LGRP_CD = #{cmsnTgtLgrpCd}
+        AND 	  CMSN_TGT_SGRP_CD = #{cmsnTgtSgrpCd}
+        AND       APLY_STR_DTM = #{aplyStrDtm}::TIMESTAMP
+        AND       APLY_END_DTM = #{aplyEndDtm}::TIMESTAMP
+        AND 	  CMSN_TYP_CD = #{cmsnTypCd}
+    </select>
+
+    <select id="aplyDateCheck" parameterType="OpCmsnInfoRequest" resultType="OpCmsnInfoResponse">
+        SELECT    DISTINCT         /* OpCmsnInfo.aplyDateCheck */
+                  TO_CHAR(APLY_STR_DTM,'YYYY-MM-DD HH24:MI:SS') AS APLY_STR_DTM
+                , TO_CHAR(APLY_END_DTM,'YYYY-MM-DD HH24:MI:SS') AS APLY_END_DTM
+        FROM      OP_CMSN_INFO
+        WHERE 	  PG_GB_CD = #{pgGbCd}
+        AND 	  CMSN_TGT_LGRP_CD = #{cmsnTgtLgrpCd}
+        AND 	  CMSN_TGT_SGRP_CD = #{cmsnTgtSgrpCd}
+        AND 	  CMSN_TYP_CD = #{cmsnTypCd}
+    </select>
+
+</mapper>
+
+

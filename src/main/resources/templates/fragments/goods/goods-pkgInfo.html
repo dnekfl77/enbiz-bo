@@ -1,0 +1,132 @@
+<!--
+* 프로그램명 : 묶음상품구성
+* 작 성 일 : 2021.06.03
+* 작 성 자 : 홍혜리
+* 수 정 자 : 홍혜리
+* 버    전 : 1.0
+* 개    요 : 묶음상품구성
+* 이    력 : 2021.10.12 프레임워크 이전
+-->
+<!DOCTYPE html>
+<html lang="ko-KR"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<body>
+    <th:block layout:fragment="pkg-goods-pkgInfo">
+        <div class="data">
+            <div class="data-head">
+                <div class="left">
+                    <span class="title" th:text="${#messages.msg('packageGoods.pkgInfo.title')}"></span>
+                </div>
+                <div class="right">
+                  <span class="data-toggle">
+                    <button type="button" class="toggle-button"><span>닫힘</span></button>
+                  </span>
+                </div>
+            </div>
+            <div class="data-body">
+                <form id="pkgInfo">
+                <table class="data-table fixed">
+                    <colgroup>
+                        <col width="130">
+                        <col>
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <!-- 묶음상품 노출 우선순위 -->
+                        <td class="label"><strong th:utext="${#strings.replace(#messages.msg('packageGoods.pkgInfo.label.pkgGoodsPrioRnkCd'),'/r/n', '&lt;br /&gt;')}"></strong></td>
+                        <td>
+                            <th:block th:each="code, index : ${codeList.PR035}">
+                                <label class="radio-inline"><input type="radio" name="pkgGoodsPrioRnkCd" th:value="${code?.cd}" th:checked="${index.index == 0}" th:text="${code?.cdNm}"></label>
+                            </th:block>
+                            <p class="tip warning mt5">관리자가 지정한 우선순위를 최우선적으로 고려하여 묶음상품 정렬순으로 노출 되며, 대표상품품절시 대체상품 선정 기준이 됩니다.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <div class="grid">
+                                <div class="grid-head">
+                                    <div class="option-area">
+                                        <div class="edit-option">
+                                            <div class="button-group">
+                                                <a href="#" class="button inside" id="btn_add_pkg_goods"><span class="text" th:text="${#messages.msg('adminCommon.grid.button.add.row')}"></span></a>
+                                                <a href="#" class="button inside" id="btn_remove_pkg_goods"><span class="text" th:text="${#messages.msg('adminCommon.grid.button.delete.row')}"></span></a>
+                                                <a href="#" class="button inside" id="btn_reset_pkg_goods"><span class="text" th:text="${#messages.msg('adminCommon.grid.button.cancel')}"></span></a>
+                                            </div>
+                                            <span class="tip warning ml10">상품의 가격, 고시정보는 대표상품의 정보를 보여줍니다. </span>
+                                        </div>
+
+                                        <div class="page-option" grid-id="packageRelatedGoodsListGrid">
+                                            <span class="total">총 <em id="packageRelatedGoodsListGridCnt">0</em>건</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="grid-body with-head" id="packageRelatedGoodsListGrid" realgrid></div>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                </form>
+            </div>
+        </div>
+    </th:block>
+    <th:block layout:fragment="pkg-goods-detail-pkgInfo">
+        <div class="data">
+            <div class="data-head">
+                <div class="left">
+                    <span class="title" th:text="${#messages.msg('packageGoods.pkgInfo.title')}"></span>
+                </div>
+                <div class="right">
+                  <span class="data-toggle">
+                    <button type="button" class="toggle-button"><span>닫힘</span></button>
+                  </span>
+                </div>
+            </div>
+            <div class="data-body">
+                <form id="pkgInfo">
+                    <table class="data-table fixed">
+                        <colgroup>
+                            <col width="130">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                        <tr>
+                            <!-- 묶음상품 노출 우선순위 -->
+                            <td class="label"><strong th:utext="${#strings.replace(#messages.msg('packageGoods.pkgInfo.label.pkgGoodsPrioRnkCd'),'/r/n', '&lt;br /&gt;')}"></strong></td>
+                            <td>
+                                <th:block th:each="code, index : ${codeList.PR035}">
+                                    <label class="radio-inline"><input type="radio" name="pkgGoodsPrioRnkCd" th:value="${code?.cd}" th:checked="${index.index == 0}" th:text="${code?.cdNm}"></label>
+                                </th:block>
+                                <p class="tip warning mt5">관리자가 지정한 우선순위를 최우선적으로 고려하여 묶음상품 정렬순으로 노출 되며, 대표상품품절시 대체상품 선정 기준이 됩니다.</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <div class="grid">
+                                    <div class="grid-head">
+                                        <div class="option-area">
+                                            <div class="edit-option">
+                                                <div class="button-group">
+                                                    <a href="#" class="button inside" id="btn_reset_pkg_goods"><span class="text" th:text="${#messages.msg('adminCommon.grid.button.cancel')}"></span></a>
+                                                </div>
+                                                <span class="tip warning ml10">상품의 가격, 고시정보는 대표상품의 정보를 보여줍니다. </span>
+                                            </div>
+
+                                            <div class="page-option" grid-id="packageRelatedGoodsListGrid">
+                                                <span class="total">총 <em id="packageRelatedGoodsListGridCnt">0</em>건</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="grid-body with-head" id="packageRelatedGoodsListGrid" realgrid></div>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </div>
+    </th:block>
+</body>
+</html>

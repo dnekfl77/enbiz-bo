@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enbiz.bo.app.repository.goods.PrAdveWrdHistTrxMapper">
+
+    <insert id="insertPrAdveWrdHist" parameterType="PrAdveWrdHist">
+        INSERT INTO PR_ADVE_WRD_HIST (/* prAdveWrdHistTrx.insertPrAdveWrdHist */
+                    GOODS_NO
+                  , APLY_STR_DT
+                  , APLY_END_DT
+                  , ADVE_WRD
+                  , USE_YN
+                  , SYS_REG_ID
+                  , SYS_REG_DTM
+                  , SYS_MOD_ID
+                  , SYS_MOD_DTM
+               )
+               VALUES (
+                    #{goodsNo}
+                  , REPLACE(#{aplyStrDt},'-','')
+                  , REPLACE(#{aplyEndDt},'-','')
+                  , #{adveWrd}
+                  , #{useYn}
+                  , #{sysRegId}
+                  , NOW()
+                  , #{sysRegId}
+                  , NOW()
+               )
+    </insert>
+
+    <update id="updatePrAdveWrdHist" parameterType="PrAdveWrdHist">
+        UPDATE PR_ADVE_WRD_HIST /* prAdveWrdHistTrx.updatePrAdveWrdHist */
+           SET ADVE_WRD = #{adveWrd}
+             , USE_YN = #{useYn}
+             , SYS_MOD_ID = #{sysModId}
+             , SYS_MOD_DTM = NOW()
+         WHERE GOODS_NO = #{goodsNo}
+           AND APLY_STR_DT = REPLACE(#{aplyStrDt},'-','')
+           AND APLY_END_DT = REPLACE(#{aplyEndDt},'-','')
+    </update>
+
+    <delete id="deleteAllAdvertisingWord" parameterType="java.lang.String">
+        DELETE /* prAdveWrdHistTrx.deleteAllAdvertisingWord */
+          FROM PR_ADVE_WRD_HIST
+         WHERE GOODS_NO = #{goodsNo}
+    </delete>
+</mapper>
+
+

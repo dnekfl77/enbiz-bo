@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.system.StRtTgtBaseLogMapper">
+	<sql id="post-paginated-frag">
+        LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+    </sql>
+    
+    <!-- 메뉴별 사용현황 Grid - base -->
+    <sql id="getMenuUseStatusList-base">
+   		SELECT FN_GET_CODENAME('UR005', RTBASE.SYS_GB_CD) AS SYS_GB_NM
+		      ,RTLOG.RT_TGT_SEQ
+		      ,RTBASE.RT_TGT_NM
+		      ,TO_CHAR(RTBASE.SYS_REG_DTM, 'yyyy-mm-dd hh24:mi:ss') AS MENU_REG_DTM
+		      ,COUNT(DISTINCT RTLOG.USER_ID) AS USER_CNT
+		      ,COUNT(*) AS MENU_USE_CNT
+		      ,TO_CHAR(MAX(RTLOG.SYS_REG_DTM), 'yyyy-mm-dd hh24:mi:ss') AS LAST_USE_DTM
+		  FROM ST_RT_TGT_BASE_LOG RTLOG
+		      ,ST_RT_TGT_BASE RTBASE
+		 WHERE RTLOG.RT_TGT_SEQ = RTBASE.RT_TGT_SEQ
+			<include refid="common-stRtTgtBaseLog-where" />
+		GROUP BY RTBASE.SYS_GB_CD, RTLOG.RT_TGT_SEQ, RTBASE.RT_TGT_NM, RTBASE.SYS_REG_DTM
+    </sql>
+    
+    <!-- 메뉴별 사용현황, 사용자별 메뉴 사용현황 공통 Grid - where -->
+    <sql id="common-stRtTgtBaseLog-where">
+    	   AND RTLOG.SYS_REG_DTM BETWEEN TO_TIMESTAMP(#{useStrtDtm}||' 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
+    	   AND TO_TIMESTAMP(#{userEndDtm}||' 23:59:59', 'YYYY-MM-DD HH24:MI:SS')
+		   AND RTBASE.RT_TGT_NM LIKE #{rtTgtNm} ||'%'
+		   AND RTBASE.SYS_GB_CD LIKE #{sysGbCd} ||'%'
+		   AND RTLOG.USER_ID LIKE #{userId} ||'%' 
+    </sql>
+    
+    <!-- 사용자별 메뉴 사용현황 Grid - base -->
+    <sql id="getUserMenuUseStatusList-base">
+   		SELECT FN_GET_CODENAME('UR005', RTBASE.SYS_GB_CD) AS SYS_GB_NM
+		      ,RTLOG.RT_TGT_SEQ
+		      ,RTBASE.RT_TGT_NM
+		      ,RTLOG.USER_ID
+		      ,(SELECT SUB.USER_NM FROM ST_USER_BASE SUB WHERE SUB.USER_ID = RTLOG.USER_ID LIMIT 1) AS USER_NM
+		      ,TO_CHAR(MAX(RTLOG.SYS_REG_DTM), 'yyyy-mm-dd hh24:mi:ss') AS LAST_USE_DTM
+		      ,COUNT(*) AS USER_MENU_USE_CNT
+		  FROM ST_RT_TGT_BASE_LOG RTLOG
+		      ,ST_RT_TGT_BASE RTBASE
+		 WHERE RTLOG.RT_TGT_SEQ = RTBASE.RT_TGT_SEQ
+		 <include refid="common-stRtTgtBaseLog-where" />
+		GROUP BY RTBASE.SYS_GB_CD, RTLOG.RT_TGT_SEQ, RTBASE.RT_TGT_NM, RTLOG.USER_ID
+    </sql>
+
+	<!--
+        제 목 : 메뉴별 사용현황 정보 조회
+        작성자 : 홍순영
+        작성일 : 2021.03.05
+        params : RtTargetBaseLogRequest
+        설 명 : 메뉴별 사용현황 정보 조회
+    -->
+    <select id="getMenuUseStatusList" parameterType="RtTargetBaseLogRequest" resultType="RtTargetBaseLogResponse">
+		SELECT /* stRtTgtBaseLog.getLastLoginInfoList */
+		       X.*
+		  FROM (
+			  <include refid="getMenuUseStatusList-base" />
+			  ) X
+		ORDER BY X.RT_TGT_SEQ
+		  <include refid="post-paginated-frag" />
+	</select>
+			
+	<!--
+		제 목 : 메뉴별 사용현황 정보 조회 카운트
+		작성자 : 홍순영
+		작성일 : 2021.03.05
+		params : RtTargetBaseLogRequest
+		설 명 : 메뉴별 사용현황 정보 조회 카운트
+	-->
+	<select id="getMenuUseStatusListCount" parameterType="RtTargetBaseLogRequest" resultType="java.lang.Integer">
+		SELECT /* stRtTgtBaseLog.getMenuUseStatusListCount */
+			   COUNT(*)
+		  FROM ( 
+		  		<include refid="getMenuUseStatusList-base" />
+		  	   ) X
+	</select>
+	
+	<!--
+		제 목 : 사용자별 메뉴 사용현황 정보 조회
+		작성자 : 홍순영
+		작성일 : 2021.03.05
+		params : RtTargetBaseLogRequest
+		설 명 : 사용자별 메뉴 사용현황 정보 조회
+	-->
+	<select id="getUserMenuUseStatusList" parameterType="RtTargetBaseLogRequest" resultType="RtTargetBaseLogResponse">
+		SELECT /* stRtTgtBaseLog.getLastLoginInfoList */
+		       X.*
+		  FROM (
+			  <include refid="getUserMenuUseStatusList-base" />
+			  ) X
+		ORDER BY X.RT_TGT_SEQ
+		  <include refid="post-paginated-frag" />
+	</select>
+	
+	<!--
+		제 목 : 사용자별 메뉴 사용현황 정보 조회 카운트
+		작성자 : 홍순영
+		작성일 : 2021.03.05
+		params : RtTargetBaseLogRequest
+		설 명 : 사용자별 메뉴 사용현황 정보 조회 카운트
+	-->
+	<select id="getUserMenuUseStatusListCount" parameterType="RtTargetBaseLogRequest" resultType="java.lang.Integer">
+		SELECT /* stRtTgtBaseLog.getUserMenuUseStatusListCount */
+			   COUNT(*)
+		  FROM ( 
+		  		<include refid="getUserMenuUseStatusList-base" />
+		  	   ) X
+	</select>
+</mapper>
+
+

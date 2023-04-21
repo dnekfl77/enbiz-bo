@@ -1,0 +1,401 @@
+<!--
+* 프로그램명 : 상품Q&A상세
+* 작 성 일 : 2021.07.19
+* 작 성 자 : 홍혜리
+* 수 정 자 : 홍혜리
+* 버    전 : 1.0
+* 개    요 : 상품관리 > 상품Q&A관리 > 상품Q&A관리 > 상품Q&A상세
+* 이    력 : 2021.09.10 프레임워크 이전
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-layout}">
+<body>
+
+<th:block layout:fragment="popup-title-area">
+    <!--Title Area-->
+    <th:block layout:insert="~{fragments/popup/popup-title :: popup-title}"
+              th:with="title=${#messages.msg('goodsQAMgmt.goodsQADetail.title')}"></th:block>
+    <!--Title Area-->
+</th:block>
+
+<th:block layout:fragment="popup-search-area">
+
+    <!-- Q&A 기본정보 -->
+    <div class="data-cont">
+        <div class="data">
+            <div class="data-head">
+                <div class="left">
+                    <span class="title" th:text="${#messages.msg('goodsQAMgmt.goodsQADetail.basicInfo.title')}"></span>
+                </div>
+            </div>
+            <div class="data-body toggle-cont">
+                <table class="data-table">
+                    <colgroup>
+                        <col width="130">
+                        <col width="120">
+                        <col width="200">
+                        <col width="120">
+                        <col width="200">
+                        <col width="120">
+                        <col width="200">
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <!-- 상품이미지 -->
+                        <td rowspan="3">
+                            <div class="data-cont">
+                                <div class="center mt5 mb5">
+                                    <img style="width:100px;height:100px;" th:src="${@domainConfig.getProperty('imageUrl')} + ${questBasicInfo.contFilePathNm} + ${questBasicInfo.contFileNm}">
+                                </div>
+                            </div>
+                        </td>
+                        <!-- 상품번호 -->
+                        <td class="label" th:text="${#messages.msg('goodsQAMgmt.goodsQADetail.basicInfo.label.goodsNo')}"></td>
+                        <td>
+                            <span th:text="${questBasicInfo.goodsNo}"></span>
+                        </td>
+                        <!-- 상품명 -->
+                        <td class="label" th:text="${#messages.msg('goodsQAMgmt.goodsQADetail.basicInfo.label.goodsNm')}"></td>
+                        <td>
+                            <span th:text="${questBasicInfo.goodsNm}"></span>
+                        </td>
+                        <!-- 상품QA번호 -->
+                        <td class="label" th:text="${#messages.msg('goodsQAMgmt.goodsQADetail.basicInfo.label.questNo')}"></td>
+                        <td>
+                            <span th:text="${questBasicInfo.questNo}"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <!-- 협력사명 -->
+                        <td class="label" th:text="${#messages.msg('goodsQAMgmt.goodsQADetail.basicInfo.label.entrNm')}"></td>
+                        <td>
+                            <span th:text="${questBasicInfo.entrNm}"></span>
+                        </td>
+                        <!-- 매입형태 -->
+                        <td class="label" th:text="${#messages.msg('goodsQAMgmt.goodsQADetail.basicInfo.label.buyTypCdNm')}"></td>
+                        <td>
+                            <span th:text="${questBasicInfo.buyTypCdNm}"></span>
+                        </td>
+                        <!-- 처리상태 -->
+                        <td class="label" th:text="${#messages.msg('goodsQAMgmt.goodsQADetail.basicInfo.label.procStatCdNm')}"></td>
+                        <td>
+                            <select class="form-control w60 disabled" th:disabled="true" id="procStatCd" name="procStatCd">
+                                <option th:each="list : ${codeList.PR039}" th:value="${list?.cd}" th:utext="${list?.cdNm}"
+                                        th:selected="${questBasicInfo.procStatCd} == ${list?.cd}"/>
+                            </select>
+                            <th:block th:if="${questBasicInfo.procStatCd} == '20'">
+                                <a href="#" class="button inside" id="btn_quest_transfer"><span class="text" th:text="${#messages.msg('goodsQAMgmt.goodsQADetail.btn.mvotCaus')}"></span></a>
+                            </th:block>
+                        </td>
+                    </tr>
+                    <tr>
+                        <!-- 처리자ID -->
+                        <td class="label" th:text="${#messages.msg('goodsQAMgmt.goodsQADetail.basicInfo.label.procId')}"></td>
+                        <td>
+                            <span th:text="${questBasicInfo.procId}"></span>
+                        </td>
+                        <!-- 처리일시 -->
+                        <td class="label" th:text="${#messages.msg('goodsQAMgmt.goodsQADetail.basicInfo.label.procStatDtm')}"></td>
+                        <td colspan="2">
+                            <span th:text="${questBasicInfo.procStatDtm}"></span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--// Q&A 기본정보 -->
+
+    <div class="data-cont col-50">
+        <!-- Q&A 질문내역 -->
+        <div class="data">
+            <div class="data-head">
+                <div class="left">
+                    <span class="title" th:text="${#messages.msg('goodsQAMgmt.goodsQADetail.questInfo.title')}"></span>
+                </div>
+                <th:block th:if="${userType} == 'MD' and ${questBasicInfo.procStatCd} == '10'">
+                    <div class="right">
+                        <a href="#" class="button inside" id="btn_quest_transfer"><span class="text" th:text="${#messages.msg('goodsQAMgmt.goodsQADetail.btn.transfer')}"></span></a>
+                    </div>
+                </th:block>
+            </div>
+            <div class="data-body toggle-cont">
+                <table class="data-table">
+                    <colgroup>
+                        <col width="120">
+                        <col width="150">
+                        <col width="120">
+                        <col width="150">
+                    </colgroup>
+                    <tbody>
+                    <!-- 질문자ID -->
+                    <tr>
+                        <td class="label" th:text="${#messages.msg('goodsQAMgmt.goodsQADetail.questInfo.label.loginId')}"></td>
+                        <td style="border-right: hidden;">
+                            <span th:text="${questBasicInfo.loginId}"></span>
+                        </td>
+                        <td colspan="2" class="right">
+                            <a href="#" class="mr10" id="btn_call_order_popup" th:text="${#messages.msg('goodsQAMgmt.goodsQADetail.btn.orderInfo')}"></a>
+                        </td>
+                    </tr>
+                    <!-- 질문일시 -->
+                    <tr>
+                        <td class="label" th:text="${#messages.msg('goodsQAMgmt.goodsQADetail.questInfo.label.questDtm')}"></td>
+                        <td colspan="3">
+                            <span th:text="${questBasicInfo.questDtm}"></span>
+                        </td>
+                    </tr>
+                    <!-- 질문유형 -->
+                    <tr>
+                        <td class="label" th:text="${#messages.msg('goodsQAMgmt.goodsQADetail.questInfo.label.questTypCdNm')}"></td>
+                        <td colspan="3">
+                            <span th:text="${questBasicInfo.questTypCdNm}"></span>
+                        </td>
+                    </tr>
+                    <!-- 질문내용 -->
+                    <tr>
+                        <td class="label" th:text="${#messages.msg('goodsQAMgmt.goodsQADetail.questInfo.label.questCont')}"></td>
+                        <td colspan="3">
+                            <textarea class="textarea w100 disabled" rows="10" th:text="${questBasicInfo.questCont}" th:readonly="true"></textarea>
+                        </td>
+                    </tr>
+                    <!-- 질문전시상태 -->
+                    <tr>
+                        <td class="label" th:text="${#messages.msg('goodsQAMgmt.goodsQADetail.questInfo.label.questDispStatCd')}"></td>
+                        <td colspan="3">
+                            <select class="form-control w40" id="questDispStatCd" name="questDispStatCd" th:disabled="${userType} != 'MD' or ${questBasicInfo.questDispStatCd} == '30'">
+                                <option value="" th:text="${#messages.msg('adminCommon.select')}" />
+                                <option th:each="list : ${codeList.PR022}" th:value="${list?.cd}" th:utext="${list?.cdNm}"
+                                        th:selected="${questBasicInfo.questDispStatCd} == ${list?.cd}"/>
+                            </select>
+                            <th:block th:if="${userType} == 'MD' and ${questBasicInfo.questDispStatCd} != '30'">
+                                <a href="#" class="button inside" id="btn_quest_save"><span class="text" th:text="${#messages.msg('adminCommon.button.save')}"></span></a>
+                            </th:block>
+                        </td>
+                    </tr>
+                    <tr>
+                        <!-- 전시처리자ID-->
+                        <td class="label" th:text="${#messages.msg('goodsQAMgmt.goodsQADetail.basicInfo.label.questDispProcmnId')}"></td>
+                        <td>
+                            <span th:text="${questBasicInfo.questDispProcmnId}"></span>
+                        </td>
+                        <!-- 전시처리일시-->
+                        <td class="label" th:text="${#messages.msg('goodsQAMgmt.goodsQADetail.basicInfo.label.questDispProcDtm')}"></td>
+                        <td>
+                            <span th:text="${questBasicInfo.questDispProcDtm}"></span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!--// Q&A 질문내역 -->
+
+        <!-- Q&A 답변내역 -->
+        <div class="data">
+            <div class="data-head">
+                <div class="left">
+                    <span class="title" th:text="${#messages.msg('goodsQAMgmt.goodsQADetail.ansInfo.title')}"></span>
+                </div>
+                <div class="right">
+                    <span id="ansIdx"><th:block th:if="${#lists.isEmpty(questAnsList)}" th:text="0"></th:block><th:block th:unless="${#lists.isEmpty(questAnsList)}" th:text="1"></th:block></span>
+                    &nbsp;/&nbsp;
+                    <span id="ansTotalCnt" th:text="${#lists.size(questAnsList)}"></span>
+                    <a href="#" class="button inside ml10" id="btn_ans_prev"><span class="text">◀</span></a>
+                    <a href="#" class="button inside" id="btn_ans_next"><span class="text">▶</span></a>
+                    <th:block th:if="${userType} == 'MD' and ${questBasicInfo.procStatCd} != '20'">
+                        <a href="#" class="button inside" id="btn_ans_reset"><span class="text" th:text="${#messages.msg('adminCommon.button.init')}"></span></a>
+                        <a href="#" class="button inside" id="btn_ans_save"><span class="text" th:text="${#messages.msg('adminCommon.button.save')}"></span></a>
+                        <a href="#" class="button inside" id="btn_ans_add"><span class="text" th:text="${#messages.msg('goodsQAMgmt.goodsQADetail.btn.add')}"></span></a>
+                    </th:block>
+                    <th:block th:if="${userType} == 'CC' and ${questBasicInfo.procStatCd} == '20'" >
+                        <a href="#" class="button inside" id="btn_ans_reset"><span class="text" th:text="${#messages.msg('adminCommon.button.init')}"></span></a>
+                        <a href="#" class="button inside" id="btn_ans_save"><span class="text" th:text="${#messages.msg('adminCommon.button.save')}"></span></a>
+                    </th:block>
+                </div>
+            </div>
+            <div class="answers">
+                <th:block th:each="questAns,index : ${questAnsList}">
+                    <div class="data-body toggle-cont answer_old" th:id="'answer_'+${index.index + 1}" th:hidden="${index.index} != 0">
+                        <form th:id="'answerForm_'+${index.index + 1}">
+                            <input type="hidden" name="questNo" th:value="${questAns.questNo}">
+                            <input type="hidden" name="ansSeq" th:value="${questAns.ansSeq}">
+                            <input type="hidden" name="procStatCd" th:value="${questBasicInfo.procStatCd}">
+                            <table class="data-table">
+                                <colgroup>
+                                    <col width="120">
+                                    <col width="150">
+                                    <col width="120">
+                                    <col width="150">
+                                </colgroup>
+                                <tbody>
+                                <tr>
+                                    <!-- 등록자ID -->
+                                    <td class="label" th:text="${#messages.msg('adminCommon.label.sys.reg.id')}"></td>
+                                    <td>
+                                        <span th:text="${questAns.sysRegId}"></span>
+                                    </td>
+                                    <!-- 등록일시 -->
+                                    <td class="label" th:text="${#messages.msg('adminCommon.label.sys.reg.date')}"></td>
+                                    <td>
+                                        <span th:text="${questAns.sysRegDtm}"></span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <!-- 수정자ID-->
+                                    <td class="label" th:text="${#messages.msg('adminCommon.label.sys.mod.id')}"></td>
+                                    <td>
+                                        <span th:text="${questAns.sysModId}"></span>
+                                    </td>
+                                    <!-- 수정일시-->
+                                    <td class="label" th:text="${#messages.msg('adminCommon.label.sys.mod.date')}"></td>
+                                    <td>
+                                        <span th:text="${questAns.sysModDtm}"></span>
+                                    </td>
+                                </tr>
+                                <!-- 답변템플릿 -->
+                                <tr>
+                                    <td class="label" th:text="${#messages.msg('goodsQAMgmt.goodsQADetail.ansInfo.label.ansTmplNo')}"></td>
+                                    <td colspan="3">
+                                        <select class="form-control w40 ansTmplNo" th:disabled="(${userType} == 'MD' and ${questBasicInfo.procStatCd} == '20') or ${userType} == 'NM'">
+                                            <option value="" th:text="${#messages.msg('adminCommon.select')}" />
+                                            <option th:each="tmpl : ${questAnsTmplList}" th:value="${tmpl.ansTmplNo}" th:utext="${tmpl.ansTmplNm}"/>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <!-- 답변내용 -->
+                                <tr>
+                                    <td class="label">
+                                        <strong th:text="${#messages.msg('goodsQAMgmt.goodsQADetail.ansInfo.label.ansCont')}"></strong>
+                                    </td>
+                                    <td colspan="3">
+                                        <textarea class="textarea w100" rows="10" name="ansCont" maxlength="4000" th:text="${questAns.ansCont}"
+                                                  th:readonly="(${userType} == 'MD' and ${questBasicInfo.procStatCd} == '20') or ${userType} == 'NM'"></textarea>
+                                    </td>
+                                </tr>
+                                <!-- 답변전시상태 -->
+                                <tr>
+                                    <td class="label">
+                                        <strong th:text="${#messages.msg('goodsQAMgmt.goodsQADetail.ansInfo.label.ansDispStatCd')}"></strong>
+                                    </td>
+                                    <td colspan="3">
+                                        <select class="form-control w40" name="ansDispStatCd" th:disabled="(${userType} == 'MD' and ${questBasicInfo.procStatCd} == '20') or ${userType} == 'NM' or ${questAns.ansDispStatCd} == '30'">
+                                            <option value="" th:text="${#messages.msg('adminCommon.select')}" />
+                                            <option th:each="list : ${codeList.PR022}" th:value="${list?.cd}" th:utext="${list?.cdNm}"
+                                                    th:selected="${questAns.ansDispStatCd} == ${list?.cd}"/>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <!-- 전시처리자ID-->
+                                    <td class="label" th:text="${#messages.msg('goodsQAMgmt.goodsQADetail.basicInfo.label.questDispProcmnId')}"></td>
+                                    <td>
+                                        <span th:text="${questAns.ansDispProcmnId}"></span>
+                                    </td>
+                                    <!-- 전시처리일시-->
+                                    <td class="label" th:text="${#messages.msg('goodsQAMgmt.goodsQADetail.basicInfo.label.questDispProcDtm')}"></td>
+                                    <td>
+                                        <span th:text="${questAns.ansDispProcDtm}"></span>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </form>
+                    </div>
+                </th:block>
+            </div>
+        </div>
+        <!--// Q&A 답변내역 -->
+    </div>
+
+    <!-- Q&A 답변 템플릿 -->
+    <div class="answer_tmpl" style="display: none">
+        <table class="data-table">
+            <colgroup>
+                <col width="120">
+                <col width="150">
+                <col width="120">
+                <col width="150">
+            </colgroup>
+            <tbody>
+            <tr>
+                <td class="label" th:text="${#messages.msg('adminCommon.label.sys.reg.id')}"></td>
+                <td></td>
+                <td class="label" th:text="${#messages.msg('adminCommon.label.sys.reg.date')}"></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td class="label" th:text="${#messages.msg('adminCommon.label.sys.mod.id')}"></td>
+                <td></td>
+                <td class="label" th:text="${#messages.msg('adminCommon.label.sys.mod.date')}"></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td class="label" th:text="${#messages.msg('goodsQAMgmt.goodsQADetail.ansInfo.label.ansTmplNo')}"></td>
+                <td colspan="3">
+                    <select class="form-control w40 ansTmplNo">
+                        <option value="" th:text="${#messages.msg('adminCommon.select')}" />
+                        <option th:each="tmpl : ${questAnsTmplList}" th:value="${tmpl.ansTmplNo}" th:utext="${tmpl.ansTmplNm}"/>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td class="label" th:text="${#messages.msg('goodsQAMgmt.goodsQADetail.ansInfo.label.ansCont')}"></td>
+                <td colspan="3">
+                    <textarea class="textarea w100" rows="10" name="ansCont"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td class="label" th:text="${#messages.msg('goodsQAMgmt.goodsQADetail.ansInfo.label.ansDispStatCd')}"></td>
+                <td colspan="3">
+                    <select class="form-control w40" name="ansDispStatCd" th:disabled="true">
+                        <option value="" th:text="${#messages.msg('adminCommon.select')}" />
+                        <option th:each="list : ${codeList.PR022}" th:value="${list?.cd}" th:utext="${list?.cdNm}"
+                                th:selected="'20' == ${list?.cd}"/>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td class="label" th:text="${#messages.msg('goodsQAMgmt.goodsQADetail.basicInfo.label.questDispProcmnId')}"></td>
+                <td></td>
+                <td class="label" th:text="${#messages.msg('goodsQAMgmt.goodsQADetail.basicInfo.label.questDispProcDtm')}"></td>
+                <td></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <!--// Q&A 답변 템플릿 -->
+
+</th:block>
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        var _gridType = '';
+        /*<![CDATA[*/
+        var _questBasicInfo = [[${questBasicInfo}]];
+
+        var _questAnsTmplList = {};
+        /*[# th:each="tmpl : ${questAnsTmplList}"]*/
+            var key = /*[[${tmpl.ansTmplNo}]]*/;
+            _questAnsTmplList[key] = /*[[${tmpl.ansTmplCont}]]*/;
+        /*[/]*/
+
+        var _questAnsList = {};
+        /*[# th:each="ans,index : ${questAnsList}"]*/
+            var i = /*[[${index.index + 1}]]*/;
+            _questAnsList[i] = /*[[${ans}]]*/;
+        /*[/]*/
+
+        /*]]>*/
+    </script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/goodsQADetail.eventHandler.js?20210910'"></script>
+    <script type="text/javascript">
+        $(function() {
+            goodsQADetail.eventhandler.init();
+        });
+    </script>
+</th:block>
+</body>
+</html>

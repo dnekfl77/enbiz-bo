@@ -1,0 +1,241 @@
+<html lang="ko-KR">
+<head>
+    <title>x2</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+    <link type="text/css" rel="stylesheet" href="../css/reset.css">
+    <link type="text/css" rel="stylesheet" href="../css/layout.css">
+    <link type="text/css" rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" type="text/css" href="../css/realgrid-style.css">
+    <script src="../js/libs/jquery/jquery-3.4.1.min.js"></script>
+    <script src="../js/contents.js"></script>
+</head>
+<body>
+    <div class="page-root">
+        <div class="page-title">
+            <div class="left">
+                <h1>제휴사관리</h1>
+            </div>
+        </div>
+        <div class="page-fixed with-title"> <!-- page-title 가 있을경우 with-title 클래스 추가 -->
+            <div class="search-cont full-height">
+                <!-- search -->
+                <div class="search">
+                    <table class="search-table">
+                      <colgroup>
+                        <col width="120">
+                        <col>
+                        <col width="120">
+                        <col>
+                    </colgroup>
+                    <tbody>
+                      <tr>
+                        <td class="label">제휴사번호/명</td>
+                        <td>
+                          <div class="input-group">
+                            <input class="input" type="text" title="제휴사번호입력" name="argEntrNo" id="argEntrNo">
+                            <em>/</em>
+                            <input class="input" type="text" title="제휴사번호입력" name="argEntrNm" id="argEntrNm">
+                            <a href="javascript:;" class="button small"
+                                onclick="window.open('popup.html','name',' resizable=no scrollbars=yes width=1000 height=700');return false"><i
+                                    class="icon-sarch"></i></a>
+                          </div>
+                        </td>
+                        <td class="label">상태</td>
+                        <td>
+                          <select name="dtPrgsStatCd" id="dtPrgsStatCd" class="form-control">
+                            <option value="">:: 전체 ::</option>
+                            <option value="10">미승인</option>
+                            <option value="20">거래</option>
+                            <option value="30">중지</option>
+                          </select>
+                        </td>
+                      </tr>
+                    </table>
+                </div>
+                <!-- //search -->
+
+                <!-- search-btn -->
+                <div class="button-group search-btn">
+                    <!-- <a href="#" class="button white"><span class="text">초기화</span></a> -->
+                    <a href="#" class="button dark"><span class="text">검색</span></a>
+                </div>
+
+
+                <!-- grid -->
+                <div class="grid-cont col-40">
+                    <div class="grid">
+                        <div class="grid-head">
+                          <div class="title-area">
+                            <h2 class="title">제휴사리스트</h2>
+                          </div>
+                          <!-- //title-area -->
+
+                          <div class="option-area">
+                            <div class="edit-option">
+                              <input type="text" class="input" id="cooperateGrid-search-input-field" placeholder="Enter Search Word">
+                            </div>
+
+                            <div class="page-option">
+                                <span class="total">총 <em>24</em>건</span>
+                            </div>
+                          </div>
+                          <!-- //option-area -->
+                        </div>
+                        <!-- //grid-head -->
+
+                        <div class="grid-body with-head" id="realgrid" realgrid>realgrid area</div>
+                        <!-- //grid-body -->
+                    </div>
+                    <!-- //제휴사리스트 -->
+                    
+                    <div class="grid-cont">
+                      <div class="data">
+                        <div class="data-head">
+                          <div class="left"><span class="title">제휴사 상세정보</span>
+                            <div class="button-group">
+                              <a href="#" class="button inside" id="btnAddCooperList" title="신규"><span class="text">신규</span></a>
+                              <a href="#" class="button inside"id="btnRemoveCooperList" title="삭제"><span class="text">삭제</span></a>
+                            </div>
+                          </div>
+                          <div class="right">
+                            <span class="data-toggle">
+                                <button type="button"
+                                class="toggle-button"
+                                    depth-name="goodsDisplay"><span>닫힘</span></button>
+                            </span>
+                          </div>
+                        </div>
+                        <div class="data-body">
+                          <table class="data-table fixed">
+                            <colgroup>
+                              <col width="120">
+                              <col>
+                              <col width="120">
+                              <col>
+                            </colgroup>
+                            <tbody>
+                              <tr>
+                                <td class="label"><strong>제휴사번호/명</strong></td>
+                                <td>
+                                  <div class="input-group">
+                                    <input class="input w30" type="text" title="제휴사번호" id="entrNo1" name="entrNo1"readonly="readonly">
+                                    <em>/</em>
+                                    <input class="input" type="text" title="제휴사명" id="entrNm1" name="entrNm1">
+                                  </div>
+                                </td>
+                                <td class="label"><strong>대표자명</strong></td>
+                                <td>
+                                  <input class="input" type="text" title="대표자명" id="presNm" name="presNm"maxlength="50">
+                                </td>
+                              </tr>
+                              <tr>
+                                <td class="label">사업자종류코드</td>
+                                <td>
+                                  <select class="form-control" name="bmanKndCd" id="bmanKndCd">
+                                    <option value="">:: 선택 ::</option>
+                                    <option value="1">면세업자</option>
+                                    <option value="2" selected="selected">일반과세자</option>
+                                  </select>
+                                </td>
+                                <td class="label"><strong>상태</strong></td>
+                                <td>
+                                  <select name="prgsStatCd" id="prgsStatCd" class="form-control">
+                                    <option value="">:: 선택 ::</option>
+                                    <option value="10" selected="selected">미승인</option>
+                                    <option value="20">거래</option>
+                                    <option value="30">중지</option>
+                                  </select>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td class="label"><strong>사업자 번호</strong></td>
+                                <td>
+                                  <input class="input" type="text" title="사업자 번호" id="bmanNo" name="bmanNo" maxlength="20">
+                                </td>
+                                <td class="label">법인번호</td>
+                                <td>
+                                  <input class="input" type="text" title="법인번호" id="firmRegNo" name="firmRegNo" maxlength="20">
+                                </td>
+                              </tr>
+                              <tr>
+                                <td class="label"><strong>계약시작일자</strong></td>
+                                <td>
+                                  <div class="picker-group">
+                                    <input type="text" class="form-control" placeholder="">
+                                    <span class="input-group-addon"><i class="icon-calendar"></i></span>
+                                  </div>
+                                </td>
+                                <td class="label"><strong>계약종료일자</strong></td>
+                                <td>
+                                  <div class="picker-group">
+                                    <input type="text" class="form-control" placeholder="">
+                                    <span class="input-group-addon"><i class="icon-calendar"></i></span>
+                                  </div>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td class="label"><strong>전화번호</strong></td>
+                                <td>
+                                  <input class="input" type="text" title="전화번호" id="phon" name="phon"maxlength="20">
+                                </td>
+                                <td class="label">팩스번호</td>
+                                <td>
+                                  <input class="input" type="text" title="팩스번호" id="faxNo" name="faxNo"maxlength="20">
+                                </td>
+                              </tr>
+                              <tr>
+                                <td class="label"><strong>주소</strong></td>
+                                <td colspan="3">
+                                  <div class="input-group address">
+                                    <input type="text" id="input-1-1" class="input disabled" disabled>
+                                    <input type="text" id="input-1-1" class="input disabled" disabled>
+                                    <a href="#" class="button small"><span class="text">주소찾기</span></a>
+                                    <input type="text" id="input-1-1" class="input">
+                                  </div>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                      <!-- //제휴사 상세정보 -->
+
+                      <div class="grid">
+                        <div class="grid-head">
+                          <div class="title-area">
+                            <h2 class="title">제휴사담당자</h2>
+                          </div>
+                          <!-- //title-area -->
+                          <div class="option-area">
+                            <div class="edit-option">
+                              <input type="text" class="input" id="cooperateEmployeeGrid-search-input-field" placeholder="Enter Search Word">
+                              <div class="button-group">
+                                  <a href="#" class="button inside"><span class="text">추가</span></a>
+                                  <a href="#" class="button inside"><span class="text">삭제</span></a>
+                                  <a href="#" class="button inside"><span class="text">저장</span></a>
+                              </div>
+                            </div>
+
+                            <div class="page-option">
+                                <span class="total">총 <em>24</em>건</span>
+                            </div>
+                          </div>
+                          <!-- //option-area -->
+                        </div>
+
+                        <div class="grid-body with-head" id="realgrid" realgrid>realgrid area</div>
+                      </div>
+                      <!-- //제휴사 담당자 -->
+                    </div>
+                </div>
+                <!-- //grid -->
+
+            </div>
+            <!-- //search-cont -->
+        </div>
+        <!-- //page-fixed -->
+    </div>
+</body>
+</html>

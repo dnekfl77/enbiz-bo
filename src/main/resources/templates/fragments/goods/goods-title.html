@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ko-KR"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<body>
+    <!-- 상품등록 -->
+    <th:block layout:fragment="goods-regist-title">
+        <div class="left"><h1 th:text="${#messages.msg('generalGoods.regist.title')}"/></div>
+    </th:block>
+
+    <!-- 임시상품상세 -->
+    <th:block layout:fragment="temp-goods-detail-title">
+        <div class="left"><h1 th:text="${#messages.msg('generalGoods.temp.detail.title')}"/></div>
+    </th:block>
+
+    <!-- 상품상세 -->
+    <th:block layout:fragment="goods-detail-title">
+        <div class="left"><h1 th:text="${#messages.msg('generalGoods.detail.title')}"/></div>
+    </th:block>
+
+    <!-- 묶음상품등록 -->
+    <th:block layout:fragment="pkg-goods-regist-title">
+        <div class="left"><h1 th:text="${#messages.msg('packageGoods.regist.title')}"/></div>
+    </th:block>
+
+    <!-- 임시묶음상품상세 -->
+    <th:block layout:fragment="temp-pkg-goods-detail-title">
+        <div class="left"><h1 th:text="${#messages.msg('packageGoods.temp.detail.title')}"/></div>
+    </th:block>
+
+    <!-- 묶음상품상세 -->
+    <th:block layout:fragment="pkg-goods-detail-title">
+        <div class="left"><h1 th:text="${#messages.msg('packageGoods.detail.title')}"/></div>
+    </th:block>
+</body>
+</html>

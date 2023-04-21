@@ -1,0 +1,409 @@
+<!--
+* 프로그램명 : 전시 연결 관리 팝업
+* 작 성 일 : 2021.04.12
+* 작 성 자 : 권다솜
+* 수 정 자 : 권다솜
+* 버    전 : 1.0
+* 개    요 : 전시관리 > 전시연결관리 > 전시연결관리 > 전시연결관리 팝업
+* 이    력 :
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-update-layout}">
+<body>
+
+<th:block layout:fragment="header-area">
+    <div class="header">
+        <h1 class="title" th:text="${#messages.msg('displayConnectMgmt.title')}"></h1>
+    </div>
+</th:block>
+
+<th:block layout:fragment="data-area">
+    <form name="displayConnectForm" id="displayConnectForm">
+        <!--data-cont-->
+        <div class="data-cont">
+            <div class="data">
+                <div class="data-head">
+                    <div class="left">
+                        <span class="title" th:text="${#messages.msg('displayConnectMgmt.displayConnectForm.title')}"></span>
+                    </div>
+                </div>
+                <div class="data-body toggle-cont">
+                    <table class="data-table">
+                        <colgroup>
+                            <col width="12%">
+                            <col width="30%">
+                            <col width="12%">
+                            <col width="30%">
+                            <col width="16%">
+                        </colgroup>
+                        <tbody>
+                            <tr>
+                                <td class="label" th:text="${#messages.msg('displayConnectMgmt.displayConnectForm.label.conrNo')}"></td>
+                                <td>
+                                    <span id="conrNo"></span>
+                                </td>
+                                <td class="label" th:text="${#messages.msg('displayConnectMgmt.displayConnectForm.label.conrNm')}"></td>
+                                <td>
+                                    <span id="conrNm"></span>
+                                </td>
+                                <td rowspan="3" class="center">
+                                    <div id="imgFile"></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label" th:text="${#messages.msg('displayConnectMgmt.displayConnectForm.label.hierarchyText')}"></td>
+                                <td>
+                                    <span id="hierarchyNm"></span>
+                                </td>
+                                <td class="label" th:text="${#messages.msg('displayConnectMgmt.displayConnectForm.label.userNm')}"></td>
+                                <td>
+                                    <span id="userNm"></span>
+                                </td>
+                            <tr>
+                                <td class="label" th:text="${#messages.msg('displayConnectMgmt.displayConnectForm.label.dispDesc')}"></td>
+                                <td colspan="3">
+                                    <span id="conrDesc"></span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!--//data-cont-->
+
+        <!-- grid-cont -->
+        <div class="grid-cont" th:if="${connerRequestData.setUseYn} == 'Y'">
+            <div class="grid">
+                <div class="grid-head">
+                    <div class="title-area">
+                        <h2 class="title" th:text="${#messages.msg('displayConnectMgmt.connerSetGrid.title')}"></h2>
+                    </div>
+                    <div class="option-area">
+                        <div class="edit-option">
+                            <div class="button-group">
+                                <a href="#" class="button inside" id="btn_connectSetGrid_save">
+                                    <span class="text" th:text="${#messages.msg('adminCommon.button.save')}"></span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="page-option">
+                            <span class="total">총 <span id="connectSetGrid-totalcount">0</span> 건</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- //grid-head -->
+
+                <div class="grid-body with-head mb20">
+                    <div id="connectSetGrid" realgrid></div>
+                </div>
+            </div>
+        </div>
+        <!-- //grid-cont -->
+
+        <!-- tabs-area -->
+        <div class="tabs-area">
+            <ul class="tabs"></ul>
+            <div class="tabs-body">
+                <!-- 상품 그리드 -->
+                <div class="grid tab-cont" id="tabGrid_11">
+                    <div class="grid-head">
+                        <div class="option-area">
+                            <div class="edit-option">
+                                <div class="button-group">
+                                    <a href="#" class="button inside" id="btn_goodsGrid_add">
+                                        <span class="text" th:text="${#messages.msg('displayConnectManagement.btn.insertGoods')}"></span>
+                                    </a>
+                                    <a href="#" class="button inside" id="btn_goodsGrid_remove">
+                                        <span class="text" th:text="${#messages.msg('adminCommon.grid.button.delete.row')}"></span>
+                                    </a>
+                                    <a href="#" class="button inside" id="btn_goodsGrid_reset">
+                                        <span class="text" th:text="${#messages.msg('adminCommon.grid.button.cancel')}"></span>
+                                    </a>
+                                    <a href="#" class="button inside" id="btn_goodsGrid_save">
+                                        <span class="text" th:text="${#messages.msg('adminCommon.grid.button.save')}"></span>
+                                    </a>
+                                    <a href="#" class="button inside" id="btn_goodsGrid_updateDispDateList">
+                                        <span class="text" th:text="${#messages.msg('displayConnectManagement.btn.updateDispDate')}"></span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="page-option">
+                                <span class="total">총 <span id="connectTabGoodsGrid-totalcount">0</span> 건</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid-body with-head">
+                        <div id="connectTabGoodsGrid" realgrid></div>
+                    </div>
+                </div>
+                <!-- 상품 그리드 -->
+                <!-- 브랜드 그리드 -->
+                <div class="grid tab-cont" id="tabGrid_12">
+                    <div class="grid-head">
+                        <div class="option-area">
+                            <div class="edit-option">
+                                <div class="button-group">
+                                    <a href="#" class="button inside" id="btn_brandGrid_add">
+                                        <span class="text" th:text="${#messages.msg('displayConnectManagement.btn.insertBrand')}"></span>
+                                    </a>
+                                    <a href="#" class="button inside" id="btn_brandGrid_remove">
+                                        <span class="text" th:text="${#messages.msg('adminCommon.grid.button.delete.row')}"></span>
+                                    </a>
+                                    <a href="#" class="button inside" id="btn_brandGrid_reset">
+                                        <span class="text" th:text="${#messages.msg('adminCommon.grid.button.cancel')}"></span>
+                                    </a>
+                                    <a href="#" class="button inside" id="btn_brandGrid_save">
+                                        <span class="text" th:text="${#messages.msg('adminCommon.grid.button.save')}"></span>
+                                    </a>
+                                    <a href="#" class="button inside" id="btn_brandGrid_updateDispDateList">
+                                        <span class="text" th:text="${#messages.msg('displayConnectManagement.btn.updateDispDate')}"></span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="page-option">
+                                <span class="total">총 <span id="connectTabBrandGrid-totalcount">0</span> 건</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid-body with-head">
+                        <div id="connectTabBrandGrid" realgrid class="rg-bodyimg"></div>
+                    </div>
+                </div>
+                <!-- 브랜드 그리드 -->
+                <!-- 상품평 그리드 -->
+                <div class="grid tab-cont" id="tabGrid_13">
+                    <div class="grid-head">
+                        <div class="option-area">
+                            <div class="edit-option">
+                                <div class="button-group">
+                                    <a href="#" class="button inside" id="btn_reviewGrid_add">
+                                        <span class="text" th:text="${#messages.msg('displayConnectManagement.btn.insertReview')}"></span>
+                                    </a>
+                                    <a href="#" class="button inside" id="btn_reviewGrid_remove">
+                                        <span class="text" th:text="${#messages.msg('adminCommon.grid.button.delete.row')}"></span>
+                                    </a>
+                                    <a href="#" class="button inside" id="btn_reviewGrid_reset">
+                                        <span class="text" th:text="${#messages.msg('adminCommon.grid.button.cancel')}"></span>
+                                    </a>
+                                    <a href="#" class="button inside" id="btn_reviewGrid_save">
+                                        <span class="text" th:text="${#messages.msg('adminCommon.grid.button.save')}"></span>
+                                    </a>
+                                    <a href="#" class="button inside" id="btn_reviewGrid_updateDispDateList">
+                                        <span class="text" th:text="${#messages.msg('displayConnectManagement.btn.updateDispDate')}"></span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="page-option">
+                                <span class="total">총 <span id="connectTabReviewGrid-totalcount">0</span> 건</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- //grid-head -->
+                    <div class="grid-body with-head">
+                        <div id="connectTabReviewGrid" realgrid></div>
+                    </div>
+                    <!-- //grid-body -->
+                </div>
+                <!-- 상품평 그리드 -->
+                <!-- 기획전 그리드 -->
+                <div class="grid tab-cont" id="tabGrid_14">
+                    <div class="grid-head">
+                        <div class="option-area">
+                            <div class="edit-option">
+                                <div class="button-group">
+                                    <a href="#" class="button inside" id="btn_mkdpGrid_add">
+                                        <span class="text" th:text="${#messages.msg('displayConnectManagement.btn.insertMkdp')}"></span>
+                                    </a>
+                                    <a href="#" class="button inside" id="btn_mkdpGrid_remove">
+                                        <span class="text" th:text="${#messages.msg('adminCommon.grid.button.delete.row')}"></span>
+                                    </a>
+                                    <a href="#" class="button inside" id="btn_mkdpGrid_reset">
+                                        <span class="text" th:text="${#messages.msg('adminCommon.grid.button.cancel')}"></span>
+                                    </a>
+                                    <a href="#" class="button inside" id="btn_mkdpGrid_save">
+                                        <span class="text" th:text="${#messages.msg('adminCommon.grid.button.save')}"></span>
+                                    </a>
+                                    <a href="#" class="button inside" id="btn_mkdpGrid_updateDispDateList">
+                                        <span class="text" th:text="${#messages.msg('displayConnectManagement.btn.updateDispDate')}"></span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="page-option">
+                                <span class="total">총 <span id="connectTabMkdpGrid-totalcount">0</span> 건</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid-body with-head">
+                        <div id="connectTabMkdpGrid" realgrid></div>
+                    </div>
+                </div>
+                <!-- 기획전 그리드 -->
+                <!-- HTML 그리드 -->
+                <div class="grid tab-cont" id="tabGrid_21">
+                    <div class="grid-head">
+                        <div class="option-area">
+                            <div class="edit-option">
+                                <div class="button-group">
+                                    <a href="#" class="button inside" id="btn_htmlGrid_add">
+                                        <span class="text" th:text="${#messages.msg('displayConnectManagement.btn.insertHtml')}"></span>
+                                    </a>
+                                    <a href="#" class="button inside" id="btn_htmlGrid_remove">
+                                        <span class="text" th:text="${#messages.msg('adminCommon.grid.button.delete.row')}"></span>
+                                    </a>
+                                    <a href="#" class="button inside" id="btn_htmlGrid_save">
+                                        <span class="text" th:text="${#messages.msg('adminCommon.grid.button.save')}"></span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="page-option">
+                                <span class="total">총 <span id="connectTabHtmlGrid-totalcount">0</span> 건</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid-body with-head">
+                        <div id="connectTabHtmlGrid" realgrid></div>
+                    </div>
+                </div>
+                <!-- HTML 그리드 -->
+                <!-- 이미지 배너 그리드 -->
+                <div class="grid tab-cont" id="tabGrid_22">
+                    <div class="grid-head">
+                        <div class="option-area">
+                            <div class="edit-option">
+                                <div class="button-group">
+                                    <a href="#" class="button inside" id="btn_imgGrid_add">
+                                        <span class="text" th:text="${#messages.msg('displayConnectManagement.btn.insertImg')}"></span>
+                                    </a>
+                                    <a href="#" class="button inside" id="btn_imgGrid_remove">
+                                        <span class="text" th:text="${#messages.msg('adminCommon.grid.button.delete.row')}"></span>
+                                    </a>
+                                    <a href="#" class="button inside" id="btn_imgGrid_save">
+                                        <span class="text" th:text="${#messages.msg('adminCommon.grid.button.save')}"></span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="page-option">
+                                <span class="total">총 <span id="connectTabImgGrid-totalcount">0</span> 건</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid-body with-head">
+                        <div id="connectTabImgGrid" realgrid></div>
+                    </div>
+                </div>
+                <!-- 이미지 배너 그리드 -->
+                <!-- 텍스트 배너 그리드 -->
+                <div class="grid tab-cont" id="tabGrid_23">
+                    <div class="grid-head">
+                        <div class="option-area">
+                            <div class="edit-option">
+                                <div class="button-group">
+                                    <a href="#" class="button inside" id="btn_textGrid_add">
+                                        <span class="text" th:text="${#messages.msg('adminCommon.grid.button.add.row')}"></span>
+                                    </a>
+                                    <a href="#" class="button inside" id="btn_textGrid_remove">
+                                        <span class="text" th:text="${#messages.msg('adminCommon.grid.button.delete.row')}"></span>
+                                    </a>
+                                    <a href="#" class="button inside" id="btn_textGrid_reset">
+                                        <span class="text" th:text="${#messages.msg('adminCommon.grid.button.cancel')}"></span>
+                                    </a>
+                                    <a href="#" class="button inside" id="btn_textGrid_save">
+                                        <span class="text" th:text="${#messages.msg('adminCommon.grid.button.save')}"></span>
+                                    </a>
+                                    <a href="#" class="button inside" id="btn_textGrid_updateDispDateList">
+                                        <span class="text" th:text="${#messages.msg('displayConnectManagement.btn.updateDispDate')}"></span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="page-option">
+                                <span class="total">총 <span id="connectTabTextGrid-totalcount">0</span> 건</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid-body with-head">
+                        <div id="connectTabTextGrid" realgrid></div>
+                    </div>
+                </div>
+                <!-- 텍스트 배너 그리드 -->
+            </div>
+        </div>
+        <!-- tabs-area -->
+
+    </form>
+</th:block>
+
+<th:block layout:fragment="button-area">
+    <div class="button-group" style="margin-top: 0px;" >
+        <a href="#" class="button" id="btn_popup_close">
+            <span class="text" th:text="${#messages.msg('adminCommon.button.close')}"></span>
+        </a>
+    </div>
+</th:block>
+
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        var connerReq   = [[${connerRequestData}]];
+        var dispDetail  = [[${displayCategoryDetail}]];
+
+        // 브랜드,택스트 베너 _ 이동프레임코드 selectBox
+        var movFrmeCdList = [[${codeList.DP007}]];
+        var movFrmeCode = [];
+        var movFrmeCdValues = [];
+        movFrmeCode.push('');
+        movFrmeCdValues.push('선택');
+        for(const job of movFrmeCdList){
+            movFrmeCode.push(job.cd);
+            movFrmeCdValues.push(job.cdNm);
+        }
+
+        var msg = x2coMessage.getMessage( {
+              cancelMsg : 'adminCommon.alert.cancel'
+            , noSearchedDataMsg : 'adminCommon.grid.alert.no.searched.data'
+            , necessaryCheckMessage : 'adminCommon.alert.required.parameter'
+            , gridSave : 'adminCommon.alert.save'
+            , removeRowValidMessage : 'adminCommon.grid.alert.no.selected.row'
+            , gridInit : 'adminCommon.grid.alert.init'
+            , gridNoSelected : 'adminCommon.grid.alert.no.selected.row'
+            , checkDispSeq : 'displayConnectManagement.message.checkDispSeq'
+        });
+    </script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/displayConnectMgmt/tab/connectTabGoodsGrid.eventHandler.js?202104140002'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/displayConnectMgmt/tab/connectTabGoodsGrid.provider.js?202104140002'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/displayConnectMgmt/tab/connectTabBrandGrid.eventHandler.js?202104190001'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/displayConnectMgmt/tab/connectTabBrandGrid.provider.js?202104190001'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/displayConnectMgmt/tab/connectTabReviewGrid.eventHandler.js?202105280001'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/displayConnectMgmt/tab/connectTabReviewGrid.provider.js?202105280001'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/displayConnectMgmt/tab/connectTabMkdpGrid.eventHandler.js?202104190001'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/displayConnectMgmt/tab/connectTabMkdpGrid.provider.js?202104190001'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/displayConnectMgmt/tab/connectTabHtmlGrid.eventHandler.js?202104190001'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/displayConnectMgmt/tab/connectTabHtmlGrid.provider.js?202104190002'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/displayConnectMgmt/tab/connectTabImgGrid.eventHandler.js?202104230001'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/displayConnectMgmt/tab/connectTabImgGrid.provider.js?202104230001'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/displayConnectMgmt/tab/connectTabTextGrid.eventHandler.js?202104230002'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/displayConnectMgmt/tab/connectTabTextGrid.provider.js?202104230001'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/displayConnectMgmt/displayConnectPopupTotal.eventHandler.js?202104120002'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/displayConnectMgmt/connectSetGrid.eventHandler.js?202104120002'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/displayConnectMgmt/connectSetGrid.provider.js?202104120003'" ></script>
+
+    <script th:inline="javascript">
+        $(document).ready(function() {
+            displayConnectPopupTotal.eventhandler.init();
+            if(connerReq.setUseYn == 'Y') {
+                connectSetGrid.eventhandler.init();
+            }
+        });
+    </script>
+</th:block>
+
+</body>
+</html>

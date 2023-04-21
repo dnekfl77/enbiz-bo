@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.display.PrSitePopupInfoTrxMapper">
+
+	<delete id="deleteSitePopupList" parameterType="java.lang.String">
+		DELETE 			/* PrSitePopupInfo.deleteSitePopupList */
+		FROM PR_SITE_POPUP_INFO
+		WHERE POPUP_NO = #{popupNo}
+	</delete>
+
+	<delete id="deleteSitePopupTgtScrnList" parameterType="java.lang.String">
+		DELETE 			/* PrSitePopupInfo.deleteSitePopupTgtScrnList */
+		FROM PR_SITE_POPUP_TGT_SCRN
+		WHERE POPUP_NO = #{popupNo}
+	</delete>
+
+	<delete id="deleteSitePopupChlAplyInfoList" parameterType="java.lang.String">
+		DELETE 			/* PrSitePopupInfo.deleteSitePopupChlAplyInfoList */
+		FROM PR_SITE_POPUP_CHL_APLY_INFO
+		WHERE POPUP_NO = #{popupNo}
+	</delete>
+
+	<insert id="prSitePopupInfoInsert" parameterType="prSitePopupInfo">
+		<selectKey keyProperty="popupNo" resultType="String" order="BEFORE">
+			SELECT NEXTVAL('PR_SITE_POPUP_INFO_SQ01') AS popupNo
+		</selectKey>
+		INSERT INTO PR_SITE_POPUP_INFO (  /* PrSitePopupInfo.prSitePopupInfoInsert */
+				  POPUP_NO
+				, POPUP_NM
+				, SITE_NO
+				, POPUP_DISP_STR_DTM
+				, POPUP_DISP_END_DTM
+				, POPUP_TYP_CD
+				, PRIO_RNK
+				, DISP_MEDIA_CD
+				, POPUP_SZ_WDT
+				, POPUP_SZ_HIGH
+				, POPUP_LOC_LEFT
+				, POPUP_LOC_TOP
+				, PRT_TYP_CD
+				, POPUP_IMG_PATH_NM
+				, POPUP_IMG_FILE_NM
+				, POPUP_LNK
+				, POPUP_CONT
+				, USE_YN
+				, SYS_REG_ID
+				, SYS_REG_DTM
+				, SYS_MOD_ID
+				, SYS_MOD_DTM
+		) VALUES (
+				  #{popupNo}
+				, #{popupNm}
+				, #{siteNo}
+				, TO_TIMESTAMP(#{popupDispStrDtm}, 'YYYY-MM-DD HH24:MI:SS')
+				, TO_TIMESTAMP(#{popupDispEndDtm}, 'YYYY-MM-DD HH24:MI:SS')
+				, #{popupTypCd}
+				, #{prioRnk}
+				, #{dispMediaCd}
+				, #{popupSzWdt}
+				, #{popupSzHigh}
+				, #{popupLocLeft}
+				, #{popupLocTop}
+				, #{prtTypCd}
+				, #{popupImgPathNm}
+				, #{popupImgFileNm}
+				, #{popupLnk}
+				, #{popupCont}
+				, #{useYn}
+				, #{sysRegId}
+				, NOW()
+				, #{sysModId}
+				, NOW()
+		)
+	</insert>
+
+	<update id="prSitePopupInfoUpdate" parameterType="prSitePopupInfo">
+		UPDATE PR_SITE_POPUP_INFO  /* PrSitePopupInfo.prSitePopupInfoUpdate */
+		SET
+			  POPUP_NM = #{popupNm}
+			, SITE_NO = #{siteNo}
+			, POPUP_DISP_STR_DTM = TO_TIMESTAMP(#{popupDispStrDtm}, 'YYYY-MM-DD HH24:MI:SS')
+			, POPUP_DISP_END_DTM = TO_TIMESTAMP(#{popupDispEndDtm}, 'YYYY-MM-DD HH24:MI:SS')
+			, POPUP_TYP_CD = #{popupTypCd}
+			, PRIO_RNK = #{prioRnk}
+			, DISP_MEDIA_CD = #{dispMediaCd}
+			, POPUP_SZ_WDT = #{popupSzWdt}
+			, POPUP_SZ_HIGH = #{popupSzHigh}
+			, POPUP_LOC_LEFT = #{popupLocLeft}
+			, POPUP_LOC_TOP = #{popupLocTop}
+			, PRT_TYP_CD = #{prtTypCd}
+			, POPUP_IMG_PATH_NM = #{popupImgPathNm}
+			, POPUP_IMG_FILE_NM = #{popupImgFileNm}
+			, POPUP_LNK = #{popupLnk}
+			, POPUP_CONT = #{popupCont}
+			, USE_YN = #{useYn}
+			, SYS_MOD_ID = #{sysModId}
+			, SYS_MOD_DTM =	NOW()
+		WHERE POPUP_NO = #{popupNo}
+	</update>
+</mapper>
+
+

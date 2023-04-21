@@ -1,0 +1,674 @@
+<!--
+* 프로그램명 : 전시카테고리관리
+* 작 성 일 : 2021.03.08
+* 작 성 자 : 권다솜
+* 수 정 자 : 권다솜
+* 버    전 : 1.0
+* 개    요 : 전시관리 > 카테고리관리 > 전시카테고리관리
+* 이    력 :
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/page-realgrid-layout}">
+<body>
+<th:block layout:fragment="page-title-area">
+    <div class="page-title">
+        <div class="left">
+            <h1 th:text="${#messages.msg('displayCategoryMgmt.title')}"></h1>
+        </div>
+    </div>
+</th:block>
+<th:block layout:fragment="page-contents">
+    <div class="page-fixed with-title">
+            <div class="data-cont col-30 full-height">
+                <!-- 전시 카테고리 관리 Tree -->
+                <div class="data full-height">
+                    <div class="data-head tree">
+                        <div class="left">
+                            <span class="title" th:text="${#messages.msg('displayCategoryMgmt.tree.title')}"></span>
+                            <div class="button-group">
+                                <a href="#" class="button inside" id="btn_mallInfo_insert">
+                                    <span class="text" th:text="${#messages.msg('displayCategoryMgmt.btn.mallAdd')}"></span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="data-body bo-none">
+                        <div class="ml10 mb10">
+                            <select class="form-control w40 mr5" id="tree_siteNo" name="tree_siteNo">
+                                <option th:each="list : ${siteList}" th:value="${list.cd}" th:text="${list.cdNm}"></option>
+                            </select>
+                            <select class="form-control w20 mr5" id="tree_shopTypCd" name="tree_shopTypCd">
+                                <option th:each="list : ${codeList.DP003}" th:value="${list.cd}" th:text="${list.cdNm}"></option>
+                            </select>
+                            <select class="form-control w30" id="tree_type" name="tree_shopTypCd">
+                                <option value="1" th:text="${#messages.msg('displayCategoryMgmt.search.label.total')}"></option>
+                                <option value="2" th:text="${#messages.msg('displayCategoryMgmt.search.label.useDisp')}"></option>
+                                <option value="3" th:text="${#messages.msg('displayCategoryMgmt.search.label.useTotal')}"></option>
+                            </select>
+                        </div>
+                        <div class="vh10 of_hide">
+                            <ul id="categoryTree" class="ztree vh10"></ul>
+                        </div>
+                    </div>
+                </div>
+                <!-- 전시 카테고리 관리 Tree -->
+
+                <div class="data-cont">
+                    <!-- A 영역 : 몰 정보 -->
+                    <div class="data full-height" id="mallInfo">
+                        <div class="data-head">
+                            <div class="left">
+                                <span class="title" th:text="${#messages.msg('displayCategoryMgmt.mallInfo.label.title')}"></span>
+                                <div class="button-group">
+                                    <a href="#" class="button inside" id="btn_mallInfo_save"><span class="text" th:text="${#messages.msg('adminCommon.button.save')}"></span></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="data-body">
+                            <form id="mallInfoForm" name="mallInfoForm">
+                                <input type="hidden" id="mallInfo_dispCtgNo" name="dispCtgNo">
+                                <input type="hidden" id="mallInfo_dpmlNo" name="dpmlNo">
+                                <input type="hidden" id="mallInfo_siteNo" name="siteNo">
+                                <table class="data-table">
+                                    <colgroup>
+                                        <col width="120px">
+                                        <col width="">
+                                        <col width="120px">
+                                        <col width="">
+                                    </colgroup>
+                                    <tbody>
+                                    <tr>
+                                        <td class="label" th:text="${#messages.msg('displayCategoryMgmt.mallInfo.label.siteNo')}"></td>
+                                        <td>
+                                            <span id="mallInfo_siteNm"></span>
+                                        </td>
+                                        <td class="label" th:text="${#messages.msg('displayCategoryMgmt.mallInfo.label.shopTypCd')}"></td>
+                                        <td>
+                                            <span id="mallInfo_shopTypCd"></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="label" th:text="${#messages.msg('displayCategoryMgmt.mallInfo.label.dpmlNo')}"></td>
+                                        <td>
+                                            <span id="mallInfo_dpmlNo_span"></span>
+                                        </td>
+                                        <td class="label" th:text="${#messages.msg('displayCategoryMgmt.mallInfo.label.dispCtgNm')}"></td>
+                                        <td>
+                                            <input class="input w100" type="text" name="dispCtgNm" id="mallInfo_dispCtgNm" maxlength="300"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="label">
+                                            <strong th:text="${#messages.msg('displayCategoryMgmt.mallInfo.label.dispSeq')}"></strong>
+                                        </td>
+                                        <td>
+                                            <input type="text" class="input w20" id="mallInfo_dispSeq" name="dispSeq" maxlength="3" onKeyup="number(this)">
+                                        </td>
+                                        <td class="label"><strong th:text="${#messages.msg('displayCategoryMgmt.mallInfo.label.dispYn')}"></strong></td>
+                                        <td>
+                                            <label class="radio-inline">
+                                                <input type="radio" name="dispYn" value="Y">
+                                                <span th:text="${#messages.msg('adminCommon.display.y')}"></span>
+                                            </label>
+                                            <label class="radio-inline">
+                                                <input type="radio" name="dispYn" value="N">
+                                                <span th:text="${#messages.msg('adminCommon.display.n')}"></span>
+                                            </label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="label">
+                                            <strong th:text="${#messages.msg('displayCategoryMgmt.mallInfo.label.useYn')}"></strong>
+                                        </td>
+                                        <td>
+                                            <label class="radio-inline">
+                                                <input type="radio" name="useYn" value="Y">
+                                                <span th:text="${#messages.msg('adminCommon.use')}"></span>
+                                            </label>
+                                            <label class="radio-inline">
+                                                <input type="radio" name="useYn" value="N">
+                                                <span th:text="${#messages.msg('adminCommon.disuse')}"></span>
+                                            </label>
+                                        </td>
+                                        <td class="label"><strong th:text="${#messages.msg('displayCategoryMgmt.mallInfo.label.hdrTypCd')}"></strong></td>
+                                        <td>
+                                            <select class="form-control w50" id="mallInfo_hdrTypCd" name="hdrTypCd">
+                                                <option value="" th:text="${#messages.msg('adminCommon.select')}"></option>
+                                                <option th:each="list : ${codeList.DP010}" th:value="${list.cd}" th:text="${list.cdNm}"></option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="label"><strong th:text="${#messages.msg('displayCategoryMgmt.mallInfo.label.prtTypCd')}"></strong></td>
+                                        <td colspan="3">
+                                            <select class="form-control w20" id="mallInfo_prtTypCd" name="prtTypCd">
+                                                <option value="" th:text="${#messages.msg('adminCommon.select')}"></option>
+                                                <option th:each="list : ${codeList.DP002}" th:value="${list.cd}" th:text="${list.cdNm}"></option>
+                                            </select>
+                                        </td>
+                                    </tr>
+
+                                    <tr id="mallInfo_prtTypCd_tmpl">
+                                        <td class="label" th:text="${#messages.msg('displayCategoryMgmt.categoryInfo.label.displayTemplate')}"></td>
+                                        <td colspan="3">
+                                            <input class="input disabled w90" type="text" id="mallInfo_tmplFilePath" th:readonly="true"/>
+                                            <input type="hidden" id="mallInfo_tmplNo" name="tmplNo"/>
+                                            <a href="#" class="button small" id="btn_mallInfo_tmplPopup_call"><i class="icon-sarch"></i></a>
+                                            <a href="#" class="button small" id="btn_mallInfo_tmplPopup_reset"><i class="icon-clear"></i></a>
+                                        </td>
+                                    </tr>
+                                    <tr id="mallInfo_prtTypCd_category">
+                                        <td class="label" th:text="${#messages.msg('displayCategoryMgmt.categoryInfo.label.linkDispNo')}"></td>
+                                        <td colspan="3">
+                                            <input class="input disabled w90" type="text" id="mallInfo_linkDispNm" th:readonly="true"/>
+                                            <input type="hidden" id="mallInfo_linkDispNo" name="linkDispNo"/>
+                                            <a href="#" class="button small" id="btn_mallInfo_dispTreePopup_call"><i class="icon-sarch"></i></a>
+                                            <a href="#" class="button small" id="btn_mallInfo_dispTreePopup_reset"><i class="icon-clear"></i></a>
+                                        </td>
+                                    </tr>
+                                    <tr id="mallInfo_prtTypCd_url">
+                                        <td class="label" th:text="${#messages.msg('displayCategoryMgmt.categoryInfo.label.movFrmeCd')}"></td>
+                                        <td>
+                                            <select class="form-control w100" id="mallInfo_movFrmeCd" name="movFrmeCd">
+                                                <option value="" th:text="${#messages.msg('adminCommon.select')}"></option>
+                                                <option th:each="list : ${codeList.DP007}" th:value="${list.cd}" th:text="${list.cdNm}"></option>
+                                            </select>
+                                        </td>
+                                        <td class="label" th:text="${#messages.msg('displayCategoryMgmt.categoryInfo.label.linkUrlAddr')}"></td>
+                                        <td>
+                                            <input class="input w100" type="text" id="mallInfo_linkUrlAddr" name="linkUrlAddr" maxlength="1000"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="label" th:text="${#messages.msg('displayCategoryMgmt.categoryInfo.label.sysModId')}"></td>
+                                        <td>
+                                            <span id="mallInfo_sysModId"></span>
+                                        </td>
+                                        <td class="label" th:text="${#messages.msg('displayCategoryMgmt.categoryInfo.label.sysModDtm')}"></td>
+                                        <td>
+                                            <span id="mallInfo_sysModDtm"></span>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- A 영역 : 몰 정보 -->
+
+                    <!-- A 영역 : 카테고리 정보 -->
+                    <div class="data full-height" id="categoryInfo">
+                        <div class="data-head">
+                            <div class="left">
+                                <span class="title" th:text="${#messages.msg('displayCategoryMgmt.categoryInfo.label.title')}"></span>
+                                <div class="button-group">
+                                    <a href="#" class="button inside" id="btn_categoryInfo_save"><span class="text" th:text="${#messages.msg('adminCommon.button.save')}"></span></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="data-body">
+                            <form id="categoryInfoForm" name="categoryInfoForm">
+                                <input type="hidden" id="categoryInfo_leafYn" name="leafYn">
+                                <input type="hidden" id="categoryInfo_siteNo" name="siteNo">
+                                <input type="hidden" id="categoryInfo_shopTypCd" name="shopTypCd">
+                                <table class="data-table">
+                                    <colgroup>
+                                        <col width="15%">
+                                        <col width="35%">
+                                        <col width="15%">
+                                        <col width="35%">
+                                    </colgroup>
+                                    <tbody>
+                                    <tr>
+                                        <td class="label" th:text="${#messages.msg('displayCategoryMgmt.categoryInfo.label.siteNm')}"></td>
+                                        <td>
+                                            <span id="categoryInfo_siteNm"></span>
+                                        </td>
+                                        <td class="label" th:text="${#messages.msg('displayCategoryMgmt.categoryInfo.label.shopTypCd')}"></td>
+                                        <td>
+                                            <span id="categoryInfo_shopName"></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="label" th:text="${#messages.msg('displayCategoryMgmt.categoryInfo.label.categoryNo')}"></td>
+                                        <td>
+                                            <input type="hidden" id="categoryInfo_dispCtgNo" name="dispCtgNo">
+                                            <span id="categoryInfo_categoryNo"></span>
+                                        </td>
+                                        <td class="label">
+                                            <strong th:text="${#messages.msg('displayCategoryMgmt.categoryInfo.label.categoryNm')}"></strong>
+                                        </td>
+                                        <td>
+                                            <input type="text" class="input w100" id="categoryInfo_categoryNm" name="dispCtgNm" maxlength="300">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="label">
+                                            <strong th:text="${#messages.msg('displayCategoryMgmt.categoryInfo.label.dispSeq')}"></strong>
+                                        </td>
+                                        <td>
+                                            <input type="text" class="input w20" id="categoryInfo_dispSeq" name="dispSeq" maxlength="3" onKeyup="number(this)">
+                                        </td>
+                                        <td class="label">
+                                            <strong th:text="${#messages.msg('displayCategoryMgmt.categoryInfo.label.dispYn')}"></strong>
+                                        </td>
+                                        <td>
+                                            <label class="radio-inline">
+                                                <input type="radio" name="dispYn" value="Y">
+                                                <span th:text="${#messages.msg('adminCommon.display.y')}"></span>
+                                            </label>
+                                            <label class="radio-inline">
+                                                <input type="radio" name="dispYn" value="N">
+                                                <span th:text="${#messages.msg('adminCommon.display.n')}"></span>
+                                            </label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="label"><strong th:text="${#messages.msg('displayCategoryMgmt.categoryInfo.label.dispStrDt')}"></strong></td>
+                                        <td>
+                                            <div class="input-group">
+                                                <div class="picker-group" data-lopicker="basic">
+                                                    <input type="text" class="input disabled" name="startDate" id="categoryInfo_startDate" disabled>
+                                                    <span class="input-group-addon"><i class="icon-calendar" id="calendarButton1"></i></span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="label"><strong th:text="${#messages.msg('displayCategoryMgmt.categoryInfo.label.dispEndDt')}"></strong></td>
+                                        <td>
+                                            <div class="input-group">
+                                                <div class="picker-group" data-lopicker="basic">
+                                                    <input type="text" class="input disabled" name="endDate" id="categoryInfo_endDate" disabled>
+                                                    <span class="input-group-addon"><i class="icon-calendar" id="calendarButton2"></i></span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="label">
+                                            <strong th:text="${#messages.msg('displayCategoryMgmt.categoryInfo.label.useYn')}"></strong>
+                                        </td>
+                                        <td>
+                                            <label class="radio-inline">
+                                                <input type="radio" name="useYn" value="Y">
+                                                <span th:text="${#messages.msg('adminCommon.use')}"></span>
+                                            </label>
+                                            <label class="radio-inline">
+                                                <input type="radio" name="useYn" value="N">
+                                                <span th:text="${#messages.msg('adminCommon.disuse')}"></span>
+                                            </label>
+                                        </td>
+                                        <td class="label">
+                                            <strong th:text="${#messages.msg('displayCategoryMgmt.categoryInfo.label.prtTypCd')}"></strong>
+                                        </td>
+                                        <td>
+                                            <select class="form-control w50" id="categoryInfo_prtTypCd" name="prtTypCd">
+                                                <option value="" th:text="${#messages.msg('adminCommon.select')}"></option>
+                                                <option th:each="list : ${codeList.DP002}" th:value="${list.cd}" th:text="${list.cdNm}"></option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr id="categoryInfo_prtTypCd_tmpl">
+                                        <td class="label" th:text="${#messages.msg('displayCategoryMgmt.categoryInfo.label.displayTemplate')}"></td>
+                                        <td colspan="3">
+                                            <input class="input disabled w90" type="text" id="categoryInfo_tmplFilePath" th:readonly="true"/>
+                                            <input type="hidden" id="categoryInfo_tmplNo" name="tmplNo"/>
+                                            <a href="#" class="button small" id="btn_category_tmplPopup_call"><i class="icon-sarch"></i></a>
+                                            <a href="#" class="button small" id="btn_category_tmplPopup_reset"><i class="icon-clear"></i></a>
+                                        </td>
+                                    </tr>
+                                    <tr id="categoryInfo_prtTypCd_category">
+                                        <td class="label" th:text="${#messages.msg('displayCategoryMgmt.categoryInfo.label.linkDispNo')}"></td>
+                                        <td colspan="3">
+                                            <input class="input disabled w90" type="text" id="categoryInfo_linkDispNm" th:readonly="true"/>
+                                            <input type="hidden" id="categoryInfo_linkDispNo" name="linkDispNo"/>
+                                            <a href="#" class="button small" id="btn_categoryInfo_dispTreePopup_call"><i class="icon-sarch"></i></a>
+                                            <a href="#" class="button small" id="btn_categoryInfo_dispTreePopup_reset"><i class="icon-clear"></i></a>
+                                        </td>
+                                    </tr>
+                                    <tr id="categoryInfo_prtTypCd_url">
+                                        <td class="label" th:text="${#messages.msg('displayCategoryMgmt.categoryInfo.label.movFrmeCd')}"></td>
+                                        <td>
+                                            <select class="form-control w100" id="categoryInfo_movFrmeCd" name="movFrmeCd">
+                                                <option value="" th:text="${#messages.msg('adminCommon.select')}"></option>
+                                                <option th:each="list : ${codeList.DP007}"
+                                                        th:value="${list.cd}"
+                                                        th:text="${list.cdNm}"></option>
+                                            </select>
+                                        </td>
+                                        <td class="label" th:text="${#messages.msg('displayCategoryMgmt.categoryInfo.label.linkUrlAddr')}"></td>
+                                        <td>
+                                            <input class="input w100" type="text" id="categoryInfo_linkUrlAddr" name="linkUrlAddr" maxlength="1000"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="label" th:text="${#messages.msg('displayCategoryMgmt.categoryInfo.label.sysModId')}"></td>
+                                        <td>
+                                            <span id="categoryInfo_sysModId"></span>
+                                        </td>
+                                        <td class="label" th:text="${#messages.msg('displayCategoryMgmt.categoryInfo.label.sysModDtm')}"></td>
+                                        <td>
+                                            <span id="categoryInfo_sysModDtm"></span>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- A 영역 : 카테고리 정보 -->
+
+                    <!-- A 영역 : 비정형 매장정보 -->
+                    <div class="data full-height" id="unstructuredInfo">
+                        <div class="data-head">
+                            <div class="left">
+                                <span class="title" th:text="${#messages.msg('displayCategoryMgmt.unstructuredInfo.label.title')}"></span>
+                                <div class="button-group" id="unstructuredInfo_save">
+                                    <a href="#" class="button inside" id="btn_unstructuredInfo_save"><span class="text" th:text="${#messages.msg('adminCommon.button.save')}"></span></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="data-body">
+                            <form id="unstructuredInfoForm" name="unstructuredInfoForm">
+                                <input type="hidden" id="unstructuredInfo_leafYn" name="leafYn">
+                                <input type="hidden" id="unstructuredInfo_shopTypCd" name="shopTypCd">
+                                <table class="data-table">
+                                    <colgroup>
+                                        <col width="15%">
+                                        <col width="35%">
+                                        <col width="15%">
+                                        <col width="35%">
+                                    </colgroup>
+                                    <tbody>
+                                    <tr>
+                                        <td class="label" th:text="${#messages.msg('displayCategoryMgmt.unstructuredInfo.label.siteNm')}"></td>
+                                        <td>
+                                            <input type="hidden" id="unstructuredInfo_siteNo" name="siteNo">
+                                            <span id="unstructuredInfo_siteNm"></span>
+                                        </td>
+                                        <td class="label" th:text="${#messages.msg('displayCategoryMgmt.unstructuredInfo.label.shopTypCd')}"></td>
+                                        <td>
+                                            <span id="unstructuredInfo_shopName"></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="label" th:text="${#messages.msg('displayCategoryMgmt.unstructuredInfo.label.categoryNo')}"></td>
+                                        <td>
+                                            <input type="hidden" id="unstructuredInfo_dispCtgNo" name="dispCtgNo">
+                                            <span id="unstructuredInfo_unstructuredNo"></span>
+                                        </td>
+                                        <td id="dispCtgNm_td" class="label" th:text="${#messages.msg('displayCategoryMgmt.unstructuredInfo.label.categoryNm')}"></td>
+                                        <td id="dispCtgNm_td_necessary" class="label">
+                                            <strong th:text="${#messages.msg('displayCategoryMgmt.unstructuredInfo.label.categoryNm')}"></strong>
+                                        </td>
+                                        <td>
+                                            <input class="input w100" type="text" id="unstructuredInfo_dispCtgNm" name="dispCtgNm">
+                                            <span id="unstructuredInfo_dispCtgNm_span"></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="label">
+                                            <strong th:text="${#messages.msg('displayCategoryMgmt.unstructuredInfo.label.useYn')}"></strong>
+                                        </td>
+                                        <td>
+                                            <label class="radio-inline">
+                                                <input type="radio" name="useYn" value="Y">
+                                                <span th:text="${#messages.msg('adminCommon.use')}"></span>
+                                            </label>
+                                            <label class="radio-inline">
+                                                <input type="radio" name="useYn" value="N">
+                                                <span th:text="${#messages.msg('adminCommon.disuse')}"></span>
+                                            </label>
+                                        </td>
+                                        <td class="label" th:text="${#messages.msg('displayCategoryMgmt.unstructuredInfo.label.shopDescCont')}"></td>
+                                        <td colspan="3">
+                                            <input class="input w100" type="text" id="unstructuredInfo_shopDescCont" name="shopDescCont">
+                                        </td>
+                                    </tr>
+                                    <tr id="unstructuredInfo_leafRow"> <!-- 리프노드인 경우 -->
+                                        <td class="label">
+                                            <strong th:text="${#messages.msg('displayCategoryMgmt.unstructuredInfo.label.prtTypCd')}"></strong>
+                                        </td>
+                                        <td colspan="3">
+                                            <select class="form-control w20" id="unstructuredInfo_prtTypCd" name="prtTypCd">
+                                                <option value="" th:text="${#messages.msg('adminCommon.select')}"></option>
+                                                <option th:each="list : ${codeList.DP002}" th:value="${list.cd}" th:text="${list.cdNm}"></option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr id="unstructuredInfo_prtTypCd_tmpl">
+                                        <td class="label" th:text="${#messages.msg('displayCategoryMgmt.unstructuredInfo.label.displayTemplate')}"></td>
+                                        <td colspan="3">
+                                            <input class="input disabled w90" type="text" id="unstructuredInfo_tmplFilePath" th:readonly="true"/>
+                                            <input type="hidden" id="unstructuredInfo_tmplNo" name="tmplNo"/>
+                                            <a href="#" class="button small" id="btn_unstructured_tmplPopup_call"><i class="icon-sarch"></i></a>
+                                            <a href="#" class="button small" id="btn_unstructured_tmplPopup_reset"><i class="icon-clear"></i></a>
+                                        </td>
+                                    </tr>
+                                    <tr id="unstructuredInfo_prtTypCd_category">
+                                        <td class="label" th:text="${#messages.msg('displayCategoryMgmt.unstructuredInfo.label.linkDispNo')}"></td>
+                                        <td colspan="3">
+                                            <input class="input disabled w90" type="text" id="unstructuredInfo_linkDispNm" th:readonly="true"/>
+                                            <input type="hidden" id="unstructuredInfo_linkDispNo" name="linkDispNo"/>
+                                            <a href="#" class="button small" id="btn_unstructured_dispTreePopup_call"><i class="icon-sarch"></i></a>
+                                            <a href="#" class="button small" id="btn_unstructured_dispTreePopup_reset"><i class="icon-clear"></i></a>
+                                        </td>
+                                    </tr>
+                                    <tr id="unstructuredInfo_prtTypCd_url">
+                                        <td class="label" th:text="${#messages.msg('displayCategoryMgmt.unstructuredInfo.label.movFrmeCd')}"></td>
+                                        <td>
+                                            <select class="form-control w100" id="unstructuredInfo_movFrmeCd" name="movFrmeCd">
+                                                <option value="" th:text="${#messages.msg('adminCommon.select')}"></option>
+                                                <option th:each="list : ${codeList.DP007}" th:value="${list.cd}" th:text="${list.cdNm}"></option>
+                                            </select>
+                                        </td>
+                                        <td class="label" th:text="${#messages.msg('displayCategoryMgmt.unstructuredInfo.label.linkUrlAddr')}"></td>
+                                        <td>
+                                            <input class="input w100" type="text" id="unstructuredInfo_linkUrlAddr" name="linkUrlAddr" maxlength="1000"/>
+                                        </td>
+                                    </tr>
+                                    <tr id="unstructuredInfo_sysModRow">
+                                        <td class="label" th:text="${#messages.msg('displayCategoryMgmt.unstructuredInfo.label.sysModId')}"></td>
+                                        <td>
+                                            <span id="unstructuredInfo_sysModId"></span>
+                                        </td>
+                                        <td class="label" th:text="${#messages.msg('displayCategoryMgmt.unstructuredInfo.label.sysModDtm')}"></td>
+                                        <td>
+                                            <span id="unstructuredInfo_sysModDtm"></span>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- A 영역 : 비정형 매장정보 -->
+
+                    <!-- B 영역 : (그리드) 하위 전시 카테고리 매장 조회 목록 -->
+                    <div class="grid-cont" id="subCategoryGridArea">
+                        <div class="grid" style="overflow: hidden;">
+                            <div class="grid-head">
+                                <form name="subCategoryGridForm" id="subCategoryGridForm">
+                                    <input type="hidden" id="subCategoryGrid_uprDispCtgNo" name="uprDispCtgNo">
+                                    <input type="hidden" id="subCategoryGrid_siteNo" name="siteNo">
+                                    <input type="hidden" id="subCategoryGrid_dpmlNo" name="dpmlNo">
+                                    <input type="hidden" id="subCategoryGrid_shopTypCd" name="shopTypCd">
+                                    <input type="hidden" id="subCategoryGrid_leafYn" name="leafYn">
+                                    <input type="hidden" id="subCategoryGrid_lrgCtgNo" name="lrgCtgNo">
+                                    <input type="hidden" id="subCategoryGrid_midCtgNo" name="midCtgNo">
+                                    <input type="hidden" id="subCategoryGrid_smlCtgNo" name="smlCtgNo">
+                                    <input type="hidden" id="subCategoryGrid_thnCtgNo" name="thnCtgNo">
+                                </form>
+                                <div class="title-area">
+                                    <h2 class="title" th:text="${#messages.msg('displayCategoryMgmt.subCategoryGrid.title')}" />
+                                </div>
+                                <div class="option-area">
+                                    <div class="edit-option">
+                                        <div class="button-group">
+                                            <a href="#" class="button inside" id="btn_subCategoryGrid_add">
+                                                <span class="text" th:text="${#messages.msg('adminCommon.grid.button.add.row')}" />
+                                            </a>
+                                            <a href="#" class="button inside" id="btn_subCategoryGrid_remove">
+                                                <span class="text" th:text="${#messages.msg('adminCommon.grid.button.delete.row')}" />
+                                            </a>
+                                            <a href="#" class="button inside" id="btn_subCategoryGrid_save">
+                                                <span class="text" th:text="${#messages.msg('adminCommon.button.save')}" />
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="page-option" grid-id="subCategoryGrid">
+                                        <span class='total'>총 <span id="subCategoryGrid-totalcount">0</span>건</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="grid-body with-head vh2">
+                                <div id="subCategoryGrid" realgrid class="vh2"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- B 영역 : (그리드) 하위 전시 카테고리 매장 조회 목록 -->
+
+                    <!-- B 영역 : (그리드) 하위 비정형 매장 조회 목록 -->
+                    <div class="grid-cont" id="unstructuredGridArea">
+                        <div class="grid" style="overflow: hidden;">
+                            <div class="grid-head">
+                                <form name="unstructuredGridForm" id="unstructuredGridForm">
+                                    <input type="hidden" id="unstructuredGrid_uprDispCtgNo" name="uprDispCtgNo">
+                                    <input type="hidden" id="unstructuredGrid_siteNo" name="siteNo">
+                                    <input type="hidden" id="unstructuredGrid_dpmlNo" name="dpmlNo">
+                                    <input type="hidden" id="unstructuredGrid_shopTypCd" name="shopTypCd">
+                                    <input type="hidden" id="unstructuredGrid_leafYn" name="leafYn">
+                                    <input type="hidden" id="unstructuredGrid_lrgCtgNo" name="lrgCtgNo">
+                                    <input type="hidden" id="unstructuredGrid_midCtgNo" name="midCtgNo">
+                                    <input type="hidden" id="unstructuredGrid_smlCtgNo" name="smlCtgNo">
+                                    <input type="hidden" id="unstructuredGrid_thnCtgNo" name="thnCtgNo">
+                                </form>
+                                <div class="title-area">
+                                    <h2 class="title" th:text="${#messages.msg('displayCategoryMgmt.unstructuredGrid.title')}" />
+                                </div>
+                                <div class="option-area">
+                                    <div class="edit-option">
+                                        <div class="button-group">
+                                            <a href="#" class="button inside" id="btn_unstructuredGrid_add">
+                                                <span class="text" th:text="${#messages.msg('adminCommon.grid.button.add.row')}" />
+                                            </a>
+                                            <a href="#" class="button inside" id="btn_unstructuredGrid_remove">
+                                                <span class="text" th:text="${#messages.msg('adminCommon.grid.button.delete.row')}" />
+                                            </a>
+                                            <a href="#" class="button inside" id="btn_unstructuredGrid_save">
+                                                <span class="text" th:text="${#messages.msg('adminCommon.button.save')}" />
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="page-option" grid-id="unstructuredGrid">
+                                        <span class='total'>총 <span id="unstructuredGrid-totalcount">0</span>건</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="grid-body with-head">
+                                <div id="unstructuredGrid" realgrid></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- B 영역 : (그리드) 하위 비정형 매장 조회 목록 -->
+
+                    <!-- B 영역 : (그리드) 매장 전시상품 조회 목록 -->
+                    <div class="grid-cont" id="displayGoodsGridArea">
+                        <div class="grid" style="overflow: hidden;">
+                            <div class="grid-head">
+                                <form name="displayGoodsGridForm" id="displayGoodsGridForm">
+                                    <input type="hidden" id="displayGoodsGrid_dispCtgNo" name="dispCtgNo">
+                                </form>
+                                <div class="title-area">
+                                    <h2 class="title" th:text="${#messages.msg('displayCategoryMgmt.displayGoodsGrid.title')}" />
+                                </div>
+                                <div class="option-area">
+                                    <div class="edit-option">
+                                        <div class="button-group">
+                                            <a href="#" class="button inside" id="btn_displayGoodsGrid_addList">
+                                                <span class="text" th:text="${#messages.msg('displayCategoryMgmt.displayGoodsGrid.field.btn.insertList')}" />
+                                            </a>
+                                            <a href="#" class="button inside" id="btn_displayGoodsGrid_add">
+                                                <span class="text" th:text="${#messages.msg('displayCategoryMgmt.displayGoodsGrid.field.btn.insert')}" />
+                                            </a>
+                                            <a href="#" class="button inside" id="btn_displayGoodsGrid_remove">
+                                                <span class="text" th:text="${#messages.msg('adminCommon.grid.button.delete.row')}" />
+                                            </a>
+                                            <a href="#" class="button inside" id="btn_displayGoodsGrid_save">
+                                                <span class="text" th:text="${#messages.msg('adminCommon.button.save')}" />
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="page-option" grid-id="displayGoodsGrid" />
+                                </div>
+                            </div>
+                            <div class="grid-body with-head">
+                                <div id="displayGoodsGrid" realgrid></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- B 영역 : (그리드) 매장 전시상품 조회 목록 -->
+
+                </div>
+            </div>
+    </div>
+</th:block>
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        var msg = x2coMessage.getMessage({
+              categoryNm : 'displayCategoryMgmt.categoryInfo.label.categoryNm'
+            , dispSeq : 'displayCategoryMgmt.categoryInfo.label.dispSeq'
+            , dispStrDt : 'displayCategoryMgmt.categoryInfo.label.dispStrDt'
+            , dispEndDt : 'displayCategoryMgmt.categoryInfo.label.dispEndDt'
+            , dispYn : 'displayCategoryMgmt.categoryInfo.label.dispYn'
+            , useYn : 'displayCategoryMgmt.categoryInfo.label.useYn'
+            , leafYn : 'displayCategoryMgmt.categoryInfo.label.leafYn'
+            , prtTypCd : 'displayCategoryMgmt.categoryInfo.label.prtTypCd'
+            , displayTemplate : 'displayCategoryMgmt.mallInsertInfo.label.displayTemplate'
+            , movFrmeCd : 'displayCategoryMgmt.mallInsertInfo.label.movFrmeCd'
+            , linkUrlAddr : 'displayCategoryMgmt.mallInsertInfo.label.linkUrlAddr'
+            , linkDispNo : 'displayCategoryMgmt.mallInsertInfo.label.linkDispNo'
+            , unstructuredInfoCategoryNm : 'displayCategoryMgmt.unstructuredInfo.label.categoryNm'
+            , dispStrDtMsg : 'displayCategoryMgmt.error.msg.dispStrDtMsg'
+            , dispEndDtMsg : 'displayCategoryMgmt.error.msg.dispEndDtMsg'
+            , necessaryCheckMessage : 'adminCommon.alert.required.parameter'
+            , noSearchedDataMsg : 'adminCommon.grid.alert.no.searched.data'
+            , deleteRowCheck : 'adminCommon.alert.no.selected.item.for.delete'
+            , gridNoSelected : 'adminCommon.grid.alert.no.selected.row'
+            , gridSave : 'adminCommon.grid.alert.save'
+            , searched : 'adminCommon.grid.alert.do.searched'
+            , successfully : 'adminCommon.message.saved.successfully'
+            , numberRange1CheckMessage : 'displayCategoryMgmt.error.msg.numberRange1CheckMsg'
+            , checkSubCategory : 'displayCategoryMgmt.error.msg.checkSubCategoryMsg'
+            , goodDetailMsg : 'displayCategoryMgmt.error.msg.goodDetailMsg'
+        });
+    </script>
+
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/displayCategoryMgmt/subCategoryGrid.provider.js?202103310002'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/displayCategoryMgmt/subCategoryGrid.eventHandler.js?202103310003'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/displayCategoryMgmt/displayGoodsGrid.provider.js?202104060001'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/displayCategoryMgmt/displayGoodsGrid.eventHandler.js?202104060001'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/displayCategoryMgmt/unstructuredGrid.provider.js?202104020001'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/displayCategoryMgmt/unstructuredGrid.eventHandler.js?202104020001'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/displayCategoryMgmt/mallInfo.eventHandler.js?202103270002'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/displayCategoryMgmt/categoryInfo.eventHandler.js?202103270002'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/displayCategoryMgmt/unstructuredInfo.eventHandler.js?202103270002'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/displayCategoryMgmt/categoryTree.eventHandler.js?202103270002'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/displayCategoryMgmt/displayCategoryTotal.eventHandler.js?202103270002'" ></script>
+
+    <script th:inline="javascript">
+        $(document).ready(function() {
+            mallInfo.eventhandler.init();               // 몰정보
+            categoryInfo.eventhandler.init();           // 카테고리정보(일반)
+            unstructuredInfo.eventhandler.init();       // 카테고리정보(비정형)
+            subCategoryGrid.eventhandler.init();        // 하위 전시 카테고리 매장 조회 목록
+            unstructuredGrid.eventhandler.init();       // 하위 비정형 매장 조회 목록
+            displayGoodsGrid.eventhandler.init();       // 매장 전시상품 조회 목록
+            categoryTree.eventhandler.init();           // 트리 제어
+            displayCategoryTotal.eventhandler.init();   // 전시 카테고리 관리 통합 제어
+        });
+    </script>
+</th:block>
+</body>
+</html>

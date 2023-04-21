@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.customerservice.CsCustCpnsAccpInfoTrxMapper">
+
+    <insert id="insertCsCustCpnsAccpInfo" parameterType="CsCustomerCompensAcceptInfo" useGeneratedKeys="false">
+        <selectKey keyProperty="custCpnsAplyNo" resultType="String" order="BEFORE">
+            SELECT NEXTVAL('CS_CUST_CPNS_APLY_INFO_SQ01') AS custCpnsAplyNo
+        </selectKey>
+        INSERT INTO CS_CUST_CPNS_ACCP_INFO(/* CsCustomerCompensAcceptInfo.insertCsCustCpnsAccpInfo */
+                    CUST_CPNS_APLY_NO
+                  , CCN_NO
+                  , CPNS_TYP_NO
+                  , CPNS_MEAN_CD
+                  , RSPN_GB_CD
+                  , CPNS_APRV_STAT_CD
+                  , CPNS_PAY_STAT_CD
+                  , MBR_NO
+                  , ACCP_DTM
+                  , ACCP_CONT
+                  , ACPTMN_ID
+                  , CPNS_AMT
+                  , PAY_BANK_CD
+                  , PAY_ACTN_NO
+                  , PAY_DEPOSITOR_NM
+                  , ORD_NO
+                  , GOODS_NO
+                  , SYS_REG_ID
+                  , SYS_REG_DTM
+                  , SYS_MOD_ID
+                  , SYS_MOD_DTM)
+            VALUES(
+                    #{custCpnsAplyNo}
+                  , #{ccnNo}
+                  , #{cpnsTypNo}
+                  , #{cpnsMeanCd}
+                  , #{rspnGbCd}
+                  , #{cpnsAprvStatCd}
+                  , #{cpnsPayStatCd}
+                  , #{mbrNo}
+                  , NOW()
+                  , #{accpCont}
+                  , #{acptmnId}
+                  , #{cpnsAmt}
+                  , #{payBankCd}
+                  , #{payActnNo}
+                  , #{payDepositorNm}
+                  , #{ordNo}
+                  , #{goodsNo}
+                  , #{sysRegId}
+                  , NOW()
+                  , #{sysModId}
+                  , NOW()
+            )
+    </insert>
+
+    <update id="updateCustomerCompensDetail" parameterType="CsCustomerCompensAcceptInfo">
+        UPDATE CS_CUST_CPNS_ACCP_INFO
+           SET /* CsCustomerCompensAcceptInfo.updateCustomerCompensDetail */
+               CPNS_AMT=#{cpnsAmt}
+             , ACCP_CONT=#{accpCont}
+             , PAY_REQ_MEMO=#{payReqMemo}
+             , PAY_BANK_CD=#{payBankCd}
+             , PAY_ACTN_NO=#{payActnNo}
+             , PAY_DEPOSITOR_NM=#{payDepositorNm}
+             , SYS_MOD_ID = #{sysModId}
+             , SYS_MOD_DTM = NOW()
+         WHERE CUST_CPNS_APLY_NO = #{custCpnsAplyNo}
+    </update>
+
+    <update id="cancelCustomerCompensDetail" parameterType="CsCustomerCompensAcceptInfo">
+        UPDATE CS_CUST_CPNS_ACCP_INFO
+           SET /* CsCustomerCompensAcceptInfo.cancelCustomerCompensDetail */
+               CPNS_APRV_STAT_CD=#{cpnsAprvStatCd}
+             , SYS_MOD_ID = #{sysModId}
+             , SYS_MOD_DTM = NOW()
+         WHERE CUST_CPNS_APLY_NO = #{custCpnsAplyNo}
+    </update>
+
+
+    <update id="rewardApproveCompensDetail" parameterType="CsCustomerCompensAcceptInfo">
+        UPDATE CS_CUST_CPNS_ACCP_INFO
+           SET /* CsCustomerCompensAcceptInfo.rewardApproveCompensDetail */
+               CPNS_APRV_STAT_CD=#{cpnsAprvStatCd}
+             , CPNS_PAY_STAT_CD = #{cpnsPayStatCd}
+             , CPNS_AMT=#{cpnsAmt}
+             , ACCP_CONT=#{accpCont}
+             , PAY_REQ_MEMO=#{payReqMemo}
+             , APRV_DTM = NOW()
+             , APRMN_ID = #{aprmnId}
+             , PAY_BANK_CD=#{payBankCd}
+             , PAY_ACTN_NO=#{payActnNo}
+             , PAY_DEPOSITOR_NM=#{payDepositorNm}
+             , SYS_MOD_ID = #{sysModId}
+             , SYS_MOD_DTM = NOW()
+         WHERE CUST_CPNS_APLY_NO = #{custCpnsAplyNo}
+    </update>
+
+    <update id="payCashApproveCompensDetail" parameterType="CsCustomerCompensAcceptInfo">
+        UPDATE CS_CUST_CPNS_ACCP_INFO
+           SET /* CsCustomerCompensAcceptInfo.payApproveCompensDetail */
+               CPNS_APRV_STAT_CD = #{cpnsAprvStatCd}
+             , CPNS_PAY_STAT_CD = #{cpnsPayStatCd}
+             , CPNS_AMT=#{cpnsAmt}
+             , ACCP_CONT=#{accpCont}
+             , PAY_REQ_MEMO=#{payReqMemo}
+             , PAY_REQ_DTM = NOW()
+             , SYS_MOD_ID = #{sysModId}
+             , SYS_MOD_DTM = NOW()
+         WHERE CUST_CPNS_APLY_NO = #{custCpnsAplyNo}
+    </update>
+
+    <update id="payNoCashApproveCompensDetail" parameterType="CsCustomerCompensAcceptInfo">
+        UPDATE CS_CUST_CPNS_ACCP_INFO
+           SET /* CsCustomerCompensAcceptInfo.payApproveCompensDetail */
+               CPNS_APRV_STAT_CD = #{cpnsAprvStatCd}
+             , CPNS_PAY_STAT_CD = #{cpnsPayStatCd}
+             , CPNS_AMT=#{cpnsAmt}
+             , ACCP_CONT=#{accpCont}
+             , PAY_REQ_MEMO=#{payReqMemo}
+             , PAY_REQ_DTM = NOW()
+             , PAY_DTM = NOW()
+             , PAYMN_ID = #{paymnId}
+             , PAY_BANK_CD=#{payBankCd}
+             , PAY_ACTN_NO=#{payActnNo}
+             , PAY_DEPOSITOR_NM=#{payDepositorNm}
+             , SYS_MOD_ID = #{sysModId}
+             , SYS_MOD_DTM = NOW()
+         WHERE CUST_CPNS_APLY_NO = #{custCpnsAplyNo}
+    </update>
+
+    <update id="rewardPayReturnCustomerCompensDetail" parameterType="CsCustomerCompensAcceptInfo">
+        UPDATE CS_CUST_CPNS_ACCP_INFO
+           SET /* CsCustomerCompensAcceptInfo.rewardReturnCustomerCompensDetail */
+               CPNS_APRV_STAT_CD=#{cpnsAprvStatCd}
+             , CPNS_PAY_STAT_CD = #{cpnsPayStatCd}
+             , RETN_DTM = NOW()
+             , RETN_PROCMN_ID = #{retnProcmnId}
+             , RETN_CAUS_CONT = #{retnCausCont}
+             , SYS_MOD_ID = #{sysModId}
+             , SYS_MOD_DTM = NOW()
+         WHERE CUST_CPNS_APLY_NO = #{custCpnsAplyNo}
+    </update>
+</mapper>

@@ -1,0 +1,54 @@
+<!--
+* 프로그램명 : 상품고시품목정보
+* 작 성 일 : 2021.03.22
+* 작 성 자 : 홍혜리
+* 수 정 자 : 홍혜리
+* 버    전 : 1.0
+* 개    요 : 상품고시품목정보
+* 이    력 : 2021.10.12 프레임워크 이전
+-->
+<!DOCTYPE html>
+<html lang="ko-KR"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<body>
+    <th:block layout:fragment="goods-announcementInfo">
+        <div class="data">
+            <div class="data-head">
+                <div class="left">
+                    <span class="title" th:text="${#messages.msg('generalGoods.announcementInfo.title')}"></span>
+                </div>
+                <div class="right">
+                  <span class="data-toggle">
+                    <button type="button" class="toggle-button"><span>닫힘</span></button>
+                  </span>
+                </div>
+            </div>
+
+            <div class="data-body">
+                <form id="announcementInfo" name="announcementInfo">
+                    <table class="data-table">
+                        <colgroup>
+                            <col width="130">
+                            <col>
+                        </colgroup>
+                        <tbody id="announcementInfoTable">
+                            <tr>
+                                <!-- 상품 고시 품목 코드-->
+                                <td class="label" th:text="${#messages.msg('generalGoods.announcementInfo.label.goodsNotiLisartCdNm')}"></td>
+                                <td>
+                                    <select class="form-control" name="goodsNotiLisartCd" id="goodsNotiLisartCd">
+                                        <option value="" th:text="${#messages.msg('adminCommon.select')}"/>
+                                        <option th:each="code : ${codeList.PR012}" th:value="${code?.cd}" th:utext="${code?.cdNm}"></option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <th:block th:replace="fragments/goods/goods-announcementInfo-itemInfo :: goods-announcementInfo-itemInfo"/>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </div>
+    </th:block>
+</body>
+</html>

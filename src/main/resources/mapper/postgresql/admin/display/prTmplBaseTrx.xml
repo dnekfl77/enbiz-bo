@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.display.PrTmplBaseTrxMapper">
+
+	<insert id="createDisplayTemplate" parameterType="prTmplBase">
+		<selectKey keyProperty="tmplNo" resultType="String" order="BEFORE">
+			SELECT NEXTVAL('PR_TMPL_BASE_SQ01') AS tmplNo
+		</selectKey>
+		INSERT INTO PR_TMPL_BASE (  /* prTmplBaseTrx.createDisplayTemplate */
+			  TMPL_NO
+			, TMPL_NM
+			, TMPL_TYP_CD
+			, TMPL_PATH_NM
+			, TMPL_FILE_NM
+			, USE_YN
+			, SYS_REG_ID
+			, SYS_REG_DTM
+			, SYS_MOD_ID
+			, SYS_MOD_DTM
+		) VALUES (
+			  #{tmplNo}
+			, #{tmplNm}
+			, #{tmplTypCd}
+			, #{tmplPathNm}
+			, #{tmplFileNm}
+			, #{useYn}
+			, #{sysRegId}
+			, NOW()
+			, #{sysModId}
+			, NOW()
+		)
+	</insert>
+
+	<update id="updateDisplayTemplate" parameterType="prTmplBase">
+		UPDATE 	PR_TMPL_BASE                  /* prTmplBaseTrx.updateDisplayTemplate */
+		SET 	  TMPL_NM      	= #{tmplNm}
+				, TMPL_TYP_CD  	= #{tmplTypCd}
+				, TMPL_PATH_NM 	= #{tmplPathNm}
+				, TMPL_FILE_NM 	= #{tmplFileNm}
+				, USE_YN       	= #{useYn}
+				, SYS_MOD_ID 	= #{sysModId}
+				, SYS_MOD_DTM 	= NOW()
+		WHERE 	TMPL_NO = #{tmplNo}
+	</update>
+
+	<delete id="deleteDisplayTemplate" parameterType="prTmplBase">
+		DELETE                  /* prTmplBaseTrx.deleteDisplayTemplate */
+		FROM 	PR_TMPL_BASE
+		WHERE 	TMPL_NO = #{tmplNo}
+	</delete>
+
+</mapper>
+
+

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enbiz.bo.app.repository.goods.PrGooodRevReplyInfoMapper">
+
+    <sql id="paginatedBase">
+        LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+    </sql>
+
+    <sql id="reviewReplyListBase">
+        SELECT REV_NO /* prGoodsRevReplyInfo.reviewReplyListBase */
+             , REPLY_SEQ
+             , FN_GET_CODENAME('PR037',WRTMN_GB_CD ) AS WRTMN_GB_CD_NM
+             , WRTMN_ID
+             , REPLY_CONT
+             , REPLY_SEQ_DISP_STAT_CD
+             , FN_GET_CODENAME('PR022',REPLY_SEQ_DISP_STAT_CD ) AS REPLY_SEQ_DISP_STAT_CD_NM
+             , SYS_REG_ID
+             , TO_CHAR(SYS_REG_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_REG_DTM
+             , SYS_MOD_ID
+             , TO_CHAR(SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+          FROM PR_GOODS_REV_REPLY_INFO
+         WHERE REV_NO = #{revNo}
+         ORDER BY SYS_REG_DTM DESC
+    </sql>
+
+    <select id="getReviewReplyListCount" parameterType="ReviewDetailRequest" resultType="java.lang.Integer">
+        SELECT COUNT(*) /* prGoodsRevReplyInfo.getReviewReplyListCount */
+          FROM (
+            <include refid="reviewReplyListBase"/>
+        ) T1
+    </select>
+
+    <select id="getReviewReplyList" parameterType="ReviewDetailRequest" resultType="ReviewDetailResponse">
+        /* prGoodsRevReplyInfo.getReviewReplyList */
+        <include refid="reviewReplyListBase" />
+        <include refid="paginatedBase" />
+    </select>
+</mapper>

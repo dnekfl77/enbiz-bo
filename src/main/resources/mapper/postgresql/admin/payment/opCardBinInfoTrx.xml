@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.payment.OpCardBinInfoTrxMapper">
+
+	<insert id="insertOpCardBinInfo" parameterType="opCardBinInfo">
+		INSERT INTO OP_CARD_BIN_INFO (  /* opCardBinInfoTrx.insertOpCardBinInfo */
+				  CARD_BINNO
+				, ISCM_CD
+				, CARDCO_NM
+				, MBR_GB_CD
+				, CARD_TYP_CD
+				, APLY_DT
+				, RMK
+				, SYS_REG_ID
+				, SYS_REG_DTM
+				, SYS_MOD_ID
+				, SYS_MOD_DTM
+		) VALUES (
+				  #{cardBinno}
+				, #{iscmCd}
+				, #{cardcoNm}
+				, #{mbrGbCd}
+				, #{cardTypCd}
+				, REPLACE(#{aplyDt}, '-','')
+				, #{rmk}
+				, #{sysRegId}
+				, now()
+				, #{sysRegId}
+				, now()
+		)
+	</insert>
+
+	<update id="updateOpCardBinInfo" parameterType="opCardBinInfo">
+		UPDATE    OP_CARD_BIN_INFO  /* opCardBinInfoTrx.updateOpCardBinInfo */
+		SET
+			   ISCM_CD          = #{iscmCd}
+			 , CARDCO_NM        = #{cardcoNm}
+			 , MBR_GB_CD        = #{mbrGbCd}
+			 , CARD_TYP_CD      = #{cardTypCd}
+			 , APLY_DT          = REPLACE(#{aplyDt}, '-','')
+			 , RMK              = #{rmk}
+			 , SYS_MOD_ID 	    = #{sysModId}
+			 , SYS_MOD_DTM 	    = now()
+		WHERE  CARD_BINNO = #{cardBinno}
+	</update>
+
+	<delete id="deleteOpCardBinInfo" parameterType="opCardBinInfo">
+		DELETE FROM OP_CARD_BIN_INFO  /* opCardBinInfoTrx.deleteOpCardBinInfo */
+		WHERE  CARD_BINNO = #{cardBinno}
+	</delete>
+
+</mapper>
+
+

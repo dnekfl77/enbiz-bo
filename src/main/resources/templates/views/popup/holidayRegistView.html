@@ -1,0 +1,162 @@
+<!--
+* 프로그램명 : 휴일 일괄등록 팝업
+* 작 성 일 : 2021.03. 03
+* 작 성 자 : 박슬기
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 휴일 일괄등록 팝업
+* 이    력 :
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-layout}">
+<body>
+<!--Title Area-->
+<th:block layout:fragment="popup-title-area">
+    <th:block layout:insert="~{fragments/popup/popup-title :: popup-title}"
+              th:with="title=${#messages.msg('holidayMgmt.title.popup')}"></th:block>
+</th:block>
+<!--Title Area-->
+
+<!--Search Area-->
+<th:block layout:fragment="popup-search-area">
+    <div class="search">
+        <form name="holiManyGridForm" id="holiManyGridForm">
+            <table class="search-table">
+                <colgroup>
+                    <col style="width:120px;" />
+                    <col/>
+                    <col style="width:120px;" />
+                    <col/>
+                    <col style="width:120px;" />
+                    <col/>
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td class="label" th:text="${#messages.msg('holidayMgmt.info.label.upload.file.form')}"></td>
+                    <td>
+                        <input class="la-input" name="uploadFormDoc" type="radio" value="1" id="file01" checked>
+                        <label for="file01"><th:block th:text="${#messages.msg('adminCommon.label.excel')}"></th:block></label>
+                        <input class="la-input" name="uploadFormDoc" type="radio" value="2" id="file02">
+                        <label for="file02"><th:block th:text="${#messages.msg('adminCommon.label.csv')}"></th:block></label>
+                    </td>
+                    <td class="label" th:text="${#messages.msg('holidayMgmt.info.label.upload.form')}"></td>
+                    <td>
+                        <a href="#" class="button small" id="btn_file_download"><span class="text" th:text="${#messages.msg('adminCommon.button.download')}"></span></a>
+                        <iframe name="download" width="0" height="0" style="display: none;"></iframe>
+                    </td>
+                    <td class="label" th:text="${#messages.msg('holidayMgmt.info.label.upload.many.file')}"></td>
+                    <td>
+                        <a href="#" class="button small" id="btn_file_search" name="btn_file_search"><span class="text" th:text="${#messages.msg('adminCommon.button.select.file')}"></span></a>
+                    </td>
+                    <input type="file" id="holidayBatchFile" name="holidayBatchFile" style="display: none;">
+                </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+</th:block>
+<!--Search Area-->
+
+<!--List Area-->
+<th:block layout:fragment="popup-List-area">
+    <div class="grid">
+        <div class="grid-head">
+            <div class="option-area">
+                <div class="edit-option">
+                    <div class="button-group">
+                        <a href="#" class="button inside mr5" id="btn_grid_delete">
+                            <span class="text" th:text="${#messages.msg('adminCommon.grid.button.delete.row')}" />
+                        </a>
+                        <a href="#" data-bs-toggle="tooltip"></a>
+                        <div class="tooltip">
+                            <a href="#" class="trigger"></a>
+                            <div class="cont">
+                                <p>업무구분 : 일반(01), 일반업체(02), 물류센터(03), 고객센터(04), 카드매입(05)</p>
+                                <p>공휴일구분 : 국경일(01), 휴일(02), 설날(03), 추석(04), 기타(05)</p>
+                                <a href="#" class="close">닫기</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="page-option" grid-id="holidayManyGrid">
+                    <span class="total"><th:block th:text="${#messages.msg('adminCommon.label.total')}"></th:block> <em id="holiManyGridCnt">0</em><th:block th:text="${#messages.msg('adminCommon.label.cnt')}"></th:block></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid-body with-head" style="height: 240px;">
+            <div id="holidayManyGrid" class="rg-root rg-grid" realgrid></div>
+        </div>
+    </div>
+    <div class="data mt10 f-upload">
+        <table class="data-table">
+            <colgroup>
+                <col style="width:33%">
+                <col style="width:33%">
+                <col style="width:34%">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th th:text="${#messages.msg('holidayMgmt.info.label.total.item.count')}"></th>
+                    <th th:text="${#messages.msg('holidayMgmt.info.label.upload.success.count')}"></th>
+                    <th th:text="${#messages.msg('holidayMgmt.info.label.upload.fail.count')}"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+<!--                    <td class="alC"><div id="total_count"></div></td>
+                    <td class="alC"><div id="complate_count"></div></td>
+                    <td class="alC"><span class="pointRe" id="error_count"></span></td>-->
+                    <td><span id="total_count">0</span></td>
+                    <td><span id="complate_count">0</span></td>
+                    <td><span id="error_count">0</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</th:block>
+<!--List Area-->
+
+
+<!--List Button Area-->
+<th:block layout:fragment="popup-List-button-area">
+    <th:block layout:insert="~{fragments/popup/popup-btn :: popup-dtl-btn}"/>
+</th:block>
+
+<!-- Additional Script -->
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+
+        var _useYnSelect      = $.parseJSON('{"N":"N","Y":"Y"}');
+        var jobsCds           = [[${codeList.CM001}]];
+        var gbCds             = [[${codeList.CM002}]];
+
+        var _jobkeys = [];
+        var _jobValues = [];
+        for(const job of jobsCds){
+            _jobkeys.push(job.cd);
+            _jobValues.push(job.cdNm);
+        }
+
+        var _gbkeys = [];
+        var _gbValues = [];
+        for(const gb of gbCds){
+            _gbkeys.push(gb.cd);
+            _gbValues.push(gb.cdNm);
+        }
+        var _defaultPage    = 0;
+        var _gridType       = 'N'; // 선택구분값이 있을경우 필수값
+    </script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'popup/popup.holidayManyGrid.eventHandler.js?20210809'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'popup/popup.holidayManyGrid.provider.js?20211025'" ></script>
+
+    <script type="text/javascript">
+        $(function() {
+            holidayManyGrid.eventhandler.init();
+        });
+    </script>
+</th:block>
+</body>
+</html>

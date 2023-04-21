@@ -1,0 +1,150 @@
+<!--
+* 프로그램명 : 전시상품 일괄등록 팝업
+* 작 성 일 : 2021.04.07
+* 작 성 자 : 권다솜
+* 수 정 자 : 권다솜
+* 버    전 : 1.0
+* 개    요 : 전시관리 > 카테고리관리 > 전시카테고리관리 > 전시상품 일괄등록 팝업
+* 이    력 :
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-layout}">
+<body>
+<!--Title Area-->
+<th:block layout:fragment="popup-title-area">
+    <th:block layout:insert="~{fragments/popup/popup-title :: popup-title}"
+              th:with="title=${#messages.msg('displayCategoryMgmt.goodsInsert.title')}"></th:block>
+</th:block>
+<!--Title Area-->
+
+<!--Search Area-->
+<th:block layout:fragment="popup-search-area">
+    <div class="search">
+        <form name="goodsListGridForm" id="goodsListGridForm">
+            <table class="search-table">
+                <colgroup>
+                    <col style="width:15%;" />
+                    <col style="width:35%;" />
+                    <col style="width:15%;" />
+                    <col style="width:35%;" />
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td class="label" th:text="${#messages.msg('displayCategoryMgmt.goodsInsert.label.fileType')}"></td>
+                    <td colspan="3">
+                        <div class="input-group">
+                            <label class="radio-inline">
+                                <input type="radio" name="uploadFormDoc" value="1" id="file01" checked>
+                                <span th:text="${#messages.msg('displayCategoryMgmt.goodsInsert.label.fileType_xls')}"></span>
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="uploadFormDoc" value="2" id="file02">
+                                <span th:text="${#messages.msg('displayCategoryMgmt.goodsInsert.label.fileType_csv')}"></span>
+                            </label>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label" th:text="${#messages.msg('displayCategoryMgmt.goodsInsert.label.fileUploadFormat')}"></td>
+                    <td>
+                        <a href="#" class="button small gray" id="filedown"><span class="text" th:text="${#messages.msg('displayCategoryMgmt.goodsInsert.label.downLoad')}"></span></a>
+                        <iframe name="download" width="0" height="0" style="display: none;"></iframe>
+                    </td>
+                    <td class="label" th:text="${#messages.msg('displayCategoryMgmt.goodsInsert.label.fileUploadSelection')}"></td>
+                    <td>
+                        <a href="#" class="button small gray" id="btn_file_search"><span class="text" th:text="${#messages.msg('displayCategoryMgmt.goodsInsert.label.fileSelection')}"></span></a>
+                        <input type="file" id="goodsBatchFile" name="goodsBatchFile" style="display: none;">
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+</th:block>
+<!--Search Area-->
+
+<!--List Area-->
+<th:block layout:fragment="popup-List-area">
+    <div class="grid" style="overflow: hidden;">
+        <div class="grid-head">
+            <div class="title-area">
+                <h2 class="title" th:text="${#messages.msg('displayCategoryMgmt.goodsListGrid.title')}"></h2>
+            </div>
+            <div class="option-area">
+                <div class="edit-option">
+                    <div class="button-group">
+                        <a href="#" class="button inside" id="btn_goodsListGrid_delete">
+                            <span class="text" th:text="${#messages.msg('adminCommon.grid.button.delete.row')}" />
+                        </a>
+                    </div>
+                </div>
+                <div class="page-option">
+                    <span class="total">총 <span id="goodsListGrid-totalCount">0</span> 건</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid-body with-head">
+            <div id="goodsListGrid" realgrid></div>
+        </div>
+    </div>
+    <div class="data mt10 f-upload">
+        <table class="data-table">
+            <colgroup>
+                <col style="width:33%">
+                <col style="width:33%">
+                <col style="width:34%">
+            </colgroup>
+            <thead>
+            <tr>
+                <th>총 항목수</th>
+                <th>업로드 성공</th>
+                <th>업로드 실패</th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span id="total_count">0</span></td>
+                    <td><span id="complate_count">0</span></td>
+                    <td><span id="error_count">0</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</th:block>
+<!--List Area-->
+
+
+<!--List Button Area-->
+<th:block layout:fragment="popup-List-button-area">
+    <th:block layout:insert="~{fragments/popup/popup-btn :: popup-List-btn}"/>
+</th:block>
+
+<!-- Additional Script -->
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        var dispCtgNo         = [[${requestData.dispCtgNo}]];
+
+        var msg = x2coMessage.getMessage({
+            necessaryCheckMessage : 'displayCategoryMgmt.error.msg.dispYnMsg'
+            , checkErrMsg : 'displayCategoryMgmt.error.msg.checkErrMsg'
+            , dispSeqError : 'displayCategoryMgmt.error.msg.numberRange1CheckMsg'
+            , goodsNoError : 'displayCategoryMgmt.error.msg.goodsNoMsg'
+            , numberOnlyError : 'displayCategoryMgmt.error.msg.numberOnlyMsg'
+            , overlapError : 'displayCategoryMgmt.error.msg.overlapMsg'
+            , fileTypeError : 'displayCategoryMgmt.error.msg.fileTypeMsg'
+        });
+    </script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/displayCategoryMgmt/goodsListGrid.eventHandler.js?202104070001'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/displayCategoryMgmt/goodsListGrid.provider.js?202104070001'" ></script>
+
+    <script th:inline="javascript">
+        $(document).ready(function() {
+            goodsListGrid.eventhandler.init();
+        });
+    </script>
+</th:block>
+</body>
+</html>

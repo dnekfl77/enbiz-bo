@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.display.CcFotrInfoMapper">
+
+	<sql id="footerGrpList">
+		SELECT     /* ccFotrInfo.footerGrpList */
+				  FORT_NO
+				, SITE_NO
+				, SYS_GB_CD
+				, FOTR_CONT_GB_CD
+				, DISP_SEQ
+				, USE_YN
+		FROM 	  CC_FOTR_INFO
+		WHERE 	  SITE_NO         = #{siteNo}
+		AND 	  UPR_FOTR_NO IS NULL
+		ORDER BY  DISP_SEQ
+	</sql>
+
+	<sql id="footerMenuList">
+		SELECT 				/* ccFotrInfo.footerMenuList */
+				  FORT_NO
+				, SITE_NO
+				, SYS_GB_CD
+				, FOTR_CONT_GB_CD
+				, DISP_SEQ
+				, USE_YN
+				, MENU_NM
+				, LINK_URL
+				, MOV_FRME_CD
+				, FOTR_CONT
+				, UPR_FOTR_NO
+		FROM 	  CC_FOTR_INFO
+		WHERE 	  SITE_NO         = #{siteNo}
+		AND 	  UPR_FOTR_NO     = #{uprFotrNo}
+		ORDER BY  DISP_SEQ
+	</sql>
+
+	<select id="getCcFotrInfoGrpListCount" parameterType="CcFotrInfoRequest" resultType="java.lang.Integer">
+		SELECT 			/* ccFotrInfo.getCcFotrInfoGrpListCount */
+				COUNT(*)
+		FROM (
+				<include refid="footerGrpList" />
+		) T1
+	</select>
+
+	<select id="getCcFotrInfoGrpList" parameterType="CcFotrInfoRequest" resultType="CcFotrInfoResponse">
+		<include refid="footerGrpList" />
+	</select>
+
+	<select id="getFooterMgmtCont" parameterType="CcFotrInfoRequest" resultType="CcFotrInfoResponse">
+		SELECT 			/* ccFotrInfo.getFooterMgmtCont */
+				  FORT_NO
+				, FOTR_CONT
+		FROM 	  CC_FOTR_INFO
+		WHERE 	  FORT_NO = #{fortNo}
+	</select>
+
+	<select id="getCcFotrInfoMenuListCount" parameterType="CcFotrInfoRequest" resultType="java.lang.Integer">
+		SELECT 			/* ccFotrInfo.getCcFotrInfoMenuListCount */
+				COUNT(*)
+		FROM (
+				<include refid="footerMenuList" />
+		) T1
+	</select>
+
+	<select id="getCcFotrInfoMenuList" parameterType="CcFotrInfoRequest" resultType="CcFotrInfoResponse">
+		<include refid="footerMenuList" />
+	</select>
+
+</mapper>

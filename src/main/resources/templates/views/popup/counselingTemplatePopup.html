@@ -1,0 +1,252 @@
+<!--
+* 프로그램명 : 상담 템플릿 조회 팝업
+* 작 성 일 : 2021.05.13
+* 작 성 자 : 권다솜
+* 수 정 자 : 홍혜리
+* 버    전 : 1.0
+* 개    요 : 상담 템플릿 조회 팝업 UI
+* 이    력 : 2021.08.02 단일선택시 적용방식 수정
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-update-layout}">
+<body>
+    <!--Title Area-->
+    <th:block layout:fragment="header-area">
+        <div class="header">
+            <h1 class="title" th:text="${#messages.msg('counselingTemplateListPopup.title')}"></h1>
+        </div>
+    </th:block>
+    <!--Title Area-->
+
+    <th:block layout:fragment="data-area">
+        <!-- tabs-area -->
+        <div class="tabs-area">
+            <ul class="tabs">
+                <li>
+                    <a href="javascript:void(0);" th:text="${#messages.msg('counselingTemplateMgmt.label.tab1Title')}"></a>
+                </li>
+                <li>
+                    <a href="javascript:void(0);" th:text="${#messages.msg('counselingTemplateMgmt.label.tab2Title')}"></a>
+                </li>
+            </ul>
+
+            <!-- tabs-body -->
+            <div class="tabs-body">
+
+                <!-- tab-cont -->
+                <div class="tab-cont">
+                    <!-- 조회테이블 -->
+                    <div class="search">
+                        <form name="counselingTemplateCommonForm" id="counselingTemplateCommonForm">
+                            <!-- 텝 타입 -->
+                            <input type="hidden" id="common_typeCode" name="typeCode" th:value="common"/>
+                            <!-- 등록자 -->
+                            <input type="hidden" id="common_userId" name="userId"/>
+                            <table class="search-table">
+                                <colgroup>
+                                    <col width="120">
+                                    <col>
+                                    <col width="120">
+                                    <col>
+                                </colgroup>
+                                <tbody>
+                                <tr>
+                                    <td class="label" th:text="${#messages.msg('counselingTemplateMgmt.label.cnslGbCd_cnslTypCd')}" />
+                                    <td>
+                                        <div class="input-group w100">
+                                            <select class="form-control w40" id="common_cnslGbCd" name="cnslGbCd">
+                                                <option value="" th:text="${#messages.msg('adminCommon.entirety')}"></option>
+                                                <option th:each="list : ${codeList.CS015}"
+                                                        th:value="${list.cd}"
+                                                        th:text="${list.cdNm}"></option>
+                                            </select>
+                                            <select class="form-control w40" id="common_cnslTypCd" name="cnslTypCd">
+                                                <option value="" th:text="${#messages.msg('adminCommon.entirety')}"></option>
+                                                <option th:each="list : ${codeList.CS016}"
+                                                        th:value="${list.cd}"
+                                                        th:text="${list.cdNm}"></option>
+                                            </select>
+                                        </div>
+                                    </td>
+                                    <!-- 템플릿 명-->
+                                    <td class="label" th:text="${#messages.msg('counselingTemplateMgmt.label.templateNm')}" />
+                                    <td>
+                                        <input class="input w100" type="text" name="tmplNm" id="common_tmplNm" maxlength="1000"/>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </form>
+                    </div>
+                    <!-- //조회테이블 -->
+                    <!-- 검색버튼 -->
+                    <div class="button-group search-btn">
+                        <a href="#" class="btn_gblue button white" id="btn_common_init">
+                            <span class="text" th:text="${#messages.msg('adminCommon.button.init')}" />
+                        </a>
+                        <a href="#" class="btn_blue button dark" id="btn_common_list">
+                            <span class="text" th:text="${#messages.msg('adminCommon.button.search')}" />
+                        </a>
+                    </div>
+                    <!-- //검색버튼 -->
+                    <!-- 리얼그리드 -->
+                    <div class="grid-cont">
+                        <div class="grid" style="overflow: hidden;">
+                            <div class="grid-head">
+                                <div class="title-area">
+                                    <h2 class="title" th:text="${#messages.msg('counselingTemplateMgmt.label.qry.rslt')}" />
+                                </div>
+                            </div>
+                            <div class="grid-body with-head">
+                                <div id="counselingTemplateCommonPopupGrid" realgrid></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- //리얼그리드 -->
+
+                    <div class="button-group search-btn">
+                        <a href="#" class="button white" id="btn_common_popup_close">
+                            <span class="text" th:text="${#messages.msg('baseInfoMgmt.label.popup.btn.close')}">취소</span>
+                        </a>
+                        <a href="#" class="button large" id="btn_common_popup_apply">
+                            <span class="text" th:text="${#messages.msg('baseInfoMgmt.label.popup.btn.apply')}">적용</span>
+                        </a>
+                    </div>
+
+                </div>
+                <!-- tab-cont -->
+
+                <!-- tab-cont -->
+                <div class="tab-cont">
+                    <!-- 조회테이블 -->
+                    <div class="search">
+                        <form name="counselingTemplateForm" id="counselingTemplateForm">
+                            <!-- 텝 타입 -->
+                            <input type="hidden" id="typeCode" name="typeCode" th:value="alone"/>
+                            <!-- 등록자 -->
+                            <input type="hidden" id="userId" name="userId"/>
+
+                            <table class="search-table">
+                                <colgroup>
+                                    <col width="120">
+                                    <col>
+                                    <col width="120">
+                                    <col>
+                                </colgroup>
+                                <tbody>
+                                <tr>
+                                    <td class="label" th:text="${#messages.msg('counselingTemplateMgmt.label.cnslGbCd_cnslTypCd')}" />
+                                    <td>
+                                        <div class="input-group w100">
+                                            <select class="form-control w40" id="cnslGbCd" name="cnslGbCd">
+                                                <option value="" th:text="${#messages.msg('adminCommon.entirety')}"></option>
+                                                <option th:each="list : ${codeList.CS015}"
+                                                        th:value="${list.cd}"
+                                                        th:text="${list.cdNm}"></option>
+                                            </select>
+                                            <select class="form-control w40" id="cnslTypCd" name="cnslTypCd">
+                                                <option value="" th:text="${#messages.msg('adminCommon.entirety')}"></option>
+                                                <option th:each="list : ${codeList.CS016}"
+                                                        th:value="${list.cd}"
+                                                        th:text="${list.cdNm}"></option>
+                                            </select>
+                                        </div>
+                                    </td>
+                                    <!-- 템플릿 명-->
+                                    <td class="label" th:text="${#messages.msg('counselingTemplateMgmt.label.templateNm')}" />
+                                    <td>
+                                        <input class="input w100" type="text" name="tmplNm" id="tmplNm" maxlength="1000"/>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </form>
+                    </div>
+                    <!-- //조회테이블 -->
+                    <!-- 검색버튼 -->
+                    <div class="button-group search-btn">
+                        <a href="#" class="btn_gblue button white" id="btn_init">
+                            <span class="text" th:text="${#messages.msg('adminCommon.button.init')}" />
+                        </a>
+                        <a href="#" class="btn_blue button dark" id="btn_list">
+                            <span class="text" th:text="${#messages.msg('adminCommon.button.search')}" />
+                        </a>
+                    </div>
+                    <!-- //검색버튼 -->
+                    <!-- 리얼그리드 -->
+                    <div class="grid-cont">
+                        <div class="grid" style="overflow: hidden;">
+                            <div class="grid-head">
+                                <div class="title-area">
+                                    <h2 class="title" th:text="${#messages.msg('counselingTemplateMgmt.label.qry.rslt')}" />
+                                </div>
+                            </div>
+                            <div class="grid-body with-head">
+                                <div id="counselingTemplatePopupGrid" realgrid></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- //리얼그리드 -->
+
+                    <div class="button-group search-btn">
+                        <a href="#" class="button white" id="btn_popup_close">
+                            <span class="text" th:text="${#messages.msg('baseInfoMgmt.label.popup.btn.close')}">취소</span>
+                        </a>
+                        <a href="#" class="button large" id="btn_popup_apply">
+                            <span class="text" th:text="${#messages.msg('baseInfoMgmt.label.popup.btn.apply')}">적용</span>
+                        </a>
+                    </div>
+
+                </div>
+                <!-- tab-cont -->
+
+            </div>
+            <!-- tabs-body -->
+
+        </div>
+        <!-- tabs-area -->
+    </th:block>
+
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        var _gridType       = [[${requestData.argSelectType}]]; // 선택구분값이 있을경우 필수값
+    </script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'popup/counselingTemplateCommonPopupGrid.eventHandler.js?20210802'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'popup/counselingTemplateCommonPopupGrid.provider.js?20210802'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'popup/counselingTemplatePopupGrid.eventHandler.js?20210802'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'popup/counselingTemplatePopupGrid.provider.js?20210802'" ></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            counselingTemplateCommonPopupGrid.eventhandler.init();
+            counselingTemplatePopupGrid.eventhandler.init();
+
+            $('.tabs-area').each(function(){
+                $(this).children('.tabs-body').children('.tab-cont:first').show();
+                var tab_type = $(this).children('.tabs').children('li');
+
+                tab_type.on('click',function(){
+                      var inx = $(this).index();
+                      var tab_body = $(this).parent().siblings('.tabs-body');
+                      $(this).siblings().removeClass('active');
+                      $(this).addClass('active');
+
+                      if(inx == 1) {
+                          counselingTemplatePopupGrid.eventhandler.grid.resetSize();
+                      }
+
+                      tab_body.children('.tab-cont').hide();
+                      tab_body.children('.tab-cont:eq(' + inx + ')').show();
+                });
+            });
+
+            $('.tabs-area > .tabs > li:eq(0)').click();
+
+        });
+    </script>
+</th:block>
+
+</body>
+</html>

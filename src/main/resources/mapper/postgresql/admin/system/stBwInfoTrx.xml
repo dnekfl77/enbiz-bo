@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.system.StBwInfoTrxMapper">
+
+	<!--
+	제 목 :금칙어 등록
+	작성자 : 박남훈
+	작성일 : 2021.02.10
+	params : stBwInfo
+	설 명 : 금칙어 등록
+	-->
+	<insert id="insertBadWord" parameterType="BadWordMgmtRequest">
+		<selectKey keyProperty="bwSeq" resultType="String" order="BEFORE">
+			SELECT NEXTVAL('st_bw_info_sq01') AS bwSeq
+		</selectKey>
+		INSERT INTO ST_BW_INFO (   /* stBwInfoTrx.insertBadWord */
+		       BW_SEQ
+		     , BW_NM
+		     , BW_DESC
+		     , USE_YN
+		     , SYS_REG_ID
+		     , SYS_REG_DTM
+		     , SYS_MOD_ID
+		     , SYS_MOD_DTM
+		) VALUES (
+		       #{bwSeq}
+		     , #{bwNm}
+		     , #{bwDesc}
+		     , #{useYn}
+		     , #{sysRegId}
+		     , now()
+		     , #{sysRegId}
+		     , now()
+		)
+	</insert>
+
+	<!--
+	제 목 :금칙어 수정
+	작성자 : 박남훈
+	작성일 : 2021.02.10
+	params : stBwInfo
+	설 명 : 금칙어 수정
+	-->
+	<update id="updateBadWord" parameterType="BadWordMgmtRequest">
+		UPDATE ST_BW_INFO  /* stBwInfoTrx.updateBadWord */
+		   SET BW_NM 		= #{bwNm}
+			 , BW_DESC 		= #{bwDesc}
+			 , USE_YN 		= #{useYn}
+			 , SYS_MOD_ID 	= #{sysModId}
+			 , SYS_MOD_DTM 	= now()
+		 WHERE BW_SEQ = #{bwSeq}
+	</update>
+
+	<!--
+	제 목 :금칙어 삭제
+	작성자 : 박남훈
+	작성일 : 2021.02.10
+	params : stBwInfo
+	설 명 : 금칙어 삭제
+	-->
+	<delete id="deleteBadWord" parameterType="BadWordMgmtRequest">
+		DELETE /* stBwInfoTrx.deleteBadWord */
+		  FROM ST_BW_INFO
+		 WHERE BW_SEQ = #{bwSeq}
+	</delete>
+
+</mapper>

@@ -1,0 +1,601 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.customerservice.CsCustCnslInfoMapper">
+
+    <sql id="paginatedBase">
+        LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+    </sql>
+
+    <sql id="integratedCounselListBase">
+        SELECT  /* csCustCnslInfo.integratedCounselList */
+               CCCI.CCN_NO
+             , FN_GET_CODENAME('CS001', CCCI.CUST_CNSL_GB_CD ) AS CUST_CNSL_GB_CD
+             , FN_GET_CODENAME('CS002', CCCI.ACCP_MEDIA_CD ) AS ACCP_MEDIA_CD
+             , FN_GET_CODENAME('CS003', CCCI.ACCP_TYP_CD ) AS ACCP_TYP_CD
+             , CCCI.CNSL_SUB_CD
+             , FN_GET_CODENAME('CS005', CCCI.CCN_PRGS_STAT_CD ) AS CCN_PRGS_STAT_CD
+             , TO_CHAR(ACCP_DTM,'YYYY-MM-DD HH24:MI:SS') AS ACCP_DTM
+             , TO_CHAR(QUOT_DTM,'YYYY-MM-DD HH24:MI:SS') AS QUOT_DTM
+             , TO_CHAR(FNSH_DTM,'YYYY-MM-DD HH24:MI:SS') AS FNSH_DTM
+             , (SELECT USER_NM FROM ST_USER_BASE SUB WHERE SUB.USER_ID = CCCI.ACPTMN_ID) AS ACPTMN_NM
+             , (SELECT USER_NM FROM ST_USER_BASE SUB WHERE SUB.USER_ID = CCCI.PROCMN_ID) AS PROCMN_NM
+             , (SELECT USER_NM FROM ST_USER_BASE SUB WHERE SUB.USER_ID = CCCI.FNSHMN_ID) AS FNSHMN_NM
+             , CCCI.MBR_NO
+             , CCCI.INQMN_NM
+             , CCCI.CNSL_LRG_TYP_NO
+             , CCCI.CNSL_MID_TYP_NO
+             , CCCI.CNSL_TYP_NO
+             , (SELECT CNSL_TYP_NM FROM CS_CNSL_TYP_INFO TEMP WHERE TEMP.CNSL_TYP_NO = CCCI.CNSL_LRG_TYP_NO) || '>' ||
+               (SELECT CNSL_TYP_NM FROM CS_CNSL_TYP_INFO TEMP WHERE TEMP.CNSL_TYP_NO = CCCI.CNSL_MID_TYP_NO) || '>' ||
+               (SELECT CNSL_TYP_NM FROM CS_CNSL_TYP_INFO TEMP WHERE TEMP.CNSL_TYP_NO = CCCI.CNSL_TYP_NO) AS CNSL_TYP_TEXT
+             , CCCI.CELL_NO_YN
+             , CCCI.TEL_RGN_NO
+             , CCCI.TEL_TXNO_NO
+             , CCCI.TEL_END_NO
+             , CCCI.EMAIL_ADDR
+             , CCCI.ACCP_CONT
+             , CCCI.SMS_ANS_NTC_YN
+             , CCCI.EMAIL_ANS_NTC_YN
+             , CCCI.OB_TYP_NO
+             , CCCI.CUST_INQ_LRG_TYP_CD
+             , CCCI.CUST_INQ_SML_TYP_CD
+             , CCCI.ANS_DTM
+             , CCCI.ANS_CONT
+             , CCCI.QUEST_NO
+             , CCCI.GOODS_NO
+             , CCCI.PRE_PROC_YN
+             , EMB.LOGIN_ID  AS MBR_ID
+             , CCCI.INQMN_NM AS MBR_NM
+          FROM CS_CUST_CNSL_INFO CCCI
+             , ET_MBR_BASE EMB
+         WHERE 1 = 1
+           AND CCCI.MBR_NO = EMB.MBR_NO
+        <if test='periodType != null and periodType eq "0"'>
+           AND CCCI.QUOT_DTM &gt;= TO_TIMESTAMP(#{startDate}||'000000', 'YYYYMMDDHH24MISS')
+           AND CCCI.QUOT_DTM &lt;= TO_TIMESTAMP(#{endDate}||'235959', 'YYYYMMDDHH24MISS')
+        </if>
+        <if test='periodType != null and periodType eq "1"'>
+           AND CCCI.ACCP_DTM &gt;= TO_TIMESTAMP(#{startDate}||'000000', 'YYYYMMDDHH24MISS')
+           AND CCCI.ACCP_DTM &lt;= TO_TIMESTAMP(#{endDate}||'235959', 'YYYYMMDDHH24MISS')
+        </if>
+        <if test='periodType != null and periodType eq "2"'>
+           AND CCCI.FNSH_DTM &gt;= TO_TIMESTAMP(#{startDate}||'000000', 'YYYYMMDDHH24MISS')
+           AND CCCI.FNSH_DTM &lt;= TO_TIMESTAMP(#{endDate}||'235959', 'YYYYMMDDHH24MISS')
+        </if>
+        <if test="custCnslGbCd != null and custCnslGbCd != ''">
+           AND CCCI.CUST_CNSL_GB_CD LIKE #{custCnslGbCd}
+        </if>
+        <if test="accpTypCd != null and accpTypCd != ''">
+           AND CCCI.ACCP_TYP_CD LIKE #{accpTypCd}
+        </if>
+        <if test="cnslLrgTypNo != null and cnslLrgTypNo != ''">
+           AND CCCI.CNSL_LRG_TYP_NO = #{cnslLrgTypNo}
+        </if>
+        <if test="cnslMidTypNo != null and cnslMidTypNo != ''">
+           AND CCCI.CNSL_MID_TYP_NO = #{cnslMidTypNo}
+        </if>
+        <if test="cnslTypNo != null and cnslTypNo != ''">
+           AND CCCI.CNSL_TYP_NO = #{cnslTypNo}
+        </if>
+        <if test="ccnPrgsStatCd != null and ccnPrgsStatCd != ''">
+           AND CCCI.CCN_PRGS_STAT_CD LIKE #{ccnPrgsStatCd}
+        </if>
+        <if test='noSelectType != null and noSelectType == "0" and noText != null and noText !=""'>
+           AND CCCI.MBR_NO = #{noText}
+        </if>
+        <if test='(noSelectType != null and noSelectType=="1") or (goodsNo !=null and goodsNo != "")'>
+           AND EXISTS (
+                 SELECT *
+                   FROM CS_CCN_ORD_GOODS_INFO CCOGI
+                  WHERE CCOGI.CCN_NO = CCCI.CCN_NO
+                  <if test='noSelectType=="1" and noText != null and noText !=""'>
+                    AND CCOGI.ORD_NO = #{noText}
+                  </if>
+                  <if test='goodsNo !=null and goodsNo != ""'>
+                    AND CCOGI.GOODS_NO = #{goodsNo}
+                  </if>
+            )
+        </if>
+        <if test='noSelectType != null and noSelectType == "2"'>
+           AND CCCI.CCN_NO = #{noText}
+        </if>
+        <if test='idSelectType != null and idSelectType=="0" and userId != null and userId !=""'>
+           AND CCCI.ACPTMN_ID LIKE #{userId}
+        </if>
+        <if test='idSelectType != null and idSelectType=="1" and userId != null and userId !=""'>
+           AND CCCI.PROCMN_ID LIKE #{userId}
+        </if>
+         ORDER BY CCCI.ACCP_DTM DESC
+    </sql>
+
+    <select id="integratedCounselList" parameterType="IntegratedCounselRequest" resultType="IntegratedCounselResponse">
+        <include refid="integratedCounselListBase" />
+        <include refid="paginatedBase" />
+    </select>
+
+    <select id="integratedCounselListCount" parameterType="IntegratedCounselRequest" resultType="java.lang.Integer">
+        SELECT /* csCustCnslInfo.integratedCounselListCount */
+               COUNT(*)
+          FROM (
+              <include refid="integratedCounselListBase" />
+          ) v
+    </select>
+
+    <select id="getIntegrateCsDetail" parameterType="java.lang.String" resultType="IntegratedCsDetailResponse">
+        SELECT  /* csCustCnslInfo.getIntegrateCsDetail */
+               CCCI.CCN_NO
+             , (SELECT USER_NM FROM ST_USER_BASE SUB WHERE SUB.USER_ID = CCCI.ACPTMN_ID) || ' / ' || TO_CHAR(ACCP_DTM,'YYYY-MM-DD HH24:MI:SS') AS ACP_DATA
+             , EMB.MBR_NM
+             , EMB.EMAIL_ADDR
+             , FN_GET_CODENAME('CS001', CCCI.CUST_CNSL_GB_CD ) || ' / ' || FN_GET_CODENAME('CS002', CCCI.ACCP_MEDIA_CD ) AS GBCD_MEDIA
+             , ACCP_TYP_CD
+             , FN_GET_CODENAME('CS003', CCCI.ACCP_TYP_CD ) AS ACCP_TYP_NM
+             , CCCI.TEL_RGN_NO
+             , CCCI.TEL_TXNO_NO
+             , CCCI.TEL_END_NO
+             , CCN_PRGS_STAT_CD
+             , FN_GET_CODENAME('CS005', CCCI.CCN_PRGS_STAT_CD ) AS CCN_PRGS_STAT_NM
+             , (SELECT CNSL_TYP_NM FROM CS_CNSL_TYP_INFO TEMP WHERE TEMP.CNSL_TYP_NO = CCCI.CNSL_LRG_TYP_NO) || '>' ||
+               (SELECT CNSL_TYP_NM FROM CS_CNSL_TYP_INFO TEMP WHERE TEMP.CNSL_TYP_NO = CCCI.CNSL_MID_TYP_NO) || '>' ||
+               (SELECT CNSL_TYP_NM FROM CS_CNSL_TYP_INFO TEMP WHERE TEMP.CNSL_TYP_NO = CCCI.CNSL_TYP_NO) AS CNSL_TYP_TEXT
+             , CASE WHEN CUST_CNSL_GB_CD = '20' THEN (SELECT OB_TYP_NM FROM CS_OB_TYP_CD COTC WHERE COTC.OB_TYP_NO = CCCI.OB_TYP_NO)
+                                                ELSE '' END AS OB_TYP_NM
+             , CCCI.ACCP_CONT
+             , CASE WHEN CCCI.ACCP_TYP_CD = '30' THEN (SELECT MVOT_CAUS FROM PR_GOODS_QA_QUEST_INFO AS PGQA WHERE PGQA.QUEST_NO = CCCI.QUEST_NO)
+                    ELSE '' END MVOT_CAUS
+             , CCCI.SMS_ANS_NTC_YN
+             , CCCI.EMAIL_ANS_NTC_YN
+             , CCCI.PRE_PROC_YN
+             , CCCI.ANS_CONT
+             , TO_CHAR(CCCI.ANS_DTM,'YYYY-MM-DD HH24:MI:SS') AS ANS_DTM
+             , CASE WHEN CCCI.SMS_ANS_NTC_YN = 'Y' AND CCCI.EMAIL_ANS_NTC_YN = 'Y' THEN 'SMS/EMAIL'
+                    WHEN CCCI.SMS_ANS_NTC_YN = 'Y' THEN 'SMS'
+                    WHEN CCCI.EMAIL_ANS_NTC_YN = 'Y' THEN 'EMAIL' END ANS_TEXT
+             , CCCI.CUST_CNSL_GB_CD
+             , CCCI.PROCMN_ID
+             , CCCI.CELL_NO_YN
+          FROM CS_CUST_CNSL_INFO CCCI
+             , ET_MBR_BASE EMB
+         WHERE 1 = 1
+           AND CCCI.MBR_NO = EMB.MBR_NO
+           AND CCN_NO = #{ccnNo}
+    </select>
+
+
+    <resultMap id="CsCcnOrdGoodsMap" type="CsCcnOrdGoodsResponse">
+        <id column="CCN_NO" property="ccnNo"/>
+        <id column="CUST_CNSL_SEQ" property="custCnslSeq"/>
+        <id column="ORD_NO" property="ordNo"/>
+        <id column="GOODS_NO" property="goodsNo"/>
+        <collection property="csCcnGoodsResponse" ofType="CsCcnGoodsResponse" columnPrefix="PR_">
+            <id column="GOODS_NO" property="goodsNo"/>
+            <result column="GOODS_NM" property="goodsNm"/>
+            <result column="ENTR_NM" property="entrNm"/>
+        </collection>
+        <collection property="csCcnOrdResponses" ofType="CsCcnOrdResponse" columnPrefix="ORD_">
+            <id column="ORD_NO" property="ordNo"/>
+            <id column="GOODS_NO" property="goodsNo"/>
+            <result column="GOODS_NM" property="goodsNm"/>
+            <result column="ITM_NO" property="itmNo"/>
+            <result column="ITM_NM" property="itmNm"/>
+            <result column="ORD_QTY" property="ordQty"/>
+            <result column="SALE_PRC" property="salePrc"/>
+            <result column="ENTR_NM" property="entrNm"/>
+        </collection>
+    </resultMap>
+
+
+    <select id="getIntegrateOrdAndGoodsInfo" parameterType="java.lang.String" resultMap="CsCcnOrdGoodsMap">
+        SELECT /* csCustCnslInfo.getIntegrateOrdAndGoodsInfo */
+               CCOGI.CCN_NO
+             , CCOGI.CUST_CNSL_SEQ
+             , CCOGI.ORD_NO
+             , CCOGI.GOODS_NO
+             , PGB.GOODS_NO AS PR_GOODS_NO
+             , PGB.GOODS_NM AS PR_GOODS_NM
+             , (SELECT ENTR_NM FROM ET_ENTR_BASE EEB WHERE EEB.ENTR_NO = PGB.ENTR_NO) AS PR_ENTR_NM
+             , ORD.ORD_NO AS ORD_ORD_NO
+             , ORD.GOODS_NO AS ORD_GOODS_NO
+             , ORD.GOODS_NM AS ORD_GOODS_NM
+             , ORD.ITM_NO AS ORD_ITM_NO
+             , ORD.ITM_NM AS ORD_ITM_NM
+             , ORD.ORD_QTY AS ORD_ORD_QTY
+             , ORD.SALE_PRC AS ORD_SALE_PRC
+             , (SELECT ENTR_NM FROM ET_ENTR_BASE EEB WHERE EEB.ENTR_NO = ORD.ENTR_NO) AS ORD_ENTR_NM
+          FROM (SELECT *
+                  FROM CS_CCN_ORD_GOODS_INFO
+                 WHERE CCN_NO = #{ccnNo}
+                 ORDER BY CUST_CNSL_SEQ DESC
+                 LIMIT 1) CCOGI
+          LEFT OUTER JOIN PR_GOODS_BASE PGB
+                       ON CCOGI.GOODS_NO = PGB.GOODS_NO
+          LEFT OUTER JOIN OP_ORD_DTL ORD
+                       ON CCOGI.ORD_NO = ORD.ORD_NO
+    </select>
+
+
+    <select id="getIntegrateProcInfo" parameterType="java.lang.String" resultType="CsCcnProcInfoResponse">
+        SELECT /* csCustCnslInfo.getIntegrateProcInfo */
+               CCN_NO
+             , CNSL_PROC_SEQ
+             , OB_PROC_TYP_CD
+             , TO_CHAR(CNSL_PROC_DTM,'YYYY-MM-DD HH24:MI:SS') AS CNSL_PROC_DTM
+             , CNSL_PROC_CONT
+             , SYS_REG_ID
+          FROM CS_CCN_PROC_INFO
+         WHERE CCN_NO = #{ccnNo}
+         ORDER BY CNSL_PROC_SEQ DESC
+    </select>
+
+    <select id="getCsTelPrmsInfo" parameterType="java.lang.String" resultType="CsTelPrmsResponse">
+        SELECT /* csCustCnslInfo.getCsTelPrmsInfo */
+               NEW_CCTPI.*
+             , CASE WHEN PRMS_STAT_CD = '20'                     THEN '완료'
+                    WHEN PROC_DTM &lt; -10                       THEN '예약'
+                    WHEN PROC_DTM &gt;= -10 AND PROC_DTM &lt; 0  THEN '임박'
+                    WHEN PROC_DTM &gt;= 0 					     THEN '지연' END PROC_STAT
+          FROM (
+                SELECT /* csCustCnslInfo.getCsTelPrmsInfo */
+                       CCN_NO
+                     , CNSL_PROC_SEQ
+                     , TEL_PRMS_SEQ
+                     , TO_CHAR(PRMS_DTM,'YYYY-MM-DD HH24:MI:SS') AS PRMS_DTM
+                     , NOTI_TM_CD
+                     , FN_GET_CODENAME('CS008',PRMS_METH_CD) AS PRMS_METH_CD
+                     , PRMS_STAT_CD
+                     , CNSL_MEMO
+                     , AEMP_ID
+                     , SUB.USER_NM
+                     , TO_CHAR(AEMP_CONF_DTM,'YYYY-MM-DD HH24:MI:SS') AS AEMP_CONF_DTM
+                     , TO_CHAR(AEMP_PROC_DTM,'YYYY-MM-DD HH24:MI:SS') AS AEMP_PROC_DTM
+                     , TEL_TRY_CNT
+                     , ( DATE_PART('DAY', NOW() - PRMS_DTM) * 24 +
+                         DATE_PART('HOUR',NOW() - PRMS_DTM)) * 60 +
+                         DATE_PART('MINUTE', NOW() - PRMS_DTM) AS PROC_DTM
+                  FROM CS_CUST_TEL_PRMS_INFO CCTPI
+                  LEFT OUTER JOIN ST_USER_BASE SUB
+                               ON CCTPI.AEMP_ID = SUB.USER_ID
+                 WHERE CCN_NO = #{ccnNo}
+          ) NEW_CCTPI
+          ORDER BY CNSL_PROC_SEQ DESC , TEL_PRMS_SEQ DESC
+    </select>
+
+
+    <select id="getCsTransReqInfo" parameterType="java.lang.String" resultType="CsTransReqResponse">
+        SELECT /* csCustCnslInfo.getCsTransReqInfo */
+               CCN_NO
+             , CNSL_PROC_SEQ
+             , CS_MVOT_TYP_NO
+             , MVOT_REQ_CONT
+             , MVOT_PROC_STAT_CD
+             , FN_GET_CODENAME('CS006',MVOT_PROC_STAT_CD) AS MVOT_PROC_STAT_NM
+             , MVOT_REQMN_ID
+             , SUB.USER_NM AS MVOT_REQMN_NM
+             , TO_CHAR(MVOT_REQ_DTM,'YYYY-MM-DD HH24:MI:SS') AS MVOT_REQ_DTM
+             , EMERG_MVOT_YN
+             , MVOT_AF_AEMP_ID
+             , TO_CHAR(QUOT_DTM,'YYYY-MM-DD HH24:MI:SS') AS QUOT_DTM
+             , FNSHMN_ID
+             , TO_CHAR(FNSH_DTM,'YYYY-MM-DD HH24:MI:SS') AS FNSH_DTM
+             , (SELECT CS_MVOT_TYP_NM FROM CS_MVOT_TYP_CD CMTC WHERE CMTC.CS_MVOT_TYP_NO = CCTRI.CS_MVOT_TYP_NO)
+          FROM CS_CCN_TRANS_REQ_INFO CCTRI
+          LEFT OUTER JOIN ST_USER_BASE SUB
+                     ON CCTRI.MVOT_REQMN_ID = SUB.USER_ID
+         WHERE CCN_NO = #{ccnNo}
+         ORDER BY CNSL_PROC_SEQ DESC
+    </select>
+
+    <resultMap id="RelatedCsMap" type="IntegratedCsDetailResponse">
+        <id column="CCN_NO" property="ccnNo"/>
+        <result column="CCN_PRGS_STAT_NM" property="ccnPrgsStatNm"/>
+        <result column="ACCP_CONT" property="accpCont"/>
+        <result column="CNSL_TYP_TEXT" property="cnslTypText"/>
+        <collection property="integrateProcInfo" ofType="CsCcnProcInfoResponse" columnPrefix="LIST_">
+            <result column="CNSL_PROC_DTM" property="cnslProcDtm"/>
+            <result column="USER_NM" property="userNm"/>
+            <result column="CNSL_PROC_CONT" property="cnslProcCont"/>
+        </collection>
+    </resultMap>
+
+
+    <select id="getRelatedConsultation" parameterType="CsRelatedResponse" resultMap="RelatedCsMap">
+        SELECT /* csCustCnslInfo.getRelatedConsultation */
+               CCN_NO
+             , CCN_PRGS_STAT_NM
+             , ACCP_CONT
+             , (SELECT TC.CNSL_TYP_NM FROM CS_CNSL_TYP_INFO TC WHERE TC.CNSL_TYP_NO = CCTI.CNSL_LRG_TYP_NO) || '>' ||
+               (SELECT TC.CNSL_TYP_NM FROM CS_CNSL_TYP_INFO TC WHERE TC.CNSL_TYP_NO = CCTI.CNSL_MID_TYP_NO) || '>' ||
+               (SELECT TC.CNSL_TYP_NM FROM CS_CNSL_TYP_INFO TC WHERE TC.CNSL_TYP_NO = CCTI.CNSL_SML_TYP_NO) AS CNSL_TYP_TEXT
+             , TO_CHAR(CNSL_PROC_DTM,'YYYY-MM-DD HH24:MI:SS') AS LIST_CNSL_PROC_DTM
+             , (SELECT USER_NM FROM ST_USER_BASE SUB WHERE SUB.USER_ID = TEMP.SYS_REG_ID) AS LIST_USER_NM
+             , CNSL_PROC_CONT AS LIST_CNSL_PROC_CONT
+          FROM (
+                 SELECT CCCI.CCN_NO
+                      , FN_GET_CODENAME('CS005',CCCI.CCN_PRGS_STAT_CD) AS CCN_PRGS_STAT_NM
+                      , CCCI.CNSL_TYP_NO
+                      , CCCI.ACCP_CONT
+                      , CCPI.CNSL_PROC_DTM
+                      , CCPI.SYS_REG_ID
+                      , CCPI.CNSL_PROC_CONT
+                      , CCPI.CNSL_PROC_SEQ
+                   FROM CS_CUST_CNSL_INFO  CCCI
+                      , CS_CCN_PROC_INFO CCPI
+                  WHERE CCCI.CCN_NO = CCPI.CCN_NO
+                    AND CCCI.CCN_NO != #{ccnNo}
+		            AND CCCI.MBR_NO = (SELECT MBR_NO FROM CS_CUST_CNSL_INFO WHERE CCN_NO = #{ccnNo})
+		            AND EXISTS (
+		   			             SELECT *
+		                           FROM CS_CCN_ORD_GOODS_INFO CCOGI
+		                          WHERE 1=1
+                                 <if test='ordNo != null and ordNo != ""'>
+                                    AND ORD_NO= #{ordNo}
+                                 </if>
+                                 <if test='goodsNo != null and goodsNo != ""'>
+		                            AND GOODS_NO= #{goodsNo}
+                                 </if>
+		                            AND CCCI.CCN_NO = CCOGI.CCN_NO
+		            )
+          ) TEMP
+           LEFT OUTER JOIN CS_CNSL_TYP_INFO CCTI
+                        ON TEMP.CNSL_TYP_NO = CCTI.CNSL_TYP_NO
+           ORDER BY CCN_NO DESC , CNSL_PROC_SEQ DESC
+    </select>
+
+    <select id="getDashboardGoodsQnaIngList" resultType="DashboardGoodsQnaIngResponse">
+        <![CDATA[ /* csCustCnslInfo.getDashboardGoodsQnaIngList */
+        SELECT TB.BUY_TYP_CD
+             , TB.BUY_TYP_CD_NM
+             , SUM(TB.FLD_24) AS FST_CNT
+             , SUM(TB.FLD_24_72) AS SEC_CNT
+             , SUM(TB.FLD_72_720) AS THD_CNT
+          FROM (
+                    SELECT '10' AS BUY_TYP_CD
+                         , '직매입' AS BUY_TYP_CD_NM
+                         , 0 AS FLD_24
+                         , 0 AS FLD_24_72
+                         , 0 AS FLD_72_720
+                    UNION ALL
+                    SELECT '20', '위탁판매', 0 , 0, 0
+                    UNION ALL
+                    SELECT TA.BUY_TYP_CD
+                         , TA.BUY_TYP_CD_NM
+                         , CASE WHEN TA.DURRING_HOUR <= 24 THEN 1 END AS FLD_24
+                         , CASE WHEN TA.DURRING_HOUR > 24 AND TA.DURRING_HOUR <= 72 THEN 1 END AS FLD_24_72
+                         , CASE WHEN TA.DURRING_HOUR > 72 AND TA.DURRING_HOUR <= 720 THEN 1 END AS FLD_72_720
+                      FROM (
+                                SELECT CCCI.GOODS_NO
+                                     , PGB.BUY_TYP_CD
+                                     , PGB.BUY_TYP_CD_NM
+                                     , EXTRACT(EPOCH FROM NOW() - ACCP_DTM)/3600 AS DURRING_HOUR
+                                  FROM CS_CUST_CNSL_INFO CCCI
+                                 INNER JOIN (
+                                        SELECT GOODS_NO
+                                             , BUY_TYP_CD
+                                             , FN_GET_CODENAME('PR006', BUY_TYP_CD) AS BUY_TYP_CD_NM
+                                        FROM PR_GOODS_BASE
+                                        ) PGB
+                                    ON CCCI.GOODS_NO = PGB.GOODS_NO
+                                 WHERE ACCP_TYP_CD = '30' /* 접수유형코드(CS003) */
+                                   AND CCN_PRGS_STAT_CD IN ('10','20','30') /* 고객상담진행상태코드(CS005) */
+                                   AND QUOT_DTM IS NOT NULL
+                                   AND ACCP_DTM >= (ACCP_DTM - '1 MONTH'::INTERVAL)
+                           ) TA
+               ) TB
+         GROUP BY TB.BUY_TYP_CD, TB.BUY_TYP_CD_NM
+        ]]>
+    </select>
+
+    <select id="csAllocationMgmtList" parameterType="CsAssignRequest" resultType="CsAssignResponse">
+        <![CDATA[
+        SELECT /* csCustCnslInfo.csAllocationMgmtList */
+               AUTO_DIV_GB_CD
+             , FN_GET_CODENAME('CS023',AUTO_DIV_GB_CD) AS AUTO_DIV_GB_NM
+             , AUTO_DIV_DTL_NO
+             , CASE WHEN AUTO_DIV_GB_CD = '50' THEN (SELECT OB_TYP_NM FROM CS_OB_TYP_CD COTC WHERE COTC.OB_TYP_NO = AUTO_DIV_DTL_NO)
+                    WHEN AUTO_DIV_GB_CD = '20' THEN (SELECT CUST_INQ_TYP_NM FROM CS_CUST_INQ_TYP_CD CCITC WHERE CCITC.CUST_INQ_TYP_CD = AUTO_DIV_DTL_NO)
+                     END AS AUTO_DIV_DTL_NM
+             , COUNT(*) AS NUMOFPEOPLEHANDLING
+             , SUM(DAYCL_QUOT_QTY) - COALESCE(SUM(TODAY_ALLO),0) AS NUMOFALLOTABLECASES
+             , SUM(TOTAL_CNT) AS NUMOFASSIGNMENTS
+             , #{days} * SUM(DAYCL_QUOT_QTY) - SUM(TOTAL_CNT) AS NUMOFUNASSIGNMENTS
+             , SUM(RECEIPT) AS RECEIPT
+             , SUM(INPROGRESS) AS INPROGRESS
+             , SUM(COMPLETE) AS COMPLETE
+             , SUM(ALREADY) AS ALREADY
+          FROM (
+                 SELECT AUTO_DIV_GB_CD
+                      , AUTO_DIV_DTL_NO
+                      , AEMP_ID
+                      , COALESCE(SUM(CNT1),0) AS RECEIPT
+                      , COALESCE(SUM(CNT2),0) AS INPROGRESS
+                      , COALESCE(SUM(CNT3),0) AS COMPLETE
+                      , COALESCE(SUM(CNT4),0) AS ALREADY
+                      , COALESCE(SUM(CNT1),0) +  COALESCE(SUM(CNT2),0) +  COALESCE(SUM(CNT3),0) +  COALESCE(SUM(CNT4),0) AS TOTAL_CNT
+                      , COALESCE(SUM(DAYCL_QUOT_QTY),0)/COUNT(*) AS DAYCL_QUOT_QTY
+                      , COALESCE(SUM(TODAY_ALLO),0) AS TODAY_ALLO
+                   FROM (
+                          SELECT  'N' AS TODAY
+                               ,  ACCP_TYP_CD
+                               ,  PROCMN_ID
+                               ,  OB_TYP_NO
+                               ,  CUST_INQ_LRG_TYP_CD
+                               ,  COUNT(CASE WHEN CCN_PRGS_STAT_CD = '10' THEN 1 END) AS CNT1
+                               ,  COUNT(CASE WHEN CCN_PRGS_STAT_CD = '20' OR CCN_PRGS_STAT_CD = '30' THEN 1 END) AS CNT2
+                               ,  COUNT(CASE WHEN CCN_PRGS_STAT_CD = '40' AND PRE_PROC_YN = 'N' THEN 1 END) AS CNT3
+                               ,  COUNT(CASE WHEN CCN_PRGS_STAT_CD = '40' AND PRE_PROC_YN = 'Y' THEN 1 END) AS CNT4
+                               ,  0 AS TODAY_ALLO
+                            FROM CS_CUST_CNSL_INFO
+                           WHERE QUOT_DTM >= TO_TIMESTAMP(#{startDate}||':59', 'YYYYMMDD HH24:MI:SS')
+                             AND QUOT_DTM <= TO_TIMESTAMP(#{endDate}||':59', 'YYYYMMDD HH24:MI:SS')
+                             AND ACCP_TYP_CD IN ('20','30','50')
+        ]]>
+                             AND CCN_PRGS_STAT_CD IN
+                             <foreach collection="ccnPrgsStatCdList" item="ccnPrgsStatCd" open="(" separator="," close=")">
+                                 #{ccnPrgsStatCd}
+                            </foreach>
+                           GROUP BY ACCP_TYP_CD,PROCMN_ID,OB_TYP_NO,CUST_INQ_LRG_TYP_CD
+                           UNION ALL
+                          SELECT
+                              'Y' AS TODAY
+                               , ACCP_TYP_CD
+                               , PROCMN_ID
+                               , OB_TYP_NO
+                               , CUST_INQ_LRG_TYP_CD
+                               , 0 AS CNT1
+                               , 0 AS CNT2
+                               , 0 AS CNT3
+                               , 0 AS CNT4
+                               , 1 AS TODAY_ALLO
+                            FROM CS_CUST_CNSL_INFO
+                           WHERE QUOT_DTM BETWEEN TO_DATE(TO_CHAR(NOW(),'YYYY-MM-DD'),'YYYY-MM-DD') AND TO_DATE(TO_CHAR(NOW(),'YYYY-MM-DD'),'YYYY-MM-DD') + 1
+                             AND ACCP_TYP_CD IN ('20','30','50')
+                             AND CCN_PRGS_STAT_CD IN
+                             <foreach collection="ccnPrgsStatCdList" item="ccnPrgsStatCd" open="(" separator="," close=")">
+                                 #{ccnPrgsStatCd}
+                             </foreach>
+                           GROUP BY ACCP_TYP_CD,PROCMN_ID,OB_TYP_NO,CUST_INQ_LRG_TYP_CD
+                   )V RIGHT OUTER JOIN CS_AUTO_DIV_AEMP_INFO A
+                                    ON (      A.AEMP_ID = V.PROCMN_ID
+                                          AND (
+                                                 ( A.AUTO_DIV_GB_CD = V.ACCP_TYP_CD AND A.AUTO_DIV_DTL_NO IS NULL)
+                                                     OR ( A.AUTO_DIV_GB_CD = V.ACCP_TYP_CD AND A.AUTO_DIV_DTL_NO = V.CUST_INQ_LRG_TYP_CD)
+                                                     OR ( A.AUTO_DIV_GB_CD = V.ACCP_TYP_CD AND A.AUTO_DIV_DTL_NO = V.OB_TYP_NO )
+                                              )
+                                       )
+                 WHERE 1=1
+                   AND A.AUTO_DIV_GB_CD = #{autoDivGbCd}
+              <if test="autoDivDtlNo != null and autoDivDtlNo != ''">
+                   AND A.AUTO_DIV_DTL_NO = #{autoDivDtlNo}
+              </if>
+              <if test="userId != null and userId != ''">
+                   AND A.AEMP_ID = #{userId}
+              </if>
+                 GROUP BY AUTO_DIV_GB_CD , AUTO_DIV_DTL_NO , AEMP_ID
+          )CT
+        GROUP BY AUTO_DIV_GB_CD , AUTO_DIV_DTL_NO
+    </select>
+
+    <select id="csAllocationDetailMgmtList" parameterType="CsAssignRequest" resultType="CsAssignResponse">
+        <![CDATA[
+        /* csCustCnslInfo.csAllocationDetailMgmtList */
+        WITH CCCIT AS (
+            SELECT *
+            FROM CS_CUST_CNSL_INFO
+            WHERE QUOT_DTM BETWEEN TO_DATE(TO_CHAR(NOW(),'YYYY-MM-DD'),'YYYY-MM-DD') AND TO_DATE(TO_CHAR(NOW(),'YYYY-MM-DD'),'YYYY-MM-DD') + 1
+              AND CCN_PRGS_STAT_CD IN ('10','20','30')
+              AND ACCP_TYP_CD IN ('20','30','50')
+        )
+        SELECT AUTO_DIV_NO
+             , AUTO_DIV_GB_CD
+             , AUTO_DIV_DTL_NO
+             , AEMP_ID
+             , (SELECT USER_NM FROM ST_USER_BASE SUB WHERE SUB.USER_ID = AEMP_ID) AS AEMP_NM
+             , CASE WHEN AUTO_DIV_PSB_YN = 'Y' THEN  (
+                         SELECT CASE WHEN COUNT(*) <= 0 THEN '대기' ELSE '할당진행' END
+                           FROM CCCIT S1
+                          WHERE A.AEMP_ID = S1.PROCMN_ID
+                            AND (
+                                     ( A.AUTO_DIV_GB_CD = S1.ACCP_TYP_CD AND A.AUTO_DIV_DTL_NO IS NULL)
+                                  OR ( A.AUTO_DIV_GB_CD = S1.ACCP_TYP_CD AND A.AUTO_DIV_DTL_NO = S1.CUST_INQ_LRG_TYP_CD)
+                                  OR ( A.AUTO_DIV_GB_CD = S1.ACCP_TYP_CD AND A.AUTO_DIV_DTL_NO = S1.OB_TYP_NO )
+                                )
+                         )
+                    ELSE '할당중지' END AS STATE
+             , COALESCE(SUM(CNT1),0) +  COALESCE(SUM(CNT2),0) +  COALESCE(SUM(CNT3),0) +  COALESCE(SUM(CNT4),0) AS numOfAssignments
+             , (#{days} * (COALESCE(SUM(DAYCL_QUOT_QTY),0)/COUNT(*))) - (COALESCE(SUM(CNT1),0) +  COALESCE(SUM(CNT2),0) +  COALESCE(SUM(CNT3),0) +  COALESCE(SUM(CNT4),0)) AS numOfUnassignments
+             , COALESCE(SUM(CNT1),0) AS RECEIPT
+             , COALESCE(SUM(CNT2),0) AS INPROGRESS
+             , COALESCE(SUM(CNT3),0) AS COMPLETE
+             , COALESCE(SUM(CNT4),0) AS ALREADY
+          FROM (
+                 SELECT  'N' AS TODAY
+                      ,  ACCP_TYP_CD
+                      ,  PROCMN_ID
+                      ,  OB_TYP_NO
+                      ,  CUST_INQ_LRG_TYP_CD
+                      ,  COUNT(CASE WHEN CCN_PRGS_STAT_CD = '10' THEN 1 END) AS CNT1
+                      ,  COUNT(CASE WHEN CCN_PRGS_STAT_CD = '20' OR CCN_PRGS_STAT_CD = '30' THEN 1 END) AS CNT2
+                      ,  COUNT(CASE WHEN CCN_PRGS_STAT_CD = '40' AND PRE_PROC_YN = 'N' THEN 1 END) AS CNT3
+                      ,  COUNT(CASE WHEN CCN_PRGS_STAT_CD = '40' AND PRE_PROC_YN = 'Y' THEN 1 END) AS CNT4
+                      ,  0 AS TODAY_ALLO
+                   FROM CS_CUST_CNSL_INFO
+                  WHERE QUOT_DTM >= TO_TIMESTAMP(#{startDate}||':59', 'YYYYMMDD HH24:MI:SS')
+                    AND QUOT_DTM <= TO_TIMESTAMP(#{endDate}||':59', 'YYYYMMDD HH24:MI:SS')
+    ]]>
+                    AND ACCP_TYP_CD IN ('20','30','50')
+                    AND CCN_PRGS_STAT_CD IN
+               <foreach collection="ccnPrgsStatCdList" item="ccnPrgsStatCd" open="(" separator="," close=")">
+                        #{ccnPrgsStatCd}
+               </foreach>
+                  GROUP BY ACCP_TYP_CD,PROCMN_ID,OB_TYP_NO,CUST_INQ_LRG_TYP_CD
+             )V RIGHT OUTER JOIN CS_AUTO_DIV_AEMP_INFO A
+                              ON (      A.AEMP_ID = V.PROCMN_ID
+                                    AND (
+                                            ( A.AUTO_DIV_GB_CD = V.ACCP_TYP_CD AND A.AUTO_DIV_DTL_NO IS NULL)
+                                         OR ( A.AUTO_DIV_GB_CD = V.ACCP_TYP_CD AND A.AUTO_DIV_DTL_NO = V.CUST_INQ_LRG_TYP_CD)
+                                         OR ( A.AUTO_DIV_GB_CD = V.ACCP_TYP_CD AND A.AUTO_DIV_DTL_NO = V.OB_TYP_NO )
+                                        )
+                                 )
+        WHERE 1=1
+          AND A.AUTO_DIV_GB_CD = #{subAutoDivGbCd}
+          <if test="subAutoDivDtlNo != null and subAutoDivDtlNo != ''">
+          AND A.AUTO_DIV_DTL_NO = #{subAutoDivDtlNo}
+          </if>
+          <if test="subAutoDivDtlNo == null">
+            AND A.AUTO_DIV_DTL_NO IS NULL
+          </if>
+          <if test="userId != null and userId != ''">
+          AND A.AEMP_ID = #{userId}
+          </if>
+        GROUP BY AUTO_DIV_NO , AUTO_DIV_GB_CD , AUTO_DIV_DTL_NO , AEMP_ID , AUTO_DIV_PSB_YN
+    </select>
+
+
+
+    <sql id="retrieveAllocationSelect">
+        <![CDATA[
+       SELECT CCN_NO
+         FROM CS_CUST_CNSL_INFO
+        WHERE CCN_PRGS_STAT_CD = '10'
+          AND PROCMN_ID = #{aempId}
+          AND QUOT_DTM >= TO_TIMESTAMP(#{startDate}||':59', 'YYYY-MM-DD HH24:MI:SS')
+          AND QUOT_DTM <= TO_TIMESTAMP(#{endDate}||':59', 'YYYY-MM-DD HH24:MI:SS')
+          AND ACCP_TYP_CD = #{autoDivGbCd}
+        ]]>
+    </sql>
+
+    <select id="retrieveObCcnNoSelect" parameterType="CsAssignRetrieveRequest" resultType="java.lang.String">
+        <include refid="retrieveAllocationSelect" />
+          AND OB_TYP_NO = #{autoDivDtlNo}
+    </select>
+
+    <select id="retrieveOneToOneCcnNoSelect" parameterType="CsAssignRetrieveRequest" resultType="java.lang.String">
+        <include refid="retrieveAllocationSelect" />
+          AND CUST_INQ_LRG_TYP_CD = #{autoDivDtlNo}
+    </select>
+
+    <select id="retrieveCcnNoSelect" parameterType="CsAssignRetrieveRequest" resultType="java.lang.String">
+        <include refid="retrieveAllocationSelect" />
+          AND CUST_INQ_LRG_TYP_CD IS NULL
+          AND OB_TYP_NO IS NULL
+    </select>
+
+
+    <sql id="retrieveAllocationUpdate">
+        <![CDATA[
+        UPDATE CS_CUST_CNSL_INFO
+           SET PROCMN_ID = NULL
+             , QUOT_DTM = NULL
+             , SYS_MOD_ID = #{sysModId}
+             , SYS_MOD_DTM = NOW()
+         WHERE CCN_PRGS_STAT_CD = '10'
+           AND PROCMN_ID = #{aempId}
+           AND QUOT_DTM >= TO_TIMESTAMP(#{startDate}||':59', 'YYYY-MM-DD HH24:MI:SS')
+           AND QUOT_DTM <= TO_TIMESTAMP(#{endDate}||':59', 'YYYY-MM-DD HH24:MI:SS')
+           AND ACCP_TYP_CD = #{autoDivGbCd}
+        ]]>
+    </sql>
+
+</mapper>

@@ -1,0 +1,228 @@
+<!--
+* 프로그램명 : 상품 조회 팝업
+* 작 성 일 : 2021.03.02
+* 작 성 자 : 홍혜리
+* 수 정 자 : 홍혜리
+* 버    전 : 1.0
+* 개    요 : 상품 조회 팝업
+* 이    력 : 2021.08.02 단일선택시 적용방식 수정
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-layout}">
+<body>
+<!--Title Area-->
+<th:block layout:fragment="popup-title-area">
+    <th:block layout:insert="~{fragments/popup/popup-title :: popup-title}"
+              th:with="title=${#messages.msg('baseInfoMgmt.label.popup.goodsList.title')}"></th:block>
+</th:block>
+<!--Title Area-->
+
+<!--Search Area-->
+<th:block layout:fragment="popup-search-area">
+    <div class="search search-detail">
+        <form name="goodsGridForm" id="goodsGridForm">
+            <input type="hidden" id="goodsNm"  name="goodsNm"   value="">
+            <input type="hidden" id="goodsNo"  name="goodsNo"   value="">
+            <input type="hidden" id="mdId"     name="mdId"      value="">
+            <input type="hidden" id="entrNo"   name="entrNo"    value="">
+            <input type="hidden" id="brandNo"  name="brandNo"   value="">
+            <input type="hidden" id="stdCtgNo" name="stdCtgNo"  value="">
+            <table class="search-table">
+                    <tr>
+                        <td class="label">
+                            <strong th:text="${#messages.msg('baseInfoMgmt.label.popup.goodsList.goodsRegDtm')}"></strong>
+                        </td>
+                        <td colspan="5">
+                            <div class="input-group">
+                                <div class="picker-group" data-lopicker="basic">
+                                    <input type="text" class="form-control disabled" placeholder="" id="goodsRegStartDtm" name="goodsRegStartDtm" th:readonly="true">
+                                    <span class="input-group-addon">~</span>
+                                    <input type="text" class="form-control disabled" placeholder="" id="goodsRegEndDtm" name="goodsRegEndDtm" th:readonly="true">
+                                    <span class="input-group-addon" id="calenderBtn"><i class="icon-calendar"></i></span>
+                                </div>
+                                <select class="form-control" id="calendarTerm">
+                                    <option value="7" th:selected="true">최근일주일</option>
+                                    <option value="30">최근한달</option>
+                                </select>                            
+                            </div>
+                        </td>
+                    </tr>
+            </tbody>
+          </table>
+            <div class="ch search toggle">
+                <div class="aa">
+                    <a href="javascript:;" class="button inside toggle-button" id="btn_fold_search_table"><span class="text">상세조회</span></a>
+                </div>
+                <table class="search-table fixed toggle-cont">
+                  <colgroup>
+                    <col style="width:100px;">
+                    <col style="">
+                    <col style="width:100px;">
+                    <col style="">
+                    <col style="width:100px;">
+                    <col style="">
+                  </colgroup>
+                  <tbody>
+                    <tr class="test">
+                        <td class="label" th:text="${#messages.msg('baseInfoMgmt.label.popup.goodsList.search.label.mdNm')}"></td>
+                        <td>
+                            <input class="input disabled w60" type="text" id="mdNm" th:readonly="true"/>
+                            <a href="#" class="button small" id="btn_call_md_popup"><i class="icon-sarch"></i></a>
+                            <a href="#" class="button small btn_reset_popup" id="btn_reset_md_popup" resetInputId="mdNm" resetDataId="mdId"><i class="icon-clear"></i></a>
+                        </td>
+                        <td class="label" th:text="${#messages.msg('baseInfoMgmt.label.popup.goodsList.search.label.entrNm')}"></td>
+                        <td>
+                            <input class="input disabled w60" type="text" id="ertrNm" th:readonly="true"/>
+                            <a href="#" class="button small" id="btn_call_entr_popup"><i class="icon-sarch"></i></a>
+                            <a href="#" class="button small btn_reset_popup" id="btn_reset_entr_popup" resetInputId="ertrNm" resetDataId="entrNo"><i class="icon-clear"></i></a>
+                        </td>
+                        <td class="label" th:text="${#messages.msg('baseInfoMgmt.label.popup.goodsList.search.label.brandNm')}"></td>
+                        <td>
+                            <input class="input disabled w60" type="text" id="brandNm" th:readonly="true"/>
+                            <a href="#" class="button small" id="btn_call_brand_popup"><i class="icon-sarch"></i></a>
+                            <a href="#" class="button small btn_reset_popup" id="btn_reset_brand_popup" resetInputId="brandNm" resetDataId="brandNo"><i class="icon-clear"></i></a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label" th:text="${#messages.msg('baseInfoMgmt.label.popup.goodsList.search.label.stdCtgNm')}"></td>
+                        <td>
+                            <input class="input disabled w60" type="text" id="stdCtgNm" th:readonly="true"/>
+                            <a href="#" class="button small" id="btn_call_stdCtg_popup"><i class="icon-sarch"></i></a>
+                            <a href="#" class="button small btn_reset_popup" id="btn_reset_stdCtg_popup" resetInputId="stdCtgNm" resetDataId="stdCtgNo"><i class="icon-clear"></i></a>
+                        </td>
+                        <td class="label" th:text="${#messages.msg('baseInfoMgmt.label.popup.goodsList.search.label.saleStatNm')}"></td>
+                        <td>
+                            <select class="form-control w80" id="saleStatCd" name="saleStatCd">
+                                <th:block th:if="${requestData.argSaleState} == null or ${requestData.argSaleState} == ''">
+                                    <option value="" th:text="${#messages.msg('baseInfoMgmt.label.full')}"></option>
+                                    <option th:each="list : ${codeList.PR005}" th:value="${list.cd}" th:utext="${list.cdNm}"></option>
+                                </th:block>
+                                <th:block th:unless="${requestData.argSaleState} == null or ${requestData.argSaleState} == ''">
+                                    <option value="" th:text="${#messages.msg('baseInfoMgmt.label.full')}"></option>
+                                    <option th:each="list : ${saleStateList}" th:value="${list.value}" th:utext="${list.key}"></option>
+                                </th:block>
+                            </select>
+                        </td>
+                        <td class="label" th:text="${#messages.msg('baseInfoMgmt.label.popup.goodsList.search.label.goodsCompNm')}"></td>
+                        <td>
+                            <select class="form-control w80 selectBox" id="goodsCompCd" name="goodsCompCd">
+                                <th:block th:if="${requestData.goodsCompCd} != null or ${requestData.goodsCompCd} != ''" >
+                                    <option th:each="list : ${codeList.PR001}"
+                                            th:value="${list?.cd}"
+                                            th:utext="${list?.cdNm}"
+                                            th:if="${requestData.goodsCompCd} == ${list?.cd}">
+
+                                    </option>
+                                </th:block>
+                                <th:block th:if="${requestData.goodsCompCd} == null or ${requestData.goodsCompCd} == ''">
+                                    <option value="" th:text="${#messages.msg('baseInfoMgmt.label.full')}"></option>
+                                    <option th:each="list : ${codeList.PR001}"
+                                            th:value="${list?.cd}"
+                                            th:utext="${list?.cdNm}">
+                                    </option>
+                                </th:block>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label" th:text="${#messages.msg('baseInfoMgmt.label.popup.goodsList.search.label.goodsTypNm')}"></td>
+                        <td>
+                            <select class="form-control w80" id="goodsTypCd" name="goodsTypCd">
+                                <th:block th:if="${requestData.argGoodsType} == null or ${requestData.argGoodsType} == ''">
+                                    <option value="" th:text="${#messages.msg('baseInfoMgmt.label.full')}"></option>
+                                    <option th:each="list : ${codeList.PR002}" th:value="${list?.cd}" th:utext="${list?.cdNm}"></option>
+                                </th:block>
+                                <th:block th:unless="${requestData.argGoodsType} == null or ${requestData.argGoodsType} == ''">
+                                    <option th:each="list : ${codeList.PR002}" th:value="${list?.cd}" th:utext="${list?.cdNm}" th:if="${requestData.argGoodsType} == ${list?.cd}"></option>
+                                </th:block>
+                            </select>
+                        </td>
+                        <td class="label" th:text="${#messages.msg('baseInfoMgmt.label.popup.goodsList.search.label.saleMethNm')}"></td>
+                        <td>
+                            <select class="form-control w80 selectBox" id="saleMethCd" name="saleMethCd">
+                                <option value="" th:text="${#messages.msg('baseInfoMgmt.label.full')}"></option>
+                                <option th:each="list : ${codeList.PR003}" th:value="${list?.cd}" th:utext="${list?.cdNm}"></option>
+                            </select>
+                        </td>
+                        <td class="label" th:text="${#messages.msg('baseInfoMgmt.label.popup.goodsList.search.label.buyTypNm')}"></td>
+                        <td>
+                            <select class="form-control w80 selectBox" id="buyTypCd" name="buyTypCd">
+                                <option value="" th:text="${#messages.msg('baseInfoMgmt.label.full')}"></option>
+                                <option th:each="list : ${codeList.PR006}" th:value="${list?.cd}" th:utext="${list?.cdNm}"></option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label" th:text="${#messages.msg('baseInfoMgmt.label.popup.goodsList.search.label.deliProcTypNm')}"></td>
+                        <td>
+                            <select class="form-control w80 selectBox" id="deliProcTypCd" name="deliProcTypCd">
+                                <option value="" th:text="${#messages.msg('baseInfoMgmt.label.full')}"></option>
+                                <option th:each="list : ${codeList.PR008}" th:value="${list?.cd}" th:utext="${list?.cdNm}"></option>
+                            </select>
+                        </td>
+                        <td class="label" th:text="${#messages.msg('baseInfoMgmt.label.popup.goodsList.search.label.option')}"></td>
+                        <td colspan="3">
+                            <select class="form-control" id="searchOption" name="searchOption">
+                                <option value="goodsNm" th:text="${#messages.msg('baseInfoMgmt.label.popup.goodsList.search.label.goodsNm')}"  th:selected="true"></option>
+                                <option value="goodsNo" th:text="${#messages.msg('baseInfoMgmt.label.popup.goodsList.search.label.goodsNo')}"></option>
+                            </select>
+                            <input class="input" type="text" name="searchWord" id="searchWord" maxlength="400"/>
+                        </td>
+                    </tr>
+                  </tbody>
+                </table>
+            </div>
+        </form>
+    </div>
+</th:block>
+<!--Search Area-->
+
+<!--Search Button Area-->
+<th:block layout:fragment="popup-search-button-area">
+    <th:block layout:insert="~{fragments/popup/popup-btn :: popup-search-btn}"/>
+</th:block>
+<!--Search Button Area-->
+
+<!--List Area-->
+<th:block layout:fragment="popup-List-area">
+    <div class="grid">
+        <div class="grid-head" style="overflow: hidden;">
+            <div class="title-area">
+                <h2 class="title" th:text="${#messages.msg('baseInfoMgmt.label.popup.goodsList.grid.title')}"></h2>
+            </div>
+            <div class="option-area">
+                <div class="page-option" grid-id="goodsGrid">
+                </div>
+            </div>
+        </div>
+
+        <div class="grid-body with-head">
+            <div id="goodsGrid" class="rg-root rg-grid" realgrid></div>
+        </div>
+    </div>
+</th:block>
+<!--List Area-->
+
+<!--List Button Area-->
+<th:block layout:fragment="popup-List-button-area">
+    <th:block layout:insert="~{fragments/popup/popup-btn :: popup-List-btn}"/>
+</th:block>
+
+<!-- Additional Script -->
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        var _gridType       = [[${requestData.argSelectType}]];  // 필수값 (선택 구분 1/N)
+    </script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'popup/popup.goodsList.goodsGrid.provider.js?2021030801'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'popup/popup.goodsList.goodsGrid.eventHandler.js?20210802'" ></script>
+
+    <script type="text/javascript">
+        $(function() {
+            goodsGrid.eventhandler.init();
+        });
+    </script>
+</th:block>
+</body>
+</html>

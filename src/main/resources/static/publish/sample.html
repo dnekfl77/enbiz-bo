@@ -1,0 +1,186 @@
+<html lang="ko-KR">
+
+<head>
+  <title>X2COMMERCE</title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+  <link type="text/css" rel="stylesheet" href="../css/reset.css">
+  <link type="text/css" rel="stylesheet" href="../css/layout.css">
+  <link type="text/css" rel="stylesheet" href="../css/common.css">
+  <link type="text/css" rel="stylesheet" href="../css/main.css">
+  <script src="../js/libs/jquery/jquery-3.4.1.min.js"></script>
+  <script src="../js/contents.js"></script>
+</head>
+
+<body onselectstart="return false;">
+  <div id="wrap" name="#top" class="toggle">
+    <!-- header -->
+    <div class="header" id="header">
+      <div class="logo"><a href="#"><img src="img/logo.svg"></a></div>
+      <div class="cont">
+        <div class="util">
+          <div class="snb-toggle"><button class="toggle-button" type="button">SNB펼치기/접기</button></div>
+          <ul class="util-menu">
+            <li><a href="#" class="noti-button user">김지원</a></li>
+            <li><a href="#" class="noti-button time">접속시간 : 09:27:27</a></li>
+            <li><a href="#" class="noti-button logout">로그아웃</a></li>
+          </ul>
+        </div>
+        <!-- gnb -->
+        <nav id="gnb">
+          <ul id="gnbBar">
+            <li class="menu-item">
+              <a class="cell">고객관리</a>
+            </li>
+            <li class="menu-item">
+              <a class="cell">상품관리</a>
+            </li>
+            <li class="menu-item">
+              <a class="cell">전시관리</a>
+            </li>
+            <li class="menu-item">
+              <a class="cell">프로모션관리</a>
+            </li>
+            <li class="menu-item">
+              <a class="cell">주문관리</a>
+            </li>
+            <li class="menu-item">
+              <a class="cell">배송관리</a>
+            </li>
+            <li class="menu-item">
+              <a class="cell">협력사관리</a>
+            </li>
+            <li class="menu-item">
+              <a class="cell">상담관리</a>
+            </li>
+            <li class="menu-item">
+              <a class="cell">정산관리</a>
+            </li>
+            <li class="menu-item">
+              <a class="cell">통계관리</a>
+            </li>
+            <li class="menu-item">
+              <a class="cell">시스템관리</a>
+            </li>
+          </ul>
+        </nav>
+        <!-- //gnb -->
+      </div>
+    </div>
+    <!-- //header -->
+    <div id="container">
+      <!-- snb -->
+      <nav id="snb" class="toggle-cont tabs-area"><!-- 2021-04-27 토글오류변경 -->
+        <ul class="tabs">
+          <li class="active"><a>기본메뉴</a></li>
+          <li><a>마이메뉴</a></li>
+        </ul>
+
+        <div class="tabs-body">
+          <ul class="tab-cont"><!-- 2021-04-27 토글오류변경 -->
+            <li class="title active">
+              <a data="2000">상품관리</a>
+              <ul id="pgcode2000" class="depth2" style="display: block;">
+                <li>
+                  <a href="javascript:void(0)" data-id="sm001" data-link="BOS_PR_0404.html">상품조회</a>
+                </li>
+                <li>
+                  <a href="javascript:void(0)" data-id="sm002" data-link="template2.html">상품등록</a>
+                </li>
+                <li>
+                  <a href="javascript:void(0)" data-id="sm003" data-link="template.html">상품진열순서 </a>
+                </li>
+                <li>
+                  <a href="javascript:void(0)" data-id="sm004" data-link="template2.html">기본 매장분류관리 </a>
+                </li>
+                <li>
+                  <a href="javascript:void(0)" data-id="sm005" data-link="template.html">매장분류(브랜드) </a>
+                </li>
+                <li>
+                  <a href="javascript:void(0)" data-id="sm006" data-link="template2.html">매장분류(삼분류) </a>
+                </li>
+                <li>
+                  <a href="javascript:void(0)" data-id="sm007" data-link="template.html">상품 메모 </a>
+                </li>
+                <li>
+                  <a href="javascript:void(0)" data-id="sm008" data-link="template2.html">상품수정 내역 </a>
+                </li>
+                <li>
+                  <a href="javascript:void(0)" data-id="sm009" data-link="template.html">판매가변경 내역 </a>
+                </li>
+                <li>
+                  <a href="javascript:void(0)" data-id="sm010" data-link="template2.html">상품 휴지통 </a>
+                </li>
+              </ul>
+            </li>
+            <li class="title">
+              <a data="2200">메인/기획전관리</a>
+              <ul id="pgcode2200" class="depth2">
+                <li>
+                  <a href="javascript:void(0)" data-id="sm011" data-link="template2.html">기획전 상품진열순서 </a>
+                </li>
+                <li>
+                  <a href="" target="">프로모션 기획전 </a>
+                </li>
+                <li>
+                  <a href="" target="">프로모션 상품그룹 관리 </a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+          <ul class="tab-cont"><!-- 2021-04-27 토글오류변경 -->
+            <li class="title active">
+              <a data="2000">마이메뉴</a>
+              <ul id="pgcode2000" class="depth2" style="display: block;">
+                <li>
+                  <a href="javascript:void(0)" data-id="sm001" data-link="BOS_PR_0404.html">상품조회</a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </nav>
+      <!-- //snb -->
+      <!-- contents -->
+      <div class="contents">
+        <div class="pages">
+          <div class="cont-tab">
+            <div id="VIEW-TABS">
+              <a href="#" class="item active" id="htmlList">
+                <span>Html List</span>
+                <span class="tab-close">
+                    <i class="icon icon-circle-with-cross"></i>
+                </span>
+              </a>
+            </div>
+          </div>
+          <div class="cont-wrap">
+            <div id="VIEW-PAGE">
+              <iframe src="list.html" width="100%" height="100%" class="active" data-id="htmlList"></iframe>
+            </div>
+            <!-- //iframe -->
+          </div>
+        </div>
+      </div>
+      <!-- //contents -->
+    </div>
+    <!-- //container -->
+    <!-- footer -->
+    <div id="footer">
+      <div class="footer-cont">
+        <div class="left">
+          <span class="bar-span copyright">x2commerce - Web Application Framework © 2021</span>
+        </div>
+      </div>
+    </div>
+    <!-- //footer -->
+  </div>
+  <div class="lo-ui-toast-container top-right" data-toast-container="2"></div>
+
+  <script>
+    tabsBody();
+  </script>
+</body>
+
+</html>

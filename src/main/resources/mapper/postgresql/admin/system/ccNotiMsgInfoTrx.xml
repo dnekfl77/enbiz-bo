@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.system.CcNotiMsgInfoTrxMapper">
+
+    <!--
+	제 목 : 알림메시지 등록
+	작성자 : 박슬기
+	작성일 : 2021.02.25
+	params : CcNotiMsgInfo
+	설 명 : 알림메시지 등록
+	-->
+    <insert id="insertNoticeMessageInfo" parameterType="CcNotiMsgInfo">
+        <selectKey keyProperty="notiMsgSeq" resultType="String" order="BEFORE">
+            SELECT NEXTVAL('cc_noti_msg_info_sq01') AS notiMsgSeq
+        </selectKey>
+        /* CcNotiMsgInfoTrxMapper.saveNtcMsgInfo */
+        INSERT INTO CC_NOTI_MSG_INFO
+        ( NOTI_MSG_SEQ
+            ,SITE_NO
+            ,MSG_GB_CD
+            ,APLY_STR_DT
+            ,APLY_END_DT
+            ,BASE_NOTI_METHOD_CD
+            ,TITLE
+            ,MSG
+            ,USE_YN
+            ,SYS_REG_ID
+            ,SYS_REG_DTM
+            ,SYS_MOD_ID
+            ,SYS_MOD_DTM)
+        VALUES
+        ( #{notiMsgSeq}
+            ,#{siteNo}
+            ,#{msgGbCd}
+            ,replace(#{aplyStrDt}, '-', '')
+            ,replace(#{aplyEndDt},'-', '')
+            ,#{baseNotiMethodCd}
+            ,#{title}
+            ,#{msg}
+            ,#{useYn}
+            ,#{sysRegId}
+            ,now()
+            ,#{sysRegId}
+            ,now()
+        )
+    </insert>
+
+    <!--
+    제 목 :알림 메시지 수정
+    작성자 : 박슬기
+    작성일 : 2021.02.26
+    params : CcNotiMsgInfo
+    설 명 : 알림 메시지 수정
+    -->
+    <update id="updateNoticeMessageInfo" parameterType="CcNotiMsgInfo">
+        UPDATE CC_NOTI_MSG_INFO /* CcNotiMsgInfoTrxMapper.updateNtcMsgInfo */
+            SET APLY_STR_DT   = replace(#{aplyStrDt}, '-', '')
+            , APLY_END_DT   = replace(#{aplyEndDt}, '-', '')
+            , BASE_NOTI_METHOD_CD = #{baseNotiMethodCd}
+            , MSG_GB_CD     = #{msgGbCd}
+            , USE_YN        = #{useYn}
+            , TITLE         = #{title}
+            , MSG           = #{msg}
+            , SYS_MOD_ID 	= #{sysModId}
+            , SYS_MOD_DTM 	= now()
+        WHERE NOTI_MSG_SEQ = #{notiMsgSeq}
+    </update>
+</mapper>
+
+

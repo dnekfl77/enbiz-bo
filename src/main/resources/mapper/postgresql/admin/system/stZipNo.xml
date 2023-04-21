@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enbiz.bo.app.repository.system.StZipNoMapper">
+
+    <sql id="zipNoListSql">
+        WITH TMP1
+        AS
+        (
+        SELECT
+                ZIP_NO_SEQ, ZIP_NO,    CTP_NM,     SIG_NM,
+                HEMD_NM,     ROAD_CD,   ROAD_NM,    BULD_SE_CD,
+                BULD_MNNM,  BULD_SLNO, POS_BUL_NM, EMD_NO,
+                BD_MGT_SN,  LNBR_MNNM, LNBR_SLNO
+        FROM   ST_ZIP_NO
+        WHERE  CTP_NM       = #{ctpNmParam}
+            AND SIG_NM       = #{sigNmParam}
+            AND ROAD_NM   LIKE #{param1}||'%'
+            <if test="param2 != null and param2 != ''">
+            AND  BULD_MNNM LIKE #{param2}||'%'
+            </if>
+            AND USE_YN = 'Y'
+        UNION ALL
+        SELECT
+                ZIP_NO_SEQ, ZIP_NO,    CTP_NM,     SIG_NM,
+                HEMD_NM,     ROAD_CD,   ROAD_NM,    BULD_SE_CD,
+                BULD_MNNM,  BULD_SLNO, POS_BUL_NM, EMD_NO,
+                BD_MGT_SN,  LNBR_MNNM, LNBR_SLNO
+        FROM   ST_ZIP_NO
+        WHERE  CTP_NM       = #{ctpNmParam}
+            AND SIG_NM       = #{sigNmParam}
+            AND POS_BUL_NM LIKE #{param1}||'%'
+            <if test="param2 != null and param2 != ''">
+            AND  #{param2, jdbcType=VARCHAR} IS NULL
+            </if>
+            AND USE_YN = 'Y'
+        UNION ALL
+        SELECT
+                ZIP_NO_SEQ, ZIP_NO,    CTP_NM,     SIG_NM,
+                HEMD_NM,     ROAD_CD,   ROAD_NM,    BULD_SE_CD,
+                BULD_MNNM,  BULD_SLNO, POS_BUL_NM, EMD_NO,
+                BD_MGT_SN,  LNBR_MNNM, LNBR_SLNO
+        FROM   ST_ZIP_NO
+        WHERE   CTP_NM       = #{ctpNmParam}
+            AND SIG_NM       = #{sigNmParam}
+            AND ADM_NM    LIKE #{param1}||'%'
+            <if test="param2 != null and param2 != ''">
+            AND  LNBR_MNNM LIKE #{param2}||'%'
+            </if>
+            AND USE_YN = 'Y'
+        UNION ALL
+        SELECT
+                ZIP_NO_SEQ, ZIP_NO,    CTP_NM,     SIG_NM,
+                HEMD_NM,     ROAD_CD,   ROAD_NM,    BULD_SE_CD,
+                BULD_MNNM,  BULD_SLNO, POS_BUL_NM, EMD_NO,
+                BD_MGT_SN,  LNBR_MNNM, LNBR_SLNO
+        FROM   ST_ZIP_NO
+        WHERE  CTP_NM       = #{ctpNmParam}
+            AND SIG_NM       = #{sigNmParam}
+            AND HEMD_NM   LIKE #{param1}||'%'
+            <if test="param2 != null and param2 != ''">
+            AND  LNBR_MNNM LIKE #{param2}||'%'
+            </if>
+            AND USE_YN = 'Y'
+        UNION ALL
+        SELECT
+                ZIP_NO_SEQ, ZIP_NO,    CTP_NM,     SIG_NM,
+                HEMD_NM,     ROAD_CD,   ROAD_NM,    BULD_SE_CD,
+                BULD_MNNM,  BULD_SLNO, POS_BUL_NM, EMD_NO,
+                BD_MGT_SN,  LNBR_MNNM, LNBR_SLNO
+        FROM   ST_ZIP_NO
+        WHERE  CTP_NM       = #{ctpNmParam}
+            AND   SIG_NM       = #{sigNmParam}
+            AND ADM_NM     LIKE #{param1}||'%'
+            <if test="param2 != null and param2 != ''">
+            AND  POS_BUL_NM LIKE #{param2}||'%'
+            </if>
+            AND USE_YN = 'Y'
+        UNION ALL
+        SELECT
+                ZIP_NO_SEQ, ZIP_NO,    CTP_NM,     SIG_NM,
+                HEMD_NM,     ROAD_CD,   ROAD_NM,    BULD_SE_CD,
+                BULD_MNNM,  BULD_SLNO, POS_BUL_NM, EMD_NO,
+                BD_MGT_SN,  LNBR_MNNM, LNBR_SLNO
+        FROM   ST_ZIP_NO
+        WHERE   CTP_NM       = #{ctpNmParam}
+            AND   SIG_NM       = #{sigNmParam}
+            AND HEMD_NM    LIKE #{param1}||'%'
+            <if test="param2 != null and param2 != ''">
+            AND  POS_BUL_NM LIKE #{param2}||'%'
+            </if>
+            AND USE_YN = 'Y'
+        )
+        SELECT
+                DISTINCT
+                A.ZIP_NO_SEQ,
+                A.ZIP_NO,
+                A.CTP_NM,
+                A.SIG_NM,
+                A.HEMD_NM,
+                A.LNBR_MNNM,
+                A.LNBR_SLNO,
+                A.ROAD_NM,
+                A.BULD_MNNM,
+                A.BULD_SLNO,
+                A.BD_MGT_SN,
+                A.POS_BUL_NM,
+                C.BULD_DTL_NM
+        FROM  TMP1 A,
+                ST_BLDG_ADDR_INFO C
+        WHERE A.BD_MGT_SN    = C.BD_MGT_SN
+        ORDER BY 1
+    </sql>
+
+    <sql id="paginatedBase">
+        LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+    </sql>
+
+    <!--
+	제 목 :우편번호 총 건수 조회
+	작성자 : 이광진
+	작성일 : 2021.02.25
+	params : ZipNoMgmtRequest
+	설 명 :
+	-->
+    <select id="getZipNoListTotalCnt" parameterType="ZipNoMgmtRequest" resultType="java.lang.Integer">
+        SELECT  /* stZipNo.getZipNoListTotalCnt */
+                COUNT(1)
+        FROM (<include refid="zipNoListSql"></include>) AS ST_ZIP_INFO
+    </select>
+
+    <!--
+	제 목 :우편번호 목록 조회
+	작성자 : 이광진
+	작성일 : 2021.02.25
+	params : ZipNoMgmtRequest
+	설 명 : 페이징 처리된 우편번호 목록을 조회
+	-->
+    <select id="getZipNoList" parameterType="ZipNoMgmtRequest" resultType="ZipNoMgmtResponse">
+        /* stZipNo.getZipNoList */
+        <include refid="zipNoListSql"></include>
+        <include refid="paginatedBase"></include>
+    </select>
+
+    <!--
+	제 목 :시도명 목록 조회
+	작성자 : 이광진
+	작성일 : 2021.02.25
+	params : String
+	설 명 :
+	-->
+    <select id="getCtpNmList" resultType="java.lang.String">
+        SELECT CTP_NM /* stZipNo.getCtpNmList */
+          FROM MV_SIDO
+         GROUP BY CTP_NM
+         ORDER BY CTP_NM
+    </select>
+
+    <!--
+	제 목 :시도명 목록 조회
+	작성자 : 이광진
+	작성일 : 2021.02.25
+	params : String
+	설 명 :
+	-->
+    <select id="getSigNmList" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT COALESCE(SIG_NM, CTP_NM) AS SIG_NM /* stZipNo.getCtpNmList */
+          FROM MV_SIDO
+         WHERE CTP_NM = #{ctpNm}
+         ORDER BY SIG_NM
+    </select>
+
+
+    <sql id="zipNoListPopupSql">
+        /*
+            도로명+건물번호 	   월드컵북로 396
+            건물명	           누리꿈스퀘어
+            지역명(동/리)+번지  상암동 1605
+            지역명(동/리)+건물명
+         */
+        WITH TMP1
+        AS
+        (
+           SELECT ZIP_NO_SEQ, ZIP_NO, CTP_NM, SIG_NM,
+                  EMD_NM, ROAD_CD, ROAD_NM, BULD_SE_CD,
+                  BULD_MNNM, BULD_SLNO, POS_BUL_NM, EMD_NO, BD_MGT_SN
+             FROM ST_ZIP_NO
+            WHERE ROAD_NM LIKE #{param1}||'%'
+              AND BULD_MNNM LIKE #{param2}||'%'
+              AND USE_YN = 'Y'
+            UNION ALL
+           SELECT ZIP_NO_SEQ, ZIP_NO, CTP_NM, SIG_NM,
+                  EMD_NM, ROAD_CD, ROAD_NM, BULD_SE_CD,
+                  BULD_MNNM, BULD_SLNO, POS_BUL_NM, EMD_NO, BD_MGT_SN
+             FROM ST_ZIP_NO
+            WHERE POS_BUL_NM LIKE #{param1}||'%'
+              AND #{param2} IS NULL
+              AND USE_YN = 'Y'
+            UNION ALL
+           SELECT ZIP_NO_SEQ, ZIP_NO, CTP_NM, SIG_NM,
+                  EMD_NM, ROAD_CD, ROAD_NM, BULD_SE_CD,
+                  BULD_MNNM, BULD_SLNO, POS_BUL_NM, EMD_NO, BD_MGT_SN
+             FROM ST_ZIP_NO
+            WHERE ADM_NM    LIKE #{param1}||'%' -- 법정동명(고척동)
+              AND LNBR_MNNM LIKE #{param2}||'%' -- 지번본번
+              AND USE_YN = 'Y'
+            UNION ALL
+           SELECT ZIP_NO_SEQ, ZIP_NO, CTP_NM, SIG_NM,
+                  EMD_NM, ROAD_CD, ROAD_NM, BULD_SE_CD,
+                  BULD_MNNM, BULD_SLNO, POS_BUL_NM, EMD_NO, BD_MGT_SN
+             FROM ST_ZIP_NO
+            WHERE HEMD_NM   LIKE #{param1}||'%' -- 행정동명(고척1동)
+              AND LNBR_MNNM LIKE #{param2}||'%' -- 지번본번
+              AND USE_YN = 'Y'
+            UNION ALL
+           SELECT ZIP_NO_SEQ, ZIP_NO, CTP_NM, SIG_NM,
+                  EMD_NM, ROAD_CD, ROAD_NM, BULD_SE_CD,
+                  BULD_MNNM, BULD_SLNO, POS_BUL_NM, EMD_NO, BD_MGT_SN
+             FROM ST_ZIP_NO
+            WHERE ADM_NM     LIKE #{param1}||'%'-- 법정동명(고척동)
+              AND POS_BUL_NM LIKE #{param2}||'%'-- 시군구건물명
+              AND USE_YN = 'Y'
+            UNION ALL
+           SELECT ZIP_NO_SEQ, ZIP_NO, CTP_NM, SIG_NM,
+                  EMD_NM, ROAD_CD, ROAD_NM, BULD_SE_CD,
+                  BULD_MNNM, BULD_SLNO, POS_BUL_NM, EMD_NO, BD_MGT_SN
+            FROM ST_ZIP_NO
+            WHERE HEMD_NM    LIKE #{param1}||'%'-- 행정동명(고척1동)
+              AND POS_BUL_NM LIKE #{param2}||'%'-- 시군구건물명
+              AND USE_YN = 'Y'
+        )
+        SELECT DISTINCT
+               A.ZIP_NO_SEQ,
+               A.ZIP_NO,
+               A.CTP_NM ||' '||   -- 시도명
+               A.SIG_NM ||' '||   -- 시군구명
+               CASE B.EMD_SE WHEN '0' THEN '' || A.EMD_NM ELSE '' END ||' '||
+               A.ROAD_NM ||
+               CASE WHEN A.BULD_SE_CD = '0' THEN ''
+                    WHEN A.BULD_SE_CD = '1' THEN '지하'
+                    WHEN A.BULD_SE_CD = '2' THEN '공중'
+                END         ||' '||
+               A.BULD_MNNM ||
+               CASE A.BULD_SLNO WHEN '0' THEN ' ' ELSE '-' || A.BULD_SLNO END ||
+               CASE WHEN (B.EMD_SE = '0' AND C.COMN_HS_YN = '0') THEN ' '
+                    WHEN (B.EMD_SE = '0' AND C.COMN_HS_YN = '1') THEN CASE COALESCE(A.POS_BUL_NM, '') WHEN '' THEN ' ' ELSE ' ('||A.POS_BUL_NM||')' END
+                    WHEN (B.EMD_SE = '1' AND C.COMN_HS_YN = '0') THEN ' ('||B.EMD_NM||')'
+                    WHEN (B.EMD_SE = '1' AND C.COMN_HS_YN = '1') THEN ' ('||B.EMD_NM|| CASE COALESCE(A.POS_BUL_NM, '') WHEN '' THEN ')'  ELSE ', '||A.POS_BUL_NM||')' END
+                END AS ADDRESS
+          FROM TMP1 A,
+               ST_ROAD_CD B,
+               ST_BLDG_ADDR_INFO C
+         WHERE SUBSTRING(A.ROAD_CD, 1, 5) = B.SIG_CD
+           AND SUBSTRING(A.ROAD_CD, 6,12) = B.ROAD_NO
+           AND A.EMD_NO    = B.EMD_NO
+           AND A.BD_MGT_SN = C.BD_MGT_SN
+         ORDER BY ZIP_NO_SEQ
+    </sql>
+
+    <select id="getZipNoPopupList" parameterType="StZipNoPopupRequest" resultType="StZipNoPopupResponse">
+       /* stZipNo.getZipNoPopupList */
+       <include refid="zipNoListPopupSql"/>
+       <include refid="paginatedBase" />
+    </select>
+
+    <select id="getZipNoPopupListCount" parameterType="StZipNoPopupRequest" resultType="java.lang.Integer">
+        SELECT /* stZipNo.getZipNoPopupListCount */
+               COUNT(E.*)
+          FROM (<include refid="zipNoListPopupSql"/>) E
+    </select>
+</mapper>

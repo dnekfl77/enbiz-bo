@@ -1,0 +1,40 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.system.StBbAtchFileMapper">
+
+    <!--
+        제 목 :시스템 공지 첨부파일 시퀀스 가져오기
+        작성자 : 이광진
+        작성일 : 2021.03.10
+        params : String
+        설 명 :
+	-->
+    <select id="getMaxFileSeq" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT /* StBbAtchFileMapper.getMaxFileSeq */
+               COALESCE(MAX(FILE_SEQ), 0)
+          FROM ST_BB_ATCH_FILE
+         WHERE BBC_NO = #{bbcNo}
+    </select>
+
+    <!--
+        제 목 :시스템 공지 첨부파일 리스트 가져오기
+        작성자 : 이광진
+        작성일 : 2021.03.10
+        params : String
+        설 명 :
+	-->
+    <select id="getStBbAtchFileList" parameterType="java.lang.String" resultType="SystemNoticeAttachFileResponse">
+        SELECT  /* StBbAtchFileMapper.getStBbAtchFileList */
+                BBC_NO,
+                FILE_SEQ,
+                ATCH_FILE_ROUTE_NM,
+                ATCH_FILE_NM,
+                SYS_REG_ID,
+                SYS_REG_DTM,
+                SYS_MOD_ID,
+                SYS_MOD_DTM,
+                ATCH_FILE_DNLD_CNT
+        FROM ST_BB_ATCH_FILE
+        WHERE BBC_NO = #{bbcNo}
+    </select>
+</mapper>

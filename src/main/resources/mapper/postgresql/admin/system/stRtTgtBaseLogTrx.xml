@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.system.StRtTgtBaseLogTrxMapper">
+	<insert id="insertStRtTgtBaseLog" parameterType="StRtTgtBaseLog">
+		INSERT INTO ST_RT_TGT_BASE_LOG ( /* stRtTgtBaseLog.insertStRtTgtBaseLog */
+			   USER_ID
+			 , RT_TGT_SEQ
+			 , WORK_DTM
+			 , RT_GRP_NO
+			 , CALL_URL
+			 , PRMT_INFO
+			 , IP_ADDR
+			 , SYS_REG_ID
+			 , SYS_REG_DTM
+		) VALUES (
+			   #{userId}
+			 , COALESCE(#{rtTgtSeq},'0', #{rtTgtSeq})
+			 , now()
+			 , #{rtGrpNo}
+			 , #{callUrl}
+			 , #{prmtInfo}
+			 , #{ipAddr}
+			 , #{sysRegId}
+			 , now()
+		)
+	</insert>
+</mapper>
+
+

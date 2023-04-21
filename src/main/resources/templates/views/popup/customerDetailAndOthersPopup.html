@@ -1,0 +1,392 @@
+<!--
+* 프로그램명 : 회원 상세, 연락처, 혜택현황, 배송지, 마케팅서비스동의, 탈퇴, 환불계좌
+* 작 성 일 : 2021.02.10
+* 작 성 자 : 박남훈
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 회원 상세, 연락처, 혜택현황, 배송지, 마케팅서비스동의, 탈퇴, 환불계좌 관리를 하는 UI
+* 이    력 :
+-->
+<html lang="ko-KR"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-update-layout}">
+
+<head>
+    <title>회원상세</title>
+</head>
+<body>
+<th:block layout:fragment="header-area">
+<div class="header">
+    <h1 class="title" th:text="${#messages.msg('customerMgmt.customerDetailAndOthersPopup.title')}">회원 상세</h1>
+    <div class="button-group">
+<!--        <a href="#" class="button"><span class="text" th:text="${#messages.msg('customerMgmt.customerDetailAndOthersPopup.button.mbrWdra')}">회원탈퇴</span></a>-->
+        <a href="#" class="button" id="btnRefundAccountPopup">
+            <span class="text" th:text="${#messages.msg('customerMgmt.customerDetailAndOthersPopup.button.rfdActnInfo')}">환불계좌</span>
+        </a>
+    </div>
+</div>
+</th:block>
+<th:block layout:fragment="data-area">
+<form name="customerDetailForm" id="customerDetailForm">
+    <input type="hidden" class="input" name="mbrNo" id="mbrNo" th:value="${customerDetail.mbrNo}">
+
+<div class="data-cont">
+    <!-- 기본정보 -->
+    <div class="data">
+        <!-- data-head -->
+        <div class="data-head">
+            <div class="left"><span class="title" th:text="${#messages.msg('customerMgmt.customerDetailAndOthersPopup.baseInfo.title')}">기본정보</span></div>
+        </div>
+        <!-- //data-head -->
+
+        <!-- data-body -->
+        <div class="data-body">
+            <table class="data-table fixed">
+                <colgroup>
+                    <col width="120">
+                    <col>
+                    <col width="120">
+                    <col>
+                    <col width="120">
+                    <col>
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td class="label" th:text="${#messages.msg('customerMgmt.customerDetailAndOthersPopup.baseInfo.label.mbrNo')}">회원번호</td>
+                    <td th:text="${customerDetail.mbrNo}"></td>
+                    <td class="label" th:text="${#messages.msg('customerMgmt.customerDetailAndOthersPopup.baseInfo.label.mbrMgrNm')}">회원관리구분</td>
+                    <td th:text="${customerDetail.mbrMgrNm}"></td>
+                    <td class="label" th:text="${#messages.msg('customerMgmt.customerDetailAndOthersPopup.baseInfo.label.mbrGradeNm')}">회원등급</td>
+                    <td><th:block th:text="${customerDetail.mbrGradeNm}">골드</th:block>
+                        <a href="#" class="button inside fl-right" id="btnCustomerGradeHistoryPopup">
+                            <span class="text" th:text="${#messages.msg('customerMgmt.customerDetailAndOthersPopup.button.gradeView')}">등급이력보기</span>
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label" th:text="${#messages.msg('customerMgmt.customerDetailAndOthersPopup.baseInfo.label.loginId')}">회원ID</td>
+                    <td th:text="${customerDetail.loginId}"></td>
+                    <td class="label"><strong th:text="${#messages.msg('customerMgmt.customerDetailAndOthersPopup.baseInfo.label.mbrNm')}">회원/법인명</strong></td>
+                    <td>
+                        <input type="text" class="input" name="mbrNm" id="mbrNm" th:value="${customerDetail.mbrNm}">
+                    </td>
+                    <td class="label" th:text="${#messages.msg('customerMgmt.customerDetailAndOthersPopup.baseInfo.label.mbrStatNm')}">회원상태</td>
+                    <td th:text="${customerDetail.mbrStatNm}"></td>
+                </tr>
+                <tr>
+                    <td class="label" th:text="${#messages.msg('customerMgmt.customerDetailAndOthersPopup.baseInfo.label.nafrGbNm')}">내외국인구분</td>
+                    <td th:text="${customerDetail.nafrGbNm}"></td>
+                    <td class="label" th:text="${#messages.msg('customerMgmt.customerDetailAndOthersPopup.baseInfo.label.sexGbNm')}">성별</td>
+                    <td th:text="${customerDetail.sexGbNm}"></td>
+                    <td class="label" th:text="${#messages.msg('customerMgmt.customerDetailAndOthersPopup.baseInfo.label.brth')}">생년월일</td>
+                    <td th:text="${customerDetail.brth}"> </td>
+                </tr>
+                <tr>
+                    <td class="label" th:text="${#messages.msg('customerMgmt.customerDetailAndOthersPopup.baseInfo.label.adlCertiYn')}">성인인증여부</td>
+                    <td th:text="${customerDetail.adlCertiYn}"></td>
+                    <td class="label" th:text="${#messages.msg('customerMgmt.customerDetailAndOthersPopup.baseInfo.label.adlCertiDtm')}">성인인증일시</td>
+                    <td th:text="${customerDetail.adlCertiDtm}"></td>
+                    <td class="label" th:text="${#messages.msg('customerMgmt.customerDetailAndOthersPopup.baseInfo.label.mbrWdraCausNm')}">회원탈퇴사유</td>
+                    <td th:text="${customerDetail.mbrWdraCausNm}">
+<!--                        <select class="form-control w20">-->
+<!--                            <option value=""-->
+<!--                                    th:text="${#messages.msg('customerMgmt.customerDetailAndOthersPopup.option.full')}">-->
+<!--                            </option>-->
+<!--                            <option th:each="list : ${codeList.ME006}"-->
+<!--                                    th:value="${list.cd}" th:utext="${list.cdNm}"-->
+<!--                                    th:selected="${list.cd} == ${customerDetail.mbrWdraCausCd}"></option>-->
+<!--                        </select>-->
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label" th:text="${#messages.msg('customerMgmt.customerDetailAndOthersPopup.baseInfo.label.mbrJoinDtm')}">회원가입일시</td>
+                        <td th:text="${customerDetail.mbrJoinDtm}"></td>
+                    <td class="label" th:text="${#messages.msg('customerMgmt.customerDetailAndOthersPopup.baseInfo.label.lstLoginDtm')}">회원최종접속일시</td>
+                        <td th:text="${customerDetail.lstLoginDtm}"></td>
+                    <td class="label" th:text="${#messages.msg('customerMgmt.customerDetailAndOthersPopup.baseInfo.label.orderYn')}">회원주문여부</td>
+                    <th:block th:if="${customerDetail.frstOrdDtm != null and customerDetail.frstOrdDtm != ''}">
+                        <td>Y</td>
+                    </th:block>
+                    <th:block th:unless="${customerDetail.frstOrdDtm != null and customerDetail.frstOrdDtm != ''}">
+                        <td>N</td>
+                    </th:block>
+                </tr>
+                <tr>
+                    <td class="label" th:text="${#messages.msg('customerMgmt.customerDetailAndOthersPopup.baseInfo.label.empNo')}">사원번호</td>
+                    <td th:text="${customerDetail.empNo}"></td>
+                    <td class="label" th:text="${#messages.msg('customerMgmt.customerDetailAndOthersPopup.baseInfo.label.deptNm')}">부서명</td>
+                    <td th:text="${customerDetail.deptNm}"></td>
+                    <td class="label" th:text="${#messages.msg('customerMgmt.customerDetailAndOthersPopup.baseInfo.label.entcmpDt')}">입사일자</td>
+                    <td th:text="${customerDetail.entcmpDt}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <!-- //data-body -->
+    </div>
+    <!-- //기본정보 -->
+
+    <!-- 회원 연락처 정보 -->
+    <div class="data">
+        <div class="data-head">
+            <div class="left"><span class="title" th:text="${#messages.msg('customerMgmt.customerDetailAndOthersPopup.contactInfo.title')}">회원 연락처 정보</span></div>
+        </div>
+        <!-- //data-head -->
+
+        <div class="data-body">
+            <table class="data-table">
+                <colgroup>
+                    <col width="120">
+                    <col>
+                    <col width="120">
+                    <col>
+                    <col width="120">
+                    <col>
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td class="label" th:text="${#messages.msg('customerMgmt.customerDetailAndOthersPopup.contactInfo.label.telNo')}">전화번호</td>
+                    <td>
+                        <div class="input-group">
+                            <input type="text" class="input w20" maxlength="4"
+                                   oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                                   name="telRgnNo" id="telRgnNo"
+                                   th:value="${customerDetail.telRgnNo}">
+                            <input type="text" class="input w20" maxlength="4"
+                                   oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                                   name="telTxnoNo" id="telTxnoNo"
+                                   th:value="${customerDetail.telTxnoNo}">
+                            <input type="text" class="input w20" maxlength="4"
+                                   oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                                   name="telEndNo" id="telEndNo"
+                                   th:value="${customerDetail.telEndNo}">
+                        </div>
+                    </td>
+                    <td class="label" th:text="${#messages.msg('customerMgmt.customerDetailAndOthersPopup.contactInfo.label.cellNo')}">휴대폰번호</td>
+                    <td>
+                        <div class="input-group" id="cellNo"
+                             th:data-msg-empty="#{customerMgmt.customerDetailAndOthersPopup.valid.empty.cellNo}">
+                            <select class="form-control w20" name="cellSctNo" id="cellSctNo"
+                                    th:data-msg-empty="#{customerMgmt.customerDetailAndOthersPopup.valid.empty.cellSctNo}">
+                                <option value=""
+                                        th:text="${#messages.msg('customerMgmt.customerDetailAndOthersPopup.option.full')}">
+                                </option>
+                                <option th:each="list : ${codeList.CM013}"
+                                        th:value="${list.cd}" th:utext="${list.cdNm}"
+                                        th:selected="${list.cd} == ${customerDetail.cellSctNo}"></option>
+                            </select>
+                            <input type="text" class="input w20" maxlength="4"
+                                   oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                                   name="cellTxnoNo" id="cellTxnoNo"
+                                   th:value="${customerDetail.cellTxnoNo}"
+                                   th:data-msg-empty="#{customerMgmt.customerDetailAndOthersPopup.valid.empty.cellTxnoNo}">
+                            <input type="text" class="input w20" maxlength="4"
+                                   oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                                   name="cellEndNo" id="cellEndNo"
+                                   th:value="${customerDetail.cellEndNo}"
+                                   th:data-msg-empty="#{customerMgmt.customerDetailAndOthersPopup.valid.empty.cellEndNo}">
+                        </div>
+                    </td>
+                    <td class="label" th:text="${#messages.msg('customerMgmt.customerDetailAndOthersPopup.contactInfo.label.emailAddr')}">이메일주소</td>
+                    <td>
+                        <div class="input-group">
+                            <input type="hidden" class="input w30" name="emailAddr" id="emailAddr">
+                            <input type="text" class="input w30" name="emailId" id="emailId" maxlength="50"
+                                   th:value="${customerDetail.emailId}">
+                            <em>@</em>
+                            <input type="text" class="input w30" name="emailDomain" id="emailDomain" maxlength="150"
+                                   th:value="${customerDetail.emailDomain}">
+                            <select class="form-control w30" name="domainSelect" id="domainSelect">
+                                <option value=""
+                                        th:text="${#messages.msg('customerMgmt.customerDetailAndOthersPopup.option.mail')}">
+                                </option>
+                                <option th:each="list : ${codeList.CM012}"
+                                        th:value="${list.cd}" th:utext="${list.cdNm}"
+                                        th:selected="${list.cd} == ${customerDetail.emailDomain}"></option>
+                            </select>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label" th:text="${#messages.msg('customerMgmt.customerDetailAndOthersPopup.contactInfo.label.address')}">회원주소</td>
+                    <td colspan="5">
+                        <div class="input-group address w90" id="zipNoAddrDtl">
+                            <input type="hidden" class="input disabled" disabled=""
+                                   name="zipNoSeq" id="zipNoSeq"
+                                   th:value="${customerDetail.zipNoSeq}"
+                                   th:data-msg-empty="#{customerMgmt.customerDetailAndOthersPopup.valid.empty.zipNoSeq}">
+                            <a href="#" class="button small" id="btnAddressSearch">
+                                <span class="text w10"
+                                      th:text="${#messages.msg('customerMgmt.customerDetailAndOthersPopup.button.addressSearch')}">
+                                </span>
+                            </a>
+                            <input type="text" class="input disabled w10" disabled=""
+                                   name="zipNo" id="zipNo"
+                                   th:value="${customerDetail.zipNo}"
+                                   th:data-msg-empty="#{customerMgmt.customerDetailAndOthersPopup.valid.empty.zipNo}">
+                            <input type="text" class="input disabled w30" disabled=""
+                                   name="zipAddr" id="zipAddr"
+                                   th:value="${customerDetail.zipAddr}"
+                                   th:data-msg-empty="#{customerMgmt.customerDetailAndOthersPopup.valid.empty.zipAddr}">
+                            <input type="text" class="input w40"
+                                   name="dtlAddr" id="dtlAddr"
+                                   th:value="${customerDetail.dtlAddr}"
+                                   th:data-msg-empty="#{customerMgmt.customerDetailAndOthersPopup.valid.empty.dtlAddr}">
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <!-- //data-body -->
+    </div>
+    <!-- //회원 연락처 정보 -->
+
+    <!-- 회원 혜택 현황 -->
+    <div class="data">
+        <div class="data-head">
+            <div class="left"><span class="title" th:text="${#messages.msg('customerMgmt.customerDetailAndOthersPopup.benefits.title')}">회원 혜택 현황</span></div>
+        </div>
+        <!-- //data-head -->
+
+        <div class="data-body">
+            <table class="data-table fixed">
+                <colgroup>
+                    <col width="120">
+                    <col>
+                    <col width="120">
+                    <col>
+                    <col width="120">
+                    <col>
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td class="label"
+                        th:text="${#messages.msg('customerMgmt.customerDetailAndOthersPopup.benefits.label.actPoint')}">활동포인트</td>
+                    <td>-<a href="#" class="button inside fl-right" name="btnActPoint" id="btnActPoint">
+                        <span class="text" th:text="${#messages.msg('customerMgmt.customerDetailAndOthersPopup.button.preview')}">조회</span>
+                    </a></td>
+                    <td class="label"
+                        th:text="${#messages.msg('customerMgmt.customerDetailAndOthersPopup.benefits.label.coupon')}">쿠폰</td>
+                    <td>-<a href="#" class="button inside fl-right" name="btnCoupon" id="btnCoupon">
+                        <span class="text"
+                              th:text="${#messages.msg('customerMgmt.customerDetailAndOthersPopup.button.preview')}">조회</span>
+                    </a></td>
+                    <td class="label"
+                        th:text="${#messages.msg('customerMgmt.customerDetailAndOthersPopup.benefits.label.freeShippingVoucher')}">무료배송권</td>
+                    <td>-<a href="#" class="button inside fl-right" name="btnFreeShippingVoucher" id="btnFreeShippingVoucher">
+                        <span class="text"
+                              th:text="${#messages.msg('customerMgmt.customerDetailAndOthersPopup.button.preview')}">조회</span>
+                    </a></td>
+                </tr>
+                <tr>
+                    <td class="label"
+                        th:text="${#messages.msg('customerMgmt.customerDetailAndOthersPopup.benefits.label.savings')}">적립금</td>
+                    <td>-<a href="#" class="button inside fl-right" name="btnSavings" id="btnSavings">
+                        <span class="text"
+                              th:text="${#messages.msg('customerMgmt.customerDetailAndOthersPopup.button.preview')}">조회</span>
+                    </a></td>
+                    <td class="label"
+                        th:text="${#messages.msg('customerMgmt.customerDetailAndOthersPopup.benefits.label.deposit')}">예치금</td>
+                    <td>-<a href="#" class="button inside fl-right" name="btnDeposit" id="btnDeposit">
+                        <span class="text"
+                              th:text="${#messages.msg('customerMgmt.customerDetailAndOthersPopup.button.preview')}">조회</span>
+                    </a></td>
+                    <td class="label"></td>
+                    <td></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <!-- //data-body -->
+    </div>
+    <!-- //회원 혜택 현황 -->
+</div>
+</form>
+<!-- grid-cont 배송지정보, 마케팅/서비스동의정보 -->
+<div class="grid-cont">
+    <!-- 배송지정보 -->
+    <form name="customerDeliveryGridForm" id="customerDeliveryGridForm">
+    <div class="grid">
+        <div class="grid-head">
+            <div class="title-area">
+                <h2 class="title" th:text="${#messages.msg('customerMgmt.customerDetailAndOthersPopup.deliveryInfo.title')}">배송지정보</h2>
+            </div>
+            <div class="option-area">
+                <div class="edit-option">
+                    <div class="button-group">
+                        <a href="#" class="button inside" id="btn_customerDeliveryGrid_add">
+                            <span class="text" th:text="${#messages.msg('customerMgmt.customerDetailAndOthersPopup.grid.button.add')}" />
+                        </a>
+                        <a href="#" class="button inside" id="btn_customerDeliveryGrid_remove">
+                            <span class="text" th:text="${#messages.msg('customerMgmt.customerDetailAndOthersPopup.grid.button.remove')}" />
+                        </a>
+                        <a href="#" class="button inside" id="btn_customerDeliveryGrid_reset">
+                            <span class="text" th:text="${#messages.msg('customerMgmt.customerDetailAndOthersPopup.grid.button.reset')}" />
+                        </a>
+                    </div>
+                </div>
+                <div class="page-option" grid-id="customerDeliveryGrid"></div>
+            </div>
+        </div>
+        <div class="grid-body with-head" id="customerDeliveryGrid" realgrid></div>
+    </div>
+    </form>
+    <!-- //배송지정보 -->
+
+    <!-- 마케팅/서비스동의정보 -->
+    <form name="customerTermsAgreeGridForm" id="customerTermsAgreeGridForm">
+    <div class="grid">
+        <div class="grid-head">
+            <div class="title-area">
+                <h2 class="title" th:text="${#messages.msg('customerMgmt.customerDetailAndOthersPopup.termsInfo.title')}">마케팅/서비스 동의 정보</h2>
+            </div>
+            <div class="option-area">
+                <div class="page-option" grid-id="customerTermsAgreeGrid"></div>
+            </div>
+        </div>
+        <div class="grid-body with-head" id="customerTermsAgreeGrid" realgrid></div>
+    </div>
+    </form>
+    <!-- //마케팅/서비스동의정보 -->
+</div>
+<!-- //grid-cont -->
+</th:block>
+
+<th:block layout:fragment="button-area">
+<div class="button-group search-btn">
+    <a href="#" class="button white" id="btnCancel"><span class="text" th:text="${#messages.msg('customerMgmt.customerDetailAndOthersPopup.button.cancel')}">취소</span></a>
+    <a href="#" class="button dark" id="btnSave"><span class="text" th:text="${#messages.msg('customerMgmt.customerDetailAndOthersPopup.button.save')}">저장</span></a>
+</div>
+</th:block>
+
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+    /*<![CDATA[*/
+        var _baseUrl 		        = [[${@domainConfig.getProperty('baseUrl')}]];
+        var _jsUrl 			        = [[${@domainConfig.getProperty('jsUrl')}]];
+        var _currentLocaleLanguage  = [[${@environmentConfig.getProperty('defaultLocale')}]];
+        var _parameterMbrNo          = [[${customerDetail.mbrNo}]];
+
+        var _etMbrDlvpInfoList = [[${etMbrDlvpInfoList}]];
+        var _etMbrSvcAgrInfoList = [[${etMbrSvcAgrInfoList}]];
+    /*]]>*/
+    </script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'popup/customerDetailAndOthersPopup.eventHandler.js'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'popup/customerDeliveryGrid.provider.js'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'popup/customerDeliveryGrid.eventHandler.js'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'popup/customerTermsAgreeGrid.provider.js'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'popup/customerTermsAgreeGrid.eventHandler.js'" ></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            customerDetailAndOthersPopup.eventhandler.initialize();
+            customerDeliveryGrid.eventhandler.initialize();
+            customerTermsAgreeGrid.eventhandler.initialize();
+        });
+    </script>
+</th:block>
+
+</body>
+</html>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.customerservice.CsCcnProcInfoTrxMapper">
+
+    <insert id="insertCsCcnProcInfo" parameterType="CsCcnProcInfo" useGeneratedKeys="false">
+        INSERT INTO CS_CCN_PROC_INFO(
+                    CCN_NO
+                  , CNSL_PROC_SEQ
+                  , OB_PROC_TYP_CD
+                  , CNSL_PROC_DTM
+                  , CNSL_PROC_CONT
+                  , SYS_REG_ID
+                  , SYS_REG_DTM
+                  , SYS_MOD_ID
+                  , SYS_MOD_DTM)
+            VALUES (
+                    #{ccnNo}
+                  , (SELECT COALESCE(CAST(MAX(CNSL_PROC_SEQ) AS INTEGER), 0) + 1 FROM CS_CCN_PROC_INFO WHERE CCN_NO = #{ccnNo})
+                  , #{obProcTypCd}
+                  , NOW()
+                  , #{cnslProcCont}
+                  , #{sysRegId}
+                  , NOW()
+                  , #{sysModId}
+                  , NOW()
+                  )
+
+    </insert>
+</mapper>

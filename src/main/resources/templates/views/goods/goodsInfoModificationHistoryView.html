@@ -1,0 +1,135 @@
+<!--
+* 프로그램명 : 상품정보수정이력조회
+* 작 성 일 : 2021.06.25
+* 작 성 자 : 홍혜리
+* 수 정 자 : 홍혜리
+* 버    전 : 1.0
+* 개    요 : 상품관리 > 싱픔정보관리 > 상품정보수정이력조회
+* 이    력 : 2021.09.24 프레임워크 이전
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/page-realgrid-layout}">
+<body>
+<th:block layout:fragment="page-title-area">
+    <!-- title area -->
+    <div class="page-title">
+        <div class="left">
+            <h1><th:block th:text="${#messages.msg('goodsInfoModificationHistory.title')}"/></h1>
+        </div>
+    </div>
+    <!--// title area -->
+</th:block>
+<th:block layout:fragment="page-contents">
+    <!-- content area -->
+    <div class="page-fixed with-title">
+        <div class="search-cont">
+            <!-- search -->
+            <div class="search">
+                <form name="modificationHistoryForm" id="modificationHistoryForm">
+                    <table class="search-table">
+                        <colgroup>
+                            <col width="120">
+                            <col>
+                            <col width="120">
+                            <col>
+                            <col width="120">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                            <tr>
+                                <!-- 수정기간 -->
+                                <td class="label"><strong th:text="${#messages.msg('goodsInfoModificationHistory.search.label.modDtm')}"></strong></td>
+                                <td>
+                                    <div class="picker-group">
+                                        <input type="text" class="form-control" id="modStartDtm" name="modStartDtm" readonly>
+                                        <span class="input-group-addon">~</span>
+                                        <input type="text" class="form-control" id="modEndDtm" name="modEndDtm" readonly>
+                                        <span class="input-group-addon" id="btn_call_calender"><i class="icon-calendar"></i></span>
+                                    </div>
+                                </td>
+                                <!-- 수정항목 -->
+                                <td class="label" th:text="${#messages.msg('goodsInfoModificationHistory.search.label.goodsModItemCd')}"></td>
+                                <td>
+                                    <select class="form-control w40" id="goodsModItemCd" name="goodsModItemCd">
+                                        <option value="" th:text="${#messages.msg('adminCommon.entirety')}" />
+                                        <option th:each="list : ${codeList.PR038}" th:value="${list?.cd}" th:utext="${list?.cdNm}" />
+                                    </select>
+                                </td>
+                                <!-- 상품번호/명 -->
+                                <td class="label" th:text="${#messages.msg('goodsInfoModificationHistory.search.label.goodsNoNm')}"></td>
+                                <td>
+                                    <input type="text" class="input w20" id="goodsNo" name="goodsNo" maxlength="15">
+                                    <input type="text" class="input w50 mr5" id="goodsNm" name="goodsNm" maxlength="400">
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+            <!-- //search -->
+
+            <!-- search-btn -->
+            <div class="button-group search-btn">
+                <a href="#" class="button white" id="btn_reset"><span class="text" th:text="${#messages.msg('adminCommon.button.init')}"></span></a>
+                <a href="#" class="button dark" id="btn_search"><span class="text" th:text="${#messages.msg('adminCommon.button.search')}"></span></a>
+            </div>
+            <!-- //search-btn -->
+
+            <!-- grid -->
+            <!-- 상품정보수정이력 -->
+            <div class="grid-cont">
+                <div class="grid" style="overflow: hidden;">
+                    <div class="grid-head">
+                        <div class="title-area">
+                            <h2 class="title" th:text="${#messages.msg('goodsInfoModificationHistory.histGrid.title')}"></h2>
+                        </div>
+                        <div class="option-area">
+                            <div class="edit-option"></div>
+                            <div class="page-option" grid-id="modificationHistoryListGrid"/>
+                        </div>
+                    </div>
+                    <div class="grid-body with-head vh5">
+                        <div id="modificationHistoryListGrid" realgrid class="vh0"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- 수정상품정보 -->
+            <div class="grid-cont mt20">
+                <div class="grid">
+                    <div class="grid-head">
+                        <div class="title-area">
+                            <h2 class="title" th:text="${#messages.msg('goodsInfoModificationHistory.infoGrid.title')}"></h2>
+                        </div>
+                        <div class="option-area">
+                            <div class="edit-option"></div>
+                            <div class="page-option" grid-id="modifiedGoodsInfoListGrid" />
+                        </div>
+                    </div>
+                    <div class="grid-body with-head vh5">
+                        <div id="modifiedGoodsInfoListGrid" realgrid class="vh0"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- //grid -->
+        </div>
+    </div>
+    <!--// content area -->
+</th:block>
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+    </script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/modificationHistoryListGrid.eventHandler.js?20210924'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/modificationHistoryListGrid.provider.js?20210924'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/modifiedGoodsInfoListGrid.eventHandler.js?20210924'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/modifiedGoodsInfoListGrid.provider.js?20210924'" ></script>
+    <script type="text/javascript">
+        $(function(){
+            modificationHistoryListGrid.eventhandler.init();
+            modifiedGoodsInfoListGrid.eventhandler.init();
+        });
+    </script>
+</th:block>
+</body>
+</html>

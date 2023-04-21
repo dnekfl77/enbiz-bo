@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.main.MainMapper">
+
+    <!--
+	제 목 : 메인 TOP 메뉴 리스트 조회
+	작성자 : 박남훈
+	작성일 : 2021.02.10
+	params :
+	result : TopMenuResponseDto
+	설 명 : 메인 TOP 메뉴 리스트 조회
+	-->
+    <select id="getTopMenuList" parameterType="com.enbiz.bo.app.dto.request.login.LoginRequest" resultType="TopMenuResponse">
+        SELECT /* main.getTopMenuList */
+               DISTINCT V.RT_TGT_SEQ
+             , V.SYS_GB_CD
+             , V.RT_TGT_NM
+             , V.SORT_SEQ
+          FROM (
+                SELECT
+                       B.RT_TGT_SEQ
+                     , B.SYS_GB_CD
+                     , B.RT_TGT_NM
+                     , B.SORT_SEQ
+                  FROM ST_RT_TGT_BASE A    /* 권한대상 기본 */
+                     , ST_RT_TGT_BASE B
+                 WHERE A.RT_TGT_SEQ     = B.UPR_RT_TGT_SEQ
+                   AND A.UPR_RT_TGT_SEQ = #{sysGbCd}                       /* argument: 백오피스:11, 고객센터 12 */
+                   AND A.USE_YN         = 'Y'
+                   AND A.SYS_GB_CD      = #{sysGbCd}                       /* argument: 시스템구분 */
+                   AND A.RT_TGT_TYP_CD IN('10','20')                       /* 권한대상유형 메뉴/화면 */
+                   AND A.POPUP_YN      = 'N'
+                   AND B.USE_YN        = 'Y'
+                   AND B.POPUP_YN      = 'N'
+               ) V
+             , ST_RT_INFO S1         /* 권한정보    */
+             , ST_RT_GRP_BASE S2     /* 권한그룹정보 */
+         WHERE 1 = 1
+           AND (  (S1.RT_SUB_GB_CD = '01' AND S1.RT_GRP_NO = #{rtGrpNo} )     /* argument: 권한그룹번호 */
+                OR (S1.RT_SUB_GB_CD = '02' AND S1.RT_GRP_NO = #{loginId}))    /* argument: 사용자아이디 */
+           AND S1.RT_TGT_SEQ = V.RT_TGT_SEQ
+           AND S1.RT_GRP_NO  = S1.RT_GRP_NO
+           AND S1.USE_YN     = 'Y'
+           AND S2.USE_YN     = 'Y'
+           AND TO_CHAR(NOW(), 'YYYYMMDD') BETWEEN S2.APLY_STR_DT AND S2.APLY_END_DT
+         ORDER BY V.SORT_SEQ
+    </select>
+
+    <select id="getLeftMenuList" parameterType="TopMenuRequest" resultType="LeftMenuResponse">
+        WITH RECURSIVE CTE   /* main.getLeftMenuList */
+        AS (
+            SELECT RT_TGT_SEQ
+                 , RT_TGT_NM
+                 , UPR_RT_TGT_SEQ
+                 , SORT_SEQ
+                 , 1 AS LEVEL
+                 , LEAF_MENU_YN
+                 , CALL_URL
+                 , CONCAT('\',TRIM(TO_CHAR(SORT_SEQ,'000'))||RT_TGT_SEQ) AS HIERARCHY
+              FROM ST_RT_TGT_BASE A
+             WHERE USE_YN = 'Y'
+               AND UPR_RT_TGT_SEQ = #{rtTgtSeq} /* ARGUMENT (1 DEPTH 권한대상순번)*/
+               AND SYS_GB_CD = #{sysGbCd}
+               AND RT_TGT_TYP_CD IN ('10','20')
+               AND USE_YN = 'Y'
+               AND POPUP_YN = 'N'
+            UNION ALL
+            SELECT SMB.RT_TGT_SEQ
+                 , SMB.RT_TGT_NM
+                 , SMB.UPR_RT_TGT_SEQ
+                 , SMB.SORT_SEQ
+                 , LEVEL + 1
+                 , SMB.LEAF_MENU_YN
+                 , SMB.CALL_URL
+                 , CONCAT_WS('\', TMP1.HIERARCHY, TRIM(TO_CHAR(SMB.SORT_SEQ,'000'))||SMB.RT_TGT_SEQ) AS HIERARCHY
+              FROM ST_RT_TGT_BASE SMB
+                 , CTE AS TMP1
+             WHERE TMP1.RT_TGT_SEQ = SMB.UPR_RT_TGT_SEQ
+               AND SMB.SYS_GB_CD = #{sysGbCd}
+               AND SMB.RT_TGT_TYP_CD IN ('10','20')
+               AND SMB.USE_YN = 'Y'
+               AND SMB.POPUP_YN    = 'N'
+        )
+        SELECT DISTINCT   /* 권한 중복 가능성이 있어 DISTINCT 함 */
+               A.RT_TGT_SEQ
+             , A.RT_TGT_NM
+             , A.UPR_RT_TGT_SEQ
+             , A.SORT_SEQ
+             , A.LEVEL
+             , A.LEAF_MENU_YN
+             , A.CALL_URL
+             , A.HIERARCHY
+          FROM CTE A
+             , ST_RT_INFO B
+             , ST_RT_GRP_BASE C
+         WHERE A.RT_TGT_SEQ = B.RT_TGT_SEQ
+           AND B.RT_GRP_NO  = C.RT_GRP_NO
+           AND B.USE_YN     = 'Y'
+           AND (  (B.RT_SUB_GB_CD = '01' AND B.RT_GRP_NO = #{rtGrpNo} )     /* argument:권한그룹번호 */
+                OR (B.RT_SUB_GB_CD = '02' AND B.RT_GRP_NO = #{userId}))    /* argument: 사용자아이디 */
+           AND C.USE_YN     = 'Y'
+           AND TO_CHAR(NOW(), 'YYYYMMDD') BETWEEN C.APLY_STR_DT AND C.APLY_END_DT
+         ORDER BY HIERARCHY
+    </select>
+
+    <select id="getAlarmMessage" parameterType="com.enbiz.bo.app.dto.request.login.LoginRequest" resultType="ReceiveMessage">
+        select 'ALARM' as type, 'nhpark' as id, 11 as count
+    </select>
+
+</mapper>

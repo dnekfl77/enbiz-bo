@@ -1,0 +1,385 @@
+<!--
+* 프로그램명 : 주문관리 > 수기주문접수 > 상품추가
+* 작 성 일 : 2021.07.13
+* 작 성 자 : yoon
+* 수 정 자 :
+* 버	전 : 1.0
+* 개	요 : 상품추가 팝업
+* 이	력 :
+-->
+<html lang="ko-KR"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/page-realgrid-layout}">
+
+<head>
+    <title>sub title</title>
+</head>
+<body>
+<th:block layout:fragment="page-contents">
+    <div class="win-popup page-root">
+        <div class="page-fixed">
+            <div class="search-cont">
+
+                <div class="header">
+                    <h1 class="title" th:text="${#messages.msg('orderReception.addGoodsPopup.title')}"></h1>
+                </div>
+
+                <!-- tabs-area -->
+                <div class="tabs-area">
+                    <ul class="tabs">
+                        <li value="1">
+                            <a href="javascript:void(0);" th:text="${#messages.msg('orderReception.addGoodsPopup.tab1')}"></a>
+                        </li>
+                        <li value="2">
+                            <a href="javascript:void(0);" th:text="${#messages.msg('orderReception.addGoodsPopup.tab2')}"></a>
+                        </li>
+                        <li value="3">
+                            <a href="javascript:void(0);" th:text="${#messages.msg('orderReception.addGoodsPopup.tab3')}"></a>
+                        </li>
+                        <li value="4">
+                            <a href="javascript:void(0);" th:text="${#messages.msg('orderReception.addGoodsPopup.tab4')}"></a>
+                        </li>
+                    </ul>
+
+                    <!-- tabs-body -->
+                    <div class="tabs-body">
+
+                        <!-- 키워드 Tab [start] -->
+                        <div class="tab-cont" id="tab-cont1">
+                            <form name="keyWordSearchForm" id="keyWordSearchForm">
+
+                                <!-- search -->
+                                <div class="search">
+                                    <table class="search-table">
+                                        <colgroup>
+                                            <col width="120">
+                                            <col>
+                                            <col width="120">
+                                            <col>
+                                        </colgroup>
+                                        <tbody>
+                                        <tr>
+                                            <!-- 표준상품분류 -->
+                                            <td class="label">
+                                                <th:block th:text="${#messages.msg('orderReception.addGoodsPopup.tab1.label.stdLrgCtgNo')}" />
+                                            </td>
+                                            <td>
+                                                <select class="form-control" name="stdLrgCtgNo">
+                                                    <option value="">:: 전체 ::</option>
+                                                    <option th:each="item : ${prStdCtgList}" th:value="${item?.stdCtgNo}" th:utext="${item?.stdCtgNm}"></option>
+                                                </select>
+                                            </td>
+                                            <!-- 판매상태 -->
+                                            <td class="label">
+                                                <th:block th:text="${#messages.msg('orderReception.addGoodsPopup.tab1.label.saleStatCd')}" />
+                                            </td>
+                                            <td>
+                                                <select class="form-control" name="saleStatCd">
+                                                    <option value="">:: 전체 ::</option>
+                                                    <option th:each="code : ${codeList.PR005}" th:value="${code?.cd}" th:utext="${code?.cdNm}"></option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <!-- 상품번호 -->
+                                            <td class="label">
+                                                <th:block th:text="${#messages.msg('orderReception.addGoodsPopup.tab1.label.goodsNo')}" />
+                                            </td>
+                                            <td><input type="text" name="goodsNo" value="" class="input"></td>
+                                            <!-- 협력사번호/명 -->
+                                            <td class="label">
+                                                <th:block th:text="${#messages.msg('orderReception.addGoodsPopup.tab1.label.entrNo')}" />
+                                            </td>
+                                            <td>
+                                                <div class="input-group">
+                                                    <input type="text" id="entrNo" name="entrNo" class="input disabled w20" readonly>
+                                                    <input type="text" id="entrNm" name="entrNm" class="input disabled" readonly>
+                                                    <a href="javascript:;" class="button small" id="btn_call_entr_popup"><i class="icon-sarch"></i></a>
+                                                    <a href="javascript:;" class="button small" id="btn_reset_entr_popup"><i class="icon-clear"></i></a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <!-- 상품명 -->
+                                            <td class="label">
+                                                <th:block th:text="${#messages.msg('orderReception.addGoodsPopup.tab1.label.goodsNm')}" />
+                                            </td>
+                                            <td><input type="text" name="goodsNm" value="" class="input"></td>
+                                            <!-- 전시카테고리 -->
+                                            <td class="label">
+                                                <th:block th:text="${#messages.msg('orderReception.addGoodsPopup.tab1.label.dispCtgNo')}" />
+                                            </td>
+                                            <td>
+                                                <div class="input-group">
+                                                    <input type="hidden" id="dispCtgNo" name="dispCtgNo">
+                                                    <input type="text" id="dispCtgNm" class="input disabled" readonly>
+                                                    <a href="javascript:;" class="button small" id="btn_dispPopup_call"><i class="icon-sarch"></i></a>
+                                                    <a href="javascript:;" class="button small" id="btn_dispPopup_reset"><i class="icon-clear"></i></a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <!-- //search -->
+
+                                <!-- search-btn -->
+                                <div class="button-group search-btn">
+                                    <a href="#" class="button white" id="btnKeyWordSearchInit"><span class="text">초기화</span></a>
+                                    <a href="#" class="button dark" id="btnKeyWordSearch"><span class="text">조회</span></a>
+                                </div>
+                                <!-- //search-btn -->
+
+                            </form>
+
+
+                            <div class="grid-cont">
+                                <div class="grid" style="overflow: hidden;">
+                                    <div class="grid-head">
+                                        <div class="title-area">
+                                            <h2 class="title" th:text="${#messages.msg('orderReception.addGoodsPopup.tab1.grid.title')}" />
+                                        </div>
+                                        <div class="option-area">
+                                            <div class="edit-option">
+                                            </div>
+                                            <div class="page-option" grid-id="keyWordGrid"></div>
+                                        </div>
+                                    </div>
+                                    <div class="grid-body">
+                                        <div id="keyWordGrid" realgrid></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- //grid -->
+                        </div>
+                        <!-- 키워드 Tab [end] -->
+
+                        <!-- 고객주문이력 [start]-->
+                        <div class="tab-cont" id="tab-cont2">
+                            <!-- search -->
+                            <form name="orderHistSearchForm" id="orderHistSearchForm">
+                                <input type="hidden" name="" value="">
+
+                                <!-- 조회 조건 -->
+                                <div class="search">
+                                    <table class="search-table">
+                                        <colgroup>
+                                            <col width="120">
+                                            <col>
+                                        </colgroup>
+                                        <tbody>
+                                        <!-- 주문일자 -->
+                                        <tr>
+                                            <td class="label">주문일자</td>
+                                            <td>
+                                                <div class="input-group">
+                                                    <div class="picker-group">
+                                                        <input type="hidden" name="mbrNo" th:value="${mbrNo}"/><!-- 회원ID -->
+                                                        <input type="text" class="form-control disabled" id="ordFnshStartDtm" name="ordFnshStartDtm" readonly>
+                                                        <span class="input-group-addon">~</span>
+                                                        <input type="text" class="form-control disabled" id="ordFnshEndDtm" name="ordFnshEndDtm" readonly>
+                                                        <span class="input-group-addon" id="btn_call_calender"><i class="icon-calendar"></i></span>
+                                                    </div>
+                                                    <label><input class="checkbox-inline" type="checkbox" id="periodYn">기간전체</label>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </form>
+                            <!-- //search -->
+
+                            <!-- search-btn -->
+                            <div class="button-group search-btn">
+                                <a href="#" class="button white" id="btnOrderHistSearchInit"><span class="text">초기화</span></a>
+                                <a href="#" class="button dark" id="btnOrderHistSearch"><span class="text">조회</span></a>
+                            </div>
+                            <!-- //search-btn -->
+
+
+                            <div class="grid">
+                                <div class="grid-head">
+                                    <div class="title-area">
+                                        <h2 class="title" th:text="${#messages.msg('orderReception.addGoodsPopup.tab2.grid.title')}" />
+                                    </div>
+                                    <!-- //title-area -->
+
+                                    <div class="option-area">
+                                        <div class="page-option" grid-id="orderHistGrid"></div>
+                                    </div>
+                                    <!-- //option-area -->
+                                </div>
+                                <!-- //grid-head -->
+
+                                <div class="grid-body with-head" id="orderHistGrid" realgrid></div>
+                                <!-- //grid-body -->
+                            </div>
+                        </div>
+                        <!-- 고객주문이력 [end]-->
+
+                        <!-- 위시리스트 Tab [start]-->
+                        <div class="tab-cont" id="tab-cont3">
+                            <form name="wishListSearchForm" id="wishListSearchForm">
+                                <input type="hidden" name="mbrNo" th:value="${mbrNo}"><!-- 회원ID -->
+                                <!-- search-btn
+                                <div class="button-group search-btn">
+                                    <a href="#" class="button white" id="btnWishListSearchInit"><span class="text">초기화</span></a>
+                                    <a href="#" class="button dark" id="btnWishListSearch"><span class="text">조회</span></a>
+                                </div> -->
+                                <!-- //search-btn -->
+                            </form>
+
+                            <div class="grid">
+                                <div class="grid-head">
+                                    <div class="title-area">
+                                        <h2 class="title" th:text="${#messages.msg('orderReception.addGoodsPopup.tab3.grid.title')}" />
+                                    </div>
+                                    <!-- //title-area -->
+
+                                    <div class="option-area">
+                                        <div class="page-option" grid-id="wishListGrid"></div>
+                                    </div>
+                                    <!-- //option-area -->
+                                </div>
+                                <!-- //grid-head -->
+
+                                <div class="grid-body with-head" id="wishListGrid" realgrid></div>
+                                <!-- //grid-body -->
+                            </div>
+                        </div>
+                        <!-- 찜목록 Tab [end]-->
+
+                        <!-- 베스트100 Tab [start]-->
+                        <div class="tab-cont" id="tab-cont4">
+                            <form name="bestSearchForm" id="bestSearchForm">
+                                <!-- search -->
+                                <div class="search">
+                                    <table class="search-table">
+                                        <colgroup>
+                                            <col width="120">
+                                            <col>
+                                        </colgroup>
+                                        <tbody>
+                                        <tr>
+                                            <td class="label">전시카테고리</td>
+                                            <td>
+                                                <div class="input-group">
+                                                    <input type="text" id="" class="input disabled" readonly>
+                                                    <a href="javascript:;" class="button small" onclick="">
+                                                        <i class="icon-sarch"></i>
+                                                    </a>
+                                                    <a href="javascript:;" class="button small"><i class="icon-clear"></i></a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <!-- //search -->
+
+                                <!-- search-btn -->
+                                <div class="button-group search-btn">
+                                    <a href="#" class="button white" id="btnBestSearchInit"><span class="text">초기화</span></a>
+                                    <a href="#" class="button dark" id="btnBestSearch"><span class="text">조회</span></a>
+                                </div>
+                                <!-- //search-btn -->
+                            </form>
+
+                            <div class="grid">
+                                <div class="grid-head">
+                                    <div class="title-area">
+                                        <h2 class="title" th:text="${#messages.msg('orderReception.addGoodsPopup.tab4.grid.title')}" />
+                                    </div>
+                                    <!-- //title-area -->
+
+                                    <div class="option-area">
+                                        <div class="page-option" grid-id="bestGrid" />
+                                    </div>
+                                    <!-- //option-area -->
+                                </div>
+                                <!-- //grid-head -->
+
+                                <div class="grid-body with-head" id="bestGrid" realgrid></div>
+                                <!-- //grid-body --></div>
+                        </div>
+                        <!-- 베스트100 Tab [end] -->
+
+                    </div>
+                    <!-- tabs-body -->
+
+
+                </div>
+                <!-- tabs-area -->
+
+                <th:block layout:fragment="popup-List-button-area">
+                    <th:block layout:insert="~{fragments/popup/popup-btn :: popup-List-btn }"/><!-- 닫기 -->
+                </th:block>
+
+            </div>
+        </div>
+    </div>
+</th:block>
+<th:block layout:fragment="add-script">
+
+    <!-- 팝업 페이지 -->
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'order/orderreception/popup/goodsSearch.js?20210712000015'"></script>
+
+    <!-- 키워드 그리드 -->
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'order/orderreception/popup/keyWordGrid.provider.js?20210712000035'"></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'order/orderreception/popup/keyWordGrid.eventHandler.js?20210712000035'"></script>
+
+    <!-- 고객주문이력 그리드 -->
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'order/orderreception/popup/orderHistGrid.provider.js?20210712000034'"></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'order/orderreception/popup/orderHistGrid.eventHandler.js?20210712000035'"></script>
+
+    <!-- 찜목록 그리드 -->
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'order/orderreception/popup/wishListGrid.provider.js?20210712000035'"></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'order/orderreception/popup/wishListGrid.eventHandler.js?20210712000035'"></script>
+
+    <!-- 베스트100 그리드 -->
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'order/orderreception/popup/bestGrid.provider.js?20210712000035'"></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'order/orderreception/popup/bestGrid.eventHandler.js?20210712000035'"></script>
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            goodsSearch.init();//페이지 초기화
+            keyWordGrid.eventhandler.init();//키워드 그리드 초기화
+            orderHistGrid.eventhandler.init();//고객주문이력 그리드 초기화
+            wishListGrid.eventhandler.init();//찜목록 그리드 초기화
+            bestGrid.eventhandler.init();//베스트100 그리드 초기화
+
+            $('.tabs-area').each(function(){
+                $(this).children('.tabs-body').children('.tab-cont:first').show();
+                var tab_type = $(this).children('.tabs').children('li');
+
+                tab_type.on('click',function(){
+                    var inx = $(this).index();
+                    var tab_body = $(this).parent().siblings('.tabs-body');
+                    $(this).siblings().removeClass('active');
+                    $(this).addClass('active');
+
+                    switch(inx){
+                        case 0: keyWordGrid.eventhandler.grid.resetSize(); break;
+                        case 1: orderHistGrid.eventhandler.grid.resetSize(); break;
+                        case 2: wishListGrid.eventhandler.grid.resetSize();
+                                wishListGrid.eventhandler.onWishListSearch();
+                                 break;
+                        case 3: bestGrid.eventhandler.grid.resetSize(); break;
+                    }
+
+                    tab_body.children('.tab-cont').hide();
+                    tab_body.children('.tab-cont:eq(' + inx + ')').show();
+                });
+            });
+
+            $('.tabs-area > .tabs > li:eq(0)').click();
+        });
+    </script>
+</th:block>
+
+</body>
+</html>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enbiz.bo.app.repository.goods.PrEvltItemCdMapper">
+
+    <sql id="paginatedBase">
+        LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+    </sql>
+
+    <sql id="evltItemListForAdddBase">
+        SELECT IC.EVLT_ITEM_NO /* PrEvltItemCd.evltItemListForAdddBase */
+             , IC.EVLT_ITEM_NM
+             , CASE WHEN IC.EVLT_ITEM_NO IN (
+                    <foreach collection="evltItemNoList" item="evltItemNo" separator="," >
+                        #{evltItemNo}
+                    </foreach>
+                 ) THEN 'N' ELSE 'Y' END ADD_YN
+             , IC.SYS_REG_ID
+             , TO_CHAR(IC.SYS_REG_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_REG_DTM
+             , IC.SYS_MOD_ID
+             , TO_CHAR(IC.SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+          FROM PR_EVLT_ITEM_CD IC
+         WHERE IC.USE_YN = 'Y'
+           AND IC.EVLT_ITEM_NM LIKE #{evltItemNm} || '%'
+         ORDER BY EVLT_ITEM_NO
+    </sql>
+
+    <select id="getEvltItemListCountForAdd" parameterType="ReviewEvaluationItemMgmtRequest" resultType="java.lang.Integer">
+        SELECT COUNT(*) /* PrEvltItemCd.getEvltItemListCountForAdd */
+          FROM (
+            <include refid="evltItemListForAdddBase"/>
+        ) T1
+    </select>
+
+    <select id="getEvltItemListForAdd" parameterType="ReviewEvaluationItemMgmtRequest" resultType="ReviewEvaluationItemMgmtResponse">
+        /* PrEvltItemCd.getEvltItemListForAdd */
+        <include refid="evltItemListForAdddBase" />
+        <include refid="paginatedBase" />
+    </select>
+
+    <sql id="evltItemListBase">
+        SELECT IC.EVLT_ITEM_NO /* PrEvltItemCd.evltItemListBase */
+             , IC.EVLT_ITEM_NM
+             , IC.USE_YN
+             , COALESCE((SELECT COUNT(STD_CTG_NO) FROM PR_STD_CTG_EVLT_ITEM_INFO
+                          GROUP BY EVLT_ITEM_NO
+                         HAVING EVLT_ITEM_NO = IC.EVLT_ITEM_NO),0) AS STD_CTG_MAP_CNT
+             , IC.SYS_REG_ID
+             , TO_CHAR(IC.SYS_REG_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_REG_DTM
+             , IC.SYS_MOD_ID
+             , TO_CHAR(IC.SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+          FROM PR_EVLT_ITEM_CD IC
+         WHERE 1 = 1
+           AND IC.SYS_REG_DTM <![CDATA[ >= ]]> TO_TIMESTAMP(#{regStartDtm} || ' 000000', 'YYYY-MM-DD HH24MISS')
+           AND IC.SYS_REG_DTM <![CDATA[ <= ]]> TO_TIMESTAMP(#{regEndDtm} || ' 235959', 'YYYY-MM-DD HH24MISS')
+           AND IC.EVLT_ITEM_NM LIKE #{evltItemNm} || '%'
+        ORDER BY EVLT_ITEM_NO DESC
+    </sql>
+
+    <select id="getEvltItemListCount" parameterType="ReviewEvaluationItemMgmtRequest" resultType="java.lang.Integer">
+        SELECT COUNT(*) /* PrEvltItemCd.getEvltItemListCount */
+          FROM (
+            <include refid="evltItemListBase"/>
+        ) T1
+    </select>
+
+    <select id="getEvltItemList" parameterType="ReviewEvaluationItemMgmtRequest" resultType="ReviewEvaluationItemMgmtResponse">
+        /* PrEvltItemCd.getEvltItemList */
+        <include refid="evltItemListBase" />
+        <include refid="paginatedBase" />
+    </select>
+
+    <select id="checkDuplicatedEvltItemNm" parameterType="PrEvltItemCd" resultType="java.lang.Boolean">
+        SELECT /* PrEvltItemCd.checkDuplicatedEvltItemNm */
+               CASE WHEN COUNT(*) <![CDATA[ > ]]> 0 THEN TRUE
+               ELSE FALSE END RESULT
+          FROM PR_EVLT_ITEM_CD
+         WHERE EVLT_ITEM_NM = #{evltItemNm}
+           AND NOT EVLT_ITEM_NO = #{evltItemNo}
+    </select>
+</mapper>

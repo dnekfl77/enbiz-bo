@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enbiz.bo.app.repository.goods.PrGoodsQaQuestInfoMapper">
+
+    <sql id="paginatedBase">
+        LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+    </sql>
+
+    <sql id="goodsQAListBase">
+        SELECT QI.PROC_STAT_CD
+             , FN_GET_CODENAME('PR039',QI.PROC_STAT_CD) AS PROC_STAT_CD_NM
+             , FN_GET_CODENAME('PR041',QI.QUEST_TYP_CD) AS QUEST_TYP_CD_NM
+             , QI.QUEST_NO
+             , QI.QUEST_CONT
+             , MB.LOGIN_ID
+             , TO_CHAR(QI.QUEST_DTM,'YYYY-MM-DD HH24:MI:SS') AS QUEST_DTM
+             , QI.GOODS_NO
+             , GB.GOODS_NM
+             , BM.BRAND_NM
+             , EB.ENTR_NM
+             , QI.QUEST_DISP_PROCMN_ID
+             , TO_CHAR(QI.QUEST_DISP_PROC_DTM, 'YYYY-MM-DD HH24:MI:SS') AS QUEST_DISP_PROC_DTM
+             , (SELECT COUNT(*) FROM PR_GOODS_QA_ANS_INFO AI WHERE AI.QUEST_NO = QI.QUEST_NO) AS QA_ANS_CNT
+             , QI.QUEST_DISP_STAT_CD
+             , FN_GET_CODENAME('PR022',QI.QUEST_DISP_STAT_CD) AS QUEST_DISP_STAT_CD_NM
+             , (SELECT STD_CTG_NM FROM PR_STD_CTG WHERE STD_CTG_NO = SC.STD_LRG_CTG_NO )
+                    || COALESCE( (SELECT '>' || STD_CTG_NM FROM PR_STD_CTG WHERE STD_CTG_NO = SC.STD_MID_CTG_NO) , '')
+                    || COALESCE( (SELECT '>' || STD_CTG_NM FROM PR_STD_CTG WHERE STD_CTG_NO = SC.STD_SML_CTG_NO) , '')
+                    || COALESCE( (SELECT '>' || STD_CTG_NM FROM PR_STD_CTG WHERE STD_CTG_NO = SC.STD_THN_CTG_NO) , '')
+                AS STD_CTG_HIERARCHY
+             , SC.MD_ID
+             , QI.MVOT_YN
+             , QI.SYS_REG_ID
+             , TO_CHAR(QI.SYS_REG_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_REG_DTM
+             , QI.SYS_MOD_ID
+             , TO_CHAR(QI.SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+          FROM PR_GOODS_QA_QUEST_INFO QI
+             , ET_MBR_BASE MB
+             , PR_GOODS_BASE GB
+               LEFT OUTER JOIN PR_BRAND_MST BM ON (GB.BRAND_NO = BM.BRAND_NO)
+             , ET_ENTR_BASE EB
+             , PR_STD_CTG SC
+         WHERE 1 = 1
+           AND QI.DEL_YN = 'N'
+           AND MB.MBR_NO = QI.MBR_NO
+           AND GB.GOODS_NO = QI.GOODS_NO
+           AND GB.ENTR_NO = EB.ENTR_NO
+           AND GB.STD_CTG_NO = SC.STD_CTG_NO
+           AND QI.QUEST_DTM <![CDATA[ >= ]]> TO_TIMESTAMP( #{questStartDtm} || ' 00:00:00','YYYY-MM-DD HH24:MI:SS')
+           AND QI.QUEST_DTM <![CDATA[ <= ]]> TO_TIMESTAMP( #{questEndDtm} || ' 23:59:59','YYYY-MM-DD HH24:MI:SS')
+           AND QI.QUEST_TYP_CD          LIKE #{questTypCd} || '%'
+           AND GB.ENTR_NO               LIKE #{entrNo} || '%'
+           AND GB.BUY_TYP_CD            LIKE #{buyTypCd} || '%'
+           AND QI.PROC_STAT_CD          LIKE #{procStatCd} || '%'
+           AND QI.QUEST_DISP_STAT_CD    LIKE #{questDispStatCd} || '%'
+           AND GB.STD_CTG_NO            LIKE #{stdCtgNo} || '%'
+           AND SC.MD_ID                 LIKE #{mdId} || '%'
+            <if test='goodsNoList != null and goodsNoList.length > 0'>
+                AND
+                <foreach collection="goodsNoList" item="goodsNo" separator="OR" open="(" close=")">
+                    <if test='!goodsNo.equals("")'>
+                        GB.GOODS_NO LIKE #{goodsNo} || '%'
+                    </if>
+                </foreach>
+            </if>
+         ORDER BY QI.QUEST_DTM DESC
+    </sql>
+
+    <select id="getGoodsQAListCount" parameterType="GoodsQAMgmtRequest" resultType="java.lang.Integer">
+        SELECT COUNT(*) /* prGoodsQaQuestInfo.getGoodsQAListCount */
+          FROM (
+            <include refid="goodsQAListBase"/>
+        ) T1
+    </select>
+
+    <select id="getGoodsQAList" parameterType="GoodsQAMgmtRequest" resultType="GoodsQAMgmtResponse">
+        /* prGoodsQaQuestInfo.getGoodsQAList */
+        <include refid="goodsQAListBase" />
+        <include refid="paginatedBase" />
+    </select>
+
+    <select id="getUnProcessedStatus" parameterType="GoodsQAMgmtRequest" resultType="GoodsQAMgmtResponse">
+        SELECT T.QUEST_DTM_PERIOD, COUNT(T.QUEST_DTM_PERIOD) AS QUEST_CNT /* prGoodsQaQuestInfo.getUnProcessedStatus */
+          FROM ( SELECT CASE WHEN NOW() - INTERVAL '24 HOUR' <![CDATA[ <= ]]> QUEST_DTM THEN 'questDtmPeriod_1'
+                             WHEN NOW() - INTERVAL '72 HOUR' <![CDATA[ <= ]]> QUEST_DTM AND QUEST_DTM <![CDATA[ < ]]> NOW() - INTERVAL '24 HOUR' THEN 'questDtmPeriod_3'
+                             WHEN NOW() - INTERVAL '1 MONTH' <![CDATA[ <= ]]> QUEST_DTM AND QUEST_DTM <![CDATA[ < ]]> NOW() - INTERVAL '72 HOUR' THEN 'questDtmPeriod_30'
+                             END AS QUEST_DTM_PERIOD
+                   FROM PR_GOODS_QA_QUEST_INFO
+                  WHERE PROC_STAT_CD = '10'
+                    AND QUEST_NO IN
+                        <foreach collection="questNoList" item="questNo" separator="," open="(" close=")">
+                            #{questNo}
+                        </foreach>
+        ) T
+         GROUP BY T.QUEST_DTM_PERIOD
+        HAVING QUEST_DTM_PERIOD IS NOT NULL
+    </select>
+
+    <select id="getGoodsQAQuestInfo" parameterType="java.lang.String" resultType="GoodsQADetailResponse">
+        SELECT QI.GOODS_NO /* prGoodsQaQuestInfo.getGoodsQAQuestInfo */
+             , QI.QUEST_NO
+             , QI.PROC_STAT_CD
+             , TO_CHAR(QI.PROC_STAT_DTM,'YYYY-MM-DD HH24:MI:SS') AS PROC_STAT_DTM
+             , QI.PROC_ID
+             , GB.GOODS_NM
+             , CI.CONT_FILE_PATH_NM
+             , CI.CONT_FILE_NM
+             , EB.ENTR_NM
+             , FN_GET_CODENAME('PR006',GB.BUY_TYP_CD) AS BUY_TYP_CD_NM
+             , MB.LOGIN_ID
+             , FN_GET_CODENAME('PR041',QI.QUEST_TYP_CD) AS QUEST_TYP_CD_NM
+             , QI.QUEST_CONT
+             , TO_CHAR(QI.QUEST_DTM, 'YYYY-MM-DD HH24:MI:SS') AS QUEST_DTM
+             , QI.QUEST_DISP_STAT_CD
+             , QI.QUEST_DISP_PROCMN_ID
+             , TO_CHAR(QI.QUEST_DISP_PROC_DTM, 'YYYY-MM-DD HH24:MI:SS') AS QUEST_DISP_PROC_DTM
+             , QI.MVOT_YN
+             , QI.MVOT_CAUS
+             , QI.SYS_REG_ID
+             , TO_CHAR(QI.SYS_REG_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_REG_DTM
+             , QI.SYS_MOD_ID
+             , TO_CHAR(QI.SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+          FROM PR_GOODS_QA_QUEST_INFO QI
+             , ET_MBR_BASE MB
+             , PR_GOODS_BASE GB
+             , PR_GOODS_CONT_INFO CI
+             , ET_ENTR_BASE EB
+         WHERE 1 = 1
+           AND MB.MBR_NO = QI.MBR_NO
+           AND GB.GOODS_NO = QI.GOODS_NO
+           AND GB.GOODS_NO = CI.GOODS_NO
+           AND CI.CMT_TYP_CD = '03'     /* 컨텐츠유형코드(PR017) */
+           AND CI.IMG_GB_CD = '10'      /* 이미지구분코드(PR031) */
+           AND GB.ENTR_NO = EB.ENTR_NO
+           AND QUEST_NO = #{questNo}
+    </select>
+</mapper>

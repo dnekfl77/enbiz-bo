@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.vendor.EtEntrBaseMapper">
+
+    <sql id="paginatedBase">
+        LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+    </sql>
+
+    <sql id="etEntrBaseList">
+        SELECT /* etEntrBase.etEntrBaseList */
+               ENTR_NO
+             , ENTR_NM
+             , ENTR_GB_CD
+             , FN_GET_CODENAME('VD001',ENTR_GB_CD) AS ENTR_GB_NM
+             , TRD_STAT_CD
+             , FN_GET_CODENAME('VD003',TRD_STAT_CD) AS TRD_STAT_NM
+             , LGC_ENTR_NO
+             , RPSTMN_NM
+             , BMAN_NO
+             , BTYP
+             , BKIND
+             , CONT_STRT_DY
+             , CONT_END_DY
+             , AEMP_NM
+             , AEMP_TEL_RGN_NO
+             , AEMP_TEL_TXNO_NO
+             , AEMP_TEL_END_NO
+             , AEMP_CELL_SCT_NO
+             , AEMP_CELL_TXNO_NO
+             , AEMP_CELL_END_NO
+             , BMAN_KIND_CD
+             , ZIP_NO_SEQ
+             , ZIP_NO
+             , ZIP_ADDR
+             , DTL_ADDR
+             , RMK_CMT
+          FROM ET_ENTR_BASE
+         WHERE 1=1
+           AND ENTR_GB_CD LIKE #{entrGbCd} || '%'
+           AND TRD_STAT_CD LIKE #{trdStatCd} || '%'
+           AND ENTR_NO LIKE #{entrNo} || '%'
+           AND ENTR_NM LIKE #{entrNm} || '%'
+    </sql>
+
+    <select id="getEtEntrBaseList" parameterType="EnEntrBaseRequest" resultType="EnEntrBaseResponse">
+           <include refid="etEntrBaseList" />
+           <include refid="paginatedBase" />
+    </select>
+
+    <select id="getEtEntrBaseListCount" parameterType="EnEntrBaseRequest" resultType="java.lang.Integer">
+        SELECT /* etEntrBase.getEtEntrBaseListCount */
+               COUNT(*)
+          FROM ET_ENTR_BASE
+         WHERE 1=1
+           AND ENTR_GB_CD LIKE #{entrGbCd} || '%'
+           AND TRD_STAT_CD LIKE #{trdStatCd} || '%'
+           AND ENTR_NO LIKE #{entrNo} || '%'
+           AND ENTR_NM LIKE #{entrNm} || '%'
+    </select>
+
+    <sql id="partnerList">
+        SELECT /* etEntrBase.partnerList */
+               ENTR_NO
+             , ENTR_NM
+             , TRD_STAT_CD
+             , FN_GET_CODENAME('VD003',TRD_STAT_CD) AS TRD_STAT_NM
+             , RPSTMN_NM
+             , BMAN_NO
+             , BTYP
+             , BKIND
+             , AEMP_NM
+             , AEMP_TEL_RGN_NO
+             , AEMP_TEL_TXNO_NO
+             , AEMP_TEL_END_NO
+             , CASE COALESCE(AEMP_TEL_RGN_NO,'') || COALESCE(AEMP_TEL_TXNO_NO, '') || COALESCE(AEMP_TEL_END_NO, '')
+               WHEN '' THEN ''
+               ELSE COALESCE(AEMP_TEL_RGN_NO,'') || COALESCE(AEMP_TEL_TXNO_NO, '') || COALESCE(AEMP_TEL_END_NO, '')
+               END AS AEMP_TEL_NO
+             , AEMP_CELL_SCT_NO
+             , AEMP_CELL_TXNO_NO
+             , AEMP_CELL_END_NO
+             , CASE COALESCE(AEMP_CELL_SCT_NO,'') || COALESCE(AEMP_CELL_TXNO_NO, '') || COALESCE(AEMP_CELL_END_NO, '')
+               WHEN '' THEN ''
+               ELSE COALESCE(AEMP_CELL_SCT_NO,'') || COALESCE(AEMP_CELL_TXNO_NO, '') || COALESCE(AEMP_CELL_END_NO, '')
+               END AS AEMP_CELL_NO
+             , TRD_TYP_CD
+             , FN_GET_CODENAME('VD002',TRD_TYP_CD) AS TRD_TYP_NM
+             , SYS_REG_ID
+             , TO_CHAR(SYS_REG_DTM,'yyyy-mm-dd hh24:mi:ss') AS SYS_REG_DTM
+             , SYS_MOD_ID
+             , TO_CHAR(SYS_MOD_DTM,'yyyy-mm-dd hh24:mi:ss') AS SYS_MOD_DTM
+          FROM ET_ENTR_BASE
+         WHERE 1=1
+           AND ENTR_GB_CD = '10'
+           AND ENTR_NO LIKE #{entrNo} || '%'
+           AND ENTR_NM LIKE #{entrNm} || '%'
+           AND TRD_STAT_CD LIKE #{trdStatCd} || '%'
+           AND TRD_TYP_CD LIKE #{trdTypCd} || '%'
+         ORDER BY ENTR_NO DESC
+    </sql>
+
+    <select id="getPartnerSearchList" parameterType="PartnerSearchRequest" resultType="PartnerSearchResponse">
+        <include refid="partnerList" />
+        <include refid="paginatedBase" />
+    </select>
+
+    <select id="getPartnerSearchListCount" parameterType="PartnerSearchRequest" resultType="java.lang.Integer">
+        SELECT /* etEntrBase.getPartnerSearchListCount */
+               COUNT(*)
+          FROM (
+                 <include refid="partnerList" />
+               ) v
+    </select>
+
+    <select id="getEtEntrBaseOne" parameterType="string" resultType="etEntrBase">
+        SELECT /* etEntrBase.getEtEntrBaseOne */
+               ENTR_NO
+             , ENTR_NM
+             , ENTR_GB_CD
+             , TRD_TYP_CD
+             , TRD_STAT_CD
+             , LGC_ENTR_NO
+             , RPSTMN_NM
+             , BMAN_NO
+             , CORPN_NO
+             , BTYP
+             , BKIND
+             , CONT_STRT_DY
+             , CONT_END_DY
+             , AEMP_NM
+             , AEMP_TEL_RGN_NO
+             , AEMP_TEL_TXNO_NO
+             , AEMP_TEL_END_NO
+             , AEMP_CELL_SCT_NO
+             , AEMP_CELL_TXNO_NO
+             , AEMP_CELL_END_NO
+             , FAX_RGN_NO
+             , FAX_TXNO_NO
+             , FAX_END_NO
+             , BMAN_KIND_CD
+             , ZIP_NO_SEQ
+             , ZIP_NO
+             , ZIP_ADDR
+             , DTL_ADDR
+             , RMK_CMT
+             , SYS_REG_ID
+             , SYS_REG_DTM
+             , SYS_MOD_ID
+             , SYS_MOD_DTM
+          FROM ET_ENTR_BASE
+         WHERE ENTR_NO = #{entrNo}
+    </select>
+
+    <sql id="deliveryPolicyList">
+        SELECT /* etEntrBase.deliveryPolicyList */
+               EEB.ENTR_NO
+             , EEB.ENTR_NM
+             , EDPB.DELI_POLC_NO
+             , EDPB.DLEX_TYP_CD
+             , EDPB.STD_AMT
+             , EDPB.DLEX_AMT
+             , EDPB.FERRY_RGN_DLEX_AMT
+             , EDPB.JEJU_DLEX
+             , EDPB.JEJU_FERRY_RGN_DLEX_AMT
+             , EDPB.RTN_AMT
+             , EDPB.USE_YN
+             , EDPB.SYS_REG_ID
+             , TO_CHAR(EDPB.SYS_REG_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_REG_DTM
+             , EDPB.SYS_MOD_ID
+             , TO_CHAR(EDPB.SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+          FROM ET_ENTR_BASE EEB
+             , ET_DELI_POLC_BASE EDPB
+         WHERE EDPB.ENTR_NO = EEB.ENTR_NO
+           AND EEB.ENTR_GB_CD = '10'
+           AND EEB.ENTR_NO LIKE #{entrNo} || '%'
+           AND EEB.ENTR_NM LIKE #{entrNm} || '%'
+         ORDER BY EEB.ENTR_NO DESC, EDPB.DLEX_TYP_CD ASC
+    </sql>
+
+    <select id="getDeliveryPolicySearchList" parameterType="PartnerSearchRequest" resultType="PartnerDeliveryPolicySearchResponse">
+        <include refid="deliveryPolicyList" />
+        <include refid="paginatedBase" />
+    </select>
+
+    <select id="getDeliveryPolicySearchListCount" parameterType="PartnerSearchRequest" resultType="java.lang.Integer">
+        SELECT /* etEntrBase.getDeliveryPolicySearchListCount */
+               COUNT(*)
+          FROM (
+                <include refid="deliveryPolicyList" />
+               ) v
+    </select>
+
+    <sql id="cooperateList">
+        SELECT /* etEntrBase.cooperateList */
+               ENTR_NO
+             , ENTR_NM
+             , TRD_STAT_CD
+             , FN_GET_CODENAME('VD003',TRD_STAT_CD) AS TRD_STAT_NM
+             , RPSTMN_NM
+             , BMAN_NO
+             , BTYP
+             , BKIND
+             , AEMP_NM
+             , AEMP_TEL_RGN_NO
+             , AEMP_TEL_TXNO_NO
+             , AEMP_TEL_END_NO
+             , CASE COALESCE(AEMP_TEL_RGN_NO,'') || COALESCE(AEMP_TEL_TXNO_NO, '') || COALESCE(AEMP_TEL_END_NO, '')
+               WHEN '' THEN ''
+               ELSE COALESCE(AEMP_TEL_RGN_NO,'') || '-' || COALESCE(AEMP_TEL_TXNO_NO, '') || '-' || COALESCE(AEMP_TEL_END_NO, '')
+               END AS AEMP_TEL_NO
+             , AEMP_CELL_SCT_NO
+             , AEMP_CELL_TXNO_NO
+             , AEMP_CELL_END_NO
+             , CASE COALESCE(AEMP_CELL_SCT_NO,'') || COALESCE(AEMP_CELL_TXNO_NO, '') || COALESCE(AEMP_CELL_END_NO, '')
+               WHEN '' THEN ''
+               ELSE COALESCE(AEMP_CELL_SCT_NO,'') || '-' || COALESCE(AEMP_CELL_TXNO_NO, '') || '-' || COALESCE(AEMP_CELL_END_NO, '')
+               END AS AEMP_CELL_NO
+             , TRD_TYP_CD
+             , FN_GET_CODENAME('VD002',TRD_TYP_CD) AS TRD_TYP_NM
+             , CONT_STRT_DY
+             , CONT_END_DY
+             , SYS_REG_ID
+             , TO_CHAR(SYS_REG_DTM,'yyyy-mm-dd hh24:mi:ss') AS SYS_REG_DTM
+             , SYS_MOD_ID
+             , TO_CHAR(SYS_MOD_DTM,'yyyy-mm-dd hh24:mi:ss') AS SYS_MOD_DTM
+          FROM ET_ENTR_BASE
+         WHERE 1=1
+           AND ENTR_GB_CD = '20'
+           AND ENTR_NO LIKE #{condxEntrNo} || '%'
+           AND ENTR_NM LIKE #{condxEntrNm} || '%'
+           AND TRD_STAT_CD LIKE #{condxTrdStatCd} || '%'
+         ORDER BY ENTR_NO DESC
+    </sql>
+
+    <select id="getCooperateSearchList" parameterType="CooperateSearchRequest" resultType="CooperateSearchResponse">
+        <include refid="cooperateList" />
+<!--        <include refid="paginatedBase" />-->
+    </select>
+
+    <select id="getCooperateSearchListCount" parameterType="CooperateSearchRequest" resultType="java.lang.Integer">
+        SELECT /* etEntrBase.getCooperateSearchListCount */
+               COUNT(*)
+          FROM (
+                <include refid="cooperateList" />
+               ) v
+    </select>
+
+    <select id="getCooperateDetail" parameterType="string" resultType="CooperateAndOthersResponse">
+        SELECT /* etEntrBase.getCooperateDetail */
+               ENTR_NO
+             , ENTR_NM
+             , ENTR_GB_CD
+             , TRD_TYP_CD
+             , TRD_STAT_CD
+             , LGC_ENTR_NO
+             , RPSTMN_NM
+             , BMAN_NO
+             , CORPN_NO
+             , BTYP
+             , BKIND
+             , CONT_STRT_DY
+             , CONT_END_DY
+             , AEMP_NM
+             , AEMP_TEL_RGN_NO
+             , AEMP_TEL_TXNO_NO
+             , AEMP_TEL_END_NO
+             , AEMP_CELL_SCT_NO
+             , AEMP_CELL_TXNO_NO
+             , AEMP_CELL_END_NO
+             , FAX_RGN_NO
+             , FAX_TXNO_NO
+             , FAX_END_NO
+             , BMAN_KIND_CD
+             , ZIP_NO_SEQ
+             , ZIP_NO
+             , ZIP_ADDR
+             , DTL_ADDR
+             , RMK_CMT
+          FROM ET_ENTR_BASE
+         WHERE ENTR_NO = #{entrNo}
+    </select>
+
+    <sql id="cooperateChannelList">
+        SELECT /* etEntrBase.cooperateChannelList */
+               ENTR_NO
+             , ENTR_NM
+             , TRD_STAT_CD
+             , FN_GET_CODENAME('VD003',TRD_STAT_CD) AS TRD_STAT_NM
+             , RPSTMN_NM
+             , BMAN_NO
+             , BTYP
+             , BKIND
+             , AEMP_NM
+             , AEMP_TEL_RGN_NO
+             , AEMP_TEL_TXNO_NO
+             , AEMP_TEL_END_NO
+             , CASE COALESCE(AEMP_TEL_RGN_NO,'') || COALESCE(AEMP_TEL_TXNO_NO, '') || COALESCE(AEMP_TEL_END_NO, '')
+               WHEN '' THEN ''
+               ELSE COALESCE(AEMP_TEL_RGN_NO,'') || '-' || COALESCE(AEMP_TEL_TXNO_NO, '') || '-' || COALESCE(AEMP_TEL_END_NO, '')
+               END AS AEMP_TEL_NO
+             , AEMP_CELL_SCT_NO
+             , AEMP_CELL_TXNO_NO
+             , AEMP_CELL_END_NO
+             , CASE COALESCE(AEMP_CELL_SCT_NO,'') || COALESCE(AEMP_CELL_TXNO_NO, '') || COALESCE(AEMP_CELL_END_NO, '')
+               WHEN '' THEN ''
+               ELSE COALESCE(AEMP_CELL_SCT_NO,'') || '-' || COALESCE(AEMP_CELL_TXNO_NO, '') || '-' || COALESCE(AEMP_CELL_END_NO, '')
+               END AS AEMP_CELL_NO
+             , TRD_TYP_CD
+             , FN_GET_CODENAME('VD002',TRD_TYP_CD) AS TRD_TYP_NM
+             , SYS_REG_ID
+             , TO_CHAR(SYS_REG_DTM,'yyyy-mm-dd hh24:mi:ss') AS SYS_REG_DTM
+             , SYS_MOD_ID
+             , TO_CHAR(SYS_MOD_DTM,'yyyy-mm-dd hh24:mi:ss') AS SYS_MOD_DTM
+          FROM ET_ENTR_BASE
+         WHERE 1=1
+           AND ENTR_GB_CD = '20'
+           AND ENTR_NO LIKE #{condxEntrNo} || '%'
+           AND ENTR_NM LIKE #{condxEntrNm} || '%'
+         ORDER BY ENTR_NO DESC
+    </sql>
+
+    <select id="getCooperateChannelSearchList" parameterType="CooperateSearchRequest" resultType="CooperateSearchResponse">
+        <include refid="cooperateChannelList" />
+        <!--        <include refid="paginatedBase" />-->
+    </select>
+
+    <select id="getCooperateChannelSearchListCount" parameterType="CooperateSearchRequest" resultType="java.lang.Integer">
+        SELECT /* etEntrBase.getCooperateChannelSearchListCount */
+               COUNT(*)
+          FROM (
+                <include refid="cooperateChannelList" />
+               ) v
+    </select>
+
+    <select id="getCountOfExistsEtEntrBaseByEntrNm" parameterType="EtEntrBase" resultType="java.lang.Integer">
+        SELECT /* etEntrBase.getCountOfExistsEtEntrBaseByEntrNm */
+               COUNT(*)
+          FROM ET_ENTR_BASE
+         WHERE ENTR_NM = #{entrNm}
+        <if test="entrNo != null and entrNo != ''">
+            AND ENTR_NO <![CDATA[ <> ]]> #{entrNo}
+        </if>
+    </select>
+</mapper>

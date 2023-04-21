@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.display.CcFotrInfoTrxMapper">
+
+	<insert id="insertCcFotrInfoGrpList" parameterType="ccFotrInfo">
+		INSERT INTO CC_FOTR_INFO (   /* ccFotrInfoTrx.insertCcFotrInfoGrpList */
+			  FORT_NO
+			, SITE_NO
+			, SYS_GB_CD
+			, FOTR_CONT_GB_CD
+			, DISP_SEQ
+			, USE_YN
+			, SYS_REG_ID
+			, SYS_REG_DTM
+			, SYS_MOD_ID
+			, SYS_MOD_DTM
+		) VALUES (
+			  NEXTVAL('CC_FOTR_INFO_SQ01')
+			, #{siteNo}
+			, #{sysGbCd}
+			, #{fotrContGbCd}
+			, CAST(#{dispSeq} AS INTEGER)
+			, #{useYn}
+			, #{sysRegId}
+			, NOW()
+			, #{sysModId}
+			, NOW()
+		)
+	</insert>
+
+	<update id="updateCcFotrInfoGrpList" parameterType="ccFotrInfo">
+		UPDATE CC_FOTR_INFO  			/* ccFotrInfoTrx.updateCcFotrInfoGrpList */
+		SET
+			  SITE_NO = #{siteNo}
+			, SYS_GB_CD = #{sysGbCd}
+			, FOTR_CONT_GB_CD = #{fotrContGbCd}
+			, DISP_SEQ = CAST(#{dispSeq} AS INTEGER)
+			, USE_YN = #{useYn}
+			, SYS_MOD_ID = #{sysModId}
+			, SYS_MOD_DTM = NOW()
+		WHERE FORT_NO = #{fortNo}
+	</update>
+
+	<delete id="deleteCcFotrInfoGrpList" parameterType="ccFotrInfo">
+		DELETE FROM CC_FOTR_INFO			/* ccFotrInfoTrx.deleteCcFotrInfoGrpList */
+		WHERE FORT_NO = #{fortNo}
+	</delete>
+
+	<update id="updateCcFotrCont" parameterType="CcFotrInfo">
+		UPDATE CC_FOTR_INFO			/* ccFotrInfoTrx.updateCcFotrCont */
+		SET
+			  FOTR_CONT = #{fotrCont}
+			, SYS_MOD_ID = #{sysModId}
+			, SYS_MOD_DTM = NOW()
+		WHERE FORT_NO = #{fortNo}
+	</update>
+
+	<insert id="insertCcFotrInfoMenuList" parameterType="ccFotrInfo">
+		INSERT INTO CC_FOTR_INFO ( 			/* ccFotrInfoTrx.insertCcFotrInfoMenuList */
+			  FORT_NO
+			, SITE_NO
+			, SYS_GB_CD
+			, FOTR_CONT_GB_CD
+			, DISP_SEQ
+			, USE_YN
+			, MENU_NM
+			, LINK_URL
+			, MOV_FRME_CD
+			, FOTR_CONT
+			, UPR_FOTR_NO
+			, SYS_REG_ID
+			, SYS_REG_DTM
+			, SYS_MOD_ID
+			, SYS_MOD_DTM
+		) VALUES (
+			  NEXTVAL('CC_FOTR_INFO_SQ01')
+			, #{siteNo}
+			, #{sysGbCd}
+			, #{fotrContGbCd}
+			, CAST(#{dispSeq} AS INTEGER)
+			, #{useYn}
+			, #{menuNm}
+			, #{linkUrl}
+			, #{movFrmeCd}
+			, #{fotrCont}
+			, #{uprFotrNo}
+			, #{sysRegId}
+			, now()
+			, #{sysModId}
+			, now()
+		)
+	</insert>
+
+	<update id="updateCcFotrInfoMenuList" parameterType="ccFotrInfo">
+		UPDATE CC_FOTR_INFO  		/* ccFotrInfoTrx.updateCcFotrInfoMenuList */
+		SET
+			  SITE_NO = #{siteNo}
+			, SYS_GB_CD = #{sysGbCd}
+			, FOTR_CONT_GB_CD = #{fotrContGbCd}
+			, DISP_SEQ = CAST(#{dispSeq} AS INTEGER)
+			, USE_YN = #{useYn}
+			, MENU_NM = #{menuNm}
+			, LINK_URL = #{linkUrl}
+			, MOV_FRME_CD = #{movFrmeCd}
+			, FOTR_CONT = #{fotrCont}
+			, UPR_FOTR_NO = #{uprFotrNo}
+			, SYS_MOD_ID = #{sysModId}
+			, SYS_MOD_DTM = now()
+		WHERE FORT_NO = #{fortNo}
+	</update>
+
+	<delete id="deleteCcFotrInfoMenuList" parameterType="ccFotrInfo">
+		DELETE FROM CC_FOTR_INFO		/* ccFotrInfoTrx.deleteCcFotrInfoMenuList */
+		WHERE FORT_NO = #{fortNo}
+	</delete>
+</mapper>

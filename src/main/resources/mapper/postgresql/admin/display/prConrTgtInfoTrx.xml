@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.display.PrConrTgtInfoTrxMapper">
+
+	<delete id="deleteDisplayCorner" parameterType="prConrBase">
+		DELETE                  /* prConrTgtInfoTrx.deleteDisplayCorner */
+		FROM 	PR_CONR_TGT_INFO
+		WHERE 	CONR_NO = #{conrNo}
+	</delete>
+
+	<insert id="insertPrConrTgtInfo" parameterType="prConrTgtInfo">
+		<selectKey keyProperty="conrTgtNo" resultType="String" order="BEFORE">
+			SELECT COALESCE(MAX(CONR_TGT_NO::INTEGER), 0) + 1 as conrTgtNo
+			FROM PR_CONR_TGT_INFO
+		</selectKey>
+		INSERT INTO PR_CONR_TGT_INFO (  /* prConrTgtInfoTrx.insertPrConrTgtInfo */
+			  CONR_NO
+			, CONR_TGT_NO
+			, CONR_TGT_NM
+			, CONR_TGT_CD
+			, CONR_TGT_CNT
+			, DISP_SEQ
+			, DPTH_NO
+			, UPR_CONR_TGT_NO
+			, SYS_REG_ID
+			, SYS_REG_DTM
+			, SYS_MOD_ID
+			, SYS_MOD_DTM
+		) VALUES (
+			  #{conrNo}
+			, #{conrTgtNo}
+			, #{conrTgtNm}
+			, #{conrTgtCd}
+			, #{conrTgtCnt}
+			, #{dispSeq}
+			, #{dpthNo}
+			, NULL
+			, #{sysRegId}
+			, NOW()
+			, #{sysModId}
+			, NOW()
+		)
+	</insert>
+
+	<insert id="insertPrConrTgtInfoUprConrTgtNo" parameterType="prConrTgtInfo">
+		<selectKey keyProperty="conrTgtNo" resultType="String" order="BEFORE">
+			SELECT COALESCE(MAX(CONR_TGT_NO::INTEGER), 0) + 1 as conrTgtNo
+			FROM PR_CONR_TGT_INFO
+		</selectKey>
+		INSERT INTO PR_CONR_TGT_INFO (  /* prConrTgtInfoTrx.insertPrConrTgtInfoUprConrTgtNo */
+			  CONR_NO
+			, CONR_TGT_NO
+			, CONR_TGT_NM
+			, CONR_TGT_CD
+			, CONR_TGT_CNT
+			, DISP_SEQ
+			, DPTH_NO
+			, UPR_CONR_TGT_NO
+			, SYS_REG_ID
+			, SYS_REG_DTM
+			, SYS_MOD_ID
+			, SYS_MOD_DTM
+		) VALUES (
+			  #{conrNo}
+			, #{conrTgtNo}
+			, #{conrTgtNm}
+			, #{conrTgtCd}
+			, #{conrTgtCnt}
+			, #{dispSeq}
+			, #{dpthNo}
+			, #{uprConrTgtNo}
+			, #{sysRegId}
+			, NOW()
+			, #{sysModId}
+			, NOW()
+		)
+	</insert>
+
+	<update id="updatePrConrTgtInfo" parameterType="prConrTgtInfo">
+		UPDATE 	PR_CONR_TGT_INFO                  /* prConrTgtInfoTrx.updatePrConrTgtInfo */
+		SET
+			    CONR_TGT_NM      	= #{conrTgtNm}
+			  , CONR_TGT_CD      	= #{conrTgtCd}
+			  , CONR_TGT_CNT     	= #{conrTgtCnt}
+			  , DISP_SEQ         	= #{dispSeq}
+			  , DPTH_NO          	= #{dpthNo}
+			  , UPR_CONR_TGT_NO  	= #{uprConrTgtNo}
+			  , SYS_MOD_ID 			= #{sysModId}
+			  , SYS_MOD_DTM 		= NOW()
+		WHERE 	CONR_TGT_NO = #{conrTgtNo}
+		AND 	CONR_NO = #{conrNo}
+	</update>
+
+	<delete id="deletePrConrTgtInfo" parameterType="prConrTgtInfo">
+		DELETE                  /* prConrTgtInfoTrx.deletePrConrTgtInfo */
+		FROM 	PR_CONR_TGT_INFO
+		WHERE 	CONR_TGT_NO = #{conrTgtNo}
+		AND 	CONR_NO = #{conrNo}
+	</delete>
+
+</mapper>
+
+

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.system.StGrpCdMapper">
+	<!--"com.x2commerce.backoffice.app.v1.system.dto.request.GroupCodeRequest"  -->
+	<sql id="paginatedBase">
+		LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+	</sql>
+	<!-- 공통코드 목록 조회 -->
+	<sql id="getStGrpCdListBase">
+		SELECT /* stGrpCd.getStGrpCdListBase */
+			   GRP_CD
+			 , GRP_CD_NM
+		     , GRP_CD_DESC
+		     , USE_YN
+		     , REF_1_VAL_DESC
+		     , REF_2_VAL_DESC
+		     , REF_3_VAL_DESC
+		     , REF_4_VAL_DESC
+		     , REF_5_VAL_DESC
+		     , SYS_REG_ID
+		     , TO_CHAR(SYS_REG_DTM, 'YYYY-MM-DD HH24:MI:SS') SYS_REG_DTM
+		     , SYS_MOD_ID
+		     , TO_CHAR(SYS_MOD_DTM, 'YYYY-MM-DD HH24:MI:SS') SYS_MOD_DTM
+		  FROM ST_GRP_CD
+		 WHERE 1 = 1
+		   AND GRP_CD LIKE #{grpCd} || '%'
+		   AND GRP_CD_NM LIKE #{grpCdNm} || '%'
+			<if test="useYn != null and useYn!= ''">
+				AND USE_YN = #{useYn}
+			</if>
+	     ORDER BY SYS_MOD_DTM DESC
+	</sql>
+
+	<!--
+	제 목 :공통코드 목록 조회
+	작성자 : 이시현
+	작성일 : 2021.02.24
+	params : stGrpCd
+	설 명 : 공통코드 목록 조회
+	-->
+	<select id="getStGrpCdList" parameterType="GroupCodeRequest" resultType="GroupCodeResponse">
+		/* stGrpCd.getStGrpCdList */
+		<include refid="getStGrpCdListBase" />
+		<include refid="paginatedBase" />
+	</select>
+
+	<!--
+     제 목 :공통코드 목록 Count
+     작성자 : 이시현
+     작성일 : 2021.02.24
+     params : stGrpCd
+     설 명 : 공통코드 목록 Count
+     -->
+	<select id="getGrpCdListCount" parameterType="GroupCodeRequest" resultType="java.lang.Integer">
+		SELECT /* StGrpCd.getGroupCodeListCount */
+			   COUNT(*)
+		  FROM (
+			<include refid="getStGrpCdListBase" />
+		) v
+	</select>
+
+	<!--
+	 제 목 : 그룹코드
+	 설 명 : 그룹코드 중복 check
+	 -->
+	<select id="getGrpCdCheck" parameterType="GroupCodeRequest" resultType="java.lang.Integer">
+		SELECT COUNT(*) /* stGrpCd.getGrpCdCheck */
+		  FROM ST_GRP_CD
+		 WHERE GRP_CD = #{grpCd}
+	</select>
+
+	<!--
+     제 목 : 그룹코드
+     설 명 : 그룹코드명 중복 check
+     -->
+	<select id="getGrpCdNmCheck" parameterType="GroupCodeRequest" resultType="java.lang.Integer">
+		SELECT COUNT(*) /* stGrpCd.getGrpCdNmCheck */
+		  FROM ST_GRP_CD
+		 WHERE GRP_CD_NM = #{grpCdNm}
+		   AND GRP_CD <![CDATA[ <> ]]> #{grpCd}
+	</select>
+
+</mapper>

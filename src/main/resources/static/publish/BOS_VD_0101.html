@@ -1,0 +1,140 @@
+<html lang="ko-KR">
+
+<head>
+    <title>x2</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+    <link type="text/css" rel="stylesheet" href="../css/reset.css">
+    <link type="text/css" rel="stylesheet" href="../css/layout.css">
+    <link type="text/css" rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" type="text/css" href="../css/realgrid-style.css">
+    <script src="../js/libs/jquery/jquery-3.4.1.min.js"></script>
+    <script src="../js/contents.js"></script>
+</head>
+
+<body>
+    <div class="page-root">
+        <div class="page-title">
+            <div class="left">
+                <h1>회원관리</h1>
+            </div>
+        </div>
+        <div class="page-fixed with-title">
+            <!-- page-title 가 있을경우 with-title 클래스 추가 -->
+            <div class="search-cont full-height">
+                <!-- search -->
+                <div class="search">
+                    <table class="search-table">
+                        <colgroup>
+                            <col width="120">
+                            <col>
+                            <col width="120">
+                            <col>
+                            <col width="120">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                            <tr>
+                                <td class="label"><strong>회원가입일자</strong></td>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="picker-group">
+                                            <input type="text" class="form-control disabled" readonly>
+                                            <span class="input-group-addon">~</span>
+                                            <input type="text" class="form-control disabled" readonly>
+                                            <span class="input-group-addon"><i class="icon-calendar"></i></span>
+                                        </div>
+                                        <label><input class="checkbox-inline ml10" type="checkbox" name="">전체기간</label>
+                                    </div>
+                                    
+                                </td>
+                                <td class="label">회원관리구분</td>
+                                <td>
+                                    <select class="form-control">
+                                        <option value="">전체</option>
+                                        <option value="">온라인회원</option>
+                                        <option value="">내부임직원</option>
+                                        <option value="">법인회원</option>
+                                    </select>
+                                </td>
+                                <td class="label">회원상태</td>
+                                <td>
+                                    <select class="form-control">
+                                        <option value="">전체</option>
+                                        <option value="">정상회원</option>
+                                        <option value="">탈퇴회원</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label">회원정보</td>
+                                <td>
+                                    <div class="input-group">
+                                        <select class="form-control">
+                                            <option value="">회원id</option>
+                                            <option value="" selected>회원명</option>
+                                        </select>
+                                        <input type="text" name="" value="" class="input">
+                                    </div>
+                                </td>
+                                <td class="label">휴대폰번호</td>
+                                <td>
+                                    <input type="text" name="" value="" class="input">
+                                </td>
+                                <td class="label">전화번호</td>
+                                <td>
+                                    <input type="text" name="" value="" class="input">
+                                </td>
+                            </tr>
+                    </table>
+                </div>
+                <!-- //search -->
+
+                <!-- search-btn -->
+                <div class="button-group search-btn">
+                    <a href="#" class="button white"><span class="text">초기화</span></a>
+                    <a href="#" class="button dark"><span class="text">조회</span></a>
+                </div>
+
+
+                <!-- grid -->
+                <div class="grid-cont">
+                    <div class="grid">
+                        <div class="grid-head">
+                            <div class="title-area">
+                                <h2 class="title">회원목록</h2>
+                            </div>
+                            <!-- //title-area -->
+
+                            <div class="option-area">
+                                <div class="page-option">
+                                    <span class="total">총 <em>24</em>건</span>
+                                    <select class="form-control">
+                                        <option value="0">20건씩</option>
+                                        <option value="1">30건씩</option>
+                                        <option value="2">100건씩</option>
+                                    </select>
+                                    <select class="form-control">
+                                        <option value="0">1</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <!-- //option-area -->
+                        </div>
+                        <!-- //grid-head -->
+
+                        <div class="grid-body with-head" id="realgrid" realgrid>realgrid area</div>
+                        <!-- //grid-body -->
+                    </div>
+                </div>
+                <!-- //grid -->
+
+            </div>
+            <!-- //search-cont -->
+        </div>
+        <!-- //page-fixed -->
+    </div>
+</body>
+
+</html>

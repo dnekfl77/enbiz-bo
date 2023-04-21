@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.display.PrMkdpDivobjInfoMapper">
+
+	<insert id="insertPrMkdpDivobjInfo" parameterType="PrMkdpDivobjInfo">
+		<selectKey keyProperty="divobjNo" resultType="String" order="BEFORE">
+			SELECT COALESCE(MAX(DIVOBJ_NO::INTEGER), 0) + 1 AS divobjNo
+			FROM PR_MKDP_DIVOBJ_INFO
+		</selectKey>
+		INSERT INTO PR_MKDP_DIVOBJ_INFO (  /* PrMkdpDivobjInfoMapper.insertPrMkdpDivobjInfo */
+				  MKDP_NO
+				, DIVOBJ_NO
+				, DIVOBJ_NM
+				, DISP_YN
+				, DISP_SEQ
+				, TMPL_NO
+				, SYS_REG_ID
+				, SYS_REG_DTM
+				, SYS_MOD_ID
+				, SYS_MOD_DTM
+		) VALUES (
+				  #{mkdpNo}
+				, #{divobjNo}
+				, #{divobjNm}
+				, #{dispYn}
+				, #{dispSeq}
+				, #{tmplNo}
+				, #{sysRegId}
+				, now()
+				, #{sysModId}
+				, now()
+		)
+	</insert>
+
+	<update id="updatePrMkdpDivobjInfo" parameterType="PrMkdpDivobjInfo">
+		UPDATE 	PR_MKDP_DIVOBJ_INFO                  /* PrMkdpDivobjInfoMapper.updatePrMkdpDivobjInfo */
+		SET 	  MKDP_NO         = #{mkdpNo}
+				, DIVOBJ_NO       = #{divobjNo}
+				, DIVOBJ_NM       = #{divobjNm}
+				, DISP_YN         = #{dispYn}
+				, DISP_SEQ        = #{dispSeq}
+				, TMPL_NO         = #{tmplNo}
+				, SYS_MOD_ID      = #{sysModId}
+				, SYS_MOD_DTM     = now()
+		WHERE 	MKDP_NO = #{mkdpNo}
+		AND 	DIVOBJ_NO = #{divobjNo}
+	</update>
+
+	<delete id="deletePrMkdpDivobjInfo" parameterType="PrMkdpDivobjInfo">
+		DELETE                  /* PrMkdpDivobjInfoMapper.deletePrMkdpDivobjInfo */
+		FROM 	PR_MKDP_DIVOBJ_INFO
+		WHERE 	MKDP_NO = #{mkdpNo}
+		AND 	DIVOBJ_NO = #{divobjNo}
+	</delete>
+
+</mapper>
+
+

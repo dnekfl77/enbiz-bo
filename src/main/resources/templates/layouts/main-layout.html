@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ko-KR"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <title>X2-Commerce</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+    <link type="text/css" rel="stylesheet" th:href="${@domainConfig.getProperty('cssUrl')} + 'reset.css?202103080001'">
+    <link type="text/css" rel="stylesheet" th:href="${@domainConfig.getProperty('cssUrl')} + 'layout.css?202103080001'">
+    <link type="text/css" rel="stylesheet" th:href="${@domainConfig.getProperty('cssUrl')} + 'common.css?202103080003'">
+    <link type="text/css" rel="stylesheet" th:href="${@domainConfig.getProperty('cssUrl')} + 'toastr.min.css?202103050001'">
+    <!--js libs-->
+    <script th:src="${@domainConfig.getProperty('jsUrl')} + 'libs/jquery/jquery-3.4.1.min.js?202103020000'"></script>
+    <script th:src="${@domainConfig.getProperty('jsUrl')} + 'libs/alertify/alertify-1.11.0.min.js?202103020000'"></script>
+    <script th:src="${@domainConfig.getProperty('jsUrl')} + 'contents.js?202102260002'"></script>
+    <!--//js libs-->
+
+    <!--js dev-->
+    <script type="text/javascript" th:src="@{/webjars/sockjs-client/1.1.2/sockjs.min.js}"></script>
+    <script type="text/javascript" th:src="@{/webjars/stomp-websocket/2.3.3-1/stomp.min.js}"></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'common/common.js?202108131241'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'common/ajax.js?202103080001'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'common/util.js?202103080002'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'common/cookie.js?202103080001'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'common/message.js?202103080001'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'common/popup.js?202108121247'"></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'common/toastr.min.js?202108121247'"></script>
+    <!--js dev-->
+</head>
+<body onselectstart="return false;">
+<div id="wrap" name="#top" class="toggle">
+    <!-- header -->
+    <div class="header" id="header">
+        <div class="logo"><a href="main.do"><img th:src="${@domainConfig.getProperty('imgUrl')} + 'logo.svg'"></a></div>
+        <div class="cont">
+            <th:block layout:fragment="notification-bar" />
+            <!-- gnb -->
+            <th:block layout:fragment="menu-bar" />
+            <!-- //gnb -->
+        </div>
+    </div>
+    <!-- //header -->
+    <div id="container">
+        <!-- snb -->
+        <th:block th:replace="fragments/container/la-aside-cont :: la-aside-cont" />
+        <!-- //snb -->
+
+        <!-- contents -->
+        <div th:replace="fragments/container/la-pages :: la-pages" />
+        <!-- //contents -->
+    </div>
+    <div id="footer">
+        <div th:replace="fragments/footer/la-footer-cont :: la-footer-cont" />
+    </div>
+
+    <!-- contextmenu s -->
+    <ul id="popTreeMenu" class="contextMenu" >
+        <li class="new"><a href="#new" id="btn_contextmenu_popup">POPUP</a></li>
+        <li class="bookmark"><a href="#bookmark" id="btn_contextmenu_bookmark">즐겨찾기</a></li>
+    </ul>
+    <!-- contextmenu e -->
+
+</div>
+<div th:replace="fragments/noties/ui-toast :: ui-toast" />
+<div th:replace="fragments/noties/ui-toast :: modal-popup" />
+<script th:inline="javascript">
+    /*<![CDATA[*/
+        var _baseUrl 		        = [[${@domainConfig.getProperty('baseUrl')}]];
+        var _uploadDomain 		    = [[${@domainConfig.getProperty('uploadDomain')}]];
+        var _jsUrl 			        = [[${@domainConfig.getProperty('jsUrl')}]];
+        var _currentLocaleLanguage  = [[${@environmentConfig.getProperty('defaultLocale')}]];
+        var _msg = x2coMessage.getMessage( {
+             noSearchedDataMsg      : 'adminCommon.grid.alert.no.searched.data'       // 조회된 데이터가 없습니다.
+            ,noSelectedDataMsg      : 'adminCommon.alert.no.selected.item.for.apply'  // 적용할 항목을 선택해주세요.
+            ,invalidAccessMsg       : 'adminCommon.message.invaild.access'            // 잘못된 접근 경로입니다.
+            ,confirmSaveMsg         : 'adminCommon.alert.save'                        // 저장하시겠습니까?
+            ,noSelectedRowMsg       : 'adminCommon.grid.alert.no.selected.row'        // 선택된 행이 없습니다.
+            ,processError           : 'adminCommon.process.error'                     // 처리도중 오류가 발생했습니다.
+	        ,systemError            : 'adminCommon.system.error'                      // 시스템 장애로인해 오류가 발생했습니다.담당자에게 문의 바랍니다.
+            ,inProcessMsg           : 'adminCommon.grid.alert.in.process'             // 처리중입니다.
+            ,processDoneMsg         : 'adminCommon.grid.alert.do.successfully'        // 처리되었습니다.
+            ,searchedDoneMsg        : 'adminCommon.grid.alert.do.searched'            // 조회되었습니다.
+            ,forbiddenMsg 			: 'adminCommon.system.forbidden'//권한없음오류
+            ,apiErrorMsg 			: 'adminCommon.restapi.internalServerError'//api error
+        });
+    /*]]>*/
+
+    $(document.body).ready(function(){
+        $('.menu-item').first().click();
+        /* $('.menu-item').first().click().addClass('active') .hasClass('active'); */
+    });
+</script>
+<th:block layout:fragment="add-script">
+    <script type="text/javascript">
+        $(document).ready(function(){
+            //기본메뉴, 마이메뉴 텝 기능 S
+            tabsBody();
+            //기본메뉴, 마이메뉴 텝 기능 E
+
+            if( $('body').is('#menu') ){
+                console.log('menu');
+            } else {
+                $(document).bind("click", function (e) {
+                    if( window.parent.$(".contextMenu").css("display") == "block"){
+                        window.parent.$(".contextMenu").hide(100);
+                    }
+                });
+            }
+            // 메뉴 오른쪽 버튼 클릭 시 나오는 레이어 떴을 때 닫기,
+            //F12키, Ctrl + U(소스보기) 막기
+/* 개발중...
+            $(document).bind('keydown',function(e){
+                if ( (e.keyCode == 123) || ( e.ctrlKey == true && e.keyCode == 85 ) ) {
+                    e.preventDefault();
+                    e.returnValue = false;
+                }
+            });
+*/
+		});
+/* 개발중...
+		function mouseRightClick() {
+            if ((event.button==2) || (event.button==2)) {
+                alert('컨텐츠 보호를 위해 마우스 우클릭이 제한됩니다.');
+            }
+        }
+
+        document.onmousedown=mouseRightClick; //왼쪽 메뉴 영역 외 오른쪽 마우스 막기
+*/
+    </script>
+</th:block>
+</body>
+</html>

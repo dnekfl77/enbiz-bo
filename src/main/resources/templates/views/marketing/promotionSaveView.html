@@ -1,0 +1,404 @@
+<!--
+* 프로그램명 : 프로모션 등록 / 상세
+* 작 성 일 : 2021.03.17
+* 작 성 자 : 윤성원
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 프로모션 등록 / 상세 팝업
+* 이    력 :
+-->
+<html lang="ko-KR"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/page-realgrid-layout}">
+
+<body>
+<th:block layout:fragment="page-contents">
+    <div class="win-popup page-root">
+    <div class="page-fixed">
+        <form id="promotion-form">
+            <!--기본정보 Form -->
+            <div class="data-cont">
+            <div class="header">
+                <h1 class="title"><th:block th:text="${promotion} == null or ${promotion} == '' ?
+                   ${#messages.msg('promotionMgmt.detail.label.registTitle')} : ${#messages.msg('promotionMgmt.detail.label.deleteTitle')} "/>
+</h1>
+              </div>
+                <div class="data">
+                    <div class="data-head">
+                        <div class="left"><span class="title"><th:block th:text="${#messages.msg('promotionMgmt.detail.label.basicForm')}"/></span>
+                        </div>
+                    </div>
+                    <!-- //data-head -->
+
+                    <div class="data-body">
+                        <table class="data-table fixed">
+                            <colgroup>
+                                <col width="120">
+                                <col>
+                                <col width="120">
+                                <col>
+                            </colgroup>
+                            <tbody>
+                            <tr>
+                                <td class="label"><strong><th:block th:text="${#messages.msg('promotionMgmt.detail.label.promoNoAndNm')}"/></strong></td>
+                                <td colspan="3">
+                                    <input type="text" name="promoNo" class="input disabled w10" id="promoNo" disabled="disabled"
+                                           th:value=" ${promotion} == null ? '' : ${promotion.promoNo}">
+                                    <input type="text" name="promoNm" class="input" id="promoNm"
+                                           th:value=" ${promotion} == null ? '' : ${promotion.promoNm}">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label"><strong><th:block th:text="${#messages.msg('promotionMgmt.detail.label.promoTypCd')}"/></strong></td>
+                                <td>
+                                    <select class="form-control" id="select-promotion-type" name="promoTypCd">
+                                        <option value="" th:text="${#messages.msg('adminCommon.select')}"></option>
+                                        <option th:if="${promotion} == null and ${list?.ref1Val}==20" th:each="list : ${codeList.MK002}" th:value="${list?.cd}" th:utext="${list?.cdNm}"></option>
+                                        <option th:if="${promotion} != null and ${list?.ref1Val}==20" th:each="list : ${codeList.MK002}" th:value="${list?.cd}" th:utext="${list?.cdNm}"
+                                                th:selected="${promotion.promoTypCd} == ${list?.cd}" ></option>
+                                    </select>
+                                </td>
+                                <td class="label"><strong><th:block th:text="${#messages.msg('promotionMgmt.detail.label.promoStatCd')}"/></strong></td>
+                                <td>
+                                    <select class="form-control" id="select-promotion-status" name="promoStatCd">
+                                        <option th:if="${promotion} == null" th:each="list : ${codeList.MK003}" th:value="${list?.cd}" th:utext="${list?.cdNm}"></option>
+                                        <option th:unless="${promotion} == null" th:each="list : ${codeList.MK003}" th:value="${list?.cd}" th:utext="${list?.cdNm}"
+                                                th:selected="${promotion.promoStatCd} == ${list?.cd}" ></option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label"><strong><th:block th:text="${#messages.msg('promotionMgmt.detail.label.promoDesc')}"/></strong></td>
+                                <td colspan="3">
+                                    <input type="text" class="input w100" id="text-promo-desc" name="promoDesc" th:value=" ${promotion} == null ? '' : ${promotion.promoDesc}">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label"><th:block th:text="${#messages.msg('adminCommon.label.sys.reg.id')}"/></td>
+                                <td>
+                                    <th:block th:text=" ${promotion} == null ? '' : ${promotion.sysRegId}"></th:block>
+                                </td>
+                                <td class="label"><th:block th:text="${#messages.msg('adminCommon.label.sys.reg.date')}"/></td>
+                                <td>
+                                    <th:block th:text=" ${promotion} == null ? '' : ${promotion.sysRegDtm}"></th:block>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label"><th:block th:text="${#messages.msg('adminCommon.label.sys.mod.id')}"/></td>
+                                <td>
+                                    <th:block th:text=" ${promotion} == null ? '' : ${promotion.sysModId}"></th:block>
+                                </td>
+                                <td class="label"><th:block th:text="${#messages.msg('adminCommon.label.sys.mod.date')}"/></td>
+                                <td>
+                                    <th:block th:text="${promotion} == null ? '' : ${promotion.sysModDtm}"></th:block>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- //data-body -->
+                </div>
+            </div>
+            <!--  기본정보 Form End -->
+            <!-- 프로모션혜택 Form Start -->
+            <div class="data-cont">
+                <div class="data">
+                    <div class="data-head">
+                        <div class="left"><span class="title"><th:block th:text="${#messages.msg('promotionMgmt.detail.label.promotionBenefit')}"/></span>
+                        </div>
+                    </div>
+                    <!-- //data-head -->
+
+                    <div class="data-body">
+                        <table class="data-table fixed">
+                            <colgroup>
+                                <col width="120">
+                                <col>
+                                <col width="120">
+                                <col>
+                            </colgroup>
+                            <tbody>
+                            <tr>
+                                <td class="label"><strong><th:block th:text="${#messages.msg('adminCommon.term')}"/></strong></td>
+                                <td colspan="3">
+                                    <div class="input-group">
+                                        <div class="picker-group time" data-lopicker="basic" id="input-2-1">
+                                            <input type="text" class="form-control disabled" id="disp-start-date" placeholder="" disabled="disabled"
+                                                   th:value=" ${promotion} == null ? '' : ${promotion.promoStrDtm}">
+                                            <span class="input-group-addon">~</span>
+                                            <input type="text" class="form-control disabled"  id="disp-end-date" placeholder="" disabled="disabled"
+                                                   th:value=" ${promotion} == null ? '' : ${promotion.promoEndDtm}">
+                                            <span class="input-group-addon" id="display-calendar"><i class="icon-calendar"></i></span>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label"><strong><th:block th:text="${#messages.msg('promotionMgmt.detail.label.applyCard')}"/></strong></td>
+                                <td colspan="3">
+                                    <select class="form-control" id="select-card-type" name="cardcoCd">
+                                        <option value="" th:text="${#messages.msg('adminCommon.select')}"></option>
+                                        <option th:if="${promotion} == null" th:each="list : ${codeList.OM027}" th:value="${list?.cd}" th:utext="${list?.cdNm}"></option>
+                                        <option th:if="${promotion} != null" th:each="list : ${codeList.OM027}" th:value="${list?.cd}" th:utext="${list?.cdNm}"
+                                                th:selected="${promotion.cardcoCd} == ${list?.cd}" ></option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label"><strong><th:block th:text="${#messages.msg('promotionMgmt.detail.label.applyMedia')}"/></strong></td>
+                                <td>
+                                    <div class="checkbox">
+                                        <label class="checkbox-inline">
+                                            <input type="checkbox" name="apply-media-all" value="all" class="js-not-checkall"
+                                                   data-target-name="apply-media-all"><th:block th:text="${#messages.msg('adminCommon.label.all')}"></th:block>
+                                        </label>
+                                        <label>
+                                            <input class="checkbox-inline" type="checkbox" name="apply-media" value="01"
+                                                   th:text="${#messages.msg('promotionMgmt.detail.label.applyMedia.pc')}">
+                                        </label>
+                                        <label>
+                                            <input class="checkbox-inline" type="checkbox" name="apply-media" value="02"
+                                                   th:text="${#messages.msg('promotionMgmt.detail.label.applyMedia.mobile')}">
+                                        </label>
+                                        <label>
+                                            <input class="checkbox-inline" type="checkbox" name="apply-media" value="03"
+                                                   th:text="${#messages.msg('promotionMgmt.detail.label.applyMedia.bo')}">
+                                        </label>
+                                    </div>
+                                </td>
+                                <td class="label"><strong><th:block th:text="${#messages.msg('promotionMgmt.detail.label.applyMbr')}"/></strong></td>
+                                <td>
+                                    <div class="input-group">
+                                        <select class="form-control" id="apply-user" name="mbrGradeCd">
+                                            <option th:if="${promotion} == null" th:each="list : ${mbrGradeList.ME024}" th:value="${list?.cd}" th:utext="${list?.cdNm}"></option>
+                                            <option th:unless="${promotion} == null" th:each="list : ${mbrGradeList.ME024}" th:value="${list?.cd}" th:utext="${list?.cdNm}"
+                                                    th:selected="${promotion.mbrGradeCd} == ${list?.cd}" ></option>
+                                        </select>
+                                        <label class="ml5">
+                                            <input class="checkbox-inline" type="checkbox" id="apply-user-checkbox" value="" th:text="${#messages.msg('promotionMgmt.detail.label.upUser')}">
+                                        </label>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label"><strong><th:block th:text="${#messages.msg('promotionMgmt.detail.label.discountType')}"/></strong></td>
+                                <td colspan="3">
+                                    <div class="input-group">
+                                        <label class="radio-inline">
+                                            <input type="radio" name="discount-amt-rate" value="01" checked="checked" th:text="${#messages.msg('promotionMgmt.detail.label.discountAmt')}">
+                                        </label>
+                                        <label class="radio-inline">
+                                            <input type="radio" name="discount-amt-rate" value="02" th:text="${#messages.msg('promotionMgmt.detail.label.discountRate')}">
+                                        </label>
+                                        <input type="text" name="dcRateAmt" value="" class="price input w15" id="discount-amtandrate" numberOnly><em>(<th:block th:text="${#messages.msg('adminCommon.label.price.mark')}"></th:block>/%)</em><em class="ml40">· <th:block th:text="${#messages.msg('promotionMgmt.detail.label.discountMinPrice')}"></th:block></em>
+                                        <input type="text" name="minBuyAmt" value="" class="price input w15" id="discount-minbuyAmt" numberOnly><em>· <th:block th:text="${#messages.msg('promotionMgmt.detail.label.discountMaxPrice')}"></th:block></em>
+                                        <input type="text" name="maxDcAmt" value="" class="price input w15" id="discount-maxdcamt" numberOnly>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <!--  프로모션혜택 Form End -->
+        <!--  적용대상 Form Start -->
+        <div class="data-cont" id="apply-target-form">
+            <div class="data">
+                <div class="data-head">
+                    <div class="left"><span class="title"><th:block th:text="${#messages.msg('promotionMgmt.detail.label.applyTarget')}"/></span>
+                    </div>
+                    <div class="right">
+                        <a href="#" class="button inside" id="apply-clear-all"><span class="text"><th:block th:text="${#messages.msg('adminCommon.button.all.init')}"></th:block></span></a>
+                    </div>
+                </div>
+                <!-- //data-head -->
+
+                <div class="data-body">
+                    <table class="data-table">
+                        <colgroup>
+                            <col width="120">
+                            <col>
+                            <col width="120">
+                            <col>
+                            <col width="120">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                        <tr>
+                            <td class="label"><th:block th:text="${#messages.msg('promotionMgmt.detail.label.site')}"/></td>
+                            <td colspan="5">
+                                <div class="quick-search">
+                                    <ul id="apply-site-ul">
+                                    </ul>
+                                    <div class="add">
+                                        <a href="#" class="button inside target-init"><span class="text"><th:block th:text="${#messages.msg('adminCommon.button.init')}"></th:block></span></a>
+                                        <a href="#" class="button inside" id="apply-site"><span class="text"><th:block th:text="${#messages.msg('adminCommon.button.add')}"></th:block></span></a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label"><th:block th:text="${#messages.msg('promotionMgmt.detail.label.goods')}"/></td>
+                            <td colspan="5">
+                                <div class="quick-search">
+                                    <ul id="apply-goods-ul">
+                                    </ul>
+                                    <div class="add">
+                                        <a href="#" class="button inside target-init"><span class="text"><th:block th:text="${#messages.msg('adminCommon.button.init')}"></th:block></span></a>
+                                        <a href="#" class="button inside" id="apply-goods"><span class="text"><th:block th:text="${#messages.msg('adminCommon.button.add')}"></th:block></span></a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label"><th:block th:text="${#messages.msg('promotionMgmt.detail.label.stdGoods')}"/></td>
+                            <td colspan="5">
+                                <div class="quick-search">
+                                    <ul id="apply-stdgoods-ul">
+                                    </ul>
+                                    <div class="add">
+                                        <a href="#" class="button inside target-init"><span class="text"><th:block th:text="${#messages.msg('adminCommon.button.init')}"></th:block></span></a>
+                                        <a href="#" class="button inside" id="apply-stdGoods"><span class="text"><th:block th:text="${#messages.msg('adminCommon.button.add')}"></th:block></span></a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label"><th:block th:text="${#messages.msg('promotionMgmt.detail.label.category')}"/></td>
+                            <td colspan="5">
+                                <div class="quick-search">
+                                    <ul id="apply-category-ul">
+                                    </ul>
+                                    <div class="add">
+                                        <a href="#" class="button inside target-init"><span class="text"><th:block th:text="${#messages.msg('adminCommon.button.init')}"></th:block></span></a>
+                                        <a href="#" class="button inside" id="apply-category"><span class="text"><th:block th:text="${#messages.msg('adminCommon.button.add')}"></th:block></span></a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label"><th:block th:text="${#messages.msg('promotionMgmt.detail.label.brand')}"/></td>
+                            <td colspan="5">
+                                <div class="quick-search">
+                                    <ul id="apply-brand-ul">
+                                    </ul>
+                                    <div class="add">
+                                        <a href="#" class="button inside target-init"><span class="text"><th:block th:text="${#messages.msg('adminCommon.button.init')}"></th:block></span></a>
+                                        <a href="#" class="button inside" id="apply-brand"><span class="text"><th:block th:text="${#messages.msg('adminCommon.button.add')}"></th:block></span></a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label"><th:block th:text="${#messages.msg('promotionMgmt.detail.label.entr')}"/></td>
+                            <td colspan="5">
+                                <div class="quick-search">
+                                    <ul id="apply-entr-ul">
+                                    </ul>
+                                    <div class="add">
+                                        <a href="#" class="button inside target-init"><span class="text"><th:block th:text="${#messages.msg('adminCommon.button.init')}"></th:block></span></a>
+                                        <a href="#" class="button inside" id="apply-entr"><span class="text"><th:block th:text="${#messages.msg('adminCommon.button.add')}"></th:block></span></a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label"><th:block th:text="${#messages.msg('promotionMgmt.detail.label.channel')}"/></td>
+                            <td colspan="5">
+                                <div class="quick-search">
+                                    <ul id="apply-channel-ul">
+                                    </ul>
+                                    <div class="add">
+                                        <a href="#" class="button inside target-init"><span class="text"><th:block th:text="${#messages.msg('adminCommon.button.init')}"></th:block></span></a>
+                                        <a href="#" class="button inside" id="apply-channel"><span class="text"><th:block th:text="${#messages.msg('adminCommon.button.add')}"></th:block></span></a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- //data-body -->
+            </div>
+        </div>
+        <!-- 적용대상 Form End -->
+        <!-- 제외대상 Form Start -->
+        <div class="data-cont" id="except-target-form">
+            <div class="data">
+                <div class="data-head">
+                    <div class="left"><span class="title"><th:block th:text="${#messages.msg('promotionMgmt.detail.label.exceptTarget')}"/></span>
+                    </div>
+                </div>
+                <!-- //data-head -->
+
+                <div class="data-body">
+                    <table class="data-table">
+                        <colgroup>
+                            <col width="120">
+                            <col>
+                            <col width="120">
+                            <col>
+                            <col width="120">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                        <tr>
+                            <td class="label"><th:block th:text="${#messages.msg('promotionMgmt.detail.label.goods')}"/></td>
+                            <td colspan="5">
+                                <div class="quick-search">
+                                    <ul id="except-goods-ul">
+                                    </ul>
+                                    <div class="add">
+                                        <a href="#" class="button inside target-init"><span class="text"><th:block th:text="${#messages.msg('adminCommon.button.init')}"></th:block></span></a>
+                                        <a href="#" class="button inside" id="except-goods"><span class="text"><th:block th:text="${#messages.msg('adminCommon.button.add')}"></th:block></span></a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label"><th:block th:text="${#messages.msg('promotionMgmt.detail.label.stdGoods')}"/></td>
+                            <td colspan="5">
+                                <div class="quick-search">
+                                    <ul id="except-stdGoods-ul">
+                                    </ul>
+                                    <div class="add">
+                                        <a href="#" class="button inside target-init"><span class="text"><th:block th:text="${#messages.msg('adminCommon.button.init')}"></th:block></span></a>
+                                        <a href="#" class="button inside" id="except-stdGoods"><span class="text"><th:block th:text="${#messages.msg('adminCommon.button.add')}"></th:block></span></a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- //data-body -->
+            </div>
+        </div>
+        <!--  제외대상 Form End -->
+        <div class="button-group search-btn">
+            <a th:if="${promotion} != null" href="#" class="button" id="promotion-manage-delete"><span class="text"><th:block th:text="${#messages.msg('adminCommon.button.delete')}"></th:block></span></a>
+            <a href="#" class="button" id="promotion-manage-close"><span class="text"><th:block th:text="${#messages.msg('adminCommon.button.close')}"></th:block></span></a>
+            <a href="#" class="button" id="promotion-manage-save"><span class="text"><th:block th:text="${#messages.msg('adminCommon.button.save')}"></th:block></span></a>
+        </div>
+        </form>
+    </div>
+    </div>
+</th:block>
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        var promotion = [[${promotion}]];
+    </script>
+
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'marketing/promotionDetail.js?202103170004'" ></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            promotionDetail.init();
+        });
+    </script>
+</th:block>
+</body>
+</html>

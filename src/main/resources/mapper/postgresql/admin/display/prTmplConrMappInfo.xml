@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.display.PrTmplConrMappInfoMapper">
+
+	<sql id="DisplayCornerList">
+		SELECT   /* prTmplConrMappInfo.DisplayCornerList */
+				  PTCMI.TMPL_NO
+				, PTCMI.CONR_NO
+				, CB.CONR_NM
+				, PTCMI.DISP_YN
+				, PTCMI.DISP_SEQ
+				, TO_CHAR(PTCMI.DISP_STR_DTM,'YYYY-MM-DD HH24:MI:SS') AS DISP_STR_DTM
+				, TO_CHAR(PTCMI.DISP_END_DTM,'YYYY-MM-DD HH24:MI:SS') AS DISP_END_DTM
+				,  (
+						SELECT  ARRAY_TO_STRING(ARRAY_AGG(FN_GET_CODENAME('DP005',S3.CONR_TGT_CD)),'+')
+						FROM  	PR_CONR_TGT_INFO S3
+						WHERE  	PTCMI.CONR_NO = S3.CONR_NO
+				   ) AS DISP_TGT
+				, PTCMI.SYS_MOD_ID
+				, TO_CHAR(PTCMI.SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+		FROM 	  PR_TMPL_CONR_MAPP_INFO PTCMI
+		  		, PR_CONR_BASE CB
+		WHERE 	  PTCMI.CONR_NO = CB.CONR_NO
+		AND 	  PTCMI.TMPL_NO = #{tmplNo}
+		ORDER BY  PTCMI.DISP_SEQ
+	</sql>
+
+	<select id="getDisplayCornerList" parameterType="PrTmplConrMappInfoRequest" resultType="PrTmplConrMappInfoResponse">
+		<include refid="DisplayCornerList" />
+	</select>
+
+	<select id="getDisplayCornerListCount" parameterType="PrTmplConrMappInfoRequest" resultType="java.lang.Integer">
+		SELECT   /* prTmplConrMappInfo.getDisplayCornerListCount */
+			COUNT(*)
+		FROM (
+			<include refid="DisplayCornerList" />
+		) T1
+	</select>
+
+	<sql id="connerList">
+		SELECT   /* prTmplConrMappInfo.connerList */
+				  PDCB.DISP_CTG_NO
+				, PDCB.TMPL_NO
+				, PDCB.SITE_NO
+				, PTCMI.CONR_NO
+				, PTCMI.DISP_YN
+				, TO_CHAR(PTCMI.DISP_STR_DTM, 'YYYY-MM-DD HH24:MI:SS') AS DISP_STR_DTM
+				, TO_CHAR(PTCMI.DISP_END_DTM, 'YYYY-MM-DD HH24:MI:SS') AS DISP_END_DTM
+				, PTCMI.DISP_SEQ
+				, PCB.CONR_NM
+				, PCB.USE_YN
+				,  (
+						SELECT 	ARRAY_TO_STRING(ARRAY_AGG(FN_GET_CODENAME('DP005',PCTI.CONR_TGT_CD)),'+')
+						FROM  	PR_CONR_TGT_INFO PCTI
+						WHERE  	PTCMI.CONR_NO = PCTI.CONR_NO
+				) AS CONR_TGT_CD
+		FROM      PR_DISP_CTG_BASE PDCB , PR_TMPL_CONR_MAPP_INFO PTCMI, PR_CONR_BASE PCB
+		WHERE  	PDCB.DISP_CTG_NO  = #{dispCtgNo}
+		AND 	PDCB.TMPL_NO = PTCMI.TMPL_NO
+		AND 	PTCMI.CONR_NO = PCB.CONR_NO
+		ORDER BY PTCMI.DISP_SEQ
+	</sql>
+
+	<select id="getConnerList" parameterType="PrTmplConrMappInfoRequest" resultType="PrTmplConrMappInfoResponse">
+		<include refid="connerList" />
+	</select>
+
+	<select id="getConnerListCount" parameterType="PrTmplConrMappInfoRequest" resultType="java.lang.Integer">
+		SELECT   /* prTmplConrMappInfo.getConnerListCount */
+			COUNT(*)
+		FROM (
+			<include refid="connerList" />
+		) T1
+	</select>
+
+</mapper>
+
+

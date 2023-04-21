@@ -1,0 +1,126 @@
+<!--
+* 프로그램명 : 배송지 추가 - appendDelivery.html
+* 작 성 일 : 2021.05.26
+* 작 성 자 : N.J.Kim
+* 수 정 자 :
+* 버	전 : 1.0
+* 개	요 : 배송지 추가 팝업
+* 이	력 :
+-->
+<!DOCTYPE html>
+<html lang="ko"
+	  xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{layouts/page-realgrid-layout}">
+<head>
+	<!-- 배송지 그리드 -->
+	<script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'order/popup/appendDeliveryNomember.js?202104290006'"></script>
+</head>
+<body>
+
+	<th:block layout:fragment="page-contents">
+
+	<div class="win-popup page-root">
+		<div class="page-fixed">
+			<div class="search-cont">
+				<div class="header">
+					<h1 class="title" id="">배송지 추가</h1>
+				</div>
+				<div class="data-cont">
+					<div class="data">
+						<div class="data-head">
+							<div class="left"><span class="title">배송지 추가</span></div>
+						</div>
+						<!-- //data-head -->
+
+						<div class="data-body">
+							<form id="dlvpForm">
+								<table class="data-table fixed">
+									<colgroup>
+										<col width="120">
+										<col>
+										<col width="120">
+										<col>
+									</colgroup>
+									<tbody>
+										<tr>
+											<td class="label"><strong>배송지명</strong></td><!-- 배송지명 -->
+											<td><input type="text" id="dlvpNm" name="dlvpNm" class="input"></td>
+											<td class="label"><strong>수취인명</strong></td><!-- 수취인명 -->
+											<td><input type="text" id="rcvmnNm" name="rcvmnNm" class="input"></a>
+											</td>
+										</tr>
+										<tr>
+											<td class="label"><strong>휴대폰번호</strong></td><!-- 휴대폰번호 -->
+				                            <td>
+				                                <div class="input-group" th:data-msg-empty="#{vendorMgmt.partner.popup.valid.empty.aempCellNo}">
+				                                    <select class="form-control w20" name="cellSctNo" id="cellSctNo" th:data-msg-empty="#{vendorMgmt.partner.popup.valid.empty.aempCellSctNo}">
+				                                        <option value="" th:text="${#messages.msg('vendorMgmt.partner.popup.option.full')}"></option>
+				                                        <option th:each="list : ${codeList.CM013}" th:value="${list?.cd}" th:utext="${list?.cdNm}"></option>
+				                                    </select>
+				                                    <input type="text" class="input w20" maxlength="4"
+				                                           oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+				                                           name="cellTxnoNo" id="cellTxnoNo"
+				                                           th:data-msg-empty="#{vendorMgmt.partner.popup.valid.empty.aempCellTxnoNo}">
+				                                    <input type="text" class="input w20" maxlength="4"
+				                                           oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+				                                           name="cellEndNo" id="cellEndNo"
+				                                           th:data-msg-empty="#{vendorMgmt.partner.popup.valid.empty.aempCellEndNo}">
+				                                </div>
+				                            </td>
+											<td class="label">이메일주소</td><!-- 이메일주소 -->
+											<td>
+												<div class="input-group w90">
+													<input type="text" class="input w30" maxlength="100" id="emailId" name="emailId">
+													<span>@</span>
+													<input type="text" class="input w30" maxlength="100" id="emailDomain" name="emailDomain">
+													<select class="form-control w30" id="domainSelectBox" name="domainSelectBox">
+														<option value="" th:text="${#messages.msg('userMgmt.label.data.domain.write')}"></option><!-- 직접입력 -->
+														<option th:each="list : ${codeList.CM012}" th:value="${list?.cdNm}" th:utext="${list?.cdNm}"></option>
+													</select>
+												</div>
+											</td>
+										</tr>
+										<tr>
+											<td class="label"><strong>주소</strong></td><!-- 주소 -->
+				                            <td colspan="3">
+				                                <div class="input-group address w90" id="zipNoAddrDtl">
+				                                    <input type="hidden" class="input disabled" disabled="" name="zipNoSeq" id="zipNoSeq" th:data-msg-empty="#{vendorMgmt.partner.popup.valid.empty.zipNoSeq}">
+				                                    <a href="#" class="button small" id="btnAddressSearch">
+				                                    	<span class="text w10" th:text="${#messages.msg('vendorMgmt.partner.popup.button.searchAddr')}"></span>
+				                                    </a>
+				                                    <input type="text" class="input disabled w10" disabled="" name="zipNo" id="zipNo" th:data-msg-empty="#{vendorMgmt.partner.popup.valid.empty.zipNo}">
+				                                    <input type="text" class="input disabled w30" disabled="" name="zipAddr" id="zipAddr" th:data-msg-empty="#{vendorMgmt.partner.popup.valid.empty.zipAddr}">
+				                                    <input type="text" class="input w40" name="dtlAddr" id="dtlAddr" th:data-msg-empty="#{vendorMgmt.partner.popup.valid.empty.dtlAddr}">
+				                                </div>
+				                            </td>
+										</tr>
+									</tbody>
+								</table>
+							</form>
+						</div>
+						<!-- //data-body -->
+					</div>
+					<!-- //기본정보 -->
+
+			</div>
+			<!-- //search-cont -->
+
+			<!--List Button Area-->
+			<th:block layout:fragment="popup-List-button-area">
+			    <th:block layout:insert="~{fragments/popup/popup-btn :: popup-List-btn}"/>
+			</th:block>
+		</div>
+		<!-- //page-fixed -->
+	</div>
+	</th:block>
+
+	<th:block layout:fragment="add-script">
+		<script type="text/javascript">
+			$(document).ready(function() {
+				appendDeliveryNomember.init();//페이지 초기화
+			});
+		</script>
+	</th:block>
+</body>
+</html>

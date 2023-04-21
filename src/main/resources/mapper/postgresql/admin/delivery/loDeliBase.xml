@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.delivery.LoDeliBaseMapper">
+
+	<sql id="paginatedBase">
+		LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+	</sql>
+
+	<!-- <insert id="insertLoDeliBase" parameterType="loDeliBase">
+		<selectKey keyProperty="deliNo" resultType="String" order="BEFORE">
+			SELECT NEXTVAL('LO_DELI_BASE_SQ01') AS deliNo
+		</selectKey>
+		INSERT INTO LO_DELI_BASE ( /* loDeliBase.insertLoDeliBase */
+				  DELI_NO
+				, SITE_NO
+				, ORD_NO
+				, DLVP_SEQ
+				, DELI_GB_CD
+				, DELI_TYP_CD
+				, DELI_PROC_TYP_CD
+				, DELI_WAY_CD
+				, INDI_DTM
+				, DELI_PRGS_STAT_CD
+				, DELI_POLC_NO
+				, DLEX_CHRG_SUB_CD
+				, MBR_NO
+				, ORDERER_NM
+				, ENTR_NO
+				, SYS_REG_ID
+				, SYS_REG_DTM
+				, SYS_MOD_ID
+				, SYS_MOD_DTM
+		) VALUES (
+				  #{deliNo}
+				, #{siteNo}
+				, #{ordNo}
+				, #{dlvpSeq}
+				, #{deliGbCd}
+				, #{deliTypCd}
+				, #{deliProcTypCd}
+				, #{deliWayCd}
+				, now()
+				, #{deliPrgsStatCd}
+				, #{deliPolcNo}
+				, #{dlexChrgSubCd}
+				, #{mbrNo}
+				, #{ordererNm}
+				, #{entrNo}
+				, #{sysRegId}
+				, now()
+				, #{sysModId}
+				, now()
+		)
+	</insert>
+
+	<insert id="insertLoDeliPrgsStatChgHist" parameterType="loDeliBase">
+		INSERT INTO LO_DELI_PRGS_STAT_CHG_HIST ( /* loDeliBase.insertLoDeliPrgsStatChgHist */
+				  DELI_NO
+				, CHG_DTM
+				, SND_CONTR_DTM
+				, SYS_REG_ID
+				, SYS_REG_DTM
+				, SYS_MOD_ID
+				, SYS_MOD_DTM
+		) VALUES (
+				  #{deliNo}
+				, now()
+				, '21'
+				, #{sysRegId}
+				, now()
+				, #{sysModId}
+				, now()
+		)
+	</insert>
+ -->
+	<sql id="DeliveryInquiryList">
+		SELECT  				/* loDeliBase.DeliveryInquiryList */
+				  SUBSTRING(LDB.ORD_NO,1,8) || '-' || SUBSTRING(LDB.ORD_NO,9,6) AS ORD_NO
+				, LDB.DELI_NO
+				, FN_GET_CODENAME( 'LO002', LDB.DELI_TYP_CD ) AS DELI_TYP_CD
+				, FN_GET_CODENAME( 'PR008', LDB.DELI_PROC_TYP_CD ) AS DELI_PROC_TYP_CD
+				, FN_GET_CODENAME( 'PR009', LDB.DELI_WAY_CD ) AS DELI_WAY_CD
+				, FN_GET_CODENAME( 'LO003', LDB.DELI_PRGS_STAT_CD ) AS DELI_PRGS_STAT_CD
+				, FN_GET_CODENAME( 'LO005', LDB.HDC_CD ) AS HDC_CD
+				, LDB.INV_NO
+				, OOD.BPCK_PSB_YN
+				, LDB.ORDERER_NM
+				, OODL.RCVMN_NM
+				, OODL.RCVMN_CELL_SCT_NO
+				, OODL.RCVMN_CELL_TXNO_NO
+				, OODL.RCVMN_CELL_END_NO
+				, OODL.RCVMN_TEL_RGN_NO
+				, OODL.RCVMN_TEL_TXNO_NO
+				, OODL.RCVMN_TEL_END_NO
+				, OODL.ZIP_ADDR
+				, OODL.DTL_ADDR
+				, TO_CHAR(OOD.ORD_FNSH_DTM, 'YYYY-MM-DD') AS ORD_FNSH_DTM
+				, TO_CHAR(LDB.INDI_DTM, 'YYYY-MM-DD') AS INDI_DTM
+				, TO_CHAR(LDB.PROC_DTM, 'YYYY-MM-DD') AS PROC_DTM
+				, TO_CHAR(LDB.FNSH_DTM, 'YYYY-MM-DD') AS FNSH_DTM
+				, LDD.SND_WAIT_CAUS_CD
+				, FN_GET_CODENAME( 'LO007', LDD.SND_WAIT_CAUS_CD ) AS SND_WAIT_CAUS_CD_NM
+				, (CASE WHEN LDD.SND_WAIT_CAUS_CD = '20' THEN '문자발송' ELSE NULL END) AS SND_WAIT_CAUS_SMS
+				, LDD.GOODS_NO
+				, LDD.GOODS_NM
+				, LDD.ITM_NO
+				, LDD.ITM_NM
+				, LDD.INDI_QTY
+				, LDD.SALE_PRC
+				, EEB.ENTR_NM AS ENTR_NO
+				, FN_GET_CODENAME( 'PR010', LDD.DELI_GOODS_GB_CD ) AS DELI_GOODS_GB_CD
+		FROM 	  LO_DELI_BASE LDB 	-- 배송기본
+				, LO_DELI_DTL LDD 	-- 배송상세
+				, ET_ENTR_BASE EEB 	-- 협력사기본
+				, OP_ORD_DTL OOD 	-- 주문상세
+				, OP_ORD_DLVP OODL 	-- 주문배송지
+		WHERE 	LDB.ORD_NO 	= 	LDD.ORD_NO 		-- 주문번호
+		AND 	LDB.DELI_NO = 	LDD.DELI_NO 	-- 배송번호
+		AND 	LDB.ENTR_NO = 	EEB.ENTR_NO 	-- 협력사번호
+		AND 	LDD.ORD_NO  = 	OOD.ORD_NO 		-- 주문번호
+		AND 	LDD.ORD_SEQ  = 	OOD.ORD_SEQ 	-- 주문순번
+		AND 	OOD.ORD_NO 	= 	OODL.ORD_NO 	-- 주문번호
+		AND 	OOD.DLVP_SEQ = 	OODL.DLVP_SEQ 	-- 배송지순번
+		<choose>
+			<when test="ordNo != null and ordNo != ''">
+				<if test='searchDeliInfoType eq "1"'>
+					AND LDB.ORD_NO = #{ordNo}
+				</if>
+				<if test='searchDeliInfoType eq "2"'>
+					AND LDB.DELI_NO = #{ordNo}
+				</if>
+				<if test='searchDeliInfoType eq "3"'>
+					AND LDB.INV_NO = #{ordNo}
+				</if>
+			</when>
+			<otherwise>
+				<if test='searchDateType eq "1"'>
+					AND LDB.INDI_DTM <![CDATA[ >= ]]> TO_TIMESTAMP(#{startDate}||'000000', 'YYYYMMDDHH24MISS')
+					AND LDB.INDI_DTM <![CDATA[ <= ]]> TO_TIMESTAMP(#{endDate}||'235959', 'YYYYMMDDHH24MISS')
+				</if>
+				<if test='searchDateType eq "2"'>
+					AND LDB.PROC_DTM <![CDATA[ >= ]]> TO_TIMESTAMP(#{startDate}||'000000', 'YYYYMMDDHH24MISS')
+					AND LDB.PROC_DTM <![CDATA[ <= ]]> TO_TIMESTAMP(#{endDate}||'235959', 'YYYYMMDDHH24MISS')
+				</if>
+				<if test='searchDateType eq "3"'>
+					AND LDB.FNSH_DTM <![CDATA[ >= ]]> TO_TIMESTAMP(#{startDate}||'000000', 'YYYYMMDDHH24MISS')
+					AND LDB.FNSH_DTM <![CDATA[ <= ]]> TO_TIMESTAMP(#{endDate}||'235959', 'YYYYMMDDHH24MISS')
+				</if>
+
+				AND  LDB.DELI_PRGS_STAT_CD 	LIKE 	#{deliPrgsStatCd} 	|| '%'
+				AND  LDB.DELI_TYP_CD 		LIKE 	#{deliTypCd} 		|| '%'
+				AND  LDD.DELI_GOODS_GB_CD 	LIKE 	#{deliGoodsGbCd} 	|| '%'
+				AND  LDB.DELI_PROC_TYP_CD	LIKE 	#{deliProcTypCd} 	|| '%'
+				AND  LDB.DELI_WAY_CD		LIKE 	#{deliWayCd} 		|| '%'
+				AND  LDB.ENTR_NO 			LIKE 	#{entrNo} 			|| '%'
+
+				<if test='searchOrdManType eq "1"'>
+					AND LDB.ORDERER_NM 		LIKE 	#{ordManNm} 		|| '%'
+				</if>
+				<if test='searchOrdManType eq "2"'>
+					AND OODL.RCVMN_NM 		LIKE 	#{ordManNm} 		|| '%'
+				</if>
+			</otherwise>
+		</choose>
+	</sql>
+
+	<select id="getDeliveryInquiryList" parameterType="DeliveryRequest" resultType="DeliveryResponse">
+		<include refid="DeliveryInquiryList" />
+		<include refid="paginatedBase" />
+	</select>
+
+	<select id="getDeliveryInquiryListCount" parameterType="DeliveryRequest" resultType="java.lang.Integer">
+		SELECT   /* loDeliBase.getDeliveryInquiryListCount */
+		COUNT(*)
+		FROM (
+		<include refid="DeliveryInquiryList" />
+		) T1
+	</select>
+
+	<select id="getExcelDeliveryInquiryList" parameterType="DeliveryRequest" resultType="DeliveryResponse">
+		<include refid="DeliveryInquiryList" />
+	</select>
+
+	<select id="getDeliveryDetail" parameterType="DeliveryRequest" resultType="DeliveryResponse">
+		SELECT DISTINCT   				/* loDeliBase.getDeliveryDetail */
+				  TO_CHAR(OOD.ORD_FNSH_DTM, 'YYYY-MM-DD HH24:MI') AS ORD_FNSH_DTM
+				, SUBSTRING(LDB.ORD_NO,1,8) || '-' || SUBSTRING(LDB.ORD_NO,9,6) AS ORD_NO
+				, LDB.ORDERER_NM
+				, LDB.DELI_NO
+				, FN_GET_CODENAME( 'LO002', LDB.DELI_TYP_CD ) AS DELI_TYP_CD
+				, CSB.SITE_NM
+				, FN_GET_CODENAME( 'PR008', LDB.DELI_PROC_TYP_CD ) AS DELI_PROC_TYP_CD
+				, FN_GET_CODENAME( 'PR009', LDB.DELI_WAY_CD ) AS DELI_WAY_CD
+				, OODL.RCVMN_NM
+				, OODL.RCVMN_CELL_SCT_NO
+				, OODL.RCVMN_CELL_TXNO_NO
+				, OODL.RCVMN_CELL_END_NO
+				, OODL.RCVMN_TEL_RGN_NO
+				, OODL.RCVMN_TEL_TXNO_NO
+				, OODL.RCVMN_TEL_END_NO
+				, OODL.ZIP_ADDR
+				, OODL.DTL_ADDR
+				, OODL.DELI_MSG
+		FROM 	  LO_DELI_BASE LDB 	-- 배송기본
+				, LO_DELI_DTL LDD 	-- 배송상세
+				, OP_ORD_DTL OOD 	-- 주문상세
+				, OP_ORD_DLVP OODL 	-- 주문배송지
+				, CC_SITE_BASE CSB 	-- 사이트기본
+		WHERE 	LDB.ORD_NO 	= 	LDD.ORD_NO 		-- 주문번호
+		AND 	LDB.DELI_NO = 	LDD.DELI_NO 	-- 배송번호
+		AND 	LDD.ORD_NO  = 	OOD.ORD_NO 		-- 주문번호
+		AND 	LDD.ORD_SEQ  = 	OOD.ORD_SEQ 	-- 주문순번
+		AND 	OOD.ORD_NO 	= 	OODL.ORD_NO 	-- 주문번호
+		AND 	OOD.DLVP_SEQ = 	OODL.DLVP_SEQ 	-- 배송지순번
+		AND 	LDB.SITE_NO = CSB.SITE_NO 		-- 사이트번호
+		AND 	LDB.DELI_NO = #{deliNo}
+	</select>
+
+	<sql id="deliveryGoodsList">
+		SELECT  				/* loDeliBase.deliveryGoodsList */
+				  LDD.GOODS_NM
+				, LDD.ITM_NM
+				, LDD.INDI_QTY
+				, FN_GET_CODENAME( 'LO005', LDB.HDC_CD ) AS HDC_CD
+				, LDB.INV_NO
+				, LDD.SUP_PCOST
+				, LDD.SALE_PRC
+				, FN_GET_CODENAME( 'LO003', LDB.DELI_PRGS_STAT_CD ) AS DELI_PRGS_STAT_CD
+				, TO_CHAR(LDB.INDI_DTM, 'YYYY-MM-DD HH24:MI') AS INDI_DTM
+				, TO_CHAR(LDB.PROC_DTM, 'YYYY-MM-DD HH24:MI') AS PROC_DTM
+				, TO_CHAR(LDB.FNSH_DTM, 'YYYY-MM-DD HH24:MI') AS FNSH_DTM
+				, FN_GET_CODENAME( 'LO004', LDB.DLEX_CHRG_SUB_CD ) AS DLEX_CHRG_SUB_CD
+		FROM 	  LO_DELI_BASE LDB 	-- 배송기본
+				, LO_DELI_DTL LDD 	-- 배송상세
+		WHERE 	  LDB.ORD_NO 	= 	LDD.ORD_NO 		-- 주문번호
+		AND 	  LDB.DELI_NO 	= 	LDD.DELI_NO 	-- 배송번호
+		AND 	  LDB.ORD_NO 	= 	#{ordNo}
+		AND 	  LDB.DELI_NO 	= 	#{deliNo}
+	</sql>
+
+	<select id="getDeliveryGoodsList" parameterType="DeliveryRequest" resultType="DeliveryResponse">
+		<include refid="deliveryGoodsList" />
+	</select>
+
+	<select id="getDeliveryGoodsListCount" parameterType="DeliveryRequest" resultType="java.lang.Integer">
+		SELECT   /* loDeliBase.getDeliveryGoodsListCount */
+				COUNT(*)
+		FROM (
+				<include refid="deliveryGoodsList" />
+		) T1
+	</select>
+
+</mapper>
+
+

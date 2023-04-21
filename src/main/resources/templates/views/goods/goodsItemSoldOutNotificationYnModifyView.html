@@ -1,0 +1,108 @@
+<!--
+* 프로그램명 : 단품품절알림 일괄변경
+* 작 성 일 : 2021.04.01
+* 작 성 자 : 윤성원
+* 수 정 자 : 홍혜리
+* 버    전 : 1.0
+* 개    요 : 상품관리  > 상품관리 > 단품관리 > 단품품절알림 일괄변경
+* 이    력 : 2021.09.30 프레임워크 이전
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/page-normal-layout}">
+<body>
+<th:block layout:fragment="page-contents">
+    <div class="win-popup page-root">
+        <div class="page-fixed">
+            <div class="search-cont">
+                <div class="header">
+                    <h1 class="title"><th:block th:text="${#messages.msg('goodsItemMgmt.soldOutNotiMod.title')}"/></h1>
+                </div>
+                <div>
+                    <ul class="list-info left">
+                        <li>품절 알림 여부를 사용으로 변경 시 선택한 단품의 품절 알림을 받으실 수 있습니다.</li>
+                    </ul>
+                </div>
+                <br/>
+                <div class="search">
+                    <form>
+                        <table class="data-table fixed">
+                            <colgroup>
+                                <col width="50px">
+                                <col width="100px">
+                            </colgroup>
+                            <tbody>
+                            <tr>
+                                <td class="label center" th:text="${#messages.msg('goodsItemMgmt.popup.label.item')}"></td>
+                                <td class="label center" th:text="${#messages.msg('goodsItemMgmt.popup.label.cont')}"></td>
+                            </tr>
+                            <tr>
+                                <td class="center" th:text="${#messages.msg('goodsItemMgmt.soldOutNotiMod.label.soutNotiYn')}"></td>
+                                <td>
+                                    <div class="input-group">
+                                        <label class="radio-inline"><input type="radio" name="sold-check" id="use" value="Y" checked="checked" th:text="${#messages.msg('adminCommon.use')}"></label>
+                                        <label class="radio-inline"><input type="radio" name="sold-check" id="not-use" value="N" th:text="${#messages.msg('adminCommon.disuse')}"></label>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="center" th:text="${#messages.msg('goodsItemMgmt.soldOutNotiMod.label.soutNotiStdQty')}"></td>
+                                <td>
+                                    <input type="text" class="input w40 only-no" id="sout_noti_std_qty" maxlength="3"> <em>개</em>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+            </div>
+            <div class="button-group search-btn">
+                <a href="#" class="button" id="btn_close"><span class="text" th:text="${#messages.msg('adminCommon.button.close')}"></span></a>
+                <a href="#" class="button" id="btn_apply"><span class="text" th:text="${#messages.msg('adminCommon.button.apply')}"></span></a>
+            </div>
+        </div>
+    </div>
+</th:block>
+<th:block layout:fragment="add-script">
+    <script type="text/javascript">
+        $(function() {
+            var soldOutNotiModViewMsg = x2coMessage.getMessage({ noSoutNotiStdQtyMsg : 'goodsItemMgmt.soldOutNotiMod.alert.msg.noSoutNotiStdQtyMsg'});
+
+            $('.only-no').on("property change keyup paste input",function(){
+                $(this).val($(this).val().replace(/[^0-9]/g,""));
+            });
+
+            $("input[name=sold-check]").change(function(){
+                if($(this).val()==='Y'){
+                    $('#sout_noti_std_qty').attr("disabled",false);
+                }else{
+                    $('#sout_noti_std_qty').attr("disabled",true);
+                    $('#sout_noti_std_qty').val('');
+                }
+            });
+
+            $('#btn_apply').click(function(){
+                if($("input[name=sold-check]:checked").val() === 'Y' &&
+                    ($("#sout_noti_std_qty").val() === undefined || $("#sout_noti_std_qty").val() === '' || $("#sout_noti_std_qty").val() <= 0)){
+                    alert(soldOutNotiModViewMsg.noSoutNotiStdQtyMsg);
+                    return;
+                }
+
+                var returnData = {};
+                returnData.useYn = $("input[name=sold-check]:checked").val();
+                returnData.qty = $("#sout_noti_std_qty").val();
+                returnData.type = 'soutCausCd'
+                window.postMessage(JSON.stringify(returnData), _baseUrl);
+                window.close();
+            })
+
+            $('#btn_close').click(function(){
+                window.close();
+            })
+        });
+    </script>
+</th:block>
+
+</body>
+</html>

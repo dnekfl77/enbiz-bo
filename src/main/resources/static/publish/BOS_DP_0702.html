@@ -1,0 +1,290 @@
+<html lang="ko-KR">
+
+<head>
+    <title>x2</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+    <link type="text/css" rel="stylesheet" href="../css/reset.css">
+    <link type="text/css" rel="stylesheet" href="../css/layout.css">
+    <link type="text/css" rel="stylesheet" href="../css/zTree.css">
+    <link type="text/css" rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" type="text/css" href="../css/realgrid-style.css">
+    <script src="../js/libs/jquery/jquery-3.4.1.min.js"></script>
+    <script src="../js/contents.js"></script>
+    <script type="text/javascript" src="../js/libs/jquery/jquery.ztree.all.js?202102260000"></script>
+</head>
+
+<body>
+    <div class="win-popup page-root">
+        <div class="page-fixed">
+            <!-- page-title 가 있을경우 with-title 클래스 추가 -->
+            <div class="search-cont">
+                <div class="header">
+                    <h1 class="title" id="">기획전 등록/수정</h1>
+                    <div class="button-group">
+                        <a href="#" class="button"><span class="text">모바일 미리보기</span></a>
+                        <a href="#" class="button"><span class="text">PC 미리보기</span></a>
+                    </div>
+                </div>
+
+                <div class="tabs-area">
+                    <ul class="tabs">
+                        <li class="active"><a href="javascript:void(0);">기본 정보</a></li>
+                        <li><a href="javascript:void(0);">구분자별 상품 정보</a></li>
+                    </ul>
+                    <div class="tabs-body">
+                        <div class="tab-cont">
+                            <div class="data-cont">
+                                <div class="data">
+                                    <div class="data-head">
+                                        <div class="left">
+                                            <div class="button-group">
+                                                <a href="" class="button inside"><span class="text">초기화</span></a>
+                                                <a href="" class="button inside"><span class="text">저장</span></a>
+                                            </div>
+                                        </div>
+                                        <div class="right">
+                                            <span class="data-toggle">
+                                                <button type="button" class="btn btn-sm btn-link bold toggle-button"
+                                                    depth-name="goodsDisplay"><span>닫힘</span></button>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="data-body">
+                                        <table class="data-table">
+                                            <colgroup>
+                                                <col width="120">
+                                                <col>
+                                                <col width="120">
+                                                <col>
+                                            </colgroup>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="label">기획전 번호</td>
+                                                    <td><input type="text" name="" value="" class="input disabled" readonly></td>
+                                                    <td class="label"><strong>기획전 유형</strong></td>
+                                                    <td>
+                                                        <select class="form-control">
+                                                            <option value="">선택</option>
+                                                            <option value="">일반 기획전</option>
+                                                            <option value="">모바일 기획전</option>
+                                                        </select>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="label"><strong>기획전명</strong></td>
+                                                    <td><input type="text" name="" value="" class="input disabled" readonly></td>
+                                                    <td class="label">담당MD</td>
+                                                    <td>
+                                                        <div class="input-group">
+                                                            <input type="text" id="" class="input disabled" readonly>
+                                                            <a href="javascript:;" class="button small" onclick=""><i class="icon-sarch"></i></a>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="label"><strong>전시 여부</strong></td>
+                                                    <td>
+                                                        <label class="radio-inline"><input type="radio" name="" value="" checked="checked">전시</label>
+                                                        <label class="radio-inline"><input type="radio" name="" value="">전시 안함</label>
+                                                    </td>
+                                                    <td class="label"><strong>템플릿</strong></td>
+                                                    <td>
+                                                        <div class="input-group">
+                                                            <input type="text" id="" class="input disabled w10" readonly>
+                                                            <input type="text" id="" class="input disabled" readonly>
+                                                            <a href="javascript:;" class="button small" onclick=""><i class="icon-sarch"></i></a>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="label"><strong>전시 순서</strong></td>
+                                                    <td>
+                                                        <input type="text" id="" class="input disabled" readonly>
+                                                    </td>
+                                                    <td class="label"><strong>리스트 출력 수</strong></td>
+                                                    <td>
+                                                        <input type="text" id="" class="input disabled" readonly>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="label">검색 키워드</td>
+                                                    <td colspan="3">
+                                                        <div class="input-group">
+                                                            <input type="text" id="" class="input">
+                                                            <input type="text" id="" class="input">
+                                                            <input type="text" id="" class="input">
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="label"><strong>기획전 기간</strong></td>
+                                                    <td colspan="3">
+                                                        <div class="picker-group">
+                                                            <input type="text" class="form-control disabled" readonly>
+                                                            <span class="input-group-addon">~</span>
+                                                            <input type="text" class="form-control disabled" readonly>
+                                                            <span class="input-group-addon"><i class="icon-calendar"></i></span>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="label">등록자</td>
+                                                    <td>
+                                                        <input type="text" name="" value="" class="input disabled" readonly>
+                                                    </td>
+                                                    <td class="label">등록 일시</td>
+                                                    <td>
+                                                        <input type="text" name="" value="" class="input disabled" readonly>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="label">수정자</td>
+                                                    <td>
+                                                        <input type="text" name="" value="" class="input disabled" readonly>
+                                                    </td>
+                                                    <td class="label">수정 일시</td>
+                                                    <td>
+                                                        <input type="text" name="" value="" class="input disabled" readonly>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="label">기획전 PC 배너</td>
+                                                    <td colspan="3">
+                                                        <img src="https://www.11st.co.kr/is/ds/2021/02/25/1311/0e043a4d58a5eb8cbb4cbcaa21a3377a.jpg" class="image mr10" width="360" height="138" />
+                                                        <div class="input-group file-upload">
+                                                            <button class="button small gray"><span class="text">찾아보기</span></button>
+                                                            <input type="text" class="input disabled" readonly="">
+                                                            <!-- 업로드 파일리스트 -->
+                                                            <ul class="file-list">
+                                                                <li>123.pdf <button class="delete" type="button">삭제</button></li>
+                                                                <li>567.pdf <button class="delete" type="button">삭제</button></li>
+                                                            </ul>
+                                                            <!-- //업로드 파일리스트 -->
+                                                            <div class="tip-wrap">
+                                                                <p class="tip">전시 순서는 1 ~ 999 범위내로 입력 가능합니다. </li>
+                                                                <p class="tip">권장 이미지 : 360px * 138px / 1M 이하 / gif, png, jpg(jpeg)</p>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="label">기획전 모바일 배너</td>
+                                                    <td colspan="3">
+                                                        <img src="https://ds.11st.co.kr/NetInsight/image/11st/11st_mobile/mobile_main@mobile_main_branding?ads_id=58908&creative_id=50184&src=https://www.11st.co.kr/is/ds/2021/03/04/1311/4f80ba069a2ed5a786f0d4b59e37a44e.jpg" class="image mr10" width="360" height="138" />
+                                                        <div class="input-group file-upload">
+                                                            <button class="button small gray"><span class="text">찾아보기</span></button>
+                                                            <input type="text" class="input disabled" readonly="">
+                                                            <!-- 업로드 파일리스트 -->
+                                                            <ul class="file-list">
+                                                                <li>123.pdf <button class="delete" type="button">삭제</button></li>
+                                                                <li>567.pdf <button class="delete" type="button">삭제</button></li>
+                                                            </ul>
+                                                            <!-- //업로드 파일리스트 -->
+                                                            <div class="tip-wrap">
+                                                                <p class="tip">전시 순서는 1 ~ 999 범위내로 입력 가능합니다. </li>
+                                                                <p class="tip">권장 이미지 : 360px * 138px / 1M 이하 / gif, png, jpg(jpeg)</p>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="data-body">
+                                        <table class="data-table">
+                                            <colgroup>
+                                                <col width="120">
+                                                <col>
+                                            </colgroup>
+                                            <tbody>
+                                                <tr>
+                                                    <td colspan="4" class="label">기획전 출력 정보</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="label">기획전 타이틀<br>HTML</td>
+                                                    <td colspan="3"></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- //기본정보 -->
+
+                        <div class="tab-cont">
+                            <div class="grid-cont">
+                                <div class="grid">
+                                    <div class="grid-head">
+                                        <div class="title-area">
+                                            <h2 class="title">구분자 정보</h2>
+                                        </div>
+                                        <!-- //title-area -->
+            
+                                        <div class="option-area">
+                                            <div class="edit-option">
+                                                <div class="button-group">
+                                                    <a href="#" class="button inside"><span class="text">행추가</span></a>
+                                                    <a href="#" class="button inside"><span class="text">삭제</span></a>
+                                                    <a href="#" class="button inside"><span class="text">저장</span></a>
+                                                </div>
+                                            </div>
+            
+                                            <div class="page-option">
+                                                <span class="total">총 <em>24</em>건</span>
+                                            </div>
+                                        </div>
+                                        <!-- //option-area -->
+                                    </div>
+                                    <!-- //grid-head -->
+            
+                                    <div class="grid-body with-head" id="realgrid" realgrid>realgrid area</div>
+                                    <!-- //grid-body -->
+                                </div>
+                            </div>
+
+                            <div class="grid-cont">
+                                <div class="grid">
+                                    <div class="grid-head">
+                                        <div class="title-area">
+                                            <h2 class="title">  기획전 상품 정보</h2>
+                                        </div>
+                                        <!-- //title-area -->
+            
+                                        <div class="option-area">
+                                            <div class="edit-option">
+                                                <div class="button-group">
+                                                    <a href="#" class="button inside"><span class="text">추가</span></a>
+                                                    <a href="#" class="button inside"><span class="text">삭제</span></a>
+                                                    <a href="#" class="button inside"><span class="text">저장</span></a>
+                                                </div>
+                                                <span class="text">총 상품 수 : 3 </span>
+                                                <span class="text">품절 상품 수 :  1</span>
+                                            </div>
+            
+                                            <div class="page-option">
+                                                <span class="total">총 <em>24</em>건</span>
+                                            </div>
+                                        </div>
+                                        <!-- //option-area -->
+                                    </div>
+                                    <!-- //grid-head -->
+            
+                                    <div class="grid-body with-head" id="realgrid" realgrid>realgrid area</div>
+                                    <!-- //grid-body -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- //page-fixed -->        
+    </div>
+    <script>
+        tabsBody();
+    </script>
+</body>
+</html>

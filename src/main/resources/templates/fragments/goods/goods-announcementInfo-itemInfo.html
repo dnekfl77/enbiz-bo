@@ -1,0 +1,112 @@
+<!--
+* 프로그램명 : 상품고시품목정보 > 상품고시항목정보
+* 작 성 일 : 2021.03.22
+* 작 성 자 : 홍혜리
+* 수 정 자 : 홍혜리
+* 버    전 : 1.0
+* 개    요 : 상품고시항목정보
+* 이    력 : 2021.10.12 프레임워크 이전
+-->
+<!DOCTYPE html>
+<html lang="ko-KR"
+      xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="goods-announcementInfo-itemInfo">
+    <th:block th:if="${not #lists.isEmpty(goodsNotiItemCodeList)}">
+        <tr th:each="goodsNotiItemCode : ${goodsNotiItemCodeList}">
+            <!-- 상품고시항목정보 -->
+            <td class="label"><strong class="itemNm" th:text="${goodsNotiItemCode.notiItemNm}"></strong></td>
+            <td>
+                <th:block th:if="${goodsNotiItemCode.insrtMethCd == 'text'}">
+                    <input class="input w30 itemCont" type="text" th:data-goodsNotiItemCd="${goodsNotiItemCode.goodsNotiItemCd}">
+                    <span th:if="${goodsNotiItemCode.notiItemDesc != null && goodsNotiItemCode.notiItemDesc != ''}">
+                        <a href="#" data-bs-toggle="tooltip" title="Some tooltip text!"></a>
+                        <div class="tooltip">
+                            <a href="#" class="trigger">설명</a>
+                            <div class="cont">
+                                <p class="text" th:text="${goodsNotiItemCode.notiItemDesc}"></p>
+                                </p>
+                                <a href="#" class="close">닫기</a>
+                            </div>
+                        </div>
+                    </span>
+                </th:block>
+                <th:block th:if="${goodsNotiItemCode.insrtMethCd == 'textarea'}">
+                    <textarea class="textarea w70 itemCont" rows="10" th:data-goodsNotiItemCd="${goodsNotiItemCode.goodsNotiItemCd}"></textarea>
+                    <span th:if="${goodsNotiItemCode.notiItemDesc != null && goodsNotiItemCode.notiItemDesc != ''}" >
+                        <a href="#" data-bs-toggle="tooltip" title="Some tooltip text!"></a>
+                        <div class="tooltip">
+                            <a href="#" class="trigger">설명</a>
+                            <div class="cont"> 
+                                <p class="text" th:text="${goodsNotiItemCode.notiItemDesc}"></p>
+                                </p>
+                                <a href="#" class="close">닫기</a>
+                            </div>
+                        </div>  
+                    </span>
+                </th:block>
+                <th:block th:if="${goodsNotiItemCode.insrtMethCd == 'radio'}">
+                    <div class="itemRadio" style="display: inline;">
+                        <label class="radio-inline"><input type="radio" th:name="${goodsNotiItemCode.goodsNotiItemCd}" value="Y" checked="checked">Y</label>
+                        <label class="radio-inline"><input type="radio" th:name="${goodsNotiItemCode.goodsNotiItemCd}" value="N">N</label>
+                    </div>
+                    <span th:if="${goodsNotiItemCode.notiItemDesc != null && goodsNotiItemCode.notiItemDesc != ''}" >
+                        <a href="#" data-bs-toggle="tooltip" title="Some tooltip text!"></a>
+                        <div class="tooltip">
+                            <a href="#" class="trigger">설명</a>
+                            <div class="cont"> 
+                                <p class="text" th:text="${goodsNotiItemCode.notiItemDesc}"></p>
+                                <a href="#" class="close">닫기</a>
+                            </div>
+                        </div>
+                    </span>
+                </th:block>
+                <th:block th:if="${goodsNotiItemCode.insrtMethCd == 'calendar'}">
+                    <input class="input w30 itemCont" type="text" th:data-goodsNotiItemCd="${goodsNotiItemCode.goodsNotiItemCd}">
+                    <span th:if="${goodsNotiItemCode.notiItemDesc != null && goodsNotiItemCode.notiItemDesc != ''}">
+                        <a href="#" data-bs-toggle="tooltip" title="Some tooltip text!"></a>
+                        <div class="tooltip">
+                            <a href="#" class="trigger">설명</a>
+                            <div class="cont">
+                                <p class="text" th:text="${goodsNotiItemCode.notiItemDesc}"></p>
+                                <a href="#" class="close">닫기</a>
+                            </div>
+                        </div>
+                    </span>
+                </th:block>
+            </td>
+        </tr>
+        <tr>
+            <!-- 안전인증대상여부확인 -->
+            <td class="label"><strong th:text="${#messages.msg('generalGoods.announcementInfo.label.safeCertiNeedYn')}"></strong></td>
+            <td>
+                <label class="radio-inline"><input type="radio" name="safeCertiNeedYn" value="Y"  th:checked="${safeCertiNeedYn} == 'Y'" th:disabled="${safeCertiNeedYn} == 'Y'" th:text="${#messages.msg('adminCommon.target.y')}"></label>
+                <label class="radio-inline"><input type="radio" name="safeCertiNeedYn" value="N" th:checked="${safeCertiNeedYn} == 'N'" th:disabled="${safeCertiNeedYn} == 'Y'" th:text="${#messages.msg('adminCommon.target.n')}"></label>
+            </td>
+        </tr>
+        <tr id="section_safeCertiInfo" th:style="${safeCertiNeedYn == 'Y'} ? 'display : display' : 'display : none'">
+            <!-- 안전인증정보 -->
+            <td class="label"><strong th:text="${#messages.msg('generalGoods.announcementInfo.label.safeCertiInfo')}"></strong></td>
+            <td id="safeCertiInfoList">
+                <!-- 안전인증정보 템플릿 -->
+                <div name="safeCertiInfo_tmpl" class="input-group block" style="display:none">
+                    <select name="safeCertiGbCd" class="form-control">
+                        <option value="">:: 안전인증구분 ::</option>
+                        <option th:each="code : ${safeCertiGbCdList}" th:value="${code?.cd}" th:utext="${code?.cdNm}"></option>
+                    </select>
+                    <input type="text" name="safeCertiOrnNm" class="input" placeholder="인증기관명">
+                    <input type="text" name="safeCertiNo" class="input" placeholder="인증번호">
+                    <a href="javascript:;" class="icon-data-plus btn_add_safe_certi_info"></a>
+                    <a href="javascript:;" class="icon-data-minus btn_remove_safe_certi_info"></a>
+                    <br />
+                    <div class="picker-group mt5" data-lopicker="basic">
+                        <input type="text" class="form-control " name="aplyStrDt" readonly>
+                        <span class="input-group-addon">~</span>
+                        <input type="text" class="form-control" name="aplyEndDt" readonly>
+                        <span class="input-group-addon btn_callCalendar"><i class="icon-calendar"></i></span>
+                    </div>
+                </div>
+                <!--// 안전인증정보 템플릿 -->
+            </td>
+        </tr>
+    </th:block>
+</th:block>

@@ -1,0 +1,167 @@
+<!--
+* 프로그램명 : 우편번호관리
+* 작 성 일 : 2021.02.23
+* 작 성 자 : 이광진
+* 수 정 자 : 홍혜리
+* 버    전 : 1.0
+* 개    요 : 우편번호 조회 UI
+* 이    력 : 2021.08.17 사용여부 외 수정 불가 처리
+-->
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/page-realgrid-layout}">
+<body>
+<th:block layout:fragment="page-title-area">
+    <div class="page-title">
+        <div class="left">
+            <h1><th:block th:text="${#messages.msg('zipNoMgmt.label.zipcode.management.lot.no')}"/></h1>
+        </div>
+    </div>
+</th:block>
+<th:block layout:fragment="page-contents">
+    <div class="page-fixed with-title">
+        <div class="search-cont full-height">
+            <!-- 조회테이블 -->
+            <div class="search">
+                <div class="search-body">
+                    <form name="zipNoGridForm" id="zipNoGridForm">
+                        <table class="search-table">
+                            <colgroup>
+                                <col width="120" />
+                                <col />
+                                <col width="120" />
+                                <col />
+                                <col width="120" />
+                                <col />
+                            </colgroup>
+                            <tbody>
+                            <tr>
+                                <td class="label">
+                                    <strong th:text="${#messages.msg('zipNoMgmt.label.zipcode.management.admrNm')}"></strong>
+                                </td>
+                                <td>
+                                    <select class="form-control w30" id="ctpNmParam" name="ctpNmParam">
+                                        <option value="" th:text="${#messages.msg('adminCommon.entirety')}"/>
+                                        <option th:each="ctpNm : ${ctpNmList}" th:value="${ctpNm}" th:text="${ctpNm}"></option>
+                                    </select>
+                                </td>
+                                <td class="label">
+                                    <strong th:text="${#messages.msg('zipNoMgmt.label.zipcode.management.skkNm')}"></strong>
+                                </td>
+                                <td>
+                                    <select class="form-control w30" id="sigNmParam" name="sigNmParam" option-init="first">
+                                        <option value="" th:text="${#messages.msg('adminCommon.entirety')}"/>
+                                    </select>
+                                </td>
+                                <td class="label">
+                                    <strong th:text="${#messages.msg('zipNoMgmt.label.zipcode.management.search.word')}"></strong>
+                                </td>
+                                <td>
+                                    <input class="input w60" type="text" name="param1" id="param1" maxlength="50"/>
+                                </td>
+
+                            </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+            </div>
+            <!-- //조회테이블 -->
+            <!-- 검색버튼 -->
+            <div class="button-group search-btn">
+                <a class="button white" id="btn_zipNoList_init">
+                    <span class="text" th:text="${#messages.msg('adminCommon.button.init')}" />
+                </a>
+                <a class="button dark" id="btn_zipNoList_search">
+                    <span class="text" th:text="${#messages.msg('adminCommon.button.search')}" />
+                </a>
+            </div>
+            <!-- //검색버튼 -->
+            <!-- 리얼그리드 -->
+            <div class="grid-cont">
+                <div class="grid full-height">
+                    <div class="grid-head">
+                        <div class="title-area">
+                            <h2 class="title" th:text="${#messages.msg('zipNoMgmt.grid.zipcode.management.title')}" />
+                        </div>
+                        <div class="option-area">
+                            <div class="edit-option">
+                                <div class="button-group">
+                                    <a href="#" class="button inside" id="btn_grid_remove">
+                                        <span class="text" th:text="${#messages.msg('adminCommon.grid.button.delete.row')}" />
+                                    </a>
+                                    <a href="#" class="button inside" id="btn_grid_reset">
+                                        <span class="text" th:text="${#messages.msg('adminCommon.grid.button.cancel')}" />
+                                    </a>
+                                    <a href="#" class="button inside" id="btn_grid_save">
+                                        <span class="text"th:text="${#messages.msg('adminCommon.grid.button.save')}" />
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="page-option" grid-id="zipNoGrid"></div>
+                        </div>
+                    </div>
+                    <div class="grid-body with-head">
+                        <div class="rg-root rg-grid" id="zipNoGrid" realgrid ></div>
+                    </div>
+                </div>
+            </div>
+            <!-- //리얼그리드 -->
+        </div>
+    </div>
+</th:block>
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+    /*<![CDATA[*/
+        const msgParam = {
+            _zipNo: "zipNoMgmt.label.zipno.zip.no",
+            _ctpNm: "zipNoMgmt.label.zipno.ctp.nm",
+            _sigNm: "zipNoMgmt.label.zipno.sig.nm",
+            _lnbrGrpNm: "zipNoMgmt.label.zipno.lnbr.grp.nm",
+            _hemdNm: "zipNoMgmt.label.zipno.hemd.nm",
+            _lnbrMnnm: "zipNoMgmt.label.zipno.lnbr.mnnm",
+            _lnbrSlno: "zipNoMgmt.label.zipno.lnbr.slno",
+            _roadGrpNm: "zipNoMgmt.label.zipno.road.grp.nm",
+            _roadNm: "zipNoMgmt.label.zipno.road.grp.nm",
+            _buldMnnm: "zipNoMgmt.label.zipno.buld.mnnm",
+            _buldSlno: "zipNoMgmt.label.zipno.buld.slno",
+            _posBulNm: "zipNoMgmt.label.zipno.pos.bul.nm",
+            _buldDtlNm: "zipNoMgmt.label.zipno.buld.dtl.nm",
+            _searchInvalidCtpNm: "zipNoMgmt.message.invalid.search.ctp.nm",
+            _searchInvalidSigNm: "zipNoMgmt.message.invalid.search.sig.nm",
+            _searchInvalidInput: "zipNoMgmt.message.invalid.search.input",
+            _rowCheckMsg: "adminCommon.grid.alert.no.selected.row",
+            _selectAllText: "adminCommon.entirety",
+            _emCtpNmMsg: "zipNoMgmt.message.invalid.em.ctp.nm",
+            _lnthCtpNmMsg: "zipNoMgmt.message.invalid.lnth.ctp.nm",
+            _emSigNmMsg: "zipNoMgmt.message.invalid.em.sig.nm",
+            _lnthSigNmMsg: "zipNoMgmt.message.invalid.lnth.sig.nm",
+            _emHemdNmMsg: "zipNoMgmt.message.invalid.em.hemd.nm",
+            _lnthEmdNmMsg: "zipNoMgmt.message.invalid.lnth.hemd.nm",
+            _lnthLnbrMnnmMsg: "zipNoMgmt.message.invalid.lnth.lnbr.mnnm",
+            _lnthLnbrSlnoMsg: "zipNoMgmt.message.invalid.lnth.lnbr.slno",
+            _emRoadNmMsg: "zipNoMgmt.message.invalid.em.road.nm",
+            _lnthRoadNmMsg: "zipNoMgmt.message.invalid.lnth.road.nm",
+            _lnthBuldMnnmMsg: "zipNoMgmt.message.invalid.lnth.buld.mnnm",
+            _lnthBuldSlnoMsg: "zipNoMgmt.message.invalid.lnth.buld.slno",
+            _lnthBuldLdgNmMsg: "zipNoMgmt.message.invalid.lnth.buld.ldg.nm",
+            _lnthBuldDtlNmMsg: "zipNoMgmt.message.invalid.lnth.buld.dtl.nm"
+        };
+
+        window.msg = x2coMessage.getMessage(msgParam);
+    /*]]>*/
+    </script>
+
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'system/zipNoGrid.eventHandler.js?20210810'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'system/zipNoGrid.provider.js?20210810'" ></script>
+
+    <script type="text/javascript">
+        $(function() {
+            zipNoGrid.eventhandler.init();
+        });
+    </script>
+</th:block>
+</body>
+</html>

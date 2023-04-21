@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.payment.OpMersInfoTrxMapper">
+
+	<insert id="opMersInfoInsert" parameterType="opMersInfo">
+		<selectKey keyProperty="mersNo" resultType="String" order="BEFORE">
+			SELECT COALESCE(MAX(MERS_NO::INTEGER), 0) + 1 AS mersNo
+			FROM OP_MERS_INFO
+		</selectKey>
+		INSERT INTO OP_MERS_INFO (  /* opMersInfo.opMersInfoInsert */
+				  MERS_NO
+				, PG_GB_CD
+				, ACQR_CD
+				, ONOFF_LINE_GB_CD
+				, NINT_USE_YN
+				, POINT_USE_YN
+				, TERML_ID
+				, USE_YN
+				, APLY_SITE_GB_CD
+				, SYS_REG_ID
+				, SYS_REG_DTM
+				, SYS_MOD_ID
+				, SYS_MOD_DTM
+		) VALUES (
+				  #{mersNo}
+				, #{pgGbCd}
+				, #{acqrCd}
+				, #{onoffLineGbCd}
+				, #{nintUseYn}
+				, #{pointUseYn}
+				, #{termlId}
+				, #{useYn}
+				, #{aplySiteGbCd}
+				, #{sysRegId}
+				, now()
+				, #{sysRegId}
+				, now()
+		)
+	</insert>
+
+	<update id="opMersInfoUpdate" parameterType="opMersInfo">
+		UPDATE    OP_MERS_INFO  /* opMersInfo.opMersInfoUpdate */
+		SET
+				  ONOFF_LINE_GB_CD = #{onoffLineGbCd}
+				, NINT_USE_YN      = #{nintUseYn}
+				, POINT_USE_YN     = #{pointUseYn}
+				, TERML_ID         = #{termlId}
+				, USE_YN           = #{useYn}
+				, APLY_SITE_GB_CD  = #{aplySiteGbCd}
+				, SYS_MOD_ID 	   = #{sysModId}
+				, SYS_MOD_DTM 	   = now()
+		WHERE     MERS_NO = #{mersNo}
+	</update>
+
+</mapper>

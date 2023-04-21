@@ -1,0 +1,140 @@
+<!--
+* 프로그램명 : 약관&이용안내 관리
+* 작 성 일 : 2021.03.02
+* 작 성 자 : 박혜진
+* 수 정 자 : 권다솜
+* 버    전 : 1.0
+* 개    요 : 전시관리 > 사이트관리 > 약관&이용안내관리 UI
+* 이    력 :
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/page-realgrid-layout}">
+
+<head>
+    <title>sub title</title>
+</head>
+<body>
+<th:block layout:fragment="page-title-area">
+    <div class="page-title">
+        <div class="left">
+            <h1><th:block th:text="${#messages.msg('termsConditionsMgmt.title')}"/></h1>
+        </div>
+    </div>
+</th:block>
+<th:block layout:fragment="page-contents">
+    <div class="page-fixed with-title">
+        <div class="search-cont">
+            <!-- 조회테이블 -->
+            <div class="search">
+                <form name="termsConditionsListGridForm" id="termsConditionsListGridForm">
+                <table class="search-table">
+                    <colgroup>
+                        <col width="120">
+                        <col>
+                        <col width="120">
+                        <col>
+                    </colgroup>
+                    <tbody>
+                        <tr>
+                            <td class="label" th:text="${#messages.msg('termsConditionsMgmt.search.label.cmAgmtPolcGbCd')}" />
+                            <td>
+                                <div class="input-group w100">
+                                    <select class="form-control w30" id="cmAgmtPolcGbCd" name="cmAgmtPolcGbCd">
+                                        <option value="" th:text="${#messages.msg('adminCommon.entirety')}"></option>
+                                        <option th:each="list : ${codeList.CH010}" th:value="${list.cd}" th:text="${list.cdNm}"></option>
+                                    </select>
+                                </div>
+                            </td>
+                            <td class="label" th:text="${#messages.msg('termsConditionsMgmt.search.label.agmtPolcCd')}" />
+                            <td>
+                                <select class="form-control w40" id="agmtPolcCd" name="agmtPolcCd">
+                                    <option value="" th:text="${#messages.msg('adminCommon.entirety')}"></option>
+                                    <option th:each="list : ${codeList.CH005}" th:value="${list.cd}" th:text="${list.cdNm}"></option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label" th:text="${#messages.msg('termsConditionsMgmt.search.label.siteNo')}" />
+                            <td>
+                                <select class="form-control w30" id="siteNo" name="siteNo">
+                                    <option value="" th:text="${#messages.msg('adminCommon.entirety')}"></option>
+                                    <option th:each="list : ${siteNmList}" th:value="${list.siteNo}" th:utext="${list.siteNm}"></option>
+                                </select>
+                            </td>
+                            <td class="label" th:text="${#messages.msg('termsConditionsMgmt.search.label.title')}" />
+                            <td>
+                                <input type="text" class="input w50" maxlength="30" name="title" id="title"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                </form>
+            </div>
+            <!-- //조회테이블 -->
+            <div class="button-group search-btn">
+                <a href="#" class="btn_gblue button white" id="btn_init">
+                    <span class="text" th:text="${#messages.msg('adminCommon.button.init')}" />
+                </a>
+                <a href="#" class="btn_blue button dark" id="btn_search">
+                    <span class="text" th:text="${#messages.msg('adminCommon.button.search')}" />
+                </a>
+            </div>
+            <!-- 리얼그리드 -->
+            <div class="grid-cont">
+                <div class="grid" style="overflow: hidden;">
+                    <div class="grid-head">
+                        <div class="title-area">
+                            <h2 class="title" th:text="${#messages.msg('termsConditionsMgmt.grid.title')}" />
+                        </div>
+                        <div class="option-area">
+                            <div class="edit-option">
+                            <div class="button-group">
+                                    <a href="#" class="button inside" id="btn_grid_add">
+                                        <span class="text" th:text="${#messages.msg('termsConditionsMgmt.grid.button.add')}" />
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="page-option" grid-id="termsConditionsListGrid" />
+                        </div>
+                    </div>
+                   <div class="grid-body">
+                        <div class="rg-root rg-grid" id="termsConditionsListGrid" realgrid ></div>
+                    </div>
+                </div>
+            </div>
+            <!-- //리얼그리드 -->
+        </div>
+    </div>
+</th:block>
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        var codeList_CH005        = [[${codeList.CH005}]];
+
+        var msg = x2coMessage.getMessage({
+              siteNm    : 'termsConditionsMgmt.grid.field.siteNm'
+            , cmAgmtPolcGbCd    : 'termsConditionsMgmt.grid.field.cmAgmtPolcGbCd'
+            , agmtPolcCd    : 'termsConditionsMgmt.grid.field.agmtPolcCd'
+            , title     : 'termsConditionsMgmt.grid.field.title'
+            , aplyStrDt : 'termsConditionsMgmt.grid.field.aplyStrDt'
+            , aplyEndDt : 'termsConditionsMgmt.grid.field.aplyEndDt'
+            , modId     : 'termsConditionsMgmt.grid.field.modId'
+            , modDtm    : 'termsConditionsMgmt.grid.field.modDtm'
+            , messageNotCheckedData : 'adminCommon.grid.alert.no.selected.row'
+            , total     : 'adminCommon.entirety'
+        });
+    </script>
+
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/termsConditionsListGrid.eventHandler.js'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/termsConditionsListGrid.provider.js'" ></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            termsConditionsListGrid.eventhandler.init();
+        });
+    </script>
+</th:block>
+
+</body>
+</html>

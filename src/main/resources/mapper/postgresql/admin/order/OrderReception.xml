@@ -1,0 +1,592 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.order.OrderReceptionMapper">
+
+    <sql id="paginatedBase">
+        LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+    </sql>
+
+    <!-- 표준상품분류 목록 조회 -->
+    <select id="getPrStdCtgList" resultType="prStdCtg">
+        SELECT /* OrderReceptionMapper.getPrStdCtgList */
+            STD_CTG_NO
+             , STD_CTG_NM
+        FROM PR_STD_CTG
+        WHERE UPR_STD_CTG_NO = '0'
+          AND USE_YN  = 'Y'
+        ORDER BY SORT_SEQ
+    </select>
+
+    <!-- 키워드 목록 조회 -->
+    <sql id="getGoodsKeyWordListBase">
+        SELECT /* OrderReceptionMapper.getGoodsKeyWordList */
+        SC1.STD_CTG_NM as STD_LRG_CTG_NM										/* 표준대분류명 */
+        , SC2.STD_CTG_NM AS STD_MID_CTG_NM										/* 표준중분류명 */
+        , GB.ENTR_NO															/* 협력사번호 */
+        , GB.STD_CTG_NO														/* 표준카테고리번호 */
+        , GB.BRAND_NO															/* 브랜드번호 */
+        , GB.GOODS_NO															/* 상품번호 */
+        , IB.ITM_NO															/* 단품번호 */
+        , GB.GOODS_NM															/* 상품명 */
+        , CONCAT_WS('/',IB.OPTN_NM_1, IB.OPTN_NM_2, IB.OPTN_NM_3, IB.OPTN_NM_4, IB.OPTN_NM_5) AS OPTN_NM	/* 단품명 */
+        , GP.NOR_PRC															/* 정상가 */
+        , GP.SALE_PRC															/* 판매가 */
+        , FN_GET_GOODS_STOCK_QTY(
+        GB.GOODS_NO
+        , IB.ITM_NO
+        , CASE WHEN GB.SALE_METH_CD = '20' THEN 'Y' ELSE 'N' end
+        , GB.STK_MGR_YN	/* 재고관리여부 */
+        ) AS STK_QTY
+        , FN_GET_CODENAME('PR005', GB.SALE_STAT_CD) AS SALE_STAT_CD_NM			/* 판매상태코드(PR005) */
+        , PH.PREST_NM															/* 증정품명 */
+        , FN_GET_CODENAME('PR002', GB.GOODS_TYP_CD) AS GOODS_TYP_CD_NM			/* 상품유형코드(PR002) */
+        , FN_GET_CODENAME('PR010', GB.DELI_GOODS_GB_CD) AS DELI_GOODS_GB_CD_NM	/* 배송상품구분코드(PR010) */
+        , FN_GET_CODENAME('PR009', GB.DELI_WAY_CD) AS DELI_WAY_CD_NM			/* 배송수단코드(PR009) */
+        , GB.DELI_WAY_CD														/* 배송수단코드(PR009) */
+        , FN_GET_CODENAME('PR008', GB.DELI_PROC_TYP_CD) AS DELI_PROC_TYP_CD_NM	/* 배송처리유형코드(PR008) */
+        , GB.DELI_DDAY															/* 배송기일 */
+        , FN_GET_CODENAME('PR003', GB.SALE_METH_CD) AS SALE_METH_CD_NM			/* 판매방식코드(PR003) */
+        , CASE WHEN CHARACTER_LENGTH(SH.FWDIDC_PRAR_DY) = 8 THEN TO_CHAR(TO_DATE(SH.FWDIDC_PRAR_DY, 'yyyymmdd'), 'yyyy-mm-dd')
+        ELSE SH.FWDIDC_PRAR_DY
+        END AS FWDIDC_PRAR_DY												/* 출고지시예정일자 */
+        , FN_GET_CODENAME('PR006', GB.BUY_TYP_CD) AS BUY_TYP_CD_NM				/* 매입형태코드(PR006) */
+        , DI.DISP_CTG_NO														/* 전시카테고리번호 */
+        , CB.DISP_CTG_NM														/* 전시카테고리명 */
+        , CB.SITE_NO															/* 사이트번호 */
+        , '1000110' AS CHL_NO													/* 채널번호 */
+        , BM.BRAND_NM															/* 브랜드명 */
+        , EB.ENTR_NM															/* 협력사명 */
+        , GB.GOODS_COMP_CD														/* 상품구성코드(PR001)10:일반상품, 20:묶음상품 */
+        , GB.BDL_DELI_PSB_YN													/* 묶음배송가능여부 */
+        , GB.BUYR_AGE_LMT_CD													/* 구입자나이제한코드(PR004) */
+        , GB.BUY_QTY_LMT_YN													/* 구매수량제한여부 */
+        , GB.MIN_LMT_QTY														/* 최소제한수량 */
+        , GB.MAX_LMT_QTY														/* 최대제한수량 */
+        , GB.SALE_STAT_CD														/* 판매상태코드(PR005)10:판매중, 20:품절, 30:일시중단, 40:판매종료 */
+        , GB.DELI_POLC_NO														/* 배송정책번호 */
+        , GB.DELI_PROC_TYP_CD													/* 배송처리유형코드(PR008) */
+        , CASE WHEN GB.BUYR_AGE_LMT_CD = '19' THEN 'N'
+        WHEN GB.SALE_STAT_CD != '10' THEN 'N'
+        ELSE 'Y' END AS SELECT_YN
+        FROM PR_GOODS_BASE GB													/* 상품기본 */
+        LEFT OUTER JOIN PR_BRAND_MST BM ON (GB.BRAND_NO = BM.BRAND_NO)			/* 브랜드마스터 */
+        LEFT OUTER JOIN PR_PREST_HIST PH ON (
+        GB.GOODS_NO = PH.GOODS_NO												/* 상품번호 */
+        AND TO_CHAR(NOW(), 'YYYYMMDD') BETWEEN PH.APLY_STR_DT AND APLY_END_DT	/* 적용시작일자 ~ 적용종료일자 */
+        AND PH.USE_YN = 'Y'
+        )																		/* 증정품이력 */
+        LEFT OUTER JOIN PR_RSV_SALE_HIST SH ON (
+        GB.GOODS_NO = SH.GOODS_NO												/* 상품번호 */
+        AND NOW() BETWEEN SH.RSV_STRT_DTM AND SH.RSV_END_DTM					/* 예약시작일시 ~ 예약종료일시 */
+        )																		/* 예약판매이력 */
+        , ET_ENTR_BASE EB														/* 협력사기본 */
+        , PR_STD_CTG SC															/* 표준카테고리 */
+        , PR_STD_CTG SC1														/* 표준카테고리(표준대분류명) */
+        , PR_STD_CTG SC2														/* 표준카테고리(표준중분류명) */
+        , PR_GOODS_PRC_HIST GP													/* 상품가격이력 */
+        , PR_ITM_BASE IB														/* 단품기본 */
+        , PR_STD_CTG_DISP_INFO DI												/* 표준카테고리전시정보 */
+        , PR_DISP_CTG_BASE CB													/* 전시카테고리기본 */
+        WHERE GB.GOODS_COMP_CD != '20'
+        AND GB.ENTR_NO	= EB.ENTR_NO											/* 협력사번호 */
+        AND GB.STD_CTG_NO = SC.STD_CTG_NO											/* 표준카테고리번호 */
+        AND SC.STD_LRG_CTG_NO = SC1.STD_CTG_NO										/* 표준카테고리(표준대분류명) */
+        AND SC.STD_MID_CTG_NO = SC2.STD_CTG_NO										/* 표준카테고리(표준중분류명) */
+        AND GB.GOODS_NO = GP.GOODS_NO												/* 상품번호 */
+        AND NOW() BETWEEN GB.SALE_STR_DTM AND GB.SALE_END_DTM						/* 판매시작일시~판매종료일시 */
+        AND NOW() BETWEEN GP.HIST_STR_DTM AND GP.HIST_END_DTM						/* 이력시작일시 ~ 이력종료일시 */
+        AND GB.GOODS_NO = IB.GOODS_NO
+        AND GB.STD_CTG_NO = DI.STD_CTG_NO											/* 표준카테고리번호 */
+        AND DI.REP_CTG_YN = 'Y' 													/* 대표카테고리여부 */
+        AND DI.USE_YN = 'Y' 														/* 사용여부 */
+        AND DI.DISP_CTG_NO = CB.DISP_CTG_NO											/* 전시카테고리번호 */
+        /* 조회 조건 */
+        <if test='stdLrgCtgNo != null and stdLrgCtgNo != ""'>
+            AND SC.STD_LRG_CTG_NO = #{stdLrgCtgNo}									/* 표준상품분류 */
+        </if>
+        <if test='saleStatCd != null and saleStatCd != ""'>
+            AND GB.SALE_STAT_CD = #{saleStatCd}										/* 판매상태 */
+        </if>
+        AND GB.GOODS_NO	LIKE #{goodsNo}||'%'										/* 상품번호 */
+        <if test='entrNo != null and entrNo != ""'>
+            AND GB.ENTR_NO = #{entrNo}												/* 협력사번호 */
+        </if>
+        AND GB.GOODS_NM	LIKE #{goodsNm}||'%'										/* 상품명 */
+        <if test='dispCtgNo != null and dispCtgNo != ""'>
+            AND DI.DISP_CTG_NO = #{dispCtgNo}										/* 전시카테고리 */
+        </if>
+        ORDER BY GB.SYS_REG_DTM DESC, GB.GOODS_NM
+    </sql>
+
+    <select id="getGoodsKeyWordList" parameterType="GoodsKeyWordRequest" resultType="GoodsListResponse">
+        <include refid="getGoodsKeyWordListBase" />
+        <include refid="paginatedBase" />
+    </select>
+
+    <select id="getGoodsKeyWordListCount" parameterType="GoodsKeyWordRequest" resultType="java.lang.Integer">
+        SELECT /* OrderReceptionMapper.getGoodsKeyWordListCount */
+        COUNT(*)
+        FROM (
+        <include refid="getGoodsKeyWordListBase" />
+        ) v
+    </select>
+
+    <!-- 고객주문이력 상품목록 조회 -->
+    <sql id="getGoodsOrderHistBase">
+        SELECT /* OrderReceptionMapper.goodsOrderHistList */
+        SC1.STD_CTG_NM	as STD_LRG_CTG_NM											/* 표준대분류명 */
+        , SC2.STD_CTG_NM AS STD_MID_CTG_NM											/* 표준중분류명 */
+        , GB.ENTR_NO																/* 협력사번호 */
+        , GB.STD_CTG_NO																/* 표준카테고리번호 */
+        , GB.GOODS_NO																/* 상품번호 */
+        , IB.ITM_NO																	/* 단품번호 */
+        , GB.GOODS_NM																/* 상품명 */
+        , CONCAT_WS('/',IB.OPTN_NM_1, IB.OPTN_NM_2, IB.OPTN_NM_3, IB.OPTN_NM_4, IB.OPTN_NM_5) AS OPTN_NM	/* 단품명 */
+        , GP.NOR_PRC																/* 정상가 */
+        , GP.SALE_PRC																/* 판매가 */
+        , FN_GET_GOODS_STOCK_QTY(
+        GB.GOODS_NO	/* 상품번호 */
+        , IB.ITM_NO	/* 아이템번호 */
+        , CASE WHEN GB.SALE_METH_CD = '20' THEN 'Y' ELSE 'N' end	/* 예약상품여부 */
+        , GB.STK_MGR_YN	/* 재고관리여부 */
+        ) AS STK_QTY	/* 재고수량 */
+        , FN_GET_CODENAME('PR005', GB.SALE_STAT_CD) AS SALE_STAT_CD_NM				/* 판매상태코드(PR005) */
+        , PH.PREST_NM																/* 증정품명 */
+        , FN_GET_CODENAME('PR002', GB.GOODS_TYP_CD) AS GOODS_TYP_CD_NM				/* 상품유형코드(PR002) */
+        , FN_GET_CODENAME('PR010', GB.DELI_GOODS_GB_CD) AS DELI_GOODS_GB_CD_NM		/* 배송상품구분코드(PR010) */
+        , FN_GET_CODENAME('PR009', GB.DELI_WAY_CD) AS DELI_WAY_CD_NM				/* 배송수단코드(PR009) */
+        , FN_GET_CODENAME('PR008', GB.DELI_PROC_TYP_CD) AS DELI_PROC_TYP_CD_NM		/* 배송처리유형코드(PR008) */
+        , GB.DELI_DDAY																/* 배송기일 */
+        , FN_GET_CODENAME('PR003', GB.SALE_METH_CD) AS SALE_METH_CD_NM				/* 판매방식코드(PR003) */
+        , CASE WHEN CHARACTER_LENGTH(SH.FWDIDC_PRAR_DY) = 8 THEN TO_CHAR(TO_DATE(SH.FWDIDC_PRAR_DY, 'yyyymmdd'), 'yyyy-mm-dd')
+        ELSE SH.FWDIDC_PRAR_DY
+        END AS FWDIDC_PRAR_DY													/* 출고지시예정일자 */
+        , DI.DISP_CTG_NO															/* 전시카테고리번호 */
+        , CB.DISP_CTG_NM															/* 전시카테고리명 */
+        , CB.SITE_NO																/* 사이트번호 */
+        , '1000110' AS CHL_NO														/* 채널번호 */
+        , BM.BRAND_NM																/* 브랜드명 */
+        , EB.ENTR_NM																/* 협력사명 */
+        , GB.GOODS_COMP_CD															/* 상품구성코드(PR001)10:일반상품, 20:묶음상품 */
+        , GB.BDL_DELI_PSB_YN														/* 묶음배송가능여부 */
+        , GB.BUYR_AGE_LMT_CD														/* 구입자나이제한코드(PR004) */
+        , GB.BUY_QTY_LMT_YN													        /* 구매수량제한여부 */
+        , GB.MIN_LMT_QTY															/* 최소제한수량 */
+        , GB.MAX_LMT_QTY															/* 최대제한수량 */
+        , GB.SALE_STAT_CD															/* 판매상태코드(PR005)10:판매중, 20:품절, 30:일시중단, 40:판매종료 */
+        , GB.DELI_POLC_NO															/* 배송정책번호 */
+        , GB.DELI_PROC_TYP_CD														/* 배송처리유형코드(PR008) */
+        , CASE WHEN GB.BUYR_AGE_LMT_CD = '19' THEN 'N'
+        WHEN GB.SALE_STAT_CD != '10' THEN 'N'
+        ELSE 'Y' END AS SELECT_YN
+        FROM PR_GOODS_BASE GB															/* 상품기본 */
+        LEFT OUTER JOIN PR_BRAND_MST BM ON (GB.BRAND_NO = BM.BRAND_NO)			/* 브랜드마스터 */
+        LEFT OUTER JOIN PR_PREST_HIST PH ON (
+        GB.GOODS_NO = PH.GOODS_NO
+        AND TO_CHAR(NOW(), 'YYYYMMDD') BETWEEN PH.APLY_STR_DT AND APLY_END_DT
+        AND PH.USE_YN = 'Y'
+        )																		/* 증정품이력 */
+        LEFT OUTER JOIN PR_RSV_SALE_HIST SH ON (
+        GB.GOODS_NO = SH.GOODS_NO												/* 상품번호 */
+        AND NOW() BETWEEN SH.RSV_STRT_DTM AND SH.RSV_END_DTM					/* 예약시작일시 ~ 예약종료일시 */
+        )																		/* 예약판매이력 */
+        , ET_ENTR_BASE EB													/* 협력사기본 */
+        , PR_STD_CTG SC														/* 표준카테고리 */
+        , PR_STD_CTG SC1													/* 표준카테고리(표준대분류명) */
+        , PR_STD_CTG SC2													/* 표준카테고리(표준중분류명) */
+        , PR_GOODS_PRC_HIST GP												/* 상품가격이력 */
+        , PR_ITM_BASE IB													/* 단품기본 */
+        , PR_STD_CTG_DISP_INFO DI											/* 표준카테고리전시정보 */
+        , PR_DISP_CTG_BASE CB												/* 전시카테고리기본 */
+        , OP_ORD_BASE OB													/* 주문기본 */
+        , OP_ORD_DTL OD														/* 주문상세 */
+        WHERE GB.GOODS_COMP_CD != '20'													/* 상품구성코드(PR001.20) 묶음 상품 조회불가 */
+        AND GB.ENTR_NO	= EB.ENTR_NO													/* 협력사번호 */
+        AND GB.STD_CTG_NO = SC.STD_CTG_NO												/* 표준카테고리번호 */
+        AND SC.STD_LRG_CTG_NO = SC1.STD_CTG_NO											/* 표준카테고리(표준대분류명) */
+        AND SC.STD_MID_CTG_NO = SC2.STD_CTG_NO											/* 표준카테고리(표준중분류명) */
+        AND GB.GOODS_NO = GP.GOODS_NO
+        AND NOW() BETWEEN GB.SALE_STR_DTM AND GB.SALE_END_DTM							/* 판매시작일시~판매종료일시 */
+        AND NOW() BETWEEN GP.HIST_STR_DTM AND GP.HIST_END_DTM							/* 최종 상품가격 */
+        AND GB.GOODS_NO = IB.GOODS_NO
+        AND GB.STD_CTG_NO = DI.STD_CTG_NO												/* 표준카테고리번호 */
+        AND DI.REP_CTG_YN = 'Y' 														/* 대표카테고리여부 */
+        AND DI.USE_YN = 'Y' 															/* 사용여부 */
+        AND DI.DISP_CTG_NO = CB.DISP_CTG_NO												/* 전시카테고리번호 */
+        AND GB.GOODS_NO = OD.GOODS_NO													/* 주문상세.상품번호 */
+        AND IB.ITM_NO = OD.ITM_NO														/* 단품번호 */
+        AND OB.ORD_NO = OD.ORD_NO
+        AND OB.MBR_NO = #{mbrNo}														/* 회원번호 */
+        <if test='periodYn != null and periodYn == "N"'>
+            AND OD.ORD_FNSH_DTM BETWEEN TO_TIMESTAMP(#{ordFnshStartDtm}||' 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
+            AND TO_TIMESTAMP(#{ordFnshEndDtm}||' 23:59:59', 'YYYY-MM-DD HH24:MI:SS')	/* 주문완료일시 */
+        </if>
+        ORDER BY OB.SYS_REG_DTM DESC
+    </sql>
+
+    <select id="getGoodsOrderHistList" parameterType="GoodsOrderHistRequest" resultType="GoodsListResponse">
+        <include refid="getGoodsOrderHistBase" />
+        <include refid="paginatedBase" />
+    </select>
+
+    <select id="getGoodsOrderHistListCount" parameterType="GoodsOrderHistRequest" resultType="java.lang.Integer">
+        SELECT /* OrderReceptionMapper.getGoodsOrderHistListCount */
+        COUNT(*)
+        FROM (
+        <include refid="getGoodsOrderHistBase" />
+        ) v
+    </select>
+
+    <!-- 위시리스트 상품목록 조회 -->
+    <sql id="getWishBase">
+        SELECT /* OrderReceptionMapper.getWishList */
+            SC1.STD_CTG_NM	as STD_LRG_CTG_NM											/* 표준대분류명 */
+             , SC2.STD_CTG_NM AS STD_MID_CTG_NM											/* 표준중분류명 */
+             , GB.ENTR_NO																/* 협력사번호 */
+             , GB.STD_CTG_NO																/* 표준카테고리번호 */
+             , GB.GOODS_NO																/* 상품번호 */
+             , IB.ITM_NO																	/* 단품번호 */
+             , GB.GOODS_NM																/* 상품명 */
+             , CONCAT_WS('/',IB.OPTN_NM_1, IB.OPTN_NM_2, IB.OPTN_NM_3, IB.OPTN_NM_4, IB.OPTN_NM_5) AS OPTN_NM	/* 단품명 */
+             , GP.NOR_PRC																/* 정상가 */
+             , GP.SALE_PRC																/* 판매가 */
+             , FN_GET_GOODS_STOCK_QTY(
+                GB.GOODS_NO	/* 상품번호 */
+            , IB.ITM_NO	/* 아이템번호 */
+            , CASE WHEN GB.SALE_METH_CD = '20' THEN 'Y' ELSE 'N' end	/* 예약상품여부 */
+            , GB.STK_MGR_YN	/* 재고관리여부 */
+            ) AS STK_QTY	/* 재고수량 */
+             , FN_GET_CODENAME('PR005', GB.SALE_STAT_CD) AS SALE_STAT_CD_NM				/* 판매상태코드(PR005) */
+             , PH.PREST_NM																/* 증정품명 */
+             , FN_GET_CODENAME('PR002', GB.GOODS_TYP_CD) AS GOODS_TYP_CD_NM				/* 상품유형코드(PR002) */
+             , FN_GET_CODENAME('PR010', GB.DELI_GOODS_GB_CD) AS DELI_GOODS_GB_CD_NM		/* 배송상품구분코드(PR010) */
+             , FN_GET_CODENAME('PR009', GB.DELI_WAY_CD) AS DELI_WAY_CD_NM				/* 배송수단코드(PR009) */
+             , FN_GET_CODENAME('PR008', GB.DELI_PROC_TYP_CD) AS DELI_PROC_TYP_CD_NM		/* 배송처리유형코드(PR008) */
+             , GB.DELI_DDAY																/* 배송기일 */
+             , FN_GET_CODENAME('PR003', GB.SALE_METH_CD) AS SALE_METH_CD_NM				/* 판매방식코드(PR003) */
+             , CASE WHEN CHARACTER_LENGTH(SH.FWDIDC_PRAR_DY) = 8 THEN TO_CHAR(TO_DATE(SH.FWDIDC_PRAR_DY, 'yyyymmdd'), 'yyyy-mm-dd')
+                    ELSE SH.FWDIDC_PRAR_DY END AS FWDIDC_PRAR_DY	/* 출고지시예정일자 */
+             , DI.DISP_CTG_NO															/* 전시카테고리번호 */
+             , CB.DISP_CTG_NM															/* 전시카테고리명 */
+             , CB.SITE_NO																/* 사이트번호 */
+             , '1000110' AS CHL_NO														/* 채널번호 */
+             , BM.BRAND_NM																/* 브랜드명 */
+             , EB.ENTR_NM																/* 협력사명 */
+             , GB.GOODS_COMP_CD															/* 상품구성코드(PR001)10:일반상품, 20:묶음상품 */
+             , GB.BDL_DELI_PSB_YN														/* 묶음배송가능여부 */
+             , GB.BUYR_AGE_LMT_CD														/* 구입자나이제한코드(PR004) */
+             , GB.BUY_QTY_LMT_YN													    /* 구매수량제한여부 */
+             , GB.MIN_LMT_QTY															/* 최소제한수량 */
+             , GB.MAX_LMT_QTY															/* 최대제한수량 */
+             , GB.SALE_STAT_CD															/* 판매상태코드(PR005)10:판매중, 20:품절, 30:일시중단, 40:판매종료 */
+             , GB.DELI_POLC_NO															/* 배송정책번호 */
+             , GB.DELI_PROC_TYP_CD														/* 배송처리유형코드(PR008) */
+             , CASE WHEN GB.BUYR_AGE_LMT_CD = '19' THEN 'N'
+                    WHEN GB.SALE_STAT_CD != '10' THEN 'N'
+                    ELSE 'Y' END AS SELECT_YN
+        FROM  ET_WISH_LIST WL													/* 위시리스트 */
+           , PR_GOODS_BASE GB													/* 상품기본 */
+                 LEFT OUTER JOIN PR_BRAND_MST BM ON (GB.BRAND_NO = BM.BRAND_NO)			/* 브랜드마스터 */
+                 LEFT OUTER JOIN PR_PREST_HIST PH ON (
+                GB.GOODS_NO = PH.GOODS_NO
+                AND TO_CHAR(NOW(), 'YYYYMMDD') BETWEEN PH.APLY_STR_DT AND APLY_END_DT
+                AND PH.USE_YN = 'Y'
+            )																		/* 증정품이력 */
+                 LEFT OUTER JOIN PR_RSV_SALE_HIST SH ON (
+                GB.GOODS_NO = SH.GOODS_NO												/* 상품번호 */
+                AND NOW() BETWEEN SH.RSV_STRT_DTM AND SH.RSV_END_DTM					/* 예약시작일시 ~ 예약종료일시 */
+            )																		/* 예약판매이력 */
+           , ET_ENTR_BASE EB													/* 협력사기본 */
+           , PR_STD_CTG SC														/* 표준카테고리 */
+           , PR_STD_CTG SC1													/* 표준카테고리(표준대분류명) */
+           , PR_STD_CTG SC2													/* 표준카테고리(표준중분류명) */
+           , PR_GOODS_PRC_HIST GP												/* 상품가격이력 */
+           , PR_ITM_BASE IB													/* 단품기본 */
+           , PR_STD_CTG_DISP_INFO DI											/* 표준카테고리전시정보 */
+           , PR_DISP_CTG_BASE CB												/* 전시카테고리기본 */
+        WHERE GB.GOODS_COMP_CD != '20'													/* 상품구성코드(PR001.20) 묶음 상품 조회불가 */
+          AND WL.GOODS_NO = GB.GOODS_NO													/* 상품번호 */
+		  AND GB.ENTR_NO	= EB.ENTR_NO													/* 협력사번호 */
+		  AND GB.STD_CTG_NO = SC.STD_CTG_NO												/* 표준카테고리번호 */
+		  AND SC.STD_LRG_CTG_NO = SC1.STD_CTG_NO											/* 표준카테고리(표준대분류명) */
+		  AND SC.STD_MID_CTG_NO = SC2.STD_CTG_NO											/* 표준카테고리(표준중분류명) */
+		  AND GB.GOODS_NO = GP.GOODS_NO
+		  AND NOW() BETWEEN GB.SALE_STR_DTM AND GB.SALE_END_DTM							/* 판매시작일시~판매종료일시 */
+		  AND NOW() BETWEEN GP.HIST_STR_DTM AND GP.HIST_END_DTM							/* 최종 상품가격 */
+		  AND GB.GOODS_NO = IB.GOODS_NO
+		  AND GB.STD_CTG_NO = DI.STD_CTG_NO												/* 표준카테고리번호 */
+		  AND DI.REP_CTG_YN = 'Y' 														/* 대표카테고리여부 */
+		  AND DI.USE_YN = 'Y' 															/* 사용여부 */
+		  AND DI.DISP_CTG_NO = CB.DISP_CTG_NO												/* 전시카테고리번호 */
+		  AND WL.MBR_NO = #{mbrNo}														/* 회원번호 */
+        ORDER BY WL.SYS_REG_DTM
+    </sql>
+
+    <select id="getWishList" parameterType="GoodsWishRequest" resultType="GoodsListResponse">
+        <include refid="getWishBase" />
+        <include refid="paginatedBase" />
+    </select>
+
+    <select id="getWishListCount" parameterType="GoodsWishRequest" resultType="java.lang.Integer">
+        SELECT /* OrderReceptionMapper.getWishListCount */
+        COUNT(*)
+        FROM (
+        <include refid="getWishBase" />
+        ) v
+    </select>
+
+    <!-- 베스트 100 상품목록 조회 -->
+    <sql id="getBestBase">
+    </sql>
+
+    <select id="getBest100List" parameterType="GoodsBest100Request" resultType="GoodsListResponse">
+        <include refid="getBestBase" />
+        <include refid="paginatedBase" />
+    </select>
+
+    <select id="getBest100ListCount" parameterType="GoodsBest100Request" resultType="java.lang.Integer">
+        SELECT /* OrderReceptionMapper.getBest100ListCount */
+        COUNT(*)
+        FROM (
+        <include refid="getBestBase" />
+        ) v
+    </select>
+
+    <!-- 배송지 목록 조회 -->
+    <select id="getMemberDeliveryList" parameterType="String" resultType="MbrDlvpInfoResponse">
+        SELECT /* OrderReceptionMapper.getMemberDeliveryList */
+            EMDI.MBR_NO															/* varchar(15) NOT NULL, 회원번호 */
+             , EMDI.MBR_DLVP_SEQ														/* varchar(5) NOT NULL, 회원배송지순번 */
+             , EMDI.DLVP_NM															/* varchar(200) NOT NULL, 배송지명 */
+             , '['||EMDI.ZIP_NO||']'||EMDI.ZIP_ADDR||' '||EMDI.DTL_ADDR AS DLVP_ADDR			/* 배송지 주소 */
+             , EMDI.RCVMN_NM															/* varchar(100) NOT NULL, 수취인명 */
+             , EMDI.BASE_DLVP_YN														/* varchar(1) NOT NULL, 기본배송지여부 */
+             , EMDI.USE_YN		/* varchar(1) NOT NULL, 사용여부 */
+             , EMDI.USER_SORT_SEQ													/* numeric(5) NOT NULL DEFAULT 0, 사용자정렬순서 */
+             , EMDI.ZIP_NO_SEQ														/* numeric(15) NOT NULL, 우편번호순번 */
+             , EMDI.ZIP_NO															/* varchar(7) NOT NULL, 우편번호 */
+             , EMDI.ZIP_ADDR															/* varchar(400) NOT NULL, 우편주소 */
+             , EMDI.DTL_ADDR															/* varchar(400) NOT NULL, 상세주소 */
+             , EMDI.TEL_RGN_NO														/* varchar(4) NULL, 전화지역번호 */
+             , EMDI.TEL_TXNO_NO														/* varchar(4) NULL, 전화국번번호 */
+             , EMDI.TEL_END_NO														/* varchar(4) NULL, 전화끝번호 */
+             , EMDI.TEL_RGN_NO||EMDI.TEL_TXNO_NO||EMDI.TEL_TXNO_NO  AS TEL_NO		            /* 전화번호 */
+             , EMDI.CELL_SCT_NO														/* varchar(4) NULL, 휴대폰구분번호 */
+             , EMDI.CELL_TXNO_NO														/* varchar(4) NULL, 휴대폰국번번호 */
+             , EMDI.CELL_END_NO														/* varchar(4) NULL, 휴대폰끝번호 */
+             , EMDI.CELL_SCT_NO||EMDI.CELL_TXNO_NO||EMDI.CELL_END_NO  AS CELL_NO		        /* 휴대폰번호*/
+             , SUB.USER_NM AS SYS_MOD_ID
+             , TO_CHAR(EMDI.SYS_MOD_DTM,'yyyy-mm-dd hh24:mi:ss') AS SYS_MOD_DTM      /* timestamp NOT NULL, 시스템수정일시 */
+        FROM ET_MBR_DLVP_INFO	EMDI	/* 회원배송지정보 */
+           , ST_USER_BASE SUB
+        WHERE EMDI.SYS_MOD_ID = SUB.USER_ID
+          AND EMDI.MBR_NO = #{mbrNo}	/* 회원번호 */
+          AND EMDI.USE_YN = 'Y'			/* 사용여부 */
+        ORDER BY BASE_DLVP_YN DESC,MBR_DLVP_SEQ ASC	/* 회원배송지순번 */
+    </select>
+
+    <!-- 배송지 목록 등록 insert -->
+    <insert id="insertMemberDeliveryList" parameterType="java.util.List">
+        INSERT INTO ET_MBR_DLVP_INFO (	/* OrderReceptionMapper.insertMemberDeliveryList */
+        MBR_NO
+        , MBR_DLVP_SEQ
+        , DLVP_NM
+        , RCVMN_NM
+        , BASE_DLVP_YN
+        , USE_YN
+        , USER_SORT_SEQ
+        , ZIP_NO_SEQ
+        , ZIP_NO
+        , ZIP_ADDR
+        , DTL_ADDR
+        , TEL_RGN_NO
+        , TEL_TXNO_NO
+        , TEL_END_NO
+        , CELL_SCT_NO
+        , CELL_TXNO_NO
+        , CELL_END_NO
+        , SYS_REG_ID
+        , SYS_REG_DTM
+        , SYS_MOD_ID
+        , SYS_MOD_DTM
+        ) VALUES
+        <foreach collection="list" index="index" item="item" separator=",">
+            (
+            #{item.mbrNo}
+            , (
+            SELECT (COALESCE(MAX(MBR_DLVP_SEQ::INTEGER), 0) +  (#{index}+1))
+            FROM ET_MBR_DLVP_INFO
+            WHERE MBR_NO = #{item.mbrNo}
+            )
+            , #{item.dlvpNm}
+            , #{item.rcvmnNm}
+            , #{item.baseDlvpYn}
+            , #{item.useYn}
+            , #{item.userSortSeq}
+            , #{item.zipNoSeq}
+            , #{item.zipNo}
+            , #{item.zipAddr}
+            , #{item.dtlAddr}
+            , #{item.telRgnNo}
+            , #{item.telTxnoNo}
+            , #{item.telEndNo}
+            , #{item.cellSctNo}
+            , #{item.cellTxnoNo}
+            , #{item.cellEndNo}
+            , #{item.sysRegId}
+            , now()
+            , #{item.sysModId}
+            , now()
+            )
+        </foreach>
+    </insert>
+
+    <update id="updateMemberDeliveryList" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" separator=";">
+            UPDATE ET_MBR_DLVP_INFO
+            SET /* OrderReceptionMapper.updateMemberDeliveryList */
+            DLVP_NM = #{item.dlvpNm}
+            , RCVMN_NM = #{item.rcvmnNm}
+            , BASE_DLVP_YN = #{item.baseDlvpYn}
+            , USE_YN = #{item.useYn}
+            , USER_SORT_SEQ = #{item.userSortSeq}
+            , ZIP_NO_SEQ = #{item.zipNoSeq}
+            , ZIP_NO = #{item.zipNo}
+            , ZIP_ADDR = #{item.zipAddr}
+            , DTL_ADDR = #{item.dtlAddr}
+            , TEL_RGN_NO = #{item.telRgnNo}
+            , TEL_TXNO_NO = #{item.telTxnoNo}
+            , TEL_END_NO = #{item.telEndNo}
+            , CELL_SCT_NO = #{item.cellSctNo}
+            , CELL_TXNO_NO = #{item.cellTxnoNo}
+            , CELL_END_NO = #{item.cellEndNo}
+            , SYS_MOD_ID = #{item.sysModId}
+            , SYS_MOD_DTM = now()
+            WHERE MBR_NO = #{item.mbrNo}
+            AND MBR_DLVP_SEQ = #{item.mbrDlvpSeq}
+        </foreach>
+    </update>
+
+    <!-- 사은품 목록 조회 -->
+    <select id="getOrderGiftList" parameterType="OrderGiftRequest" resultType="OrderGiftResponse">
+        SELECT  /* OrderReceptionMapper.getOrderGiftList */
+            R_AE_NO AS AE_NO
+             , R_AE_FVR_SEQ AS AE_FVR_SEQ
+             , R_ADD_EVT_TYP_CD AS ADD_EVT_TYP_CD
+             , R_ADD_EVT_TYP_CD_NM AS ADD_EVT_TYP_CD_NM
+             , R_AE_NM AS AE_NM
+             , R_GOODS_NO AS GOODS_NO
+             , R_GOODS_NM AS GOODS_NM
+             , R_ITM_NO AS ITM_NO
+             , R_ITM_NM AS ITM_NM
+             , R_STK_QTY AS STK_QTY
+             , R_BDL_DELI_PSB_YN AS BDL_DELI_PSB_YN
+             , R_DELI_POLC_NO AS DELI_POLC_NO
+        FROM FN_GET_ORDER_GIFT(
+                #{mbrNo}
+            , #{media}
+            , #{siteNo}
+            , #{chlNo}
+            , #{goodsInfoList,typeHandler=org.apache.ibatis.type.ArrayTypeHandler}
+            )
+    </select>
+
+
+    <!--혜택가져오기-->
+    <select id="getBenefitList" parameterType="OrderBenefitRequest" resultType="OrderBenefitResponse">
+        SELECT  /* OrderReceptionMapper.getBenefitList */
+            R_CPN_ISU_NO AS CPN_ISU_NO
+             , R_PROMO_NO AS PROMO_NO
+             , R_PROMO_NM AS PROMO_NM
+             , R_PROMO_TYP_CD AS PROMO_TYP_CD
+             , R_PROMO_TYP_NM AS PROMO_TYP_NM
+             , R_DISCOUNT_AMT AS DISCOUNT_AMT
+             , R_GOODS_NO AS GOODS_NO
+             , R_GOODS_NM AS GOODS_NM
+             , R_ITM_NO AS ITM_NO
+             , R_ITM_NM AS ITM_NM
+             , R_SALE_PRC AS SALE_PRC
+             , R_ORD_QTY AS ORD_QTY
+             , R_DISCOUNT_LEVEL AS DISCOUNT_LEVEL
+             , CASE WHEN R_DISCOUNT_LEVEL = '2' THEN ''
+                    WHEN R_DISCOUNT_LEVEL = '3' THEN '중복'
+            END OVERLAP_CPN_YN
+        FROM FN_GET_USABLE_BENEFIT(#{mbrNo}
+            ,#{media}
+            ,#{siteNo}
+            ,#{chlNo}
+            ,#{goodsInfoList,typeHandler=org.apache.ibatis.type.ArrayTypeHandler}
+            ,#{promotionList,typeHandler=org.apache.ibatis.type.ArrayTypeHandler})
+    </select>
+
+
+
+    <!-- 배송비 목록 조회 -->
+    <select id="getDlvAmtList" parameterType="list" resultType="EtDeliPolcResponse">
+        SELECT /* OrderReceptionMapper.getDlvAmtList */
+        EDPB.DELI_POLC_NO
+        , EDPB.ENTR_NO
+        , EEB.ENTR_NM
+        , EDPB.DLEX_TYP_CD
+        , FN_GET_CODENAME('VD005', EDPB.DLEX_TYP_CD) AS DLEX_TYP_CD_NM
+        , EDPB.STD_AMT
+        , EDPB.DLEX_AMT
+        , EDPB.FERRY_RGN_DLEX_AMT
+        , EDPB.JEJU_DLEX
+        , EDPB.JEJU_FERRY_RGN_DLEX_AMT
+        , EDPB.RTN_AMT
+        , EDPB.USE_YN
+        FROM ET_DELI_POLC_BASE EDPB
+        , ET_ENTR_BASE EEB
+        WHERE EDPB.ENTR_NO = EEB.ENTR_NO
+        AND EDPB.USE_YN = 'Y'
+        AND DELI_POLC_NO IN
+        <foreach collection="list" index="index" open="(" close=")"  item="item" separator=",">
+            #{item}
+        </foreach>
+    </select>
+
+    <!-- 배송지 지역 코드 조회 -->
+    <select id="getDeliRegnByZipCd" parameterType="list" resultType="DlvRegnByZipCdResponse">
+        SELECT /* OrderReceptionMapper.getDeliRegnByZipCd */
+               DELI_REGN_GB_CD
+             , ZIP_NO
+          FROM ET_DELI_REGN_BY_ZIP_CD
+         WHERE ZIP_NO IN
+        <foreach collection="list" index="index" open="(" close=")"  item="item" separator=",">
+            #{item}
+        </foreach>
+    </select>
+
+    <!--  배송비 - 쿠폭 목록 조회 -->
+    <select id="getDlvCouponList" parameterType="DlvCouponRequest" resultType="DlvCouponResponse">
+        SELECT /*OrderReceptionMapper.getDlvCouponList*/
+               CPB.PROMO_NM||': '||TO_CHAR(CCIM.VALI_END_DTM, 'YYYY-MM-DD') AS PROMO_NM
+             , CCIM.CPN_ISU_NO
+          FROM CC_PROM_BASE CPB
+             , CC_CPN_ISU_MBR CCIM
+         WHERE CPB.PROMO_NO = CCIM.CPN_NO
+           AND NOW() BETWEEN CCIM.VALI_STRT_DTM AND CCIM.VALI_END_DTM
+           AND CCIM.USE_YN = 'N'
+           AND CPB.PROMO_STAT_CD = '10'
+           AND CPB.PROMO_TYP_CD = #{promoTypCd}
+           AND CCIM.MBR_NO = #{mbrNo}
+         ORDER BY CCIM.CPN_ISU_NO
+    </select>
+
+    <!--  배송비 - 쿠폭 목록 조회 -->
+    <select id="getMbrAstSumList" parameterType="java.lang.String" resultType="MbrAstSumResponse">
+        SELECT /*OrderReceptionMapper.getMbrAstSumList*/
+               MBR_NO
+             , AST_GB_CD
+             , TOT_AMT
+             , USE_AMT
+             , POSN_AMT
+          FROM ME_MBR_AST_SUM
+         WHERE MBR_NO = #{mbrNo}
+    </select>
+
+
+</mapper>

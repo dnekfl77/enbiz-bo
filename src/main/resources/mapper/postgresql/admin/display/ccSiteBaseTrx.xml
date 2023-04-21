@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.system.CcSiteBaseTrxMapper">
+
+	<insert id="insertSiteBase" parameterType="ccSiteBase">
+		<selectKey keyProperty="siteNo" resultType="String" order="BEFORE">
+			SELECT NEXTVAL('CC_SITE_BASE_SQ01') AS siteNo
+		</selectKey>
+		INSERT INTO CC_SITE_BASE (			/* ccSiteBaseTrx.insertSiteBase */
+				  SITE_NO
+				, SITE_NM
+				, TRD_STRT_DT
+				, TRD_END_DT
+				, SITE_DOM
+				, SYS_REG_ID
+				, SYS_REG_DTM
+				, SYS_MOD_ID
+				, SYS_MOD_DTM
+		) VALUES (
+				  #{siteNo}
+				, #{siteNm}
+				, TO_CHAR(TO_TIMESTAMP(#{trdStrtDt}, 'YYYY-MM-DD'), 'YYYYMMDD')
+				, TO_CHAR(TO_TIMESTAMP(#{trdEndDt}, 'YYYY-MM-DD'), 'YYYYMMDD')
+				, #{siteDom}
+				, #{sysRegId}
+				, NOW()
+				, #{sysModId}
+				, NOW()
+		)
+	</insert>
+
+	<update id="updateSiteBase" parameterType="ccSiteBase">
+		UPDATE CC_SITE_BASE			/* ccSiteBaseTrx.updateSiteBase */
+		SET
+				  SITE_NM = #{siteNm}
+				, TRD_STRT_DT = TO_CHAR(TO_TIMESTAMP(#{trdStrtDt}, 'YYYY-MM-DD'), 'YYYYMMDD')
+				, TRD_END_DT = TO_CHAR(TO_TIMESTAMP(#{trdEndDt}, 'YYYY-MM-DD'), 'YYYYMMDD')
+				, SITE_DOM = #{siteDom}
+				, SYS_MOD_ID = #{sysModId}
+				, SYS_MOD_DTM = NOW()
+		WHERE 	  SITE_NO = #{siteNo}
+	</update>
+
+</mapper>
+
+

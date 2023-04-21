@@ -1,0 +1,136 @@
+<!--
+* 프로그램명 : 결제수수료관리
+* 작 성 일 : 2021.07.27
+* 작 성 자 : 권다솜
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 결제관리 > 결제수단관리 > 결제수수료관리
+* 이    력 :
+-->
+<html lang="ko-KR"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/page-realgrid-layout}">
+
+<head>
+    <title>sub title</title>
+</head>
+<body>
+<th:block layout:fragment="page-title-area">
+    <div class="page-title">
+        <div class="left">
+            <h1><th:block th:text="${#messages.msg('paymentCommissionMgmt.title')}"/></h1>
+        </div>
+    </div>
+</th:block>
+<th:block layout:fragment="page-contents">
+    <div class="page-fixed with-title">
+        <div class="search-cont">
+            <!-- 조회테이블 -->
+            <div class="search">
+                <form name="clearingCommissionGridForm" id="clearingCommissionGridForm">
+                <table class="search-table">
+                    <colgroup>
+                        <col width="120">
+                        <col>
+                        <col width="120">
+                        <col>
+                        <col width="120">
+                        <col>
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <td class="label" th:text="${#messages.msg('paymentCommissionMgmt.label.pgGbCd')}"></td>
+                        <td>
+                            <select class="form-control w40" id="pgGbCd" name="pgGbCd">
+                                <option value="" th:text="${#messages.msg('baseInfoMgmt.label.full')}"></option>
+                                <option th:each="list : ${codeList.OM030}" th:value="${list.cd}" th:text="${list.cdNm}"></option>
+                            </select>
+                        </td>
+                        <td class="label" th:text="${#messages.msg('paymentCommissionMgmt.label.cmsnTgtLgrpCd')}" />
+                        <td>
+                            <select class="form-control w40" id="cmsnTgtLgrpCd" name="cmsnTgtLgrpCd">
+                                <option value="" th:text="${#messages.msg('baseInfoMgmt.label.full')}"></option>
+                                <option th:each="list : ${codeList.OM037}" th:value="${list.cd}" th:text="${list.cdNm}"></option>
+                            </select>
+                        </td>
+                        <td class="label" th:text="${#messages.msg('paymentCommissionMgmt.label.cmsnTgtSgrpCd')}" />
+                        <td>
+                            <select class="form-control w40" id="cmsnTgtSgrpCd" name="cmsnTgtSgrpCd">
+                                <option value="" th:text="${#messages.msg('baseInfoMgmt.label.full')}"></option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label" th:text="${#messages.msg('paymentCommissionMgmt.label.cmsnTypCd')}"></td>
+                        <td>
+                            <select class="form-control w40" id="cmsnTypCd" name="cmsnTypCd">
+                                <option value="" th:text="${#messages.msg('baseInfoMgmt.label.full')}"></option>
+                                <option th:each="list : ${codeList.OM038}" th:value="${list.cd}" th:text="${list.cdNm}"></option>
+                            </select>
+                        </td>
+                        <td class="label" th:text="${#messages.msg('paymentCommissionMgmt.label.mersNo')}" />
+                        <td colspan="3">
+                            <input class="input w20" type="text" name="mersNo" id="mersNo" maxlength="20" onKeyup="number(this)"/>
+                        </td>
+                    </tbody>
+                </table>
+                </form>
+            </div>
+            <!-- //조회테이블 -->
+            <!-- 검색버튼 -->
+            <div class="button-group search-btn">
+                <a href="#" class="btn_gblue button white" id="btn_init">
+                    <span class="text" th:text="${#messages.msg('methodsOfPaymentManagement.label.initialization')}" />
+                </a>
+                <a href="#" class="btn_blue button dark" id="btn_list">
+                    <span class="text" th:text="${#messages.msg('methodsOfPaymentManagement.label.list')}" />
+                </a>
+            </div>
+            <!-- //검색버튼 -->
+            <!-- 리얼그리드 -->
+            <div class="grid-cont">
+                <div class="grid" style="overflow: hidden;">
+                    <div class="grid-head">
+                        <div class="title-area">
+                            <h2 class="title" th:text="${#messages.msg('paymentCommissionMgmt.clearingCommissionGrid.title')}" />
+                        </div>
+                        <div class="option-area">
+                            <div class="edit-option">
+                                <div class="button-group">
+                                    <a href="#" class="button inside" id="btn_grid_insert">
+                                        <span class="text" th:text="${#messages.msg('methodsOfPaymentManagement.label.clearingCommissionInsert')}" />
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="page-option" grid-id="clearingCommissionGrid" />
+                        </div>
+                    </div>
+                    <div class="grid-body with-head">
+                        <div id="clearingCommissionGrid" realgrid></div>
+                    </div>
+                </div>
+            </div>
+            <!-- //리얼그리드 -->
+        </div>
+    </div>
+</th:block>
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        // 그리드 내 selectBox 옵션 셋팅 (은행, 매입사)
+        var code26List = [[${codeList.OM026}]];
+        var code28List = [[${codeList.OM028}]];
+    </script>
+
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'payment/clearingCommissionGrid.eventHandler.js?202107270001'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'payment/clearingCommissionGrid.provider.js?202107270001'" ></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            clearingCommissionGrid.eventhandler.init();
+        });
+    </script>
+</th:block>
+
+</body>
+</html>

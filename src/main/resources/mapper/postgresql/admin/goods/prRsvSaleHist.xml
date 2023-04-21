@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enbiz.bo.app.repository.goods.PrRsvSaleHistMapper">
+
+    <sql id="paginatedBase">
+        LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+    </sql>
+
+    <sql id="prRsvSaleHistBaseToNormalMeth">
+        SELECT /* prRsvSaleHist.prRsvSaleHistBaseToNormalMeth */
+               PGB.GOODS_TYP_CD
+             , FN_GET_CODENAME('PR002',PGB.GOODS_TYP_CD) AS GOODS_TYP_NM
+             , PGB.GOODS_NO
+             , PGB.GOODS_NM
+             , PGB.MODL_NM
+             , PBM.BRAND_NM
+             , PGB.SALE_STAT_CD
+             , FN_GET_CODENAME('PR005',PGB.SALE_STAT_CD) AS SALE_STAT_NM
+             , PGB.SALE_METH_CD
+             , FN_GET_CODENAME('PR003',PGB.SALE_METH_CD) AS SALE_METH_NM
+             , EEB.ENTR_NM
+             , SUB.USER_NM AS MD
+             , 	       COALESCE(     (SELECT STD_CTG_NM
+                                        FROM PR_STD_CTG T
+                                       WHERE T.STD_CTG_NO = PSC.STD_LRG_CTG_NO),'')
+                    || COALESCE('>'||(SELECT STD_CTG_NM
+                                        FROM PR_STD_CTG T
+                                       WHERE T.STD_CTG_NO = PSC.STD_MID_CTG_NO),'')
+                    || COALESCE('>'||(SELECT STD_CTG_NM
+                                        FROM PR_STD_CTG T
+                                       WHERE T.STD_CTG_NO = PSC.STD_SML_CTG_NO),'')
+                    || COALESCE('>'||(SELECT STD_CTG_NM
+                                        FROM PR_STD_CTG T
+                                       WHERE T.STD_CTG_NO = PSC.STD_THN_CTG_NO),'') AS STR_CTG
+             , CASE WHEN PGB.DISP_YN = 'Y' THEN '전시' ELSE '전시안함' END DISP_YN
+             , FN_GET_CODENAME('PR006',PGB.BUY_TYP_CD) AS BUY_TYP_NM
+             , FN_GET_CODENAME('PR007',PGB.TAX_GB_CD) AS TAX_GB_NM
+             , PGPH.NOR_PRC
+             , PGPH.MRGN_RATE
+             , PGPH.SALE_PRC
+             , TO_CHAR(PGB.GOODS_REG_DTM,'yyyy-mm-dd hh24:mi:ss') AS GOODS_REG_DTM
+             , (SELECT TO_CHAR(RSV_STRT_DTM,'yyyy-mm-dd hh24:mi:ss') FROM PR_RSV_SALE_HIST WHERE GOODS_NO = PGB.GOODS_NO ORDER BY RSV_END_DTM DESC LIMIT 1) AS RSV_STRT_DTM
+             , (SELECT TO_CHAR(RSV_END_DTM,'yyyy-mm-dd hh24:mi:ss') FROM PR_RSV_SALE_HIST WHERE GOODS_NO = PGB.GOODS_NO ORDER BY RSV_END_DTM DESC LIMIT 1) AS RSV_END_DTM
+             , (SELECT SUBSTRING(FWDIDC_PRAR_DY,1,4)||'-'||SUBSTRING(FWDIDC_PRAR_DY,5,2)||'-'||SUBSTRING(FWDIDC_PRAR_DY,7,2) FROM PR_RSV_SALE_HIST WHERE GOODS_NO = PGB.GOODS_NO ORDER BY RSV_END_DTM DESC LIMIT 1) AS FWDIDC_PRAR_DY
+             , (SELECT RSV_END_AF_PROC_METH_CD FROM PR_RSV_SALE_HIST WHERE GOODS_NO = PGB.GOODS_NO ORDER BY RSV_END_DTM DESC LIMIT 1) AS RSV_END_AF_PROC_METH_CD
+             , (SELECT FN_GET_CODENAME('PR011',RSV_END_AF_PROC_METH_CD) AS RSV_END_AF_PROC_METH_NM FROM PR_RSV_SALE_HIST WHERE GOODS_NO = PGB.GOODS_NO ORDER BY RSV_END_DTM DESC LIMIT 1) AS RSV_END_AF_PROC_METH_NM
+          FROM PR_GOODS_BASE PGB
+             , PR_GOODS_PRC_HIST PGPH
+             , PR_STD_CTG   PSC
+             , ST_USER_BASE SUB
+             , ET_ENTR_BASE EEB
+             , PR_BRAND_MST PBM
+         WHERE PGB.GOODS_NO      = PGPH.GOODS_NO
+           AND PGPH.HIST_END_DTM = TO_TIMESTAMP('29991231235959', 'YYYYMMDDHH24MISS')
+           AND PGB.STD_CTG_NO    = PSC.STD_CTG_NO
+           AND PSC.MD_ID         = SUB.USER_ID
+           AND PGB.ENTR_NO       = EEB.ENTR_NO
+           AND PGB.BRAND_NO 	 = PBM.BRAND_NO
+           AND PGB.GOODS_COMP_CD = '10'
+           AND PGB.SALE_METH_CD  = #{saleMethCd}
+           AND PGB.GOODS_REG_DTM <![CDATA[>=]]> TO_TIMESTAMP(#{startDate}||'000000', 'YYYYMMDDHH24MISS')
+           AND PGB.GOODS_REG_DTM <![CDATA[<=]]> TO_TIMESTAMP(#{endDate}||'235959', 'YYYYMMDDHH24MISS')
+        <if test="userId != null and userId != ''">
+           AND PSC.MD_ID LIKE #{userId} || '%'
+        </if>
+           AND EEB.ENTR_NO LIKE #{entrNo} || '%'
+           AND PBM.BRAND_NO LIKE #{brandNo} || '%'
+           AND PGB.SALE_STAT_CD LIKE #{saleStatCd} || '%'
+           AND PGB.GOODS_NO LIKE #{goodsNo} || '%'
+           AND PGB.GOODS_NM LIKE #{goodsNm} || '%'
+    </sql>
+
+    <select id="getReservationNormalSaleGoodsListCount" parameterType="ReservationGoodsMgmtRequest" resultType="java.lang.Integer">
+        SELECT COUNT(*) /* prRsvSaleHist.getReservationNormalSaleGoodsListCount */
+          FROM (
+        <include refid="prRsvSaleHistBaseToNormalMeth"/>
+        ) T1
+    </select>
+
+
+    <select id="getReservationNormalSaleGoodsList" parameterType="ReservationGoodsMgmtRequest" resultType="ReservationGoodsMgmtResponse">
+        /* prRsvSaleHist.getReservationNormalSaleGoodsList */
+        <include refid="prRsvSaleHistBaseToNormalMeth"/>
+        <include refid="paginatedBase" />
+    </select>
+
+    <sql id="prRsvSaleHistBaseToRsvMeth">
+        SELECT /* prRsvSaleHist.prRsvSaleHistBaseToRsvMeth */
+               PGB.GOODS_TYP_CD
+             , FN_GET_CODENAME('PR002',PGB.GOODS_TYP_CD) AS GOODS_TYP_NM
+             , PGB.GOODS_NO
+             , PGB.GOODS_NM
+             , PGB.MODL_NM
+             , PBM.BRAND_NM
+             , PGB.SALE_STAT_CD
+             , FN_GET_CODENAME('PR005',PGB.SALE_STAT_CD) AS SALE_STAT_NM
+             , PGB.SALE_METH_CD
+             , FN_GET_CODENAME('PR003',PGB.SALE_METH_CD) AS SALE_METH_NM
+             , EEB.ENTR_NM
+             , SUB.USER_NM AS MD
+             , 	       COALESCE(     (SELECT STD_CTG_NM
+                                        FROM PR_STD_CTG T
+                                       WHERE T.STD_CTG_NO = PSC.STD_LRG_CTG_NO),'')
+                    || COALESCE('>'||(SELECT STD_CTG_NM
+                                        FROM PR_STD_CTG T
+                                       WHERE T.STD_CTG_NO = PSC.STD_MID_CTG_NO),'')
+                    || COALESCE('>'||(SELECT STD_CTG_NM
+                                        FROM PR_STD_CTG T
+                                       WHERE T.STD_CTG_NO = PSC.STD_SML_CTG_NO),'')
+                    || COALESCE('>'||(SELECT STD_CTG_NM
+                                        FROM PR_STD_CTG T
+                                       WHERE T.STD_CTG_NO = PSC.STD_THN_CTG_NO),'') AS STR_CTG
+             , CASE WHEN PGB.DISP_YN = 'Y' THEN '전시' ELSE '전시안함' END DISP_YN
+             , FN_GET_CODENAME('PR006',PGB.BUY_TYP_CD) AS BUY_TYP_NM
+             , FN_GET_CODENAME('PR007',PGB.TAX_GB_CD) AS TAX_GB_NM
+             , PGPH.NOR_PRC
+             , PGPH.MRGN_RATE
+             , PGPH.SALE_PRC
+             , TO_CHAR(PGB.GOODS_REG_DTM,'yyyy-mm-dd hh24:mi:ss') AS GOODS_REG_DTM
+             , TO_CHAR(PRSH.RSV_STRT_DTM,'yyyy-mm-dd hh24:mi:ss') AS RSV_STRT_DTM
+             , TO_CHAR(PRSH.RSV_END_DTM,'yyyy-mm-dd hh24:mi:ss') AS RSV_END_DTM
+             , SUBSTRING(PRSH.FWDIDC_PRAR_DY,1,4)||'-'||SUBSTRING(PRSH.FWDIDC_PRAR_DY,5,2)||'-'||SUBSTRING(PRSH.FWDIDC_PRAR_DY,7,2) AS FWDIDC_PRAR_DY
+             , PRSH.RSV_END_AF_PROC_METH_CD
+             , FN_GET_CODENAME('PR011',PRSH.RSV_END_AF_PROC_METH_CD) AS RSV_END_AF_PROC_METH_NM -- 예약종료후 판매방식명
+          FROM PR_GOODS_BASE PGB
+             , PR_GOODS_PRC_HIST PGPH
+             , PR_RSV_SALE_HIST PRSH
+             , PR_STD_CTG   PSC
+             , ST_USER_BASE SUB
+             , ET_ENTR_BASE EEB
+             , PR_BRAND_MST PBM
+         WHERE PGB.GOODS_NO      = PGPH.GOODS_NO
+           AND PGB.GOODS_NO      = PRSH.GOODS_NO
+           AND PGPH.HIST_END_DTM = TO_TIMESTAMP('29991231235959', 'YYYYMMDDHH24MISS')
+           AND PGB.STD_CTG_NO    = PSC.STD_CTG_NO
+           AND PSC.MD_ID         = SUB.USER_ID
+           AND PGB.ENTR_NO       = EEB.ENTR_NO
+           AND PGB.BRAND_NO 	 = PBM.BRAND_NO
+           AND PGB.GOODS_COMP_CD = '10'
+           AND PRSH.RSV_STOP_YN  = 'N'
+           AND PGB.SALE_METH_CD  = #{saleMethCd}
+           AND PGB.GOODS_REG_DTM <![CDATA[>=]]> TO_TIMESTAMP(#{startDate}||'000000', 'YYYYMMDDHH24MISS')
+           AND PGB.GOODS_REG_DTM <![CDATA[<=]]> TO_TIMESTAMP(#{endDate}||'235959', 'YYYYMMDDHH24MISS')
+        <if test="userId != null and userId != ''">
+           AND PSC.MD_ID LIKE #{userId} || '%'
+        </if>
+           AND EEB.ENTR_NO LIKE #{entrNo} || '%'
+           AND PBM.BRAND_NO LIKE #{brandNo} || '%'
+           AND PGB.SALE_STAT_CD LIKE #{saleStatCd} || '%'
+           AND PGB.GOODS_NO LIKE #{goodsNo} || '%'
+           AND PGB.GOODS_NM LIKE #{goodsNm} || '%'
+    </sql>
+
+    <select id="getReservationRsvSaleGoodsListCount" parameterType="ReservationGoodsMgmtRequest" resultType="java.lang.Integer">
+        SELECT COUNT(*) /* prRsvSaleHist.getReservationRsvSaleGoodsListCount */
+          FROM (
+        <include refid="prRsvSaleHistBaseToRsvMeth"/>
+        ) T1
+    </select>
+
+    <select id="getReservationRsvSaleGoodsList" parameterType="ReservationGoodsMgmtRequest" resultType="ReservationGoodsMgmtResponse">
+        /* prRsvSaleHist.getReservationRsvSaleGoodsList */
+        <include refid="prRsvSaleHistBaseToRsvMeth"/>
+        <include refid="paginatedBase" />
+    </select>
+
+    <select id="getReservationSaleHistList" parameterType="java.lang.String" resultType="ReservationGoodsMgmtResponse">
+        SELECT /* prRsvSaleHist.getReservationSaleHistList */
+               TO_CHAR(PRSH.RSV_STRT_DTM,'YYYY-MM-DD HH24:MI:SS') AS RSV_STRT_DTM
+             , TO_CHAR(PRSH.RSV_END_DTM,'YYYY-MM-DD HH24:MI:SS') AS RSV_END_DTM
+             , SUBSTRING(FWDIDC_PRAR_DY,1,4)||'-'||SUBSTRING(FWDIDC_PRAR_DY,5,2)||'-'||SUBSTRING(FWDIDC_PRAR_DY,7,2) AS FWDIDC_PRAR_DY
+             , FN_GET_CODENAME('PR011',RSV_END_AF_PROC_METH_CD) AS RSV_END_AF_PROC_METH_NM
+             , PRSH.RSV_STOP_YN
+             , FN_GET_CODENAME('PR034',RSV_STOP_CAUS_CD) AS RSV_STOP_CAUS_NM
+             , PRSH.SYS_MOD_ID
+             , TO_CHAR(PRSH.SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+          FROM PR_GOODS_BASE    PGB
+             , PR_RSV_SALE_HIST PRSH
+             , PR_STD_CTG       PSC
+             , ST_USER_BASE     SUB
+             , ET_ENTR_BASE     EEB
+         WHERE PGB.GOODS_NO      = PRSH.GOODS_NO
+           AND PGB.STD_CTG_NO    = PSC.STD_CTG_NO
+           AND PSC.MD_ID         = SUB.USER_ID
+           AND PGB.ENTR_NO       = EEB.ENTR_NO
+           AND PGB.GOODS_NO LIKE #{goodsNo} || '%'
+         ORDER BY PRSH.RSV_END_DTM DESC
+    </select>
+
+    <select id="getRsvSaleHist" parameterType="java.lang.String" resultType="PrRsvSaleHist">
+        SELECT GOODS_NO /* prRsvSaleHist.getRsvSaleHist */
+             , TO_CHAR(RSV_STRT_DTM,'YYYY-MM-DD HH24:MI') AS RSV_STRT_DTM
+             , TO_CHAR(RSV_END_DTM,'YYYY-MM-DD HH24:MI') AS RSV_END_DTM
+             , SUBSTRING(FWDIDC_PRAR_DY,1,4)||'-'||SUBSTRING(FWDIDC_PRAR_DY,5,2)||'-'||SUBSTRING(FWDIDC_PRAR_DY,7,2) AS FWDIDC_PRAR_DY
+             , RSV_END_AF_PROC_METH_CD
+             , RSV_STOP_YN
+             , RSV_STOP_CAUS_CD
+             , TO_CHAR(RSV_STOP_DTM,'YYYY-MM-DD HH24:MI') AS RSV_STOP_DTM
+             , SYS_REG_ID
+             , TO_CHAR(SYS_REG_DTM,'YYYY-MM-DD') AS SYS_REG_DTM
+             , SYS_MOD_ID
+             , TO_CHAR(SYS_MOD_DTM,'YYYY-MM-DD') AS SYS_MOD_DTM
+          FROM PR_RSV_SALE_HIST
+         WHERE GOODS_NO = #{goodsNo}
+           AND RSV_STOP_YN = 'N'
+    </select>
+</mapper>

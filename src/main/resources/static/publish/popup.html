@@ -1,0 +1,220 @@
+<html lang="ko-KR">
+
+<head>
+    <title>x2</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+    <link type="text/css" rel="stylesheet" href="../css/reset.css">
+    <link type="text/css" rel="stylesheet" href="../css/layout.css">
+    <link type="text/css" rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" type="text/css" href="../css/realgrid-style.css">
+    <script src="../js/libs/jquery/jquery-3.4.1.min.js"></script>
+    <script src="../js/contents.js"></script>
+</head>
+
+<body>
+    <div class="win-popup page-root">
+        <div class="page-fixed">
+            <!-- page-title 가 있을경우 with-title 클래스 추가 -->
+            <div class="search-cont">
+                <!-- 높이갚 최대일때 full-height 클래스 추가 -->
+                <div class="header">
+                    <h1 class="title" id="">팝업타이틀</h1>
+                    <div class="button-group">
+                        <a href="#" class="button"><span class="text">모바일 미리보기</span></a>
+                        <a href="#" class="button"><span class="text">PC 미리보기</span></a>
+                    </div>
+                </div>
+
+                <!-- search -->
+                <div class="search">
+                    <table class="search-table">
+                        <colgroup>
+                            <col width="120">
+                            <col>
+                            <col width="120">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                            <tr>
+                                <td class="label">프로모션등록일</td>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="picker-group" data-lopicker="basic" id="input-2-1">
+                                            <input type="text" class="form-control " placeholder="">
+                                            <span class="input-group-addon">~</span>
+                                            <input type="text" class="form-control" placeholder="">
+                                            <span class="input-group-addon"><i class="icon-calendar"></i></span>
+                                        </div>
+                                        <select class="form-control">
+                                            <option value="0">최근3일</option>
+                                            <option value="1">최근7일</option>
+                                            <option value="2">30일</option>
+                                        </select>
+                                    </div>
+                                </td>
+                                <td class="label">프로모션상태</td>
+                                <td>
+                                    <input type="text" class="input disabled" disabled="disabled">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label">기간</td>
+                                <td>
+                                </td>
+                                <td class="label">쿠폰번호/명</td>
+                                <td>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label">카테고리 검색</td>
+                                <td>
+                                    <div class="input-group">
+                                        <select class="form-control">
+                                            <option value="0">대카테고리</option>
+                                            <option value="1">의류ㅁㅁ</option>
+                                            <option value="2"></option>
+                                        </select>
+                                        <select class="form-control">
+                                            <option value="0">대카테고리</option>
+                                            <option value="1">의류ㅁㅁ</option>
+                                            <option value="2"></option>
+                                        </select>
+                                        <select class="form-control">
+                                            <option value="0">대카테고리</option>
+                                            <option value="1">의류ㅁㅁ</option>
+                                            <option value="2"></option>
+                                        </select>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- //search -->
+
+                <!-- search-btn -->
+                <div class="button-group search-btn">
+                    <a href="#" class="button"><span class="text">취소</span></a>
+                    <a href="#" class="button primary"><span class="text">조회</span></a>
+                </div>
+
+
+                <!--데이터테이블-->
+                <div class="data">
+                    <div class="data-head">
+                        <div class="left"><span class="title">기본정보</span>
+                        </div>
+                        <div class="right">
+                            <span class="data-toggle toggle">
+                                <button type="button" class="btn btn-sm btn-link bold toggle-button"
+                                    depth-name="goodsDisplay"><span>닫힘</span></button>
+                            </span>
+                        </div>
+
+                    </div>
+                    <div class="data-body">
+                        <table class="data-table">
+                            <colgroup>
+                                <col width="120">
+                                <col>
+                                <col width="120">
+                                <col>
+                            </colgroup>
+                            <tbody>
+                                <tr>
+                                    <td class="label">협력사번호/명</td>
+                                    <td>
+                                        <label class="radio-inline"><input type="radio" name="" value=""
+                                                checked="checked">전체</label>
+                                        <label class="radio-inline"><input type="radio" name="" value="">통합설정</label>
+                                        <label class="radio-inline"><input type="radio" name="" value="">개별설정</label>
+                                    </td>
+                                    <td class="label">가격</td>
+                                    <td>
+                                        <input type="text" name="" value="" class="input price">이상 ~
+                                        <input type="text" name="" value="" class="input price">이하
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="label">주소</td>
+                                    <td colspan="4">
+                                        <div class="input-group address">
+                                            <input type="text" id="input-1-1" class="input" disabled><input type="text"
+                                                id="input-1-1" class="input" disabled>
+                                            <a href="#" class="button small"><span class="text">주소찾기</span></a>
+                                            <input type="text" id="input-1-1" class="input">
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!--데이터테이블 끝-->
+
+                <!-- grid -->
+                <div class="grid full-height">
+                    <div class="grid-head">
+                        <div class="title-area">
+                            <h2 class="title">쿠폰목록</h2>
+                            <div class="button-group">
+                                <a href="#" class="button inside"><span class="text">행추가</span></a>
+                                <a href="#" class="button inside"><span class="text">행삭제</span></a>
+                                <a href="#" class="button inside"><span class="text">변경취소</span></a>
+                            </div>
+                        </div>
+                        <!-- //title-area -->
+
+                        <div class="option-area">
+                            <div class="edit-option">
+                                <select class="form-control">
+                                    <option value="0">전체</option>
+                                    <option value="1">옵션표시명</option>
+                                    <option value="2">옵션관리명</option>
+                                </select>
+                                <div class="button-group">
+                                    <a href="#" class="button inside"><span class="text">행추가</span></a>
+                                    <a href="#" class="button inside"><span class="text">행삭제</span></a>
+                                    <a href="#" class="button inside"><span class="text">변경취소</span></a>
+                                </div>
+                            </div>
+
+                            <div class="page-option">
+                                <span class="total">총 <em>24</em>건</span>
+                                <select class="form-control">
+                                    <option value="0">20건씩</option>
+                                    <option value="1">30건씩</option>
+                                    <option value="2">100건씩</option>
+                                </select>
+                                <select class="form-control">
+                                    <option value="0">20건씩</option>
+                                    <option value="1">30건씩</option>
+                                    <option value="2">100건씩</option>
+                                </select>
+                            </div>
+                        </div>
+                        <!-- //option-area -->
+                    </div>
+                    <!-- //grid-head -->
+
+                    <div class="grid-body with-head">
+                        <div id="realgrid" class="rg-root rg-grid"></div>
+                    </div>
+                    <!-- //grid-body -->
+                </div>
+                <!-- //grid -->
+
+            </div>
+            <!-- //search-cont -->
+
+            <div class="button-group">
+                <a href="#" class="button"><span class="text">취소</span></a>
+                <a href="#" class="button large" onclick="javascript"><span class="text">확인</span></a>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

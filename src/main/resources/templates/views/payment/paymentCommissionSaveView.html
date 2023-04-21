@@ -1,0 +1,335 @@
+<!--
+* 프로그램명 : 결제수수료 등록/수정
+* 작 성 일 : 2021.08.02
+* 작 성 자 : 권다솜
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 결제관리 > 결제수단관리 > 결제수수료관리 > 결제수수료 등록/수정
+* 이    력 :
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-update-layout}">
+<body>
+
+<th:block layout:fragment="header-area">
+    <div class="header">
+        <h1 class="title" th:if="${requestData.argInsertUpdate} == 'I'"
+            th:text="${#messages.msg('paymentCommissionMgmt.popupInsert.title')}"></h1>
+        <h1 class="title" th:if="${requestData.argInsertUpdate} == 'U'"
+            th:text="${#messages.msg('paymentCommissionMgmt.popupUpdate.title')}"></h1>
+    </div>
+</th:block>
+
+<th:block layout:fragment="data-area">
+    <form name="clearingCommissionForm" id="clearingCommissionForm">
+        <!--data-cont-->
+        <div class="data-cont">
+            <div class="data">
+                <div class="data-head">
+                    <div class="left">
+                        <span class="title" th:text="${#messages.msg('paymentCommissionMgmt.popupUpdate.label.subTitle1')}"></span>
+                    </div>
+                </div>
+                <div class="data-body toggle-cont">
+                    <table class="data-table">
+                        <colgroup>
+                            <col width="120">
+                            <col>
+                            <col width="120">
+                            <col>
+                            <col width="120">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                            <tr>
+                                <td class="label"><strong th:text="${#messages.msg('paymentCommissionMgmt.popupUpdate.label.pgGbCd')}"></strong></td>
+                                <td>
+                                    <select class="form-control w60" id="pgGbCd" name="pgGbCd">
+                                        <option value="" th:text="${#messages.msg('baseInfoMgmt.label.select')}"></option>
+                                        <option th:each="list : ${codeList.OM030}" th:value="${list.cd}" th:text="${list.cdNm}"></option>
+                                    </select>
+                                </td>
+                                <td class="label"><strong th:text="${#messages.msg('paymentCommissionMgmt.popupUpdate.label.cmsnTgtLgrpCd')}"></strong></td>
+                                <td>
+                                    <select class="form-control w60" id="cmsnTgtLgrpCd" name="cmsnTgtLgrpCd">
+                                        <option value="" th:text="${#messages.msg('baseInfoMgmt.label.select')}"></option>
+                                        <option th:each="list : ${codeList.OM037}" th:value="${list.cd}" th:text="${list.cdNm}"></option>
+                                    </select>
+                                </td>
+                                <td class="label"><strong th:text="${#messages.msg('paymentCommissionMgmt.popupUpdate.label.cmsnTgtSgrpCd')}"></strong></td>
+                                <td>
+                                    <select class="form-control w60" id="cmsnTgtSgrpCd" name="cmsnTgtSgrpCd">
+                                        <option value="" th:text="${#messages.msg('baseInfoMgmt.label.select')}"></option>
+                                    </select>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!--//data-cont-->
+
+        <!--data-cont-->
+        <div class="data-cont">
+            <div class="data">
+                <div class="data-head">
+                    <div class="left">
+                        <span class="title" th:text="${#messages.msg('paymentCommissionMgmt.popupUpdate.label.subTitle2')}"></span>
+                    </div>
+                </div>
+                <div class="data-body toggle-cont">
+                    <table class="data-table">
+                        <colgroup>
+                            <col width="120">
+                            <col>
+                            <col width="120">
+                            <col>
+                            <col width="120">
+                            <col>
+                            <col width="120">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                        <tr>
+                            <!-- 기본 -->
+                            <td class="label" id="row1_content1_label"><strong th:text="${#messages.msg('paymentCommissionMgmt.popupUpdate.label.cmsnGbCd')}"></strong></td>
+                            <td id="row1_content1">
+                                <div class="input-group">
+                                    <th:block th:each="list,idx : ${codeList.OM039}">
+                                        <label class="radio-inline" th:for="${list.cdNm}">
+                                            <input type="radio" name="cmsnGbCd" th:value="${list.cd}" th:id="${list.cdNm}">
+                                            <span th:text="${list.cdNm}"></span>
+                                        </label>
+                                    </th:block>
+                                </div>
+                            </td>
+                            <td class="label" id="row1_content2_label"><strong th:text="${#messages.msg('paymentCommissionMgmt.popupUpdate.label.cmsnAmt')}"></strong></td>
+                            <td id="row1_content2">
+                                <input class="input w90" type="text" name="cmsn" id="cmsn" maxlength="15"/>
+                                <input type="hidden" name="cmsnAmt" id="cmsnAmt"/>
+                                <input type="hidden" name="cmsnRateBase" id="cmsnRateBase"/>
+                                <span id="cmsnAmt_CmsnGbCd"></span>
+                            </td>
+                            <!-- // 기본 -->
+
+                            <!-- 결제수단유형 : 신용카드 -->
+                            <td class="label" id="row1_content3_label"><strong th:text="${#messages.msg('paymentCommissionMgmt.popupUpdate.label.cmsnTypCd')}"></strong></td>
+                            <td colspan="3" id="row1_content3">
+                                <div class="input-group">
+                                    <th:block th:each="list,idx : ${codeList.OM038}">
+                                        <label class="radio-inline" th:for="${list.cdNm}">
+                                            <input type="radio" name="cmsnTypCd" th:value="${list.cd}" th:id="${list.cdNm}">
+                                            <span th:text="${list.cdNm}"></span>
+                                        </label>
+                                    </th:block>
+                                </div>
+                            </td>
+                            <!-- // 결제수단유형 : 신용카드 -->
+
+                            <td class="label"><strong th:text="${#messages.msg('paymentCommissionMgmt.popupUpdate.label.aplyStrDtm')}"></strong></td>
+                            <td>
+                                <div class="input-group">
+                                    <div class="picker-group" data-lopicker="basic">
+                                        <input type="text" class="input disabled" name="aplyStartDate" id="aplyStartDate" disabled>
+                                        <span class="input-group-addon"><i class="icon-calendar" id="calendarButton1" th:if="${requestData.argInsertUpdate} == 'I'"></i></span>
+                                    </div>
+                                    <input class="input" type="hidden" name="aplyStrDtm" id="aplyStrDtm"/>
+                                </div>
+                            </td>
+                            <td class="label"><strong th:text="${#messages.msg('paymentCommissionMgmt.popupUpdate.label.aplyEndDtm')}"></strong></td>
+                            <td>
+                                <div class="input-group">
+                                    <span id="aplyEndDate"></span>
+                                    <input class="input" type="hidden" name="aplyEndDtm" id="aplyEndDtm"/>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- 결제수단유형 : 신용카드, 수수료유형 : 가맹점/포인트 -->
+                        <tr id="row2_content1">
+                            <td class="label"><strong th:text="${#messages.msg('paymentCommissionMgmt.popupUpdate.label.mersChoose')}"></strong></td>
+                            <td colspan="3">
+                                <div class="input-group">
+                                    <th:block th:each="list : ${mersTotalList}">
+                                        <label>
+                                            <input class="checkbox-inline" type="checkbox" name="mersList1" th:value="${list.cd}"/>
+                                            <span th:text="${list.cdNm}"></span>
+                                            <br>
+                                        </label>
+                                    </th:block>
+                                </div>
+                            </td>
+                            <td class="label"><strong th:text="${#messages.msg('paymentCommissionMgmt.popupUpdate.label.cmsnRate')}"></strong></td>
+                            <td colspan="3">
+                                <input class="input w50" type="text" name="cmsnRate" id="cmsnRate" maxlength="6" onkeypress="return decimalPoint2(event)" onkeyup="return delHangle(event)"/><span>%</span>
+                            </td>
+                        </tr>
+                        <!-- // 결제수단유형 : 신용카드, 수수료유형 : 가맹점/포인트 -->
+
+                        <!-- 결제수단유형 : 신용카드, 수수료유형 : 무이자 -->
+                        <tr id="row2_content2">
+                            <td class="label" rowspan="11"><strong th:text="${#messages.msg('paymentCommissionMgmt.popupUpdate.label.mersChoose')}"></strong></td>
+                            <td colspan="3" rowspan="11">
+                                <div class="input-group">
+                                    <th:block th:each="list : ${mersTotalList}">
+                                        <label th:for="${list.cdNm}">
+                                            <input class="checkbox-inline" type="checkbox" name="mersList2" th:value="${list.cd}" th:id="${list.cdNm}"/>
+                                            <span th:text="${list.cdNm}"></span>
+                                            <br>
+                                        </label>
+                                    </th:block>
+                                </div>
+                            </td>
+                            <td class="label" rowspan="11"><strong th:text="${#messages.msg('paymentCommissionMgmt.popupUpdate.label.cmsnRate')}"></strong></td>
+                            <td class="label" th:text="${#messages.msg('paymentCommissionMgmt.popupUpdate.label.month2')}"></td>
+                            <td colspan="2">
+                                <input class="input w50" type="text" name="month" id="month2" maxlength="6" onkeypress="return decimalPoint2(event)" onkeyup="return delHangle(event)"/><span>%</span>
+                                <input type="hidden" name="monthList" id="monthList" />
+                            </td>
+                        </tr>
+                        <tr name="row2_content2_month">
+                            <td class="label" th:text="${#messages.msg('paymentCommissionMgmt.popupUpdate.label.month3')}"></td>
+                            <td colspan="2">
+                                <input class="input w50" type="text" name="month" id="month3" maxlength="6" onkeypress="return decimalPoint2(event)" onkeyup="return delHangle(event)"/><span>%</span>
+                            </td>
+                        </tr>
+                        <tr name="row2_content2_month">
+                            <td class="label" th:text="${#messages.msg('paymentCommissionMgmt.popupUpdate.label.month4')}"></td>
+                            <td colspan="2">
+                                <input class="input w50" type="text" name="month" id="month4" maxlength="6" onkeypress="return decimalPoint2(event)" onkeyup="return delHangle(event)"/><span>%</span>
+                            </td>
+                        </tr>
+                        <tr name="row2_content2_month">
+                            <td class="label" th:text="${#messages.msg('paymentCommissionMgmt.popupUpdate.label.month5')}"></td>
+                            <td colspan="2">
+                                <input class="input w50" type="text" name="month" id="month5" maxlength="6" onkeypress="return decimalPoint2(event)" onkeyup="return delHangle(event)"/><span>%</span>
+                            </td>
+                        </tr>
+                        <tr name="row2_content2_month">
+                            <td class="label" th:text="${#messages.msg('paymentCommissionMgmt.popupUpdate.label.month6')}"></td>
+                            <td colspan="2">
+                                <input class="input w50" type="text" name="month" id="month6" maxlength="6" onkeypress="return decimalPoint2(event)" onkeyup="return delHangle(event)"/><span>%</span>
+                            </td>
+                        </tr>
+                        <tr name="row2_content2_month">
+                            <td class="label" th:text="${#messages.msg('paymentCommissionMgmt.popupUpdate.label.month7')}"></td>
+                            <td colspan="2">
+                                <input class="input w50" type="text" name="month" id="month7" maxlength="6" onkeypress="return decimalPoint2(event)" onkeyup="return delHangle(event)"/><span>%</span>
+                            </td>
+                        </tr>
+                        <tr name="row2_content2_month">
+                            <td class="label" th:text="${#messages.msg('paymentCommissionMgmt.popupUpdate.label.month8')}"></td>
+                            <td colspan="2">
+                                <input class="input w50" type="text" name="month" id="month8" maxlength="6" onkeypress="return decimalPoint2(event)" onkeyup="return delHangle(event)"/><span>%</span>
+                            </td>
+                        </tr>
+                        <tr name="row2_content2_month">
+                            <td class="label" th:text="${#messages.msg('paymentCommissionMgmt.popupUpdate.label.month9')}"></td>
+                            <td colspan="2">
+                                <input class="input w50" type="text" name="month" id="month9" maxlength="6" onkeypress="return decimalPoint2(event)" onkeyup="return delHangle(event)"/><span>%</span>
+                            </td>
+                        </tr>
+                        <tr name="row2_content2_month">
+                            <td class="label" th:text="${#messages.msg('paymentCommissionMgmt.popupUpdate.label.month10')}"></td>
+                            <td colspan="2">
+                                <input class="input w50" type="text" name="month" id="month10" maxlength="6" onkeypress="return decimalPoint2(event)" onkeyup="return delHangle(event)"/><span>%</span>
+                            </td>
+                        </tr>
+                        <tr name="row2_content2_month">
+                            <td class="label" th:text="${#messages.msg('paymentCommissionMgmt.popupUpdate.label.month11')}"></td>
+                            <td colspan="2">
+                                <input class="input w50" type="text" name="month" id="month11" maxlength="6" onkeypress="return decimalPoint2(event)" onkeyup="return delHangle(event)"/><span>%</span>
+                            </td>
+                        </tr>
+                        <tr name="row2_content2_month">
+                            <td class="label" th:text="${#messages.msg('paymentCommissionMgmt.popupUpdate.label.month12')}"></td>
+                            <td colspan="2">
+                                <input class="input w50" type="text" name="month" id="month12" maxlength="6" onkeypress="return decimalPoint2(event)" onkeyup="return delHangle(event)"/><span>%</span>
+                            </td>
+                        </tr>
+                        <!-- // 결제수단유형 : 신용카드, 수수료유형 : 무이자 -->
+
+                        <tr>
+                            <td class="label"><strong th:text="${#messages.msg('paymentCommissionMgmt.popupUpdate.label.vatInclYn')}"></strong></td>
+                            <td>
+                                <div class="input-group">
+                                    <label class="radio-inline" for="vatInclYn_Y">
+                                        <input type="radio" name="vatInclYn" value="Y" id="vatInclYn_Y"><span th:text="${#messages.msg('paymentCommissionMgmt.popupUpdate.label.vatInclYn_Y')}"></span>
+                                    </label>
+                                    <label class="radio-inline" for="vatInclYn_N">
+                                        <input type="radio" name="vatInclYn" value="N" id="vatInclYn_N"><span th:text="${#messages.msg('paymentCommissionMgmt.popupUpdate.label.vatInclYn_N')}"></span>
+                                    </label>
+                                </div>
+                            </td>
+                            <td class="label"><strong th:text="${#messages.msg('paymentCommissionMgmt.popupUpdate.label.adjGbCd')}"></strong></td>
+                            <td>
+                                <div class="input-group">
+                                    <th:block th:each="list,idx : ${codeList.OM040}">
+                                        <label class="radio-inline" th:for="${list.cdNm}">
+                                            <input type="radio" name="adjGbCd" th:value="${list.cd}" th:id="${list.cdNm}">
+                                            <span th:text="${list.cdNm}"></span>
+                                        </label>
+                                    </th:block>
+                                </div>
+                            </td>
+                            <td class="label" th:text="${#messages.msg('paymentCommissionMgmt.popupUpdate.label.rmkCont')}"></td>
+                            <td colspan="3">
+                                <input class="input w100" type="text" name="rmkCont" id="rmkCont" maxlength="4000"/>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!--//data-cont-->
+
+    </form>
+</th:block>
+
+<th:block layout:fragment="button-area">
+    <div class="button-group" style="margin-top: 0px;" >
+        <a href="#" class="button" id="btn_popup_close">
+            <span class="text" th:text="${#messages.msg('methodsOfPaymentManagement.label.close')}"></span>
+        </a>
+        <a href="#" class="button" id="btn_popup_save">
+            <span class="text" th:text="${#messages.msg('methodsOfPaymentManagement.label.save')}"></span>
+        </a>
+    </div>
+</th:block>
+
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        var req = [[${requestData}]];
+        var mersTotalList = [[${mersTotalList}]];
+        var mersList = [[${mersList}]];
+        var monthList = [[${monthList}]];
+
+        // 그리드 내 selectBox 옵션 셋팅 (은행, 매입사)
+        var code26List = [[${codeList.OM026}]];
+        var code28List = [[${codeList.OM028}]];
+
+        var msg = x2coMessage.getMessage( {
+              necessaryCheckMessage : 'paymentCommissionMgmt.message.necessaryCheckMessage'
+            , mersCheck : 'paymentCommissionMgmt.message.mersCheck'
+            , monthCheck : 'paymentCommissionMgmt.message.monthCheck'
+            , doneSave : 'paymentCommissionMgmt.message.doneSave'
+            , save : 'paymentCommissionMgmt.message.save'
+            , cancel : 'paymentCommissionMgmt.message.cancel'
+            , aplyDateCheck : 'paymentCommissionMgmt.message.aplyDateCheck'
+        });
+    </script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'payment/clearingCommission.eventHandler.js?202108020001'" ></script>
+
+    <script th:inline="javascript">
+        $(document).ready(function() {
+            clearingCommission.eventhandler.init();
+        });
+    </script>
+</th:block>
+
+</body>
+</html>

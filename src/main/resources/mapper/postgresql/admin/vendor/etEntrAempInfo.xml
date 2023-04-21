@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.vendor.EtEntrAempInfoMapper">
+
+    <sql id="paginatedBase">
+        LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+    </sql>
+
+    <select id="getEtEntrAempInfoList" parameterType="string" resultType="CooperateEmployeeSearchResponse">
+        SELECT /* etEntrAempInfo.getEtEntrAempInfoList */
+               ENTR_NO
+             , AEMP_SEQ
+             , DUTY_CD
+             , AEMP_NM
+             , TEL_RGN_NO
+             , TEL_TXNO_NO
+             , TEL_END_NO
+             , CASE COALESCE(TEL_RGN_NO,'') || COALESCE(TEL_TXNO_NO, '') || COALESCE(TEL_END_NO, '')
+               WHEN '' THEN ''
+               ELSE COALESCE(TEL_RGN_NO,'') || COALESCE(TEL_TXNO_NO, '') || COALESCE(TEL_END_NO, '')
+               END AS TEL_NO
+             , CELL_SCT_NO
+             , CELL_TXNO_NO
+             , CELL_END_NO
+             , CASE COALESCE(CELL_SCT_NO,'') || COALESCE(CELL_TXNO_NO, '') || COALESCE(CELL_END_NO, '')
+               WHEN '' THEN ''
+               ELSE COALESCE(CELL_SCT_NO,'') || COALESCE(CELL_TXNO_NO, '') || COALESCE(CELL_END_NO, '')
+               END AS CELL_NO
+             , EMAIL_ADDR
+             , SYS_REG_ID
+             , SYS_REG_DTM
+             , SYS_MOD_ID
+             , SYS_MOD_DTM
+          FROM ET_ENTR_AEMP_INFO
+         WHERE ENTR_NO = #{entrNo}
+    </select>
+
+    <sql id="enEntrAempInfoList">
+        SELECT /* etEntrAempInfo.enEntrAempInfoList */
+               ENTR_NO
+             , AEMP_SEQ
+             , DUTY_CD
+             , AEMP_NM
+             , TEL_RGN_NO
+             , TEL_TXNO_NO
+             , TEL_END_NO
+             , CASE COALESCE(TEL_RGN_NO,'') || COALESCE(TEL_TXNO_NO, '') || COALESCE(TEL_END_NO, '')
+               WHEN '' THEN ''
+               ELSE COALESCE(TEL_RGN_NO,'') || COALESCE(TEL_TXNO_NO, '') || COALESCE(TEL_END_NO, '')
+               END AS TEL_NO
+             , CELL_SCT_NO
+             , CELL_TXNO_NO
+             , CELL_END_NO
+             , CASE COALESCE(CELL_SCT_NO,'') || COALESCE(CELL_TXNO_NO, '') || COALESCE(CELL_END_NO, '')
+               WHEN '' THEN ''
+               ELSE COALESCE(CELL_SCT_NO,'') || COALESCE(CELL_TXNO_NO, '') || COALESCE(CELL_END_NO, '')
+               END AS CELL_NO
+             , EMAIL_ADDR
+             , SYS_REG_ID
+             , SYS_REG_DTM
+             , SYS_MOD_ID
+             , SYS_MOD_DTM
+          FROM ET_ENTR_AEMP_INFO
+         WHERE ENTR_NO = #{entrNo}
+    </sql>
+
+    <select id="getCooperateEmployeeSearchList" parameterType="CooperateEmployeeSearchRequest" resultType="CooperateEmployeeSearchResponse">
+        <include refid="enEntrAempInfoList" />
+        <!--        <include refid="paginatedBase" />-->
+    </select>
+
+    <select id="getCooperateEmployeeSearchListCount" parameterType="CooperateEmployeeSearchRequest" resultType="java.lang.Integer">
+        SELECT /* etEntrAempInfo.getCooperateEmployeeSearchListCount */
+               COUNT(*)
+          FROM (
+                <include refid="enEntrAempInfoList" />
+               ) v
+    </select>
+
+</mapper>
+
+

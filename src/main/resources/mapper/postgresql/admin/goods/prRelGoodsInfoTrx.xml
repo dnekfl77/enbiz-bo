@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enbiz.bo.app.repository.goods.PrRelGoodsInfoTrxMapper">
+    <insert id="insertPrRelGoods" parameterType="PrRelGoodsInfo">
+        INSERT INTO PR_REL_GOODS_INFO( /* prRelGoodsInfoTrx.insertPrRelGoods */
+               BASE_GOODS_NO
+             , TGT_GOODS_NO
+             , REP_YN
+             , SORT_SEQ
+             , SYS_REG_ID
+             , SYS_REG_DTM
+             , SYS_MOD_ID
+             , SYS_MOD_DTM
+        ) VALUES (
+               #{baseGoodsNo}
+             , #{tgtGoodsNo}
+             , #{repYn}
+             , #{sortSeq}
+             , #{sysRegId}
+             , now()
+             , #{sysRegId}
+             , now()
+        )
+    </insert>
+
+    <update id="updatePrRelGoodsInfo" parameterType="PrRelGoodsInfo">
+        UPDATE PR_REL_GOODS_INFO /* prRelGoodsInfoTrx.updatePrRelGoodsInfo */
+           SET REP_YN       = #{repYn}
+             , SORT_SEQ     = #{sortSeq}
+             , SYS_MOD_ID 	= #{sysModId}
+             , SYS_MOD_DTM  = now()
+         WHERE BASE_GOODS_NO = #{baseGoodsNo}
+           AND TGT_GOODS_NO = #{tgtGoodsNo}
+    </update>
+
+    <delete id="deletePrRelGoods" parameterType="PrRelGoodsInfo">
+        DELETE /*  prRelGoodsInfoTrx.deletePrRelGoods */
+          FROM PR_REL_GOODS_INFO
+         WHERE BASE_GOODS_NO = #{baseGoodsNo}
+    </delete>
+</mapper>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enbiz.bo.app.repository.goods.PrPregPrestHistTrxMapper">
+    <insert id="insertPregPrestHist" parameterType="PrPregPrestHist">
+        INSERT INTO PR_PREG_PREST_HIST ( /* prPregPrestHistTrx.insertPregPrestHist */
+               PREG_GOODS_NO
+             , APLY_STR_DT
+             , APLY_END_DT
+             , PREST_NM
+             , USE_YN
+             , SYS_REG_ID
+             , SYS_REG_DTM
+             , SYS_MOD_ID
+             , SYS_MOD_DTM
+        ) VALUES (
+               #{pregGoodsNo}
+             , #{aplyStrDt}
+             , #{aplyEndDt}
+             , #{prestNm}
+             , #{useYn}
+             , #{sysRegId}
+             , now()
+             , #{sysRegId}
+             , now()
+        )
+    </insert>
+
+    <insert id="applyPregPrestHist" parameterType="PrPregGoodsBase">
+        INSERT INTO PR_PREST_HIST( /* prPregPrestHistTrx.applyPregPrestHist */
+               GOODS_NO
+             , APLY_STR_DT
+             , APLY_END_DT
+             , PREST_NM
+             , USE_YN
+             , SYS_REG_ID
+             , SYS_REG_DTM
+             , SYS_MOD_ID
+             , SYS_MOD_DTM
+        )
+        SELECT #{goodsNo}
+             , APLY_STR_DT
+             , APLY_END_DT
+             , PREST_NM
+             , USE_YN
+             , #{sysRegId}
+             , now()
+             , #{sysRegId}
+             , now()
+        FROM PR_PREG_PREST_HIST
+        WHERE PREG_GOODS_NO = #{pregGoodsNo}
+    </insert>
+
+    <delete id="deletePregPrestHist" parameterType="java.lang.String">
+        DELETE /*  prPregPrestHistTrx.deletePregPrestHist */
+          FROM PR_PREG_PREST_HIST
+         WHERE PREG_GOODS_NO = #{pregGoodsNo}
+    </delete>
+</mapper>

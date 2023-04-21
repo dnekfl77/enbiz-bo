@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.delivery.LoDeliBaseTrxMapper">
+
+	<sql id="paginatedBase">
+		LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+	</sql>
+
+	<insert id="insertLoDeliBase" parameterType="loDeliBase">
+		<selectKey keyProperty="deliNo" resultType="String" order="BEFORE">
+			SELECT NEXTVAL('LO_DELI_BASE_SQ01') AS deliNo
+		</selectKey>
+		INSERT INTO LO_DELI_BASE ( /* loDeliBase.insertLoDeliBase */
+				  DELI_NO
+				, SITE_NO
+				, ORD_NO
+				, DLVP_SEQ
+				, DELI_GB_CD
+				, DELI_TYP_CD
+				, DELI_PROC_TYP_CD
+				, DELI_WAY_CD
+				, INDI_DTM
+				, DELI_PRGS_STAT_CD
+				, DELI_POLC_NO
+				, DLEX_CHRG_SUB_CD
+				, MBR_NO
+				, ORDERER_NM
+				, ENTR_NO
+				, SYS_REG_ID
+				, SYS_REG_DTM
+				, SYS_MOD_ID
+				, SYS_MOD_DTM
+		) VALUES (
+				  #{deliNo}
+				, #{siteNo}
+				, #{ordNo}
+				, #{dlvpSeq}
+				, #{deliGbCd}
+				, #{deliTypCd}
+				, #{deliProcTypCd}
+				, #{deliWayCd}
+				, now()
+				, #{deliPrgsStatCd}
+				, #{deliPolcNo}
+				, #{dlexChrgSubCd}
+				, #{mbrNo}
+				, #{ordererNm}
+				, #{entrNo}
+				, #{sysRegId}
+				, now()
+				, #{sysModId}
+				, now()
+		)
+	</insert>
+
+	<insert id="insertLoDeliPrgsStatChgHist" parameterType="loDeliBase">
+		INSERT INTO LO_DELI_PRGS_STAT_CHG_HIST ( /* loDeliBase.insertLoDeliPrgsStatChgHist */
+				  DELI_NO
+				, CHG_DTM
+				, SND_CONTR_DTM
+				, SYS_REG_ID
+				, SYS_REG_DTM
+				, SYS_MOD_ID
+				, SYS_MOD_DTM
+		) VALUES (
+				  #{deliNo}
+				, now()
+				, '21'
+				, #{sysRegId}
+				, now()
+				, #{sysModId}
+				, now()
+		)
+	</insert>
+
+</mapper>
+
+

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ko-KR"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<body>
+    <!-- 상품등록 -->
+    <th:block layout:fragment="goods-regist-button">
+        <div class="right">
+            <div class="button-group">
+                <a href="#" class="button white" id="btn_goods_regist_reset"><span class="text" th:text="${#messages.msg('adminCommon.button.init')}"></span></a>
+                <a href="#" class="button sky" id="btn_goods_regist_save"><span class="text" th:text="${#messages.msg('adminCommon.button.temp.save')}"></span></a>
+                <a href="#" class="button" id="btn_goods_regist_request_approval"><span class="text" th:text="${#messages.msg('adminCommon.button.request.approval')}"></span></a>
+            </div>
+        </div>
+    </th:block>
+
+    <!-- 임시상품상세 -->
+    <th:block layout:fragment="temp-goods-detail-button">
+        <div class="right">
+            <div class="button-group">
+                <a href="#" class="button white" id="btn_temp_goods_detail_reset"><span class="text" th:text="${#messages.msg('adminCommon.button.init')}"></span></a>
+                <a href="#" class="button sky disabled" id="btn_temp_goods_detail_save"><span class="text" th:text="${#messages.msg('adminCommon.button.temp.save')}"></span></a>
+                <a href="#" class="button disabled" id="btn_temp_goods_detail_request_approval"><span class="text" th:text="${#messages.msg('adminCommon.button.request.approval')}"></span></a>
+                <a href="#" class="button" id="btn_temp_goods_detail_close"><span class="text" th:text="${#messages.msg('adminCommon.button.close')}"></span></a>
+            </div>
+        </div>
+    </th:block>
+
+    <!-- 상품상세 -->
+    <th:block layout:fragment="goods-detail-button">
+        <div class="right">
+            <div class="button-group">
+                <a href="#" class="button white" id="btn_goods_detail_preview"><span class="text" th:text="${#messages.msg('adminCommon.button.preview')}"></span></a>
+                <a href="#" class="button disabled" id="btn_goods_detail_reset"><span class="text" th:text="${#messages.msg('adminCommon.button.init')}"></span></a>
+                <a href="#" class="button sky disabled" id="btn_goods_detail_save"><span class="text" th:text="${#messages.msg('adminCommon.button.save')}"></span></a>
+                <a href="#" class="button" id="btn_goods_detail_close"><span class="text" th:text="${#messages.msg('adminCommon.button.close')}"></span></a>
+            </div>
+        </div>
+    </th:block>
+
+    <!-- 묶음상품등록 -->
+    <th:block layout:fragment="pkg-goods-regist-button">
+        <div class="right">
+            <div class="button-group">
+                <a href="#" class="button white" id="btn_pkg_goods_regist_reset"><span class="text" th:text="${#messages.msg('adminCommon.button.init')}"></span></a>
+                <a href="#" class="button sky" id="btn_pkg_goods_regist_save"><span class="text" th:text="${#messages.msg('adminCommon.button.temp.save')}"></span></a>
+                <a href="#" class="button" id="btn_pkg_goods_regist_request_approval"><span class="text" th:text="${#messages.msg('adminCommon.button.request.approval')}"></span></a>
+            </div>
+        </div>
+    </th:block>
+
+    <!-- 임시묶음상품상세 -->
+    <th:block layout:fragment="temp-pkg-goods-detail-button">
+        <div class="right">
+            <div class="button-group">
+                <a href="#" class="button white" id="btn_temp_pkg_goods_detail_reset"><span class="text" th:text="${#messages.msg('adminCommon.button.init')}"></span></a>
+                <a href="#" class="button sky" id="btn_temp_pkg_goods_detail_save"><span class="text" th:text="${#messages.msg('adminCommon.button.temp.save')}"></span></a>
+                <a href="#" class="button" id="btn_temp_pkg_goods_detail_request_approval"><span class="text" th:text="${#messages.msg('adminCommon.button.request.approval')}"></span></a>
+                <a href="#" class="button" id="btn_temp_pkg_goods_detail_close"><span class="text" th:text="${#messages.msg('adminCommon.button.close')}"></span></a>
+            </div>
+        </div>
+    </th:block>
+
+    <!-- 묶음상품상세 -->
+    <th:block layout:fragment="pkg-goods-detail-button">
+        <div class="right">
+            <div class="button-group">
+                <a href="#" class="button white" id="btn_pkg_goods_detail_preview"><span class="text" th:text="${#messages.msg('adminCommon.button.preview')}"></span></a>
+                <a href="#" class="button disabled" id="btn_pkg_goods_detail_reset"><span class="text" th:text="${#messages.msg('adminCommon.button.init')}"></span></a>
+                <a href="#" class="button sky disabled" id="btn_pkg_goods_detail_save"><span class="text" th:text="${#messages.msg('adminCommon.button.save')}"></span></a>
+                <a href="#" class="button" id="btn_pkg_goods_detail_close"><span class="text" th:text="${#messages.msg('adminCommon.button.close')}"></span></a>
+            </div>
+        </div>
+    </th:block>
+</body>
+</html>

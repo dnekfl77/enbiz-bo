@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.order.OpRfdInfoTrxMapper">
+
+    <insert id="insertAccpOpRfdInfo" parameterType="OpRfdInfo" useGeneratedKeys="false">
+        <selectKey keyProperty="rfdNo" resultType="String" order="BEFORE">
+            SELECT NEXTVAL('OP_RFD_INFO_SQ01') AS rfdNo
+        </selectKey>
+        INSERT INTO OP_RFD_INFO(/* OpRfdInfoMapper.insertOpRfdInfo */
+                    RFD_NO
+                  , PAY_NO
+                  , ORD_NO
+                  , MBR_NO
+                  , RFD_TYP_CD
+                  , RFD_PRGS_STAT_CD
+                  , RFD_BANK_CD
+                  , RFD_ACTN_NO
+                  , RFD_ACTN_DEPOSITOR_NM
+                  , RFD_CAUS_CD
+                  , RFD_ACTN_CERTI_YN
+                  , RFD_AMT
+                  , RFD_CMSN_AMT
+                  , RFD_ITMI
+                  , ACPTMN_ID
+                  , ACCP_DTM
+                  , RFD_SMS_SND_YN
+                  , SYS_REG_ID
+                  , SYS_REG_DTM
+                  , SYS_MOD_ID
+                  , SYS_MOD_DTM
+             )
+             VALUES(
+                    #{rfdNo}
+                  , #{payNo}
+                  , #{ordNo}
+                  , #{mbrNo}
+                  , #{rfdTypCd}
+                  , #{rfdPrgsStatCd}
+                  , #{rfdBankCd}
+                  , #{rfdActnNo}
+                  , #{rfdActnDepositorNm}
+                  , #{rfdCausCd}
+                  , #{rfdActnCertiYn}
+                  , #{rfdAmt}
+                  , #{rfdCmsnAmt}
+                  , #{rfdItmi}
+                  , #{acptmnId}
+                  , NOW()
+                  , #{rfdSmsSndYn}
+                  , #{sysRegId}
+                  , NOW()
+                  , #{sysModId}
+                  , NOW()
+             )
+    </insert>
+
+</mapper>

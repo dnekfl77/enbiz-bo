@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.customerservice.CsCpnsTypCdTrxMapper">
+    <insert id="insertCsCpnsTypCd" parameterType="CsCpnsTypCd">
+        <selectKey keyProperty="cpnsTypNo" resultType="String" order="BEFORE">
+            SELECT NEXTVAL('CS_CPNS_TYP_CD_SQ01') AS cpnsTypNo
+        </selectKey>
+        INSERT INTO CS_CPNS_TYP_CD (  /* csCpnsTypCdTrx.insertCsCpnsTypCd */
+                  CPNS_TYP_NO
+                , CPNS_TYP_NM
+                , USE_YN
+                , SORT_SEQ
+                , CPNS_SUB_CD
+                , CPNS_STD_CD
+                , CPNS_STD_RATE
+                , MAX_PAY_LIM
+                , CPNS_STD_DESC
+                , UPR_CPNS_TYP_CD
+                , SYS_REG_ID
+                , SYS_REG_DTM
+                , SYS_MOD_ID
+                , SYS_MOD_DTM
+        ) VALUES (
+                  #{cpnsTypNo}
+                , #{cpnsTypNm}
+                , #{useYn}
+                , #{sortSeq}
+                , #{cpnsSubCd}
+                , #{cpnsStdCd}
+                , #{cpnsStdRate}
+                , #{maxPayLim}
+                , #{cpnsStdDesc}
+                , #{uprCpnsTypCd}
+                , #{sysRegId}
+                , now()
+                , #{sysModId}
+                , now()
+        )
+    </insert>
+    <update id="updateCsCpnsTypCd" parameterType="CsCpnsTypCd">
+        UPDATE    CS_CPNS_TYP_CD  /* csCpnsTypCdTrx.updateCsCpnsTypCd */
+        SET
+                  CPNS_TYP_NM      	 = #{cpnsTypNm}
+                , USE_YN             = #{useYn}
+                , SORT_SEQ         	 = #{sortSeq}
+                , CPNS_SUB_CD        = #{cpnsSubCd}
+                , CPNS_STD_CD      	 = #{cpnsStdCd}
+                , CPNS_STD_RATE      = #{cpnsStdRate}
+                , MAX_PAY_LIM      	 = #{maxPayLim}
+                , CPNS_STD_DESC      = #{cpnsStdDesc}
+                , UPR_CPNS_TYP_CD    = #{uprCpnsTypCd}
+                , SYS_MOD_ID 	= #{sysModId}
+                , SYS_MOD_DTM 	= now()
+        WHERE     CPNS_TYP_NO = #{cpnsTypNo}
+    </update>
+</mapper>

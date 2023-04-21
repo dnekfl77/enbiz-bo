@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.system.PrNtcInfoMapper">
+
+    <sql id="paginatedBase">
+        LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+    </sql>
+
+    <sql id="customerNoticeListBase">
+        SELECT /* prNtcInfo.customerNoticeListBase */
+               FN_GET_CODENAME('DP018',DISP_MEDIA_CD) AS DISP_MEDIA_CD_NM
+             , FN_GET_CODENAME('DP019',NTC_CLSS_CD) AS NTC_CLSS_CD_NM
+             , NTC_NO
+             , NTC_TITLE_NM
+             , BB_YN
+             , TO_CHAR(BB_STR_DTM,'YYYY-MM-DD') AS BB_STR_DTM
+             , TO_CHAR(BB_END_DTM,'YYYY-MM-DD') AS BB_END_DTM
+             , SYS_REG_ID
+             , TO_CHAR(SYS_REG_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_REG_DTM
+             , SYS_MOD_ID
+             , TO_CHAR(SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+          FROM PR_NTC_INFO
+         WHERE 1 = 1
+           AND NTC_CLSS_CD = '10'
+           AND BB_STR_DTM <![CDATA[ >= ]]> TO_TIMESTAMP( #{bbStrStartDtm} || ' 000000', 'YYYY-MM-DD HH24MISS')
+           AND BB_STR_DTM <![CDATA[ <= ]]> TO_TIMESTAMP( #{bbStrEndDtm} || ' 235959', 'YYYY-MM-DD HH24MISS')
+           AND DISP_MEDIA_CD    LIKE #{dispMediaCd} ||  '%'
+           AND NTC_TITLE_NM     LIKE #{ntcTitleNm} || '%'
+           AND BB_YN            LIKE #{bbYn} || '%'
+           AND SYS_REG_ID       LIKE #{ntcRegId} || '%'
+         ORDER BY BB_STR_DTM DESC
+    </sql>
+
+    <select id="getCustomerNoticeList" parameterType="CustomerNoticeRequest" resultType="CustomerNoticeResponse">
+        /* prNtcInfo.getCustomerNoticeList */
+        <include refid="customerNoticeListBase" />
+        <include refid="paginatedBase" />
+    </select>
+
+    <select id="getCustomerNoticeListCount" parameterType="CustomerNoticeRequest" resultType="java.lang.Integer">
+        SELECT COUNT(*)   /* prNtcInfo.getCustomerNoticeListCount */
+          FROM (
+            <include refid="customerNoticeListBase" />
+        ) T1
+    </select>
+
+    <select id="getCustomerNoticeInfo" parameterType="java.lang.String" resultType="CustomerNoticeResponse">
+        SELECT NTC_NO /* prNtcInfo.getCustomerNoticeInfo */
+             , DISP_MEDIA_CD
+             , NTC_TITLE_NM
+             , TO_CHAR(BB_STR_DTM,'YYYY-MM-DD') AS BB_STR_DTM
+             , TO_CHAR(BB_END_DTM,'YYYY-MM-DD') AS BB_END_DTM
+             , BB_YN
+             , UPR_FIX_YN
+             , PC_NTC_CONT
+             , MO_NTC_CONT
+             , SYS_REG_ID
+             , TO_CHAR(SYS_REG_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_REG_DTM
+             , SYS_MOD_ID
+             , TO_CHAR(SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+          FROM PR_NTC_INFO
+         WHERE NTC_NO = #{ntcNo}
+    </select>
+</mapper>

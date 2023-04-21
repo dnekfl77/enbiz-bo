@@ -1,0 +1,254 @@
+<!--
+* 프로그램명 : 가격정보
+* 작 성 일 : 2021.03.24
+* 작 성 자 : 홍혜리
+* 수 정 자 : 홍혜리
+* 버    전 : 1.0
+* 개    요 : 가격정보
+* 이    력 : 2021.10.12 프레임워크 이전
+-->
+<!DOCTYPE html>
+<html lang="ko-KR"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<body>
+    <th:block layout:fragment="goods-regist-priceInfo">
+        <div class="data">
+            <div class="data-head">
+                <div class="left">
+                    <span class="title" th:text="${#messages.msg('generalGoods.priceInfo.title')}"></span>
+                </div>
+                <div class="right">
+                  <span class="data-toggle">
+                    <button type="button" class="toggle-button"><span>닫힘</span></button>
+                  </span>
+                </div>
+            </div>
+            <div class="data-body">
+                <form id="priceInfo" name="priceInfo">
+                    <table class="data-table fixed">
+                        <colgroup>
+                            <col width="130">
+                            <col>
+                            <col width="130">
+                            <col>
+                            <col width="130">
+                            <col>
+                            <col width="130">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                        <tr>
+                            <!-- 매입형태 -->
+                            <td class="label" th:text="${#messages.msg('generalGoods.priceInfo.label.buyType')}"></td>
+                            <td colspan="3">
+                                <select class="form-control w30 disabled" id="buyTypCd" name="buyTypCd" disabled>
+                                    <option value="" th:text="${#messages.msg('adminCommon.select')}"/>
+                                    <option th:each="code : ${codeList.PR006}" th:value="${code?.cd}" th:utext="${code?.cdNm}"></option>
+                                </select>
+                            </td>
+                            <!-- 과/면세구분 -->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.priceInfo.label.taxType')}"></strong></td>
+                            <td colspan="3">
+                                <select class="form-control w30" name="taxGbCd" id="taxGbCd">
+                                    <option value="" th:text="${#messages.msg('adminCommon.select')}"/>
+                                    <option th:each="code : ${codeList.PR007}" th:value="${code?.cd}" th:utext="${code?.cdNm}"></option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label" colspan="8" >
+                                <span th:text="${#messages.msg('generalGoods.priceInfo.subTitle')}"></span>
+                                <a href="#" data-bs-toggle="tooltip" title="Some tooltip text!"></a>
+                                <div class="tooltip">
+                                    <a href="#" class="trigger">설명</a>
+                                    <div class="cont">
+                                        <p class="text"></p>고객 구입가격입니다. 매입담당자와 협의된 마진율 또는 공급원가를 입력해주세요. (부가세 포함가격으로 10원 단위까지 입력가능)</p>
+                                        </p>
+                                        <a href="#" class="close">닫기</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <!-- 공급가 -->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.priceInfo.label.supPcost')}"></strong></td>
+                            <td>
+                                <input type="text" class="price input priceValue w60" id="supPcost" name="supPcost" numberOnly><em>원</em>
+                            </td>
+                            <!-- 판매가 -->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.priceInfo.label.salePrc')}"></strong></td>
+                            <td>
+                                <input type="text" class="price input priceValue w60" id="salePrc" name="salePrc" numberOnly><em>원</em>
+                            </td>
+                            <!-- 정상가 -->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.priceInfo.label.norPrc')}"></strong></td>
+                            <td>
+                                <input type="text" class="price input priceValue w60" id="norPrc" name="norPrc" numberOnly><em>원</em>
+                            </td>
+                            <!-- 마진율 -->
+                            <td class="label" th:text="${#messages.msg('generalGoods.priceInfo.label.mrgnRate')}"></td>
+                            <td>
+                                <input type="text" class="price input disabled w60" id="mrgnRate" name="mrgnRate" readonly><em>%</em>
+                            </td>
+                        </tr>
+                        <tr>
+                            <!--결제가능수단-->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.priceInfo.label.payWay')}"></strong></td>
+                            <td colspan="7">
+                                <div class="checkbox">
+                                    <label class="chk_all mr5"><input class="checkbox-inline" type="checkbox" value="" id="btn_check_all_payway" th:checked="true">전체</label>
+                                    <label th:each="code : ${codeList.OM013}">
+                                        <input class="checkbox-inline" type="checkbox" name="payWayCd" th:value="${code?.cd}" th:text="${code?.cdNm}" th:checked="true">
+                                    </label>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </div>
+    </th:block>
+    <th:block layout:fragment="goods-detail-priceInfo">
+        <div class="data">
+            <div class="data-head">
+                <div class="left">
+                    <span class="title" th:text="${#messages.msg('generalGoods.priceInfo.title')}"></span>
+                </div>
+                <div class="right">
+                  <span class="data-toggle">
+                    <button type="button" class="toggle-button"><span>닫힘</span></button>
+                  </span>
+                </div>
+            </div>
+            <div class="data-body bo-none">
+                <div class="tabs-area">
+                    <ul class="tabs">
+                        <li class="active"><a href="javascript:void(0);" th:text="${#messages.msg('generalGoods.priceInfo.tabTitle.priceInfo')}"></a></li>
+                        <li><a href="javascript:void(0);" th:text="${#messages.msg('generalGoods.priceInfo.tabTitle.priceHistInfo')}"></a></li>
+                    </ul>
+                    <div class="tabs-body">
+                        <!-- 가격정보 -->
+                        <div class="tab-cont">
+                            <form id="priceInfo" name="priceInfo">
+                                <table class="data-table fixed">
+                                    <colgroup>
+                                        <col width="130">
+                                        <col>
+                                        <col width="130">
+                                        <col>
+                                        <col width="130">
+                                        <col>
+                                        <col width="130">
+                                        <col>
+                                    </colgroup>
+                                    <tbody>
+                                        <tr>
+                                            <!-- 매입형태 -->
+                                            <td class="label" th:text="${#messages.msg('generalGoods.priceInfo.label.buyType')}"></td>
+                                            <td colspan="3">
+                                                <select class="form-control w30 disabled" id="buyTypCd" name="buyTypCd" disabled>
+                                                    <option value="" th:text="${#messages.msg('adminCommon.select')}"/>
+                                                    <option th:each="code : ${codeList.PR006}" th:value="${code?.cd}" th:utext="${code?.cdNm}"></option>
+                                                </select>
+                                            </td>
+                                            <!-- 과/면세구분 -->
+                                            <td class="label" th:text="${#messages.msg('generalGoods.priceInfo.label.taxType')}"></td>
+                                            <td colspan="3">
+                                                <select class="form-control w30 disabled" name="taxGbCd" id="taxGbCd" disabled>
+                                                    <option value="" th:text="${#messages.msg('adminCommon.select')}"/>
+                                                    <option th:each="code : ${codeList.PR007}" th:value="${code?.cd}" th:utext="${code?.cdNm}"></option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="label" colspan="8" >
+                                                <span th:text="${#messages.msg('generalGoods.priceInfo.subTitle')}"></span>
+                                                <a href="#" data-bs-toggle="tooltip" title="Some tooltip text!"></a>
+                                                <div class="tooltip">
+                                                    <a href="#" class="trigger">설명</a>
+                                                    <div class="cont">
+                                                        <p class="text"></p>고객 구입가격입니다. 매입담당자와 협의된 마진율 또는 공급원가를 입력해주세요. (부가세 포함가격으로 10원 단위까지 입력가능)</p>
+                                                        </p>
+                                                        <a href="#" class="close">닫기</a>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <!-- 공급가 -->
+                                            <td class="label" th:text="${#messages.msg('generalGoods.priceInfo.label.supPcost')}"></td>
+                                            <td>
+                                                <input type="text" class="price input priceValue w60 disabled" id="supPcost" name="supPcost" readonly><em>원</em>
+                                            </td>
+                                            <!-- 판매가 -->
+                                            <td class="label" th:text="${#messages.msg('generalGoods.priceInfo.label.salePrc')}"></td>
+                                            <td>
+                                                <input type="text" class="price input priceValue w60 disabled" id="salePrc" name="salePrc" readonly><em>원</em>
+                                            </td>
+                                            <!-- 정상가 -->
+                                            <td class="label" th:text="${#messages.msg('generalGoods.priceInfo.label.norPrc')}"></td>
+                                            <td>
+                                                <input type="text" class="price input priceValue w60 disabled" id="norPrc" name="norPrc" readonly><em>원</em>
+                                            </td>
+                                            <!-- 마진율 -->
+                                            <td class="label" th:text="${#messages.msg('generalGoods.priceInfo.label.mrgnRate')}"></td>
+                                            <td>
+                                                <input type="text" class="price input disabled w60" id="mrgnRate" name="mrgnRate" readonly><em>%</em>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <!-- 가격변경 적용기간 -->
+                                            <td class="label" th:text="${#messages.msg('generalGoods.priceInfo.label.prcHistDtm')}"></td>
+                                            <td colspan="3">
+                                                <div class="picker-group time-s">
+                                                    <input type="text" class="form-control disabled" id="histStrDtm" readonly>
+                                                    <span class="input-group-addon">~</span>
+                                                    <input type="text" class="form-control disabled" id="histEndDtm" readonly>
+                                                </div>
+                                                <a href="javascript:void(0)" class="button small" id="btn_call_chgPrcRsv_popup" th:attr="data-isReserved=${isReserved}"><span class="text" th:text="${#messages.msg('generalGoods.priceInfo.btn.chgPrcRsv')}"></span></a>
+                                            </td>
+                                            <!-- 가격변경사유-->
+                                            <td class="label" th:text="${#messages.msg('generalGoods.priceInfo.label.prcChgCaus')}"></td>
+                                            <td colspan="3">
+                                                <select class="form-control w30" id="prcChgCausCd" name="prcChgCausCd" disabled>
+                                                    <option value="">해당없음</option>
+                                                    <option th:each="code : ${codeList.PR033}" th:value="${code?.cd}" th:utext="${code?.cdNm}"></option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <!--결제가능수단-->
+                                            <td class="label"><strong th:text="${#messages.msg('generalGoods.priceInfo.label.payWay')}"></strong></td>
+                                            <td colspan="7">
+                                                <div class="checkbox">
+                                                    <label class="chk_all mr5"><input class="checkbox-inline" type="checkbox" value="" id="btn_check_all_payway" th:checked="true">전체</label>
+                                                    <label th:each="code : ${codeList.OM013}">
+                                                        <input class="checkbox-inline" type="checkbox" name="payWayCd" th:value="${code?.cd}" th:text="${code?.cdNm}" th:checked="true">
+                                                    </label>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </form>
+                        </div>
+                        <!-- 가격이력정보 -->
+                        <div class="tab-cont">
+                            <div class="grid">
+                                <div class="grid-head">
+                                    <div class="option-area">
+                                        <div class="page-option" grid-id="detailPriceHistGrid"></div>
+                                    </div>
+                                </div>
+                                <div class="grid-body with-head" id="detailPriceHistGrid" realgrid></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </th:block>
+</body>
+</html>

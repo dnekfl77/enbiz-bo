@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enbiz.bo.app.repository.goods.PrOptnCdMapper">
+
+    <sql id="paginatedBase">
+        LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+    </sql>
+
+    <sql id="prOptnCdListBase">
+        SELECT TA.OPTN_CAT_NO /* prOptnCd.prOptnCdListBase */
+             , TA.OPTN_NO
+             , TA.OPTN_NM
+             , TA.SORT_SEQ
+             , TA.USE_YN
+             , TA.SYS_MOD_ID
+             , TO_CHAR(TA.SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+             , TA.SYS_REG_ID
+             , TO_CHAR(TA.SYS_REG_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_REG_DTM
+          FROM PR_OPTN_CD TA
+         WHERE TA.OPTN_CAT_NO = #{optnCatNo}
+    </sql>
+
+    <select id="getPrOptnCdListCount" parameterType="OptionMgmtRequest" resultType="java.lang.Integer">
+        SELECT /* prOptnCd.getPrOptnCdListCount */
+               COUNT(*)
+          FROM (
+                <include refid="prOptnCdListBase" />
+               ) v
+    </select>
+
+    <select id="getPrOptnCdList" parameterType="OptionMgmtRequest" resultType="OptionMgmtResponse">
+        /* prOptnCd.getPrOptnCdList */
+        <include refid="prOptnCdListBase" />
+        <include refid="paginatedBase" />
+    </select>
+
+    <select id="getCountOfExistsPrOptnCd" parameterType="PrOptnCd" resultType="java.lang.Integer">
+        SELECT COUNT(*) /* prOptnCd.getCountOfExistsPrOptnCd */
+          FROM PR_OPTN_CD
+         WHERE OPTN_CAT_NO  = #{optnCatNo}
+           AND OPTN_NM      = #{optnNm}
+    </select>
+
+    <select id="getPrOptnCdListFromGoods" parameterType="GoodsOptionRequest" resultType="GoodsOptionResponse">
+        SELECT OPTN_NO  /* prOptnCd.getPrOptnCdListFromGoods */
+             , OPTN_NM
+          FROM PR_OPTN_CD
+         WHERE 1 = 1
+           AND OPTN_CAT_NO = #{optnCatNo}
+           AND USE_YN = 'Y'
+         ORDER BY SORT_SEQ
+    </select>
+
+</mapper>
+
+

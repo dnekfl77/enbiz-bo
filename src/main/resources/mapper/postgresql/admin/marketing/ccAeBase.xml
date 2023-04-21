@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.marketing.CcAeBaseMapper">
+
+    <sql id="paginatedBase">
+        LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+    </sql>
+
+    <sql id="appreciationEventListBase">
+        SELECT /* CcAeBaseMapper.appreciationEventListBase */
+               AE_NO
+             , AE_NM
+             , ADD_EVT_TYP_CD
+             , FN_GET_CODENAME('MK012',ADD_EVT_TYP_CD) AS ADD_EVT_TYP_NM
+             , TO_CHAR(AE_STR_DTM,'YYYY-MM-DD HH24:MI:SS') AS AE_STR_DTM
+             , TO_CHAR(AE_END_DTM,'YYYY-MM-DD HH24:MI:SS') AS AE_END_DTM
+             , AE_PRGS_STAT_CD
+             , FN_GET_CODENAME('MK003',AE_PRGS_STAT_CD) AS AE_PRGS_STAT_NM
+             , SYS_MOD_ID
+             , TO_CHAR(SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+          FROM CC_AE_BASE
+         WHERE AE_STR_DTM &gt;= TO_TIMESTAMP(#{startDate}||'000000', 'YYYYMMDDHH24MISS')
+           AND AE_END_DTM &lt;= TO_TIMESTAMP(#{endDate}||'235959', 'YYYYMMDDHH24MISS')
+           AND SYS_REG_ID LIKE #{userId} || '%'
+           AND AE_NO LIKE #{aeNo}|| '%'
+           AND AE_NM LIKE #{aeNm}|| '%'
+           AND ADD_EVT_TYP_CD LIKE #{addEvtTypCd}|| '%'
+           AND AE_PRGS_STAT_CD LIKE #{aePrgsStatCd}|| '%'
+    </sql>
+
+    <select id="getAppreciationEventList" parameterType="AppreciateRequest" resultType="AppreciateResponse">
+        <include refid="appreciationEventListBase" />
+        <include refid="paginatedBase" />
+    </select>
+
+    <select id="getAppreciationEventListCount" parameterType="PromotionRequest" resultType="java.lang.Integer">
+        SELECT /* CcAeBaseMapper.getAppreciationEventListCount */
+               COUNT(*)
+          FROM (
+            <include refid="appreciationEventListBase" />
+          ) v
+    </select>
+
+    <select id="getAppreciation" parameterType="java.lang.String" resultType="AppreciateDetailResponse">
+            SELECT /* CcAeBaseMapper.getAppreciation */
+                   AE_NO
+                 , AE_NM
+                 , ADD_EVT_TYP_CD
+                 , TO_CHAR(AE_STR_DTM,'YYYY-MM-DD hh24:mi') AS AE_STR_DTM
+                 , TO_CHAR(AE_END_DTM,'YYYY-MM-DD hh24:mi') AS AE_END_DTM
+                 , CASE WHEN PAY_STR_DT IS NULL THEN  ''
+                                                ELSE  SUBSTRING(PAY_STR_DT,1,4)||'-'||SUBSTRING(PAY_STR_DT,5,2)||'-'||SUBSTRING(PAY_STR_DT,7,2)
+                                                END PAY_STR_DT
+                 , CASE WHEN PAY_END_DT IS NULL THEN  ''
+                                                ELSE  SUBSTRING(PAY_END_DT,1,4)||'-'||SUBSTRING(PAY_END_DT,5,2)||'-'||SUBSTRING(PAY_END_DT,7,2)
+                                                END PAY_END_DT
+                 , APLY_STR_TM
+                 , APLY_END_TM
+                 , AE_PRGS_STAT_CD
+                 , MBR_TYP_CD
+                 , AE_DESC
+                 , SYS_REG_ID
+                 , TO_CHAR(SYS_REG_DTM,'yyyy-mm-dd hh24:mi:ss') AS SYS_REG_DTM
+                 , SYS_MOD_ID
+                 , TO_CHAR(SYS_MOD_DTM,'yyyy-mm-dd hh24:mi:ss') AS SYS_MOD_DTM
+                 , TM_EVT_YN
+              FROM CC_AE_BASE
+             WHERE AE_NO = #{aeNo}
+    </select>
+
+    <select id="getAplyInfo" parameterType="java.lang.String" resultType="AppreciateAplyInfoResponse">
+        SELECT /* CcAeBaseMapper.getAplyInfo */
+               AE_NO
+             , FVR_APLY_GB_CD
+             , FVR_APLY_TYP_CD
+             , FVR_TGT_NO
+             , CASE WHEN FVR_APLY_TYP_CD = '01' THEN (SELECT SITE_NM FROM CC_SITE_BASE WHERE SITE_NO = FVR_TGT_NO)
+                    WHEN FVR_APLY_TYP_CD = '02' THEN (SELECT GOODS_NM FROM PR_GOODS_BASE WHERE GOODS_NO = FVR_TGT_NO)
+                    WHEN FVR_APLY_TYP_CD = '03' THEN (SELECT (
+                                                                 SELECT DISP_CTG_NM
+                                                                 FROM PR_DISP_CTG_BASE
+                                                                 WHERE DISP_CTG_NO = PDCB.LRG_CTG_NO
+                                                             )
+                                                                 ||
+                                                             COALESCE(
+                                                                     (SELECT '>'|| DISP_CTG_NM
+                                                                      FROM PR_DISP_CTG_BASE
+                                                                      WHERE DISP_CTG_NO = PDCB.MID_CTG_NO)
+                                                                 ,'')
+                                                                 ||
+                                                             COALESCE(
+                                                                     (SELECT '>'||DISP_CTG_NM
+                                                                      FROM PR_DISP_CTG_BASE
+                                                                      WHERE DISP_CTG_NO = PDCB.SML_CTG_NO)
+                                                                 ,'')
+                                                                 ||
+                                                             COALESCE(
+                                                                     (SELECT '>'||DISP_CTG_NM
+                                                                      FROM PR_DISP_CTG_BASE
+                                                                      WHERE DISP_CTG_NO = PDCB.THN_CTG_NO)
+                                                                 ,'')
+                                                      FROM PR_DISP_CTG_BASE AS PDCB WHERE DISP_CTG_NO = FVR_TGT_NO
+                    )
+                    WHEN FVR_APLY_TYP_CD = '04' THEN (SELECT STD_CTG_NM FROM PR_STD_CTG WHERE STD_CTG_NO = FVR_TGT_NO)
+                    WHEN FVR_APLY_TYP_CD = '05' THEN (SELECT ENTR_NM FROM ET_ENTR_BASE WHERE ENTR_NO = FVR_TGT_NO)
+                    WHEN FVR_APLY_TYP_CD = '06' THEN (SELECT BRAND_NM FROM PR_BRAND_MST WHERE BRAND_NO = FVR_TGT_NO)
+                    WHEN FVR_APLY_TYP_CD = '07' THEN (SELECT CHL_NM FROM CC_CHL_BASE WHERE CHL_NO = FVR_TGT_NO)
+               END AS FVR_TGT_NM
+          FROM CC_AE_APLY_INFO
+         WHERE AE_NO = #{aeNo}
+    </select>
+
+    <select id="getMediaInfo" parameterType="java.lang.String" resultType="AppreciateMediaInfoResponse">
+        SELECT /* CcAeBaseMapper.getMediaInfo */
+               AE_NO
+             , APLY_PSB_MEDIA_CD
+          FROM CC_AE_APLY_MEDIA_INFO
+         WHERE AE_NO = #{aeNo}
+    </select>
+
+    <select id="getFvrInfo" parameterType="java.lang.String" resultType="AppreciateFvrInfoResponse">
+        SELECT /* CcAeBaseMapper.getFvrInfo */
+               AE_NO
+             , AE_FVR_SEQ
+             , GOODS_NO
+             , (SELECT GOODS_NM FROM PR_GOODS_BASE PGB WHERE PGB.GOODS_NO = CAFI.GOODS_NO) AS GOODS_NM
+             , APLY_MIN_AMT
+          FROM CC_AE_FVR_INFO CAFI
+         WHERE AE_NO = #{aeNo}
+    </select>
+
+
+</mapper>
+
+

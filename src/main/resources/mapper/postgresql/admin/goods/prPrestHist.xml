@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.goods.PrPrestHistMapper">
+
+    <sql id="paginatedBase">
+        LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+    </sql>
+
+    <!-- 증정품 관리 조회 -->
+    <sql id="presentationListBase">
+        SELECT /* prPrestHist.presentationListBase */
+               PPH.GOODS_NO
+             , PGB.GOODS_NM
+             , PPH.PREST_NM
+             , SUBSTRING(PPH.APLY_STR_DT,1,4)||'-'||SUBSTRING(PPH.APLY_STR_DT,5,2)||'-'||SUBSTRING(PPH.APLY_STR_DT,7,2) AS APLY_STR_DT
+             , SUBSTRING(PPH.APLY_END_DT,1,4)||'-'||SUBSTRING(PPH.APLY_END_DT,5,2)||'-'||SUBSTRING(PPH.APLY_END_DT,7,2) AS APLY_END_DT
+             , PPH.USE_YN
+             , PPH.SYS_MOD_ID
+             , TO_CHAR(PPH.SYS_MOD_DTM,'yyyy-mm-dd hh24:mi:ss') AS SYS_MOD_DTM
+          FROM PR_PREST_HIST PPH
+          LEFT OUTER JOIN PR_GOODS_BASE PGB
+                     ON PPH.GOODS_NO = PGB.GOODS_NO
+         WHERE PPH.GOODS_NO LIKE #{goodsNo} || '%'
+           AND PGB.GOODS_NM LIKE #{goodsNm} || '%'
+           AND PPH.APLY_STR_dT <![CDATA[>=]]> #{aplyStrDt} || '%'
+           AND PPH.APLY_END_DT <![CDATA[<=]]> #{aplyEndDt} || '%'
+           AND PPH.PREST_NM LIKE #{prestNm} || '%'
+           AND PPH.USE_YN LIKE #{useYn} || '%'
+         ORDER BY APLY_STR_DT
+    </sql>
+
+    <select id="getPresentationList" parameterType="PresentationRequest" resultType="PresentationResponse">
+        <include refid="presentationListBase" />
+        <include refid="paginatedBase" />
+    </select>
+
+    <select id="getPresentationListCount" parameterType="PresentationRequest" resultType="java.lang.Integer">
+        SELECT /* prPrestHist.getPresentationListCount */
+              COUNT(*)
+        FROM (
+              <include refid="presentationListBase" />
+        ) v
+    </select>
+
+    <select id="checkDuplicate" parameterType="PresentationDuplicateRequest" resultType="boolean">
+        SELECT EXISTS ( /* prPrestHist.checkDuplicate */
+                  SELECT *
+                    FROM PR_PREST_HIST
+                   WHERE GOODS_NO = #{goodsNo}
+                     AND ( APLY_STR_DT BETWEEN REPLACE(#{aplyStrDt},'-','') AND REPLACE(#{aplyEndDt},'-','')
+                      OR   APLY_END_DT BETWEEN REPLACE(#{aplyStrDt},'-','') AND REPLACE(#{aplyEndDt},'-','') )
+               ) AS EXIST
+    </select>
+
+    <select id="getPresentList" parameterType="java.lang.String" resultType="PrPrestHist">
+        SELECT GOODS_NO  /* prPrestHist.getPresentList */
+             , SUBSTRING(APLY_STR_DT,1,4)||'-'||SUBSTRING(APLY_STR_DT,5,2)||'-'||SUBSTRING(APLY_STR_DT,7,2) AS APLY_STR_DT
+             , SUBSTRING(APLY_END_DT,1,4)||'-'||SUBSTRING(APLY_END_DT,5,2)||'-'||SUBSTRING(APLY_END_DT,7,2) AS APLY_END_DT
+             , PREST_NM
+             , USE_YN
+             , SYS_REG_ID
+             , TO_CHAR(SYS_REG_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_REG_DTM
+             , SYS_MOD_ID
+             , TO_CHAR(SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+          FROM PR_PREST_HIST
+         WHERE GOODS_NO = #{goodsNo}
+         ORDER BY APLY_STR_DT, APLY_END_DT
+    </select>
+</mapper>
+
+

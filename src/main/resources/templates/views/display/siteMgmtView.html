@@ -1,0 +1,123 @@
+<!--
+* 프로그램명 : 사이트 관리
+* 작 성 일 : 2021.02.23
+* 작 성 자 : 박혜진
+* 수 정 자 : 권다솜
+* 버    전 : 1.0
+* 개    요 : 전시관리 > 사이트관리 > 사이트관리 UI
+* 이    력 :
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/page-realgrid-layout}">
+
+<head>
+    <title>sub title</title>
+</head>
+<body>
+<th:block layout:fragment="page-title-area">
+    <div class="page-title">
+        <div class="left">
+            <h1><th:block th:text="${#messages.msg('siteMgmt.title')}"/></h1>
+        </div>
+    </div>
+</th:block>
+<th:block layout:fragment="page-contents">
+    <div class="page-fixed with-title">
+        <div class="search-cont">
+            <!-- 조회테이블 -->
+            <div class="search">
+                <form name="siteListGridForm" id="siteListGridForm">
+                    <table class="search-table">
+                        <colgroup>
+                            <col style="width:120px;" />
+                            <col />
+                        </colgroup>
+                        <tbody>
+                            <tr>
+                                <td class="label" th:text="${#messages.msg('siteMgmt.search.label.site')}"></td>
+                                <td>
+                                    <select class="form-control w10" id="siteNo" name="siteNo">
+                                        <option value=""><th:block th:text="${#messages.msg('adminCommon.entirety')}"/></option>
+                                        <option th:each="list : ${list}" th:value="${list.siteNo}" th:text="${list.siteNm}"></option>
+                                    </select>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+            <!-- //조회테이블 -->
+            <!-- 검색버튼 -->
+            <div class="button-group search-btn">
+                <a href="#" class="btn_gblue button white" id="btn_init">
+                    <span class="text" th:text="${#messages.msg('adminCommon.button.init')}" />
+                </a>
+                <a href="#" class="btn_blue button dark" id="btn_search">
+                    <span class="text" th:text="${#messages.msg('adminCommon.button.search')}" />
+                </a>
+            </div>
+            <!-- //검색버튼 -->
+            <!-- 리얼그리드 -->
+            <div class="grid-cont">
+                <div class="grid" style="overflow: hidden;">
+                    <div class="grid-head">
+                        <div class="title-area">
+                            <h2 class="title" th:text="${#messages.msg('siteMgmt.grid.title')}" />
+                        </div>
+                        <div class="option-area">
+                            <div class="edit-option">
+                                <div class="button-group">
+                                    <a href="#" class="button inside" id="btn_grid_insert">
+                                        <span class="text" th:text="${#messages.msg('adminCommon.grid.button.add.row')}" />
+                                    </a>
+                                    <a href="#" class="button inside" id="btn_grid_reset">
+                                        <span class="text" th:text="${#messages.msg('adminCommon.grid.button.cancel')}" />
+                                    </a>
+                                    <a href="#" class="button inside" id="btn_grid_save">
+                                        <span class="text" th:text="${#messages.msg('adminCommon.grid.button.save')}" />
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="page-option" grid-id="siteListGrid"></div>
+                        </div>
+                    </div>
+                    <div class="grid-body">
+                        <div class="rg-root rg-grid" id="siteListGrid" realgrid></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        var msg = x2coMessage.getMessage( {
+              siteNo    : 'siteMgmt.grid.field.siteNo'
+            , siteNm    : 'siteMgmt.grid.field.siteNm'
+            , siteDom   : 'siteMgmt.grid.field.siteDom'
+            , trdStrtDt : 'siteMgmt.grid.field.trdStrtDt'
+            , trdEndDt  : 'siteMgmt.grid.field.trdEndDt'
+            , modId     : 'siteMgmt.grid.field.modId'
+            , modDtm    : 'siteMgmt.grid.field.modDtm'
+            , gridInit  : 'adminCommon.grid.alert.init'
+            , trdStrtDtMsgCheckMessage : 'siteMgmt.error.msg.trdStrtDtMsg'
+            , trdEndDtMsgCheckMessage : 'siteMgmt.error.msg.trdEndDtMsg'
+            , requiredCheckMessage : 'adminCommon.alert.required.parameter'
+            , messageNotCheckedData : 'adminCommon.grid.alert.no.selected.row'
+        });
+    </script>
+
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/siteListGrid.eventHandler.js'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/siteListGrid.provider.js'" ></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            siteListGrid.eventhandler.init();
+        });
+    </script>
+</th:block>
+
+</body>
+</html>

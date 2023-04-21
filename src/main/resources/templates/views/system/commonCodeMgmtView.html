@@ -1,0 +1,190 @@
+<!--
+* 프로그램명 : 공통코드 관리
+* 작 성 일 : 2021.02.22
+* 작 성 자 : 이시현
+* 수 정 자 : 홍혜리
+* 버    전 : 1.0
+* 개    요 : 공통 코드 관리를 하는 UI
+* 이    력 : 2021.08.18
+-->
+<html lang="ko-KR" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layouts/page-realgrid-layout}">
+
+<head>
+<title>sub title</title>
+</head>
+<body>
+	<th:block layout:fragment="page-title-area">
+		<div class="page-title">
+			<div class="left">
+				<h1>
+					<th:block
+						th:text="${#messages.msg('commonCodeMgmt.label.code.management')}" />
+				</h1>
+			</div>
+		</div>
+	</th:block>
+	<th:block layout:fragment="page-contents">
+		<div class="page-fixed with-title">
+			<div class="search-cont" >
+				<!-- 조회테이블 -->
+				<div class="search">
+					<div class="search-body">
+						<form name="gcGridForm" id="gcGridForm">
+							<table class="search-table">
+								<colgroup>
+									<col width="120">
+									<col>
+									<col width="120">
+									<col>
+									<col width="120">
+									<col>
+								</colgroup>
+								<tbody>
+									<tr>
+										<td class="label" th:text="${#messages.msg('commonCodeMgmt.label.comm.cd.id')}">
+										</td>
+										<td>
+											<input class="input inputtxt w50" type="text" maxlength="10" name="grpCd" id="grpCd"/>
+										</td>
+										<td class="label" th:text="${#messages.msg('commonCodeMgmt.label.comm.cd.name')}">
+										</td>
+										<td>
+											<input class="input inputtxt w50" type="text" maxlength="200" name="grpCdNm" id="grpCdNm" /></td>
+										<td class="label" th:text="${#messages.msg('adminCommon.use.yn')}">
+										</td>
+										<td>
+											<select class="form-control w20" id="useYn" name="useYn">
+												<option value="" th:text="${#messages.msg('adminCommon.entirety')}" />
+												<option value="Y" th:text="${#messages.msg('adminCommon.use')}"/>
+												<option value="N" th:text="${#messages.msg('adminCommon.disuse')}"/>
+											</select>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</form>
+					</div>
+				</div>
+				<!-- //조회테이블 -->
+				<!-- 검색버튼 -->
+				<div class="button-group search-btn">
+                	<a href="#" class="btn_gblue button white" id="btn_init">
+                    	<span class="text" th:text="${#messages.msg('adminCommon.button.init')}" />
+                	</a>
+                	<a href="#" class="btn_blue button dark" id="btn_search">
+                    	<span class="text" th:text="${#messages.msg('adminCommon.button.search')}" />
+                	</a>
+            	</div>
+				<!-- //검색버튼 -->
+				<!-- 리얼그리드 -->
+				<div class="grid-cont col-50">
+					<div class="grid" style="overflow: hidden;">
+						<div class="grid_box grid-head">
+								<div class="title-area">
+									<h2 class="title" th:text="${#messages.msg('commonCodeMgmt.label.code.group')}" />
+								</div>
+								<div class="option-area">
+									<div class="edit-option">
+                                		<div class="button-group">
+                                    		<a href="#" class="button inside" id="btn_grid_add">
+                                        		<span class="text" th:text="${#messages.msg('adminCommon.grid.button.add.row')}" />
+                                    		</a>
+											<a href="#" class="button inside" id="btn_grid_reset">
+												<span class="text" th:text="${#messages.msg('adminCommon.grid.button.cancel')}" />
+											</a>
+                                    		<a href="#" class="button inside" id="btn_grid_save">
+                                        		<span class="text"th:text="${#messages.msg('adminCommon.grid.button.save')}" />
+                                    		</a>
+                                		</div>
+                            		</div>
+								<div class="page-option" grid-id="gcGrid"></div>
+							</div>
+						</div>
+						<div class="grid-body">
+							<div class="rg-root rg-grid" id="gcGrid" realgrid ></div>
+						</div>
+					</div>
+					<div class="grid" style="overflow: hidden;">
+						<form name="detailGridForm" id="detailGridForm" hidden="true">
+						</form>
+						<div class="grid_box grid-head">
+							<div class="title-area">
+								<h2 class="title" th:text="${#messages.msg('commonCodeMgmt.label.code.detail')}" />
+							</div>
+							<div class="option-area">
+								<div class="edit-option">
+									<div class="button-group">
+										<a href="#" class="button inside" id="btn_dtl_grid_add">
+											<span class="text" th:text="${#messages.msg('adminCommon.grid.button.add.row')}" />
+										</a>
+										<a href="#" class="button inside" id="btn_dtl_grid_reset">
+											<span class="text" th:text="${#messages.msg('adminCommon.grid.button.cancel')}" />
+										</a>
+										<a href="#" class="button inside" id="btn_dtl_grid_save">
+											<span class="text"th:text="${#messages.msg('adminCommon.grid.button.save')}" />
+										</a>
+									</div>
+								</div>
+
+								<div class="page-option" grid-id="detailGrid"></div>
+							</div>
+						</div>
+						<div class="grid-body">
+							<div class="rg-root rg-grid" id="detailGrid" realgrid ></div>
+						</div>
+					</div>
+				</div>
+				<!-- //리얼그리드 -->
+			</div>
+		</div>
+	</th:block>
+	<th:block layout:fragment="add-script">
+		<script th:inline="javascript">
+			var message = x2coMessage.getMessage({
+				_grp_cd 				:"commonCodeMgmt.cmCodeMgmt.grp.grid.label.comm.cd.id",
+				_grp_cd_nm  			:"commonCodeMgmt.cmCodeMgmt.grp.grid.label.comm.cd.name",
+				_grp_cd_desc  			:"commonCodeMgmt.cmCodeMgmt.grp.grid.label.cd.desc",
+				_use_yn    	   			:"commonCodeMgmt.cmCodeMgmt.grp.grid.label.use.yn",
+				_ref_1_val  			:"commonCodeMgmt.cmCodeMgmt.grp.grid.label.ref.first.value",
+				_ref_2_val  			:"commonCodeMgmt.cmCodeMgmt.grp.grid.label.ref.second.value",
+				_ref_3_val  			:"commonCodeMgmt.cmCodeMgmt.grp.grid.label.ref.third.value",
+				_ref_4_val  			:"commonCodeMgmt.cmCodeMgmt.grp.grid.label.ref.fourth.value",
+				_ref_5_val  			:"commonCodeMgmt.cmCodeMgmt.grp.grid.label.ref.fifth.value",
+				_cd    					:"commonCodeMgmt.cmCodeMgmt.cd.grid.label.cd",
+				_cdNm  					:"commonCodeMgmt.cmCodeMgmt.cd.grid.label.cdNm",
+				_cdDesc					:"commonCodeMgmt.cmCodeMgmt.cd.grid.label.cdDesc",
+				_sort_seq   			:"commonCodeMgmt.cmCodeMgmt.cd.grid.label.sort.seq",
+				_sysRegId 				:"adminCommon.label.sys.reg.id",
+				_sysRegDtm     			:"adminCommon.label.sys.reg.date",
+				_sysModId				:"adminCommon.label.sys.mod.id",
+				_sysModDtm				:"adminCommon.label.sys.mod.date",
+				_gcIdMessage 	       	:"commonCodeMgmt.grpcd.message.grpCd",
+				_gcNmMessage 	       	:"commonCodeMgmt.grpcd.message.grpCdNm",
+				_invalidGrpCdMessage    :"commonCodeMgmt.grpcd.message.invalidGrpCd",
+				_duplicateGrpCdMessage  :"commonCodeMgmt.grpcd.message.grpCdDuplicate",
+				_duplicateGrpCdNmMessage:"commonCodeMgmt.grpcd.message.grpCdNmDuplicate",
+				_grpCdUnSelectedMessage :"commonCodeMgmt.grp.cd.grb.unselected",
+				_cdMessage 	       		:"commonCodeMgmt.grpcd.message.detail.cd",
+				_cdNmMessage 	       	:"commonCodeMgmt.grpcd.message.detail.cdNm",
+				_sortSeqMessage 		:"commonCodeMgmt.message.comm.sort.seq",
+				_invalidCdMessage 		:"commonCodeMgmt.grpcd.message.invalidCd",
+				_duplicateCdMessage 	:"commonCodeMgmt.grpcd.message.cdDuplicated",
+				_duplicateCdNmMessage 	:"commonCodeMgmt.grpcd.message.cdNmDuplicated",
+				_duplicateSortSeqMessage:"commonCodeMgmt.grpcd.message.sortSeqDuplicated"
+			});
+    </script>
+		<script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'system/gcGrid.provider.js?20210817002'"></script>
+		<script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'system/gcGrid.eventHandler.js?20210817002'"></script>
+		<script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'system/detailGrid.provider.js?20210817002'"></script>
+		<script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'system/detailGrid.eventHandler.js?20210817002'"></script>
+		<script type="text/javascript">
+        $(function() {
+            gcGrid.eventhandler.init();
+        	detailGrid.eventhandler.init();
+        });
+    </script>
+	</th:block>
+</body>
+</html>

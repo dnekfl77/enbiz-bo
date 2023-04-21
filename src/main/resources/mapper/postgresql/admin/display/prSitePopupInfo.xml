@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.display.PrSitePopupInfoMapper">
+
+	<sql id="paginatedBase">
+		LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+	</sql>
+
+	<sql id="sitePopupList">
+		SELECT  /* PrSitePopupInfo.getSitePopupList */
+		          '' AS PREVIEW
+				, SB.SITE_NO
+				, SB.SITE_NM
+				, PI.POPUP_NO
+				, PI.POPUP_NM
+				, TO_CHAR(PI.POPUP_DISP_STR_DTM, 'YYYY-MM-DD') || ' ~ ' ||TO_CHAR(PI.POPUP_DISP_END_DTM, 'YYYY-MM-DD') AS POPUP_DISP_DTM
+				, PI.PRIO_RNK
+				, (	SELECT
+							CONCAT_WS(',', 	MAX(CASE WHEN POPUP_TGT_SCRN_CD = '01' THEN '메인페이지' END),
+										MAX(CASE WHEN POPUP_TGT_SCRN_CD = '02' THEN '상품상세'  END),
+										MAX(CASE WHEN POPUP_TGT_SCRN_CD = '03' THEN '기획전'   END),
+										MAX(CASE WHEN POPUP_TGT_SCRN_CD = '04' THEN '검색결과'  END),
+										MAX(CASE WHEN POPUP_TGT_SCRN_CD = '05' THEN '카테고리'  END)
+							) AS SCREEN_NM
+				   	FROM   PR_SITE_POPUP_TGT_SCRN S1
+					WHERE  S1.POPUP_NO  = PI.POPUP_NO
+				)  AS SCREEN_NM
+				, FN_GET_CODENAME( 'DP015', PI.DISP_MEDIA_CD ) AS DISP_MEDIA_CD
+				, PI.USE_YN
+		FROM
+				  PR_SITE_POPUP_INFO PI
+				, CC_SITE_BASE SB
+		WHERE
+				PI.SITE_NO  = SB.SITE_NO
+		AND    	PI.POPUP_DISP_STR_DTM <![CDATA[ >= ]]> TO_TIMESTAMP(#{startDate}||'000000', 'YYYYMMDDHH24MISS')
+		AND	   	PI.POPUP_DISP_END_DTM <![CDATA[ <= ]]> TO_TIMESTAMP(#{endDate}||'235959', 'YYYYMMDDHH24MISS')
+		AND    	PI.SITE_NO         LIKE #{siteNo} || '%'
+		AND    	PI.DISP_MEDIA_CD   LIKE #{dispMediaCd} || '%'
+
+		<if test="chlNo != '' || chlNm != ''">
+		AND    EXISTS (SELECT 	'1'
+						FROM    PR_SITE_POPUP_CHL_APLY_INFO CA
+								, CC_CHL_BASE CB
+						WHERE PI.POPUP_NO = CA.POPUP_NO
+						AND   CA.CHL_NO   = CB.CHL_NO
+						AND   CA.CHL_NO LIKE #{chlNo} || '%'
+						AND   CB.CHL_NM LIKE #{chlNm} || '%'
+				)
+		</if>
+		ORDER BY SB.SITE_NO, PI.POPUP_DISP_STR_DTM
+	</sql>
+
+	<select id="getSitePopupList" parameterType="PrSitePopupInfoRequest" resultType="PrSitePopupInfoResponse">
+		<include refid="sitePopupList" />
+		<include refid="paginatedBase" />
+	</select>
+
+	<select id="getSitePopupListCount" parameterType="PrSitePopupInfoRequest" resultType="java.lang.Integer">
+		SELECT  /* PrSitePopupInfo.getSitePopupListCount */
+				COUNT(*)
+		FROM (
+				<include refid="sitePopupList" />
+		) T1
+	</select>
+
+	<select id="getSitePopupDetail" parameterType="PrSitePopupInfoRequest" resultType="PrSitePopupInfoResponse">
+		SELECT  /* PrSitePopupInfo.getSitePopupDetail */
+				  PI.POPUP_NO
+				, PI.POPUP_NM
+				, PI.SITE_NO
+				, TO_CHAR(PI.POPUP_DISP_STR_DTM, 'YYYY-MM-DD HH24:MI') AS POPUP_DISP_STR_DTM
+				, TO_CHAR(PI.POPUP_DISP_END_DTM, 'YYYY-MM-DD HH24:MI') AS POPUP_DISP_END_DTM
+				, (	SELECT
+						ARRAY_TO_STRING(ARRAY_AGG(S1.POPUP_TGT_SCRN_CD),',')
+					FROM   	PR_SITE_POPUP_TGT_SCRN S1
+					WHERE  	S1.POPUP_NO  = PI.POPUP_NO
+				  )  AS SCREEN_NM
+				, PI.POPUP_TYP_CD
+				, PI.PRIO_RNK
+				, PI.DISP_MEDIA_CD
+				, PI.POPUP_SZ_WDT
+				, PI.POPUP_SZ_HIGH
+				, PI.POPUP_LOC_LEFT
+				, PI.POPUP_LOC_TOP
+				, PI.PRT_TYP_CD
+				, PI.POPUP_IMG_PATH_NM
+				, PI.POPUP_IMG_FILE_NM
+				, PI.POPUP_LNK
+				, PI.POPUP_CONT
+				, PI.USE_YN
+		FROM
+				  PR_SITE_POPUP_INFO PI
+		WHERE 	  PI.POPUP_NO = #{popupNo}
+	</select>
+
+</mapper>
+
+

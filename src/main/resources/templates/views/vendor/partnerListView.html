@@ -1,0 +1,134 @@
+<!--
+* 프로그램명 : 협력사 관리
+* 작 성 일 : 2021.02.10
+* 작 성 자 : 박남훈
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 협력사 관리를 하는 UI
+* 이    력 :
+-->
+<html lang="ko-KR"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/page-realgrid-layout}">
+
+<head>
+    <title>sub title</title>
+</head>
+<body>
+<th:block layout:fragment="page-title-area">
+    <div class="page-title">
+        <div class="left">
+            <h1><th:block th:text="${#messages.msg('vendorMgmt.partner.list.title')}"/></h1>
+        </div>
+    </div>
+</th:block>
+<th:block layout:fragment="page-contents">
+    <div class="page-fixed with-title">
+        <div class="search-cont">
+            <!-- 조회테이블 -->
+            <div class="search">
+                <form name="partnerGridForm" id="partnerGridForm">
+                <table class="search-table">
+                    <colgroup>
+                        <col width="120">
+                        <col width="">
+                        <col width="120">
+                        <col width="">
+                        <col width="120">
+                        <col width="">
+                    </colgroup>
+                    <tbody>
+                        <tr>
+                            <td class="label"
+                                th:text="${#messages.msg('vendorMgmt.partner.list.search.label.partnerNo')}" />
+                            <td>
+                                <div class="input-group w100">
+                                    <input type="text" class="input w20" maxlength="15" name="entrNo" id="entrNo"/>
+                                    <input type="text" class="input w60" maxlength="30" name="entrNm" id="entrNm"/>
+                                </div>
+                            </td>
+                            <td class="label"
+                                th:text="${#messages.msg('vendorMgmt.partner.list.search.label.trdStat')}" />
+                            <td>
+                                <select class="form-control w50" id="trdStatCd" name="trdStatCd">
+                                    <option value=""
+                                        th:text="${#messages.msg('vendorMgmt.partner.list.search.option.full')}">
+                                    </option>
+                                    <option th:each="list : ${codeList.VD003}"
+                                            th:value="${list?.cd}" th:utext="${list?.cdNm}"></option>
+                                </select>
+                            </td>
+                            <td class="label"
+                                th:text="${#messages.msg('vendorMgmt.partner.list.search.label.trdTyp')}" />
+                            <td>
+                                <select class="form-control w50" id="trdTypCd" name="trdTypCd">
+                                    <option value=""
+                                            th:text="${#messages.msg('vendorMgmt.partner.list.search.option.full')}">
+                                    </option>
+                                    <option th:each="list : ${codeList.VD002}"
+                                            th:value="${list?.cd}" th:utext="${list?.cdNm}"></option>
+                                </select>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                </form>
+            </div>
+            <!-- //조회테이블 -->
+            <!-- 검색버튼 -->
+            <div class="button-group search-btn">
+                <a href="#" class="button white" id="btn_partnerList_init">
+                    <span class="text" th:text="${#messages.msg('vendorMgmt.partner.list.search.button.initialize')}" />
+                </a>
+                <a href="#" class="button dark" id="btn_partnerList_search">
+                    <span class="text" th:text="${#messages.msg('vendorMgmt.partner.list.search.button.search')}" />
+                </a>
+            </div>
+            <!-- //검색버튼 -->
+            <!-- 리얼그리드 -->
+            <div class="grid-cont">
+                <div class="grid" style="overflow: hidden;">
+                    <div class="grid-head">
+                        <div class="title-area">
+                            <h2 class="title" th:text="${#messages.msg('vendorMgmt.partner.list.result.title')}" />
+                        </div>
+                        <div class="option-area">
+                            <div class="edit-option">
+                                <div class="button-group">
+                                    <a href="#" class="button inside" id="btn_partnerlist_grid_register">
+                                        <span class="text" th:text="${#messages.msg('vendorMgmt.partner.list.result.button.register')}" />
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="page-option" grid-id="partnerGrid" />
+                        </div>
+                    </div>
+                    <div class="grid-body with-head">
+                        <div class="rg-root rg-grid" id="partnerGrid" realgrid></div>
+                    </div>
+                </div>
+            </div>
+            <!-- //리얼그리드 -->
+        </div>
+    </div>
+</th:block>
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+    /*<![CDATA[*/
+    /*]]>*/
+    </script>
+
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'vendor/vendor.partnerList.partnerGrid.eventHandler.js?2021031002'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'vendor/vendor.partnerList.partnerGrid.provider.js?2021031002'" ></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            partnerGrid.eventhandler.initialize();
+        });
+    </script>
+</th:block>
+
+</body>
+</html>

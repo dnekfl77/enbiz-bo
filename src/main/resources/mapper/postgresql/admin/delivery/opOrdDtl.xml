@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.order.OpOrdDtlMapper">
+
+	<sql id="paginatedBase">
+		LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+	</sql>
+
+	<sql id="fullOrderInquiryList">
+		WITH TOTAL_ORDER AS (   /* OpOrdDtl.fullOrderInquiryList */
+				SELECT
+						SUBSTRING(OOD.ORD_NO,1,8) || '-' || SUBSTRING(OOD.ORD_NO,9,6) AS ORD_NO
+						, TO_CHAR(OOD.ORD_FNSH_DTM, 'YYYY-MM-DD') AS ORD_FNSH_DTM
+						, TO_DATE(OOD.SND_INDI_FCST_DT, 'YYYYMMDD') AS SND_INDI_FCST_DT
+						, FN_GET_CODENAME( 'OM007', OOB.ORD_MEDIA_CD ) AS ORD_MEDIA_CD
+						, FN_GET_CODENAME( 'PR003', OOD.SALE_METH_CD ) AS SALE_METH_CD
+						, FN_GET_CODENAME( 'PR008', OOD.DELI_PROC_TYP_CD ) AS DELI_PROC_TYP_CD
+						, FN_GET_CODENAME( 'PR009', OOD.DELI_WAY_CD ) AS DELI_WAY_CD
+						, FN_GET_CODENAME( 'OM005', OOD.ORD_DTL_STAT_CD ) AS ORD_DTL_STAT_CD
+						, EEB.ENTR_NM
+						, OOD.GOODS_NO
+						, OOD.GOODS_NM
+						, OOD.ITM_NO
+						, OOD.ITM_NM
+						, (OOD.ORD_QTY - OOD.CNCL_QTY - OOD.RTN_QTY) AS ORD_QTY 		-- 주문수량 : 주문수량 - 최소수량 - 반품수량
+						, OOD.SALE_PRC
+						, (
+								SELECT 	COALESCE(SUM(APLY_ADTN_AMT),0)
+								FROM 	OP_ORD_ADTN_COST OOAC 		-- 주문부가비용
+								WHERE 	OOD.ORD_NO = OOAC.ORD_NO 	-- 주문번호
+								AND 	OOD.ORD_SEQ = OOAC.ORD_SEQ 	-- 주문순번
+								AND 	OOAC.ADTN_GB_CD = '10' 		-- 부가비용구분코드(OM018)
+						) AS APLY_ADTN_AMT
+						, OODL.DELI_MSG
+						, OODL.SHOP_TRAF_MSG
+						, OOB.ORD_MAN_NM
+						, OODL.RCVMN_NM
+						, OOB.MBR_NO
+						, OOB.UMEM_CELL_SCT_NO
+						, OOB.UMEM_CELL_TXNO_NO
+						, OOB.UMEM_CELL_END_NO
+						, EMB.CELL_SCT_NO
+						, EMB.CELL_TXNO_NO
+						, EMB.CELL_END_NO
+						, OODL.RCVMN_CELL_SCT_NO
+						, OODL.RCVMN_CELL_TXNO_NO
+						, OODL.RCVMN_CELL_END_NO
+						, OODL.ZIP_ADDR
+						, OODL.DTL_ADDR
+				FROM 	  OP_ORD_DTL OOD 	-- 주문상세
+						, OP_ORD_BASE OOB 	-- 주문기본
+						, ET_MBR_BASE EMB	-- 회원기본
+						, ET_ENTR_BASE EEB 	-- 협력사기본
+						, OP_ORD_DLVP OODL 	-- 주문배송지
+				WHERE 	OOD.ORD_NO 	= 	OOB.ORD_NO 		-- 주문번호
+				AND 	OOD.ENTR_NO = 	EEB.ENTR_NO 	-- 협력사번호
+				AND 	OOD.ORD_NO 	= 	OODL.ORD_NO 	-- 주문번호
+				AND 	OOD.DLVP_SEQ = 	OODL.DLVP_SEQ 	-- 배송지순번
+				AND 	OOB.MBR_NO 	= 	EMB.MBR_NO 		-- 회원번호
+		AND 	OOD.ORD_DTL_GB_CD IN ('10','30')	-- 주문내역 구분코드 (주문일반, 교환주문만 해당)
+				AND 	OOD.ORD_QTY - OOD.CNCL_QTY - OOD.RTN_QTY > 0  -- 실 주문수량이 0보다 큰것
+				<choose>
+					<when test="ordNo != null and ordNo != ''">
+						AND OOD.ORD_NO = #{ordNo}
+					</when>
+					<otherwise>
+						<if test='searchDateType eq "1"'>
+							AND OOD.ORD_FNSH_DTM <![CDATA[ >= ]]> TO_TIMESTAMP(#{startDate}||'000000', 'YYYYMMDDHH24MISS')
+							AND OOD.ORD_FNSH_DTM <![CDATA[ <= ]]> TO_TIMESTAMP(#{endDate}||'235959', 'YYYYMMDDHH24MISS')
+						</if>
+						<if test='searchDateType eq "2"'>
+							AND OOD.SND_INDI_FCST_DT <![CDATA[ >= ]]> #{startDate}
+							AND OOD.SND_INDI_FCST_DT <![CDATA[ <= ]]> #{endDate}
+						</if>
+
+						AND  OOB.ORD_MEDIA_CD 		LIKE 	#{ordMediaCd} 		|| '%'
+						AND  OOD.SALE_METH_CD 		LIKE 	#{saleMethCd} 		|| '%'
+						AND  OOD.ORD_DTL_STAT_CD 	LIKE 	#{ordDtlStatCd} 	|| '%'
+						AND  OOD.DELI_PROC_TYP_CD	LIKE 	#{deliProcTypCd} 	|| '%'
+						AND  OOD.DELI_WAY_CD		LIKE 	#{deliWayCd} 		|| '%'
+						AND  OOD.GOODS_NO 			LIKE 	#{goodsNo} 			|| '%'
+						AND  OOD.ENTR_NO 			LIKE 	#{entrNo} 			|| '%'
+
+						<if test='searchOrdManType eq "1"'>
+							AND OOB.ORD_MAN_NM 		LIKE 	#{ordManNm} 		|| '%'
+						</if>
+						<if test='searchOrdManType eq "2"'>
+							AND OODL.RCVMN_NM 		LIKE 	#{ordManNm} 		|| '%'
+						</if>
+
+						<if test='searchOrdManTelType eq "1"'>
+							AND ( 	CASE WHEN OOB.MBR_NO = #{umem}
+									THEN COALESCE(OOB.UMEM_CELL_SCT_NO,'X') || COALESCE(OOB.UMEM_CELL_TXNO_NO,'X') || COALESCE(OOB.UMEM_CELL_END_NO,'X')	-- 비회원인경우
+									ELSE COALESCE(EMB.CELL_SCT_NO,'X') || COALESCE(EMB.CELL_TXNO_NO,'X') || COALESCE(EMB.CELL_END_NO,'X')  					-- 회원인 경우
+									END
+							)  LIKE #{ordManTel} || '%'
+						</if>
+						<if test='searchOrdManTelType eq "2"'>
+							AND OODL.RCVMN_CELL_SCT_NO || OODL.RCVMN_CELL_TXNO_NO || OODL.RCVMN_CELL_END_NO 	LIKE 	#{ordManTel}  || '%'
+						</if>
+					</otherwise>
+				</choose>
+		)
+		SELECT
+		*
+		, (SALE_PRC  * ORD_QTY) - APLY_ADTN_AMT AS ORD_PRC
+		FROM TOTAL_ORDER
+		ORDER BY ORD_FNSH_DTM, ORD_NO
+	</sql>
+
+	<select id="getFullOrderInquiryList" parameterType="FullOrderRequest" resultType="FullOrderResponse">
+		<include refid="fullOrderInquiryList" />
+		<include refid="paginatedBase" />
+	</select>
+
+	<select id="getFullOrderInquiryListCount" parameterType="FullOrderRequest" resultType="java.lang.Integer">
+		SELECT   /* OpOrdDtl.getFullOrderInquiryListCount */
+				COUNT(*)
+		FROM (
+				<include refid="fullOrderInquiryList" />
+		) T1
+	</select>
+
+	<select id="getExcelFullOrderInquiryList" parameterType="FullOrderRequest" resultType="FullOrderResponse">
+		<include refid="fullOrderInquiryList" />
+	</select>
+
+	<sql id="individualSendInstructList">
+		SELECT   /* OpOrdDtl.individualSendInstructList */
+				  SUBSTRING(OOD.ORD_NO,1,8) || '-' || SUBSTRING(OOD.ORD_NO,9,6) AS ORD_NO
+				, OOD.DELI_UNIT_NO
+				, MIN(OOD.ORD_SEQ) AS ORD_SEQ
+				, MIN(OOD.DLVP_SEQ) AS DLVP_SEQ
+				, MIN(OOB.SITE_NO) as SITE_NO
+				, MIN(OOD.ORD_DTL_GB_CD) as ORD_DTL_GB_CD
+				, MIN(OOD.DELI_POLC_NO) as DELI_POLC_NO
+				, MIN(OOD.DLEX_CHRG_SUB_CD) as DLEX_CHRG_SUB_CD
+				, MIN(OOD.ENTR_NO) as ENTR_NO
+				, MIN(OOB.ORD_MAN_NM) AS ORD_MAN_NM
+				, MIN(OOB.ORD_MAN_NM) AS ORD_MAN_NM_MASK
+				, MIN(OODL.RCVMN_NM) AS RCVMN_NM
+				, MIN(FN_GET_CODENAME( 'PR003', OOD.SALE_METH_CD )) AS SALE_METH_CD
+				, MIN(TO_DATE(OOD.SND_INDI_FCST_DT, 'YYYYMMDD')) AS SND_INDI_FCST_DT
+				, MIN(FN_GET_CODENAME( 'PR008', OOD.DELI_PROC_TYP_CD )) AS DELI_PROC_TYP_NM
+				, MIN(OOD.DELI_PROC_TYP_CD) AS DELI_PROC_TYP_CD
+				, MIN(FN_GET_CODENAME( 'PR009', OOD.DELI_WAY_CD )) AS DELI_WAY_NM
+				, MIN(OOD.DELI_WAY_CD) AS DELI_WAY_CD
+				, MIN(FN_GET_CODENAME( 'OM005', OOD.ORD_DTL_STAT_CD )) AS ORD_DTL_STAT_CD
+				, MIN(OOB.MBR_NO) AS MBR_NO
+				, MIN(OOB.UMEM_CELL_SCT_NO) AS UMEM_CELL_SCT_NO
+				, MIN(OOB.UMEM_CELL_TXNO_NO) AS UMEM_CELL_TXNO_NO
+				, MIN(OOB.UMEM_CELL_END_NO) AS UMEM_CELL_END_NO
+				, MIN(EMB.CELL_SCT_NO) AS CELL_SCT_NO
+				, MIN(EMB.CELL_TXNO_NO) AS CELL_TXNO_NO
+				, MIN(EMB.CELL_END_NO) AS CELL_END_NO
+				, MIN(OOB.UMEM_TEL_RGN_NO) AS UMEM_TEL_RGN_NO
+				, MIN(OOB.UMEM_TEL_TXNO_NO) AS UMEM_TEL_TXNO_NO
+				, MIN(OOB.UMEM_TEL_END_NO) AS UMEM_TEL_END_NO
+				, MIN(EMB.TEL_RGN_NO) AS TEL_RGN_NO
+				, MIN(EMB.TEL_TXNO_NO) AS TEL_TXNO_NO
+				, MIN(EMB.TEL_END_NO) AS TEL_END_NO
+		FROM 	  OP_ORD_DTL OOD 	-- 주문상세
+				, OP_ORD_BASE OOB 	-- 주문기본
+				, ET_MBR_BASE EMB	-- 회원기본
+				, OP_ORD_DLVP OODL 	-- 주문배송지
+		WHERE 	OOD.ORD_NO 	= 	OOB.ORD_NO 		-- 주문번호
+		AND 	OOD.ORD_NO 	= 	OODL.ORD_NO 	-- 주문번호
+		AND 	OOD.DLVP_SEQ = 	OODL.DLVP_SEQ 	-- 배송지순번
+		AND 	OOB.MBR_NO 	= 	EMB.MBR_NO 		-- 회원번호
+		AND 	OOD.ORD_DTL_GB_CD IN ('10','30')	-- 주문내역 구분코드 (주문일반, 교환주문만 해당)
+		AND 	OOD.ORD_QTY - OOD.CNCL_QTY - OOD.RTN_QTY > 0  -- 실 주문수량이 0보다 큰것
+		AND 	OOD.ORD_DTL_STAT_CD = '12'  	-- 주문내역상태코드 (주문완료만 해당)
+		<choose>
+			<when test="ordNo != null and ordNo != ''">
+				AND OOD.ORD_NO = #{ordNo}
+			</when>
+			<otherwise>
+				AND OOD.ORD_FNSH_DTM <![CDATA[ >= ]]> TO_TIMESTAMP(#{startDate}||'000000', 'YYYYMMDDHH24MISS')
+				AND OOD.ORD_FNSH_DTM <![CDATA[ <= ]]> TO_TIMESTAMP(#{endDate}||'235959', 'YYYYMMDDHH24MISS')
+				AND  OOD.SALE_METH_CD 		LIKE 	#{saleMethCd} 		|| '%'
+				AND  OOD.DELI_PROC_TYP_CD	LIKE 	#{deliProcTypCd} 	|| '%'
+
+				<if test='searchOrdManType eq "1"'>
+					AND OOB.ORD_MAN_NM 		LIKE 	#{ordManNm} 		|| '%'
+				</if>
+				<if test='searchOrdManType eq "2"'>
+					AND OODL.RCVMN_NM 		LIKE 	#{ordManNm} 		|| '%'
+				</if>
+			</otherwise>
+		</choose>
+		GROUP BY OOD.ORD_NO, OOD.DELI_UNIT_NO <!-- OOD.ORD_NO, OOD.DELI_PROC_TYP_CD, (CASE WHEN OOD.DELI_PROC_TYP_CD = '20' THEN OOD.ENTR_NO ELSE '0' END), OOD.DLVP_SEQ, OOD.BPCK_PSB_YN-->
+		ORDER BY OOD.ORD_NO
+	</sql>
+
+	<select id="getIndividualSendInstructList" parameterType="IndividualSendInstructRequest" resultType="IndividualSendInstructResponse">
+		<include refid="individualSendInstructList" />
+		<include refid="paginatedBase" />
+	</select>
+
+	<select id="getIndividualSendInstructListCount" parameterType="IndividualSendInstructRequest" resultType="java.lang.Integer">
+		SELECT   /* OpOrdDtlMapper.getIndividualSendInstructListCount */
+				COUNT(*)
+		FROM (
+				<include refid="individualSendInstructList" />
+		) T1
+	</select>
+
+	<!-- <update id="updateSendInstruct" parameterType="opOrdDtl">
+		UPDATE    OP_ORD_DTL 	   /* OpOrdDtl.updateSendInstruct */
+		SET 	  ORD_DTL_STAT_CD = '21'
+				, SYS_MOD_ID = #{sysModId}
+				, SYS_MOD_DTM = NOW()
+		WHERE 	  ORD_NO = #{ordNo}
+		AND 	  DELI_UNIT_NO = #{deliUnitNo}
+	</update> -->
+
+	<select id="getOrdSeqList" parameterType="IndividualSendInstructRequest" resultType="opOrdDtlStatChgHist">
+		SELECT 					/* OpOrdDtl.getOrdSeqList */
+				  ORD_NO
+				, ORD_SEQ
+		FROM 	OP_ORD_DTL 	-- 주문상세
+		WHERE 	ORD_DTL_STAT_CD = '21'	-- 주문내역상태코드 (발송지시)
+		AND     ORD_NO = #{ordNo}
+		AND     DELI_UNIT_NO = #{deliUnitNo}
+	</select>
+
+	<select id="getDeliUnitList" parameterType="IndividualSendInstructRequest" resultType="loDeliDtl">
+		SELECT 					/* OpOrdDtl.getDeliUnitList */
+		ORD_NO
+		, ORD_SEQ
+		, ORD_SALE_TYP_CD
+		, (CASE WHEN DELI_PROC_TYP_CD = '20' THEN ENTR_NO ELSE '0' END) AS ENTR_NO
+		, GOODS_NO
+		, ITM_NO
+		, GOODS_NM
+		, ITM_NM
+		, PREST_NM
+		, GOODS_COMP_CD
+		, GOODS_TYP_CD
+		, SALE_METH_CD
+		, ORD_QTY - CNCL_QTY - RTN_QTY AS INDI_QTY
+		, 0 AS CNCL_QTY
+		, 0 AS PROC_QTY
+		, SUP_PCOST
+		, NOR_PRC
+		, SALE_PRC
+		, MRGN_RATE
+		, TAX_GB_CD
+		, BUY_TYP_CD
+		, DELI_GOODS_GB_CD
+		FROM 	OP_ORD_DTL 	-- 주문상세
+		WHERE 	ORD_DTL_STAT_CD = '21'	-- 주문내역상태코드 (발송지시)
+		AND 	ORD_NO = #{ordNo}
+		AND 	DELI_UNIT_NO = #{deliUnitNo}
+	</select>
+
+</mapper>
+
+

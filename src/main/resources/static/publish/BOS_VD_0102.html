@@ -1,0 +1,253 @@
+<html lang="ko-KR">
+
+<head>
+    <title>x2</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+    <link type="text/css" rel="stylesheet" href="../css/reset.css">
+    <link type="text/css" rel="stylesheet" href="../css/layout.css">
+    <link type="text/css" rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" type="text/css" href="../css/realgrid-style.css">
+    <script src="../js/libs/jquery/jquery-3.4.1.min.js"></script>
+    <script src="../js/contents.js"></script>
+</head>
+
+<body>
+    <div class="win-popup page-root">
+        <div class="page-fixed">
+            <div class="search-cont">
+                <div class="header">
+                    <h1 class="title" id="">회원 상세</h1>
+                    <div class="button-group">
+                        <a href="#" class="button"><span class="text">회원탈퇴</span></a>
+                        <a href="#" class="button"><span class="text">관심고객등록</span></a>
+                        <a href="#" class="button"><span class="text">환불계좌관리</span></a>
+                    </div>
+                </div>
+                <div class="data-cont">
+                    <div class="data">
+                        <div class="data-head">
+                            <div class="left"><span class="title">기본정보</span></div>
+                        </div>
+                        <!-- //data-head -->
+
+                        <div class="data-body">
+                            <table class="data-table fixed">
+                                <colgroup>
+                                    <col width="120">
+                                    <col>
+                                    <col width="120">
+                                    <col>
+                                    <col width="120">
+                                    <col>
+                                </colgroup>
+                                <tbody>
+                                    <tr>
+                                        <td class="label">회원번호</td>
+                                        <td></td>
+                                        <td class="label">회원관리구분</td>
+                                        <td></td>
+                                        <td class="label">회원등급</td>
+                                        <td>골드 <a href="#" class="button inside fl-right"><span class="text">등급이력보기</span></a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="label">회원ID</td>
+                                        <td></td>
+                                        <td class="label"><strong>회원/법인명</strong></td>
+                                        <td>
+                                            <input type="text" name="" value="" class="input">
+                                        </td>
+                                        <td class="label">회원상태</td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="label">내외국인구분</td>
+                                        <td></td>
+                                        <td class="label">성별</td>
+                                        <td></td>
+                                        <td class="label">생년월일</td>
+                                        <td> </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="label">성인인증여부</td>
+                                        <td></td>
+                                        <td class="label">성인인증일시</td>
+                                        <td></td>
+                                        <td class="label">회원탈퇴사유</td>
+                                        <td>
+                                            <select class="form-control">
+                                                <option value="">option1</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="label">회원가입일시</td>
+                                        <td></td>
+                                        <td class="label">회원최종접속일시</td>
+                                        <td></td>
+                                        <td class="label">회원주문여부</td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="label">사원번호</td>
+                                        <td></td>
+                                        <td class="label">부서명</td>
+                                        <td></td>
+                                        <td class="label">입사일자</td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- //data-body -->
+                    </div>
+                    <!-- //기본정보 -->
+
+                    <div class="data">
+                        <div class="data-head">
+                            <div class="left"><span class="title">회원 연락처 정보</span></div>
+                        </div>
+                        <!-- //data-head -->
+
+                        <div class="data-body">
+                            <table class="data-table">
+                                <colgroup>
+                                    <col width="120">
+                                    <col>
+                                    <col width="120">
+                                    <col>
+                                    <col width="120">
+                                    <col>
+                                </colgroup>
+                                <tbody>
+                                    <tr>
+                                        <td class="label">전화번호</td>
+                                        <td><input type="text" name="" value="" class="input"></td>
+                                        <td class="label">휴대폰번호</td>
+                                        <td><input type="text" name="" value="" class="input"></td>
+                                        <td class="label">이메일주소</td>
+                                        <td>
+                                            <div class="input-group">
+                                                <input type="text" name="" value="" class="input">
+                                                <em>@</em>
+                                                <input type="text" name="" value="" class="input">
+                                                <select class="form-control">
+                                                    <option value="">직접입력</option>
+                                                </select>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="label">회원주소</td>
+                                        <td colspan="5">
+                                            <div class="input-group address">
+                                                <input type="text" id="" class="input disabled" disabled>
+                                                <input type="text" id="" class="input disabled" disabled>
+                                                <a href="#" class="button small"><span class="text">주소찾기</span></a>
+                                                <input type="text" id="" class="input">
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- //data-body -->
+                    </div>
+                    <!-- //회원 연락처 정보 -->
+
+                    <div class="data">
+                        <div class="data-head">
+                            <div class="left"><span class="title">회원 혜택 현황</span></div>
+                        </div>
+                        <!-- //data-head -->
+
+                        <div class="data-body">
+                            <table class="data-table fixed">
+                                <colgroup>
+                                    <col width="120">
+                                    <col>
+                                    <col width="120">
+                                    <col>
+                                    <col width="120">
+                                    <col>
+                                </colgroup>
+                                <tbody>
+                                    <tr>
+                                        <td class="label">활동포인트</td>
+                                        <td>10,000 
+                                            <a href="#" class="button inside fl-right"><span class="text">조회</span></a>
+                                        </td>
+                                        <td class="label">쿠폰</td>
+                                        <td><a href="#" class="button inside fl-right"><span class="text">조회</span></a></td>
+                                        <td class="label">무료배송권</td>
+                                        <td><a href="#" class="button inside fl-right"><span class="text">조회</span></a></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="label">적립금</td>
+                                        <td><a href="#" class="button inside fl-right"><span class="text">조회</span></a></td>
+                                        <td class="label">예치금</td>
+                                        <td><a href="#" class="button inside fl-right"><span class="text">조회</span></a></td>
+                                        <td class="label"></td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- //data-body -->
+                    </div>
+                    <!-- //회원 혜택 현황 -->
+
+                </div>
+                <!-- //data-cont -->
+
+                <div class="grid-cont">
+                    <div class="grid">
+                        <div class="grid-head">
+                            <div class="title-area">
+                                <h2 class="title">배송지정보</h2>
+                            </div>
+                            <div class="option-area">
+                                <div class="edit-option">
+                                    <div class="button-group">
+                                        <a href="#" class="button inside"><span class="text">행추가</span></a>
+                                        <a href="#" class="button inside"><span class="text">행삭제</span></a>
+                                        <a href="#" class="button inside"><span class="text">변경취소</span></a>
+                                    </div>
+                                </div>
+                                <div class="page-option"><span class="total">총 <em>24</em>건</span></div>
+                            </div>
+                        </div>
+                        <div class="grid-body with-head" id="realgrid" realgrid>realgrid area</div>
+                    </div>
+                    <!-- //배송지정보 -->
+
+                    <div class="grid">
+                        <div class="grid-head">
+                            <div class="title-area">
+                                <h2 class="title">마케팅/서비스 동의 정보</h2>
+                            </div>
+                            <div class="option-area">
+                                <div class="page-option"><span class="total">총 <em>24</em>건</span></div>
+                            </div>
+                        </div>
+                        <div class="grid-body with-head" id="realgrid" realgrid>realgrid area</div>
+                    </div>
+                    <!-- // -->
+                </div>
+                <!-- //grid-cont -->
+
+            </div>
+            <!-- //search-cont -->
+
+            <div class="button-group">
+                <a href="#" class="button"><span class="text">취소</span></a>
+                <a href="#" class="button"><span class="text">저장</span></a>
+            </div>
+        </div>
+        <!-- //page-fixed -->
+    </div>
+</body>
+
+</html>

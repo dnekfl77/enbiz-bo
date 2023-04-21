@@ -1,0 +1,381 @@
+<html lang="ko-KR">
+
+<head>
+    <title>x2</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+    <link type="text/css" rel="stylesheet" href="../css/reset.css">
+    <link type="text/css" rel="stylesheet" href="../css/layout.css">
+    <link type="text/css" rel="stylesheet" href="../css/zTree.css">
+    <link type="text/css" rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" type="text/css" href="../css/realgrid-style.css">
+    <script src="../js/libs/jquery/jquery-3.4.1.min.js"></script>
+    <script src="../js/contents.js"></script>
+    <script type="text/javascript" src="../js/libs/jquery/jquery.ztree.all.js?202102260000"></script>
+</head>
+
+<body>
+    <div class="win-popup page-root">
+        <div class="page-fixed">
+            <!-- page-title 가 있을경우 with-title 클래스 추가 -->
+            <div class="search-cont">
+                <div class="header">
+                    <h1 class="title" id="">사은행사 등록/상세</h1>
+                    <div class="button-group">
+                        <a href="#" class="button"><span class="text">목록</span></a>
+                        <a href="#" class="button"><span class="text">삭제</span></a>
+                        <a href="#" class="button"><span class="text">저장</span></a>
+                    </div>
+                </div>
+
+                <div class="data">
+                    <div class="data-head">
+                        <div class="left"><span class="title">기본정보</span>
+                        </div>
+                        <div class="right">
+                            <span class="data-toggle toggle">
+                                <button type="button" class="btn btn-sm btn-link bold toggle-button"
+                                    depth-name="goodsDisplay"><span>닫힘</span></button>
+                            </span>
+                        </div>
+
+                    </div>
+                    <div class="data-body">
+                        <table class="data-table">
+                            <colgroup>
+                                <col width="120">
+                                <col>
+                                <col width="120">
+                                <col>
+                                <col width="120">
+                                <col>
+                                <col width="120">
+                                <col>
+                            </colgroup>
+                            <tbody>
+                                <tr>
+                                    <td class="label">사은행사번호/명</td>
+                                    <td colspan="7">
+                                        <div class="input-group block">
+                                            <input type="text" name="" value="" class="input disabled">
+                                            <input type="text" name="" value="" class="input">
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="label">사은행사유형</td>
+                                    <td colspan="3">
+                                        <select class="form-control">
+                                            <option value="">구매금액 사은품</option>
+                                            <option value="">카드사사은품</option>
+                                        </select>
+                                    </td>
+                                    <td class="label">사은행사상태</td>
+                                    <td colspan="3">
+                                        <select class="form-control">
+                                            <option value="">대기</option>
+                                            <option value="">진행</option>
+                                            <option value="">종료</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="label">사은행사상세설명</td>
+                                    <td colspan="7">
+                                        <textarea class="textarea" rows="5"></textarea>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="label">등록자</td>
+                                    <td>
+                                        <input type="text" name="" value="" class="input disabled">
+                                    </td>
+                                    <td class="label">등록일시</td>
+                                    <td>
+                                        <div class="picker-group time">
+                                            <input type="text" class="form-control disabled" readonly>
+                                            <span class="input-group-addon"><i class="icon-calendar"></i></span>
+                                        </div>
+                                    </td>
+                                    <td class="label">수정자</td>
+                                    <td>
+                                        <input type="text" name="" value="" class="input disabled">
+                                    </td>
+                                    <td class="label">수정일시</td>
+                                    <td>
+                                        <div class="picker-group time">
+                                            <input type="text" class="form-control disabled" readonly>
+                                            <span class="input-group-addon"><i class="icon-calendar"></i></span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- //기본정보 -->
+
+                <div class="data">
+                    <div class="data-head">
+                        <div class="left"><span class="title">적용대상 선택</span></div>
+                        <div class="right">
+                            <a href="#" class="button inside"><span class="text">전체 초기화</span></a>
+                        </div>
+                    </div>
+                    <div class="data-body">
+                        <table class="data-table">
+                            <colgroup>
+                                <col width="120">
+                                <col>
+                            </colgroup>
+                            <tbody>
+                                <tr>
+                                    <td class="label">사이트</td>
+                                    <td>
+                                        <div class="quick-search">
+                                            <ul>
+                                                <li class="btt" tooltip="쇼핑몰"><a onclick="" class="link ">쇼핑몰</a><a onclick="" class="delete2"></a></li>
+                                            </ul>
+                                            <div class="add">
+                                                <a href="#" class="button inside"><span class="text">초기화</span></a>
+                                                <a href="#" class="button inside"><span class="text">추가</span></a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="label">상품</td>
+                                    <td>
+                                        <div class="quick-search">
+                                            <ul>
+                                                
+                                            </ul>
+                                            <div class="add">
+                                                <a href="#" class="button inside"><span class="text">초기화</span></a>
+                                                <a href="#" class="button inside"><span class="text">추가</span></a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="label">표준상품분류</td>
+                                    <td>
+                                        <div class="quick-search">
+                                            <ul>
+                                                
+                                            </ul>
+                                            <div class="add">
+                                                <a href="#" class="button inside"><span class="text">초기화</span></a>
+                                                <a href="#" class="button inside"><span class="text">추가</span></a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="label">전시카테고리</td>
+                                    <td>
+                                        <div class="quick-search">
+                                            <ul>
+                                                
+                                            </ul>
+                                            <div class="add">
+                                                <a href="#" class="button inside"><span class="text">초기화</span></a>
+                                                <a href="#" class="button inside"><span class="text">추가</span></a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="label">브랜드</td>
+                                    <td>
+                                        <div class="quick-search">
+                                            <ul>
+                                                
+                                            </ul>
+                                            <div class="add">
+                                                <a href="#" class="button inside"><span class="text">초기화</span></a>
+                                                <a href="#" class="button inside"><span class="text">추가</span></a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="label">협력사</td>
+                                    <td>
+                                        <div class="quick-search">
+                                            <ul>
+                                                
+                                            </ul>
+                                            <div class="add">
+                                                <a href="#" class="button inside"><span class="text">초기화</span></a>
+                                                <a href="#" class="button inside"><span class="text">추가</span></a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="label">채널</td>
+                                    <td>
+                                        <div class="quick-search">
+                                            <ul>
+                                                
+                                            </ul>
+                                            <div class="add">
+                                                <a href="#" class="button inside"><span class="text">초기화</span></a>
+                                                <a href="#" class="button inside"><span class="text">추가</span></a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- //적용대상 선택 -->
+
+                <div class="data">
+                    <div class="data-head">
+                        <div class="left"><span class="title">제외대상 선택</span></div>
+                        <div class="right">
+                            <a href="#" class="button inside"><span class="text">전체 초기화</span></a>
+                        </div>
+                    </div>
+                    <div class="data-body">
+                        <table class="data-table">
+                            <colgroup>
+                                <col width="120">
+                                <col>
+                            </colgroup>
+                            <tbody>
+                                <tr>
+                                    <td class="label">상품</td>
+                                    <td>
+                                        <div class="quick-search">
+                                            <ul>
+                                                <li class="btt" tooltip="쇼핑몰"><a onclick="" class="link ">쇼핑몰</a><a onclick="" class="delete2"></a></li>
+                                            </ul>
+                                            <div class="add">
+                                                <a href="#" class="button inside"><span class="text">초기화</span></a>
+                                                <a href="#" class="button inside"><span class="text">추가</span></a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="label">표준상품분류</td>
+                                    <td>
+                                        <div class="quick-search">
+                                            <ul>
+                                                
+                                            </ul>
+                                            <div class="add">
+                                                <a href="#" class="button inside"><span class="text">초기화</span></a>
+                                                <a href="#" class="button inside"><span class="text">추가</span></a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- //제외대상 선택 -->
+
+                <div class="data">
+                    <div class="data-head">
+                        <div class="left"><span class="title">사은행사 지급설정</span></div>
+                        <div class="right">
+                            <span class="data-toggle">
+                                <button type="button" class="toggle-button"
+                                    depth-name="goodsDisplay"><span>닫힘</span></button>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="data-body toggle-cont">
+                        <table class="data-table fixed">
+                            <colgroup>
+                                <col width="120">
+                                <col>
+                                <col width="120">
+                                <col>
+                            </colgroup>
+                            <tbody>
+                                <tr>
+                                    <td class="label">사은행사기간</td>
+                                    <td colspan="3">
+                                        <div class="picker-group time">
+                                            <input type="text" class="form-control disabled" readonly>
+                                            <span class="input-group-addon">~</span>
+                                            <input type="text" class="form-control disabled" readonly>
+                                            <span class="input-group-addon"><i class="icon-calendar"></i></span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="label">적용카드</td>
+                                    <td colspan="3">
+                                        <select class="form-control">
+                                            <option value="">전체</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="label">적용매체</td>
+                                    <td>
+                                        <div class="checkbox">
+                                            <label class="checkbox-inline"><input type="checkbox" name="" value="all"checked="checked">전체</label>
+                                            <label><input class="checkbox-inline" type="checkbox" name="">EC</label>
+                                            <label><input class="checkbox-inline" type="checkbox" name="">Mobile</label>
+                                            <label><input class="checkbox-inline" type="checkbox" name="">App</label>
+                                        </div> 
+                                    </td>
+                                    <td class="label">대상회원</td>
+                                    <td>
+                                        <select class="form-control">
+                                            <option value="">전체</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="label">행사조건</td>
+                                    <td colspan="3">
+                                        <div class="input-group block">
+                                            <label class="mr10"><input class="checkbox-inline" type="checkbox" name="">특정시간대</label>
+                                            <div class="picker-group">
+                                                <input type="text" class="form-control disabled" readonly>
+                                                <span class="input-group-addon"><i class="icon-calendar"></i></span>
+                                            </div>
+                                        </div>
+                                        <div class="input-group block">
+                                            <span class="tit">구매금액</span>
+                                            <input type="text" name="" value="" class="price input"><em>원 이상</em>
+                                            <span class="tit">지급사은품</span>
+                                            <input type="text" id="" class="input disabled" readonly>
+                                            <a href="javascript:;" class="button small" onclick=""><i class="icon-sarch"></i></a>
+                                            <a href="javascript:;" class="icon-data-plus">추가</a>
+                                        </div>
+                                        <div class="input-group block">
+                                            <span class="tit">구매금액</span>
+                                            <input type="text" name="" value="" class="price input"><em>원 이상</em>
+                                            <span class="tit">지급사은품</span>
+                                            <input type="text" id="" class="input disabled" readonly>
+                                            <a href="javascript:;" class="button small" onclick=""><i class="icon-sarch"></i></a>
+                                            <a href="javascript:;" class="icon-data-plus">추가</a>
+                                            <a href="javascript:;" class="icon-data-minus">삭제</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- //사은행사 지급설정 -->
+
+            </div>
+        </div>
+      <!-- //page-fixed -->
+    </div>
+</body>
+
+</html>

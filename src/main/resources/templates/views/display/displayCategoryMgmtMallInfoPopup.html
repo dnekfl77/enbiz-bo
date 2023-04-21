@@ -1,0 +1,201 @@
+<!--
+* 프로그램명 : 전시 카테고리 관리 _ 몰 추가 팝업
+* 작 성 일 : 2021.03.15
+* 작 성 자 : 권다솜
+* 수 정 자 : 권다솜
+* 버    전 : 1.0
+* 개    요 : 카테고리관리 > 전시카테고리관리 > 몰 추가 팝업
+* 이    력 :
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-update-layout}">
+<body>
+
+<th:block layout:fragment="header-area">
+    <div class="header">
+        <h1 class="title" th:text="${#messages.msg('displayCategoryMgmt.mallInsertInfo.title')}"></h1>
+    </div>
+</th:block>
+
+<th:block layout:fragment="data-area">
+    <form name="mallForm" id="mallForm">
+        <input type="hidden" id="siteNo" name="siteNo" th:value="${requestData.siteNo}" >
+        <input type="hidden" id="mallTypCd" name="mallTypCd" th:value="10"><!-- 일반몰로 입력값 고정 -->
+        <!--data-cont-->
+        <div class="data-cont">
+            <div class="data">
+                <div class="data-body toggle-cont">
+                    <table class="data-table">
+                        <colgroup>
+                            <col width="120">
+                            <col>
+                            <col width="120">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                            <tr>
+                                <td class="label" th:text="${#messages.msg('displayCategoryMgmt.mallInsertInfo.label.siteNm')}"></td>
+                                <td th:text="${siteNm}"></td>
+                                <td class="label"><strong th:text="${#messages.msg('displayCategoryMgmt.mallInsertInfo.label.shopTypCd')}"></strong></td>
+                                <td>
+                                    <select class="form-control w80" id="shopTypCd" name="shopTypCd">
+                                        <option th:each="list : ${codeList.DP003}" th:value="${list.cd}" th:text="${list.cdNm}"></option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label"><strong th:text="${#messages.msg('displayCategoryMgmt.mallInsertInfo.label.mallNm')}"></strong></td>
+                                <td>
+                                    <input class="input w100" type="text" name="dpmlNm" id="dpmlNm" maxlength="300"/>
+                                </td>
+                                <td class="label">
+                                    <strong th:text="${#messages.msg('displayCategoryMgmt.mallInsertInfo.label.dispSeq')}"></strong>
+                                </td>
+                                <td>
+                                    <input type="text" class="input w20" id="dispSeq" name="dispSeq" maxlength="3" onKeyup="number(this)">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label"><strong th:text="${#messages.msg('displayCategoryMgmt.mallInsertInfo.label.dispYn')}"></strong></td>
+                                <td>
+                                    <div class="input-group">
+                                        <label class="radio-inline" th:for="dispYn_Y">
+                                            <input type="radio" name="dispYn" th:value="Y" th:id="dispYn_Y">
+                                            <span th:text="${#messages.msg('adminCommon.display.y')}"></span>
+                                        </label>
+                                        <label class="radio-inline" th:for="dispYn_N">
+                                            <input type="radio" name="dispYn" th:value="N" th:id="dispYn_N">
+                                            <span th:text="${#messages.msg('adminCommon.display.n')}"></span>
+                                        </label>
+                                    </div>
+                                </td>
+                                <td class="label"><strong th:text="${#messages.msg('displayCategoryMgmt.mallInsertInfo.label.useYn')}"></strong></td>
+                                <td>
+                                    <div class="input-group">
+                                        <label class="radio-inline" th:for="useYn_Y">
+                                            <input type="radio" name="useYn" th:value="Y" th:id="useYn_Y">
+                                            <span th:text="${#messages.msg('adminCommon.use')}"></span>
+                                        </label>
+                                        <label class="radio-inline" th:for="useYn_N">
+                                            <input type="radio" name="useYn" th:value="N" th:id="useYn_N">
+                                            <span th:text="${#messages.msg('adminCommon.disuse')}"></span>
+                                        </label>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label"><strong th:text="${#messages.msg('displayCategoryMgmt.mallInsertInfo.label.hdrTypCd')}"></strong></td>
+                                <td>
+                                    <select class="form-control w80" id="hdrTypCd" name="hdrTypCd">
+                                        <option value="" th:text="${#messages.msg('adminCommon.select')}"></option>
+                                        <option th:each="list : ${codeList.DP010}" th:value="${list.cd}" th:text="${list.cdNm}"></option>
+                                    </select>
+                                </td>
+                                <td class="label"><strong th:text="${#messages.msg('displayCategoryMgmt.mallInsertInfo.label.prtTypCd')}"></strong></td>
+                                <td>
+                                    <select class="form-control w80" id="prtTypCd" name="prtTypCd">
+                                        <option value="" th:text="${#messages.msg('adminCommon.select')}"></option>
+                                        <option th:each="list : ${codeList.DP002}" th:value="${list.cd}" th:text="${list.cdNm}"></option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr id="prtTypCd_tmpl">
+                                <td class="label" th:text="${#messages.msg('displayCategoryMgmt.mallInsertInfo.label.displayTemplate')}"></td>
+                                <td colspan="3">
+                                    <div class="input-group w100">
+                                        <input class="input disabled w90" type="text" id="tmplFilePath" th:readonly="true"/>
+                                        <input type="hidden" id="tmplNo" name="tmplNo"/>
+                                        <a href="#" class="button small" id="btn_tmplPopup_call"><i class="icon-sarch"></i></a>
+                                        <a href="#" class="button small" id="btn_tmplPopup_reset"><i class="icon-clear"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr id="prtTypCd_category">
+                                <td class="label" th:text="${#messages.msg('displayCategoryMgmt.mallInsertInfo.label.linkDispNo')}"></td>
+                                <td colspan="3">
+                                    <div class="input-group w100">
+                                        <input class="input disabled w90" type="text" id="linkDispNm" th:readonly="true"/>
+                                        <input type="hidden" id="linkDispNo" name="linkDispNo"/>
+                                        <a href="#" class="button small" id="btn_dispPopup_call"><i class="icon-sarch"></i></a>
+                                        <a href="#" class="button small" id="btn_dispPopup_reset"><i class="icon-clear"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr id="prtTypCd_url">
+                                <td class="label" th:text="${#messages.msg('displayCategoryMgmt.mallInsertInfo.label.tgtURL')}"></td>
+                                <td colspan="3">
+                                    <table class="data-table inbox fixed">
+                                        <colgroup>
+                                            <col width="120">
+                                            <col>
+                                            <col width="120">
+                                            <col>
+                                        </colgroup>
+                                        <tbody>
+                                        <tr>
+                                            <td class="label" th:text="${#messages.msg('displayCategoryMgmt.mallInsertInfo.label.movFrmeCd')}"></td>
+                                            <td>
+                                                <select class="form-control w100" id="movFrmeCd" name="movFrmeCd">
+                                                    <option value="" th:text="${#messages.msg('adminCommon.select')}"></option>
+                                                    <option th:each="list : ${codeList.DP007}" th:value="${list.cd}" th:text="${list.cdNm}"></option>
+                                                </select>
+                                            </td>
+                                            <td class="label" th:text="${#messages.msg('displayCategoryMgmt.mallInsertInfo.label.linkUrlAddr')}"></td>
+                                            <td>
+                                                <input class="input w100" type="text" id="linkUrlAddr" name="linkUrlAddr" maxlength="1000"/>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!--//data-cont-->
+    </form>
+</th:block>
+
+<th:block layout:fragment="button-area">
+    <div class="button-group" style="margin-top: 0px;" >
+        <a href="#" class="button" id="btn_popup_cancel">
+            <span class="text" th:text="${#messages.msg('adminCommon.button.cancel')}">취소</span>
+        </a>
+        <a href="#" class="button large" id="btn_popup_save">
+            <span class="text" th:text="${#messages.msg('adminCommon.button.save')}">저장</span>
+        </a>
+    </div>
+</th:block>
+
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        var req         = [[${requestData}]];
+
+        var msg = x2coMessage.getMessage( {
+              mallNm : 'displayCategoryMgmt.mallInsertInfo.label.mallNm'
+            , dispSeq : 'displayCategoryMgmt.mallInsertInfo.label.dispSeq'
+            , hdrTypCd : 'displayCategoryMgmt.mallInsertInfo.label.hdrTypCd'
+            , prtTypCd : 'displayCategoryMgmt.mallInsertInfo.label.prtTypCd'
+            , displayTemplate : 'displayCategoryMgmt.mallInsertInfo.label.displayTemplate'
+            , movFrmeCd : 'displayCategoryMgmt.mallInsertInfo.label.movFrmeCd'
+            , linkUrlAddr : 'displayCategoryMgmt.mallInsertInfo.label.linkUrlAddr'
+            , linkDispNo : 'displayCategoryMgmt.mallInsertInfo.label.linkDispNo'
+            , cancelMessage : 'adminCommon.alert.cancel'
+            , necessaryCheckMessage : 'adminCommon.alert.required.parameter'
+        });
+    </script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/displayCategoryMgmt/mallInsert.eventHandler.js?202103270001'" ></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            mallInsert.eventhandler.init();
+        });
+    </script>
+</th:block>
+
+</body>
+</html>

@@ -1,0 +1,277 @@
+<!--
+* 프로그램명 : 판매옵션
+* 작 성 일 : 2021.03.25
+* 작 성 자 : 홍혜리
+* 수 정 자 : 홍혜리
+* 버    전 : 1.0
+* 개    요 : 판매옵션
+* 이    력 : 2021.10.12 프레임워크 이전
+-->
+<!DOCTYPE html>
+<html lang="ko-KR"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<body>
+    <th:block layout:fragment="goods-regist-saleInfo">
+        <div class="data">
+            <div class="data-head">
+                <div class="left">
+                    <span class="title" th:text="${#messages.msg('generalGoods.saleInfo.title')}"></span>
+                </div>
+                <div class="right">
+                  <span class="data-toggle">
+                    <button type="button" class="toggle-button"><span>닫힘</span></button>
+                  </span>
+                </div>
+            </div>
+            <div class="data-body">
+                <form id="saleInfo" name="saleInfo">
+                    <table class="data-table fixed">
+                        <colgroup>
+                            <col width="130">
+                            <col>
+                            <col width="130">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                        <tr>
+                            <!-- 재고관리여부 -->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.saleInfo.label.stkMgrYn')}"></strong></td>
+                            <td>
+                                <label class="radio-inline"><input type="radio" name="stkMgrYn" value="Y" checked="checked" th:text="${#messages.msg('adminCommon.management.y')}"></label>
+                                <label class="radio-inline"><input type="radio" name="stkMgrYn" value="N" th:text="${#messages.msg('adminCommon.management.n')}"></label>
+                            </td>
+                            <!-- 단품품절알림여부 -->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.saleInfo.label.itmSoutNotiYn')}"></strong></td>
+                            <td>
+                                <label class="radio-inline"><input type="radio" name="itmSoutNotiYn" value="Y" checked="checked" th:text="${#messages.msg('adminCommon.use')}"></label>
+                                <label class="radio-inline"><input type="radio" name="itmSoutNotiYn" value="N" th:text="${#messages.msg('adminCommon.disuse')}"></label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <!-- 구매수량제한여부 -->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.saleInfo.label.buyQtyLmtYn')}"></strong></td>
+                            <td>
+                                <label class="radio-inline"><input type="radio" name="buyQtyLmtYn" value="Y" checked="checked" th:text="${#messages.msg('adminCommon.use')}"></label>
+                                <label class="radio-inline"><input type="radio" name="buyQtyLmtYn" value="N" th:text="${#messages.msg('adminCommon.disuse')}"></label>
+                            </td>
+                            <!-- 최소/최대구매수량 -->
+                            <td class="label" th:text="${#messages.msg('generalGoods.saleInfo.label.minMaxLmtQty')}"></td>
+                            <td>
+                                <div class="input-group">
+                                    <em>최소수량</em>
+                                    <input type="text" name="minLmtQty" id="minLmtQty" class="input w15 price" numberOnly>
+                                    <em>개</em>
+                                    <em>최대수량</em>
+                                    <input type="text" name="maxLmtQty" id="maxLmtQty" class="input w15 price" numberOnly>
+                                    <em>개</em>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <!-- 옵션여부 -->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.saleInfo.label.optnYn')}"></strong></td>
+                            <td colspan="3">
+                                <label class="radio-inline"><input type="radio" name="optnYn" value="Y" >옵션있음</label>
+                                <label class="radio-inline"><input type="radio" name="optnYn" value="N" checked="checked">옵션없음</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <!-- 옵션등록 -->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.saleInfo.label.addOption')}"></strong></td>
+                            <td colspan="3">
+                                <div class="grid">
+                                    <div class="grid-body with-head">
+                                        <!-- 옵션 등록 테이블-->
+                                        <table class="data-table fixed" id="optionTable">
+                                            <colgroup>
+                                                <col width="30px">
+                                                <col width="20%">
+                                                <col width="80%">
+                                            </colgroup>
+                                            <tbody>
+                                                <tr>
+                                                    <td colspan="3" class="label bo-top">
+                                                        <div class="fl-left">
+                                                            <div class="button-group">
+                                                                <a href="#" class="button inside disabled" id="btn_add_option"><span class="text" th:text="${#messages.msg('adminCommon.grid.button.add.row')}"></span></a>
+                                                                <a href="#" class="button inside disabled" id="btn_remove_options"><span class="text" th:text="${#messages.msg('adminCommon.grid.button.delete.row')}"></span></a>
+                                                                <a href="#" class="button inside disabled" id="btn_create_items"><span class="text" th:text="${#messages.msg('generalGoods.saleInfo.btn.createItem')}"></span></a>
+                                                            </div>
+                                                            <a href="#" data-bs-toggle="tooltip" title="Some tooltip text!"></a>
+                                                            <div class="tooltip">
+                                                                <a href="#" class="trigger">설명</a>
+                                                                <div class="cont" style="width: 475px;">
+                                                                    <p class="text">설정된 판매옵션만 등록 가능합니다. 선택형판매옵션은 최소 1개가 선택되어야 합니다.</p>
+                                                                    <a href="#" class="close">닫기</a>
+                                                                </div>
+                                                            </div>                         
+                                                        </div>
+                                                        <div class="fl-right">
+                                                            <span class="total">총 <em id="optionCnt">0</em>건</span>
+                                                        </div>
+                                                        
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="label">
+                                                        <input type="checkbox" id="btn_check_all_option">
+                                                    </td>
+                                                    <td class="label" th:text="${#messages.msg('generalGoods.saleInfo.optionGrid.field.optnCatNm')}"></td>
+                                                    <td class="label" th:text="${#messages.msg('generalGoods.saleInfo.optionGrid.field.optnNm')}"></td>
+                                                </tr>
+                                                <!-- 옵션 등록 템플릿-->
+                                                <tr type="option_tmpl" style="display:none;">
+                                                    <td class="inpd"><input type="checkbox" name="btn_check_option"></td>
+                                                    <td>
+                                                        <select class="form-control w80" name="optionClassCode">
+                                                            <option value="" th:text="${#messages.msg('adminCommon.select')}"></option>
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                        <div class="checkbox" name="optionCodeList"></div>
+                                                    </td>
+                                                </tr>
+                                                <!--// 옵션 등록 템플릿-->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <!-- 단품등록 -->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.saleInfo.label.addItem')}"></strong></td>
+                            <td colspan="3">
+                                <div class="grid" id="itemGrid">
+                                    <div class="grid-head">
+                                        <div class="option-area">
+                                            <div class="edit-option w80">
+                                                <div class="button-group">
+                                                    <a href="#" class="button inside disabled" id="btn_remove_items"><span class="text" th:text="${#messages.msg('adminCommon.grid.button.delete.row')}"></span></a>
+                                                    <a href="#" class="button inside disabled" id="btn_reset_items"><span class="text" th:text="${#messages.msg('adminCommon.grid.button.cancel')}"></span></a>
+                                                </div>
+                                                <div class="input-group ml10 w40">
+                                                    <select class="form-control w30" id="batchModType">
+                                                        <option value="" th:text="${#messages.msg('adminCommon.select')}"></option>
+                                                        <option value="01">재고수량</option>
+                                                        <option value="02">품절알림기준수량</option>
+                                                    </select>
+                                                    <input type="text" id="batchModQty" class="input w20" numberOnly>
+                                                    <a href="#" class="button inside disabled" id="btn_mod_items"><span class="text" th:text="${#messages.msg('adminCommon.button.modify.many')}"></span></a>
+                                                </div>
+                                            </div>
+                                            <div class="page-option" grid-id="itemListGrid">
+                                                <span class="total">총 <em id="itemListGridCnt">0</em>건</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="grid-body with-head">
+                                        <div id="itemListGrid" class="rg-root rg-grid" realgrid></div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </div>
+    </th:block>
+    <th:block layout:fragment="goods-detail-saleInfo">
+        <div class="data">
+            <div class="data-head">
+                <div class="left">
+                    <span class="title" th:text="${#messages.msg('generalGoods.saleInfo.title')}"></span>
+                </div>
+                <div class="right">
+                  <span class="data-toggle">
+                    <button type="button" class="toggle-button"><span>닫힘</span></button>
+                  </span>
+                </div>
+            </div>
+            <div class="data-body">
+                <form id="saleInfo" name="saleInfo">
+                    <table class="data-table fixed">
+                        <colgroup>
+                            <col width="130">
+                            <col>
+                            <col width="130">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                        <tr>
+                            <!-- 재고관리여부 -->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.saleInfo.label.stkMgrYn')}"></strong></td>
+                            <td>
+                                <label class="radio-inline"><input type="radio" name="stkMgrYn" value="Y" checked="checked" th:text="${#messages.msg('adminCommon.management.y')}"></label>
+                                <label class="radio-inline"><input type="radio" name="stkMgrYn" value="N" th:text="${#messages.msg('adminCommon.management.n')}"></label>
+                            </td>
+                            <!-- 단품품절알림여부 -->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.saleInfo.label.itmSoutNotiYn')}"></strong></td>
+                            <td>
+                                <label class="radio-inline"><input type="radio" name="itmSoutNotiYn" value="Y" checked="checked" th:text="${#messages.msg('adminCommon.use')}"></label>
+                                <label class="radio-inline"><input type="radio" name="itmSoutNotiYn" value="N" th:text="${#messages.msg('adminCommon.disuse')}"></label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <!-- 구매수량제한여부 -->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.saleInfo.label.buyQtyLmtYn')}"></strong></td>
+                            <td>
+                                <label class="radio-inline"><input type="radio" name="buyQtyLmtYn" value="Y" checked="checked" th:text="${#messages.msg('adminCommon.use')}"></label>
+                                <label class="radio-inline"><input type="radio" name="buyQtyLmtYn" value="N" th:text="${#messages.msg('adminCommon.disuse')}"></label>
+                            </td>
+                            <!-- 최소/최대구매수량 -->
+                            <td class="label" th:text="${#messages.msg('generalGoods.saleInfo.label.minMaxLmtQty')}"></td>
+                            <td>
+                                <div class="input-group">
+                                    <em>최소수량</em>
+                                    <input type="text" name="minLmtQty" id="minLmtQty" class="input w20" numberOnly>
+                                    <em>개</em>
+                                    <em>최대수량</em>
+                                    <input type="text" name="maxLmtQty" id="maxLmtQty" class="input w20" numberOnly>
+                                    <em>개</em>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <!-- 단품등록 -->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.saleInfo.label.addItem')}"></strong></td>
+                            <td colspan="3">
+                                <div class="grid" id="itemGrid">
+                                    <div class="grid-head">
+                                        <div class="option-area">
+                                            <div class="edit-option w80">
+                                                <div class="button-group">
+                                                    <a href="#" class="button inside" id="btn_reset_items"><span class="text" th:text="${#messages.msg('adminCommon.grid.button.cancel')}"></span></a>
+                                                </div>
+                                                <div class="input-group ml10 w40">
+                                                    <select class="form-control w30" id="batchModType">
+                                                        <option value="" th:text="${#messages.msg('adminCommon.select')}"></option>
+                                                        <option value="01">재고수량</option>
+                                                        <option value="02">품절알림기준수량</option>
+                                                    </select>
+                                                    <input type="text" id="batchModQty" class="input w20" numberOnly>
+                                                    <a href="#" class="button inside" id="btn_mod_items"><span class="text" th:text="${#messages.msg('adminCommon.button.modify.many')}"></span></a>
+                                                </div>
+                                            </div>
+                                            <div class="page-option" grid-id="detailItemListGrid">
+                                                <span class="total">총 <em id="detailItemListGridCnt">0</em>건</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="grid-body with-head">
+                                        <div id="detailItemListGrid" class="rg-root rg-grid" realgrid></div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </div>
+    </th:block>
+</body>
+</html>

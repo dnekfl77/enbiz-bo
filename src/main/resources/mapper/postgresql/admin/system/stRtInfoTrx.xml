@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.system.StRtInfoTrxMapper">
+
+    <delete id="deleteStRtInfo" parameterType="stRtInfo">
+        DELETE /* StRtInfoTrx.deleteStRtInfo */
+        FROM ST_RT_INFO
+        WHERE RT_GRP_NO = #{rtGrpNo}
+        AND RT_TGT_SEQ = #{rtTgtSeq}
+    </delete>
+
+	<insert id="saveStRtInfo"  parameterType="stRtInfo">
+		INSERT INTO ST_RT_INFO(  /* StRtInfoTrx.saveStRtInfo */
+				RT_GRP_NO,
+				RT_TGT_SEQ,
+				RT_SUB_GB_CD,
+				USE_YN,
+				SYS_REG_ID,
+				SYS_REG_DTM,
+				SYS_MOD_ID,
+				SYS_MOD_DTM
+			) VALUES (
+				#{rtGrpNo},
+				#{rtTgtSeq},
+				#{rtSubGbCd},
+				#{useYn},
+				#{sysRegId},
+				now(),
+				#{sysModId},
+				now()
+			)
+		ON CONFLICT (RT_GRP_NO,RT_TGT_SEQ) DO UPDATE
+		SET
+		RT_GRP_NO = excluded.RT_GRP_NO,
+		RT_TGT_SEQ = excluded.RT_TGT_SEQ,
+		RT_SUB_GB_CD = excluded.RT_SUB_GB_CD,
+		USE_YN = excluded.USE_YN,
+		SYS_MOD_ID = excluded.SYS_MOD_ID,
+		SYS_MOD_DTM = now();
+    </insert>
+
+</mapper>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enbiz.bo.app.repository.goods.PrGoodsQaAnsInfoMapper">
+
+    <select id="getGoodsQAAnsList" parameterType="java.lang.String" resultType="PrGoodsQaAnsInfo">
+        SELECT QUEST_NO /* prGoodsQaAnsInfo.getGoodsQAAnsList */
+             , ANS_SEQ
+             , ANS_CONT
+             , ANS_DISP_STAT_CD
+             , TO_CHAR(ANS_DISP_PROC_DTM,'YYYY-MM-DD HH24:MI:SS') AS ANS_DISP_PROC_DTM
+             , ANS_DISP_PROCMN_ID
+             , SYS_REG_ID
+             , TO_CHAR(SYS_REG_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_REG_DTM
+             , SYS_MOD_ID
+             , TO_CHAR(SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+          FROM PR_GOODS_QA_ANS_INFO
+         WHERE QUEST_NO = #{questNo}
+         ORDER BY ANS_SEQ
+    </select>
+
+</mapper>

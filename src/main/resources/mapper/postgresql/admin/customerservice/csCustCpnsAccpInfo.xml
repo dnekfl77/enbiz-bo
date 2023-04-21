@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.customerservice.CsCustCpnsAccpInfoMapper">
+
+    <sql id="paginatedBase">
+        LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+    </sql>
+
+    <select id="getCpnsPayYn" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT /* CsCustomerCompensAcceptInfo.getCpnsPayYn */
+               CASE WHEN COUNT(*) > 0 THEN 'N'
+                                      ELSE 'Y' END
+          FROM CS_CUST_CPNS_ACCP_INFO
+         WHERE CPNS_PAY_STAT_CD NOT IN ('50')
+           AND CCN_NO = #{ccnNo}
+    </select>
+
+    <sql id="customerCustomerCompens">
+        <![CDATA[
+        SELECT /* CsCustomerCompensAcceptInfo.customerCpManagement */
+               CCCAI.CUST_CPNS_APLY_NO   /*보상번호*/
+             , TO_CHAR(CCCAI.ACCP_DTM,'YYYY-MM-DD HH24:MI:SS') AS ACCP_DTM  /*접수일시*/
+             , CCCAI.CPNS_APRV_STAT_CD AS CPNS_APRV_STAT_CD   /*승인상태*/
+             , FN_GET_CODENAME('CS021',CCCAI.CPNS_APRV_STAT_CD) AS CPNS_APRV_STAT_NM   /*승인상태*/
+             , CCCAI.CPNS_PAY_STAT_CD
+             , FN_GET_CODENAME('CS022',CCCAI.CPNS_PAY_STAT_CD) AS CPNS_PAY_STAT_NM    /*지급상태*/
+             , CCTC.CPNS_TYP_NO         /*보상유형*/
+             , CCTC.CPNS_TYP_NM         /*보상유형명*/
+             , FN_GET_CODENAME('CS019',CCCAI.CPNS_MEAN_CD) AS CPNS_MEAN_CD       /*보상수단*/
+             , FN_GET_CODENAME('CS020',CCCAI.RSPN_GB_CD) AS RSPN_GB_CD         /*귀책구분*/
+             , CCCAI.CPNS_AMT           /*보상금액*/
+             , CCTC.MAX_PAY_LIM         /*최대지급한도*/
+             , CASE WHEN CCCAI.CPNS_AMT <= CCTC.MAX_PAY_LIM THEN 'N' /*기존금액초과여부*/
+                    ELSE 'Y' END AS OVER_AMT
+             , CCCAI.ORD_NO
+             , CCCAI.GOODS_NO
+             , PGB.GOODS_NM
+             , OOD.ITM_NM
+             , EMB.LOGIN_ID
+             , EMB.MBR_NM
+             , EEB.ENTR_NM
+             , CCCAI.ACPTMN_ID
+             , TO_CHAR(CCCAI.APRV_DTM,'YYYY-MM-DD HH24:MI:SS') AS APRV_DTM
+             , CCCAI.APRMN_ID
+             , TO_CHAR(CCCAI.RETN_DTM,'YYYY-MM-DD HH24:MI:SS') AS RETN_DTM
+             , CCCAI.RETN_PROCMN_ID
+             , TO_CHAR(CCCAI.PAY_DTM,'YYYY-MM-DD HH24:MI:SS') AS PAY_DTM
+          FROM CS_CPNS_TYP_CD CCTC
+             , CS_CUST_CPNS_ACCP_INFO CCCAI
+          LEFT OUTER JOIN PR_GOODS_BASE PGB
+                       ON CCCAI.GOODS_NO = PGB.GOODS_NO
+          LEFT OUTER JOIN OP_ORD_DTL OOD
+                       ON (     CCCAI.ORD_NO = OOD.ORD_NO
+                            AND CCCAI.GOODS_NO = OOD.GOODS_NO
+                       )
+             , ET_MBR_BASE EMB
+             , ET_ENTR_BASE EEB
+         WHERE CCTC.CPNS_TYP_NO = CCCAI.CPNS_TYP_NO
+           AND CCCAI.MBR_NO = EMB.MBR_NO
+           AND PGB.ENTR_NO = EEB.ENTR_NO
+        ]]>
+        <if test='periodType != null and periodType eq "0"'>
+           AND CCCAI.ACCP_DTM <![CDATA[ >= ]]> TO_TIMESTAMP(#{startDate}||'000000', 'YYYYMMDDHH24MISS')
+           AND CCCAI.ACCP_DTM <![CDATA[ <= ]]> TO_TIMESTAMP(#{endDate}||'235959', 'YYYYMMDDHH24MISS')
+        </if>
+        <if test='periodType != null and periodType eq "1"'>
+           AND CCCAI.APRV_DTM <![CDATA[ >= ]]> TO_TIMESTAMP(#{startDate}||'000000', 'YYYYMMDDHH24MISS')
+           AND CCCAI.APRV_DTM <![CDATA[ <= ]]> TO_TIMESTAMP(#{endDate}||'235959', 'YYYYMMDDHH24MISS')
+        </if>
+        <if test='periodType != null and periodType eq "2"'>
+           AND CCCAI.PAY_DTM <![CDATA[ >= ]]> TO_TIMESTAMP(#{startDate}||'000000', 'YYYYMMDDHH24MISS')
+           AND CCCAI.PAY_DTM <![CDATA[ <= ]]> TO_TIMESTAMP(#{endDate}||'235959', 'YYYYMMDDHH24MISS')
+        </if>
+        <if test='mbrType != null and mbrType eq "1"'>
+           AND EMB.LOGIN_ID LIKE #{loginId} || '%'
+        </if>
+        <if test='mbrType != null and mbrType eq "2"'>
+           AND EMB.MBR_NM LIKE #{mbrNm} || '%'
+        </if>
+        <if test='userType != null and userType eq "1"'>
+           AND CCCAI.ACPTMN_ID LIKE #{userId} || '%'
+        </if>
+        <if test='userType != null and userType eq "2"'>
+           AND CCCAI.APRMN_ID LIKE #{userId} || '%'
+        </if>
+        <if test='userType != null and userType eq "3"'>
+           AND CCCAI.RETN_PROCMN_ID LIKE #{userId} || '%'
+        </if>
+           AND CCCAI.RSPN_GB_CD LIKE #{rspnGbCd} || '%'
+           AND CCCAI.CPNS_TYP_NO LIKE #{cpnsTypNo} || '%'
+           AND CCCAI.CPNS_MEAN_CD LIKE #{cpnsMeanCd} || '%'
+           AND CCCAI.CPNS_APRV_STAT_CD LIKE #{cpnsAprvStatCd} || '%'
+           AND CCCAI.CPNS_PAY_STAT_CD LIKE #{cpnsPayStatCd} || '%'
+         ORDER BY CCCAI.ACCP_DTM DESC , CCCAI.CUST_CPNS_APLY_NO DESC
+    </sql>
+
+    <select id="getCustomerCompensList" parameterType="CsCustomerCompensRequest" resultType="CsCustomerCompensResponse">
+        <include refid="customerCustomerCompens" />
+        <include refid="paginatedBase" />
+    </select>
+
+    <select id="getCustomerCompensListCount" parameterType="CsCustomerCompensRequest" resultType="java.lang.Integer">
+        SELECT /* CsCustomerCompensAcceptInfo.getCustomerCompensListCount */
+               COUNT(*)
+          FROM (
+            <include refid="customerCustomerCompens" />
+         ) v
+    </select>
+
+    <select id="getCustomerCompensInfo" parameterType="map" resultType="CsCustomerCompensAcceptInfo">
+        SELECT /* CsCustomerCompensAcceptInfo.getCustomerCompensInfo */
+               CUST_CPNS_APLY_NO   /*보상번호*/
+             , CPNS_TYP_NO
+             , CPNS_MEAN_CD
+             , RSPN_GB_CD
+             , CPNS_APRV_STAT_CD
+             , CPNS_PAY_STAT_CD
+             , MBR_NO
+             , ACCP_CONT
+             , PAY_REQ_MEMO
+             , CPNS_AMT
+             , PAY_BANK_CD
+             , PAY_ACTN_NO
+             , PAY_DEPOSITOR_NM
+          FROM CS_CUST_CPNS_ACCP_INFO
+         WHERE CUST_CPNS_APLY_NO IN
+         <foreach collection="array" item="arr" open="(" close=")" separator=",">
+               #{arr}
+         </foreach>
+
+    </select>
+
+    <select id="getCustomerCompensDetail" parameterType="java.lang.String" resultType="CsCompensDetailResponse">
+        SELECT /*CsCustomerCompensAcceptInfo.getCustomerCompensDetail*/
+               CCCAI.CUST_CPNS_APLY_NO
+             , EMB.MBR_NM
+             , EMB.MBR_NO
+             , EMB.LOGIN_ID
+             , CCCAI.CCN_NO
+             , CCCAI.ORD_NO
+             , CCCAI.GOODS_NO
+             , PGB.GOODS_NM
+             , CCCAI.CPNS_MEAN_CD
+             , CCCTC.CPNS_TYP_NM
+             , CCCAI.RSPN_GB_CD
+             , CCCTC.CPNS_TYP_NM || '/' || FN_GET_CODENAME('CS018',CCCTC.CPNS_STD_CD) || '/' ||CCCTC.CPNS_STD_RATE AS STANDARD
+             , CCCTC.MAX_PAY_LIM
+             , CCCAI.CPNS_AMT
+             , CCCAI.PAY_BANK_CD
+             , CCCAI.PAY_DEPOSITOR_NM
+             , CCCAI.PAY_ACTN_NO
+             , CCCAI.CPNS_APRV_STAT_CD
+             , FN_GET_CODENAME('CS021',CCCAI.CPNS_APRV_STAT_CD) AS CPNS_APRV_STAT_NM
+             , CCCAI.CPNS_PAY_STAT_CD
+             , FN_GET_CODENAME('CS022',CCCAI.CPNS_PAY_STAT_CD) AS CPNS_PAY_STAT_NM
+             , CCCAI.ACCP_CONT
+             , CCCAI.PAY_REQ_MEMO
+             , CCCAI.ACPTMN_ID
+          FROM CS_CPNS_TYP_CD CCCTC
+             , CS_CUST_CPNS_ACCP_INFO CCCAI
+          LEFT OUTER JOIN PR_GOODS_BASE PGB
+                       ON CCCAI.GOODS_NO = PGB.GOODS_NO
+             , ET_MBR_BASE EMB
+         WHERE CCCTC.CPNS_TYP_NO = CCCAI.CPNS_TYP_NO
+           AND CCCAI.MBR_NO = EMB.MBR_NO
+           AND CCCAI.CUST_CPNS_APLY_NO = #{custCpnsAplyNo}
+    </select>
+
+    <sql id="customerCpPayBase">
+        <![CDATA[
+        SELECT /* CsCustomerCompensAcceptInfo.customerCpPayManagementList */
+               CCCAI.CUST_CPNS_APLY_NO
+             , TO_CHAR(CCCAI.ACCP_DTM,'YYYY-MM-DD HH24:MI:SS') AS ACCP_DTM
+             , TO_CHAR(CCCAI.PAY_DTM,'YYYY-MM-DD HH24:MI:SS') AS PAY_DTM
+             , FN_GET_CODENAME('CS019',CCCAI.CPNS_MEAN_CD ) AS CPNS_MEAN_CD
+             , CCTC.CPNS_TYP_NO
+             , (SELECT T.CPNS_TYP_NM || ' / ' || CCTC.CPNS_TYP_NM FROM CS_CPNS_TYP_CD T WHERE T.CPNS_TYP_NO = CCTC.UPR_CPNS_TYP_CD) AS CPNS_TYP_NM
+             , CCCAI.CPNS_AMT
+             , EMB.LOGIN_ID
+             , EMB.MBR_NM
+             , CCCAI.ORD_NO
+             , CCCAI.GOODS_NO
+          FROM CS_CUST_CPNS_ACCP_INFO CCCAI
+             , CS_CPNS_TYP_CD CCTC
+             , ET_MBR_BASE EMB
+         WHERE CCCAI.CPNS_TYP_NO = CCTC.CPNS_TYP_NO
+           AND CCCAI.MBR_NO = EMB.MBR_NO
+        ]]>
+        <if test='periodType != null and periodType eq "0"'>
+           AND CCCAI.PAY_DTM <![CDATA[ >= ]]> TO_TIMESTAMP(#{startDate}||'000000', 'YYYYMMDDHH24MISS')
+           AND CCCAI.PAY_DTM <![CDATA[ <= ]]> TO_TIMESTAMP(#{endDate}||'235959', 'YYYYMMDDHH24MISS')
+        </if>
+        <if test='periodType != null and periodType eq "1"'>
+           AND CCCAI.ACCP_DTM <![CDATA[ >= ]]> TO_TIMESTAMP(#{startDate}||'000000', 'YYYYMMDDHH24MISS')
+           AND CCCAI.ACCP_DTM <![CDATA[ <= ]]> TO_TIMESTAMP(#{endDate}||'235959', 'YYYYMMDDHH24MISS')
+        </if>
+        <if test='mbrType != null and mbrType eq "1"'>
+           AND EMB.LOGIN_ID LIKE #{loginId} || '%'
+        </if>
+        <if test='mbrType != null and mbrType eq "2"'>
+           AND EMB.MBR_NM LIKE #{mbrNm} || '%'
+        </if>
+        <if test='userType != null and userType eq "1"'>
+           AND CCCAI.ACPTMN_ID LIKE #{userId} || '%'
+        </if>
+        <if test='userType != null and userType eq "2"'>
+           AND CCCAI.PAYMN_ID LIKE #{userId} || '%'
+        </if>
+           AND CCCAI.CPNS_TYP_NO LIKE #{cpnsTypNo} || '%'
+           AND CCCAI.CPNS_MEAN_CD LIKE #{cpnsMeanCd} || '%'
+         ORDER BY CCCAI.ACCP_DTM DESC
+    </sql>
+
+    <select id="customerCpPayManagementList" parameterType="CsCpPayRequest" resultType="CsCustomerCompensResponse">
+        <include refid="customerCpPayBase" />
+        <include refid="paginatedBase" />
+    </select>
+
+    <select id="customerCpPayManagementListCount" parameterType="CsCpPayRequest" resultType="java.lang.Integer">
+        SELECT /* CsCustomerCompensAcceptInfo.customerCpPayManagementListCount */
+               COUNT(*)
+          FROM (
+             <include refid="customerCpPayBase" />
+          ) v
+    </select>
+</mapper>

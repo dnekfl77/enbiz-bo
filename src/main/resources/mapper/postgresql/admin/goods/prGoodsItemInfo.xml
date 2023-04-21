@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enbiz.bo.app.repository.goods.PrGoodsItemInfoMapper">
+    <select id="getGoodsItemList" parameterType="java.lang.String" resultType="PrGoodsItemInfo">
+        SELECT GOODS_NO /* prGoodsItemInfo.getGoodsItemList */
+             , GOODS_NOTI_LISART_CD
+             , GOODS_NOTI_ITEM_CD
+             , NOTI_ITEM_CMT
+             , SYS_REG_ID
+             , TO_CHAR(SYS_REG_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_REG_DTM
+             , SYS_MOD_ID
+             , TO_CHAR(SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+          FROM PR_GOODS_ITEM_INFO
+         WHERE GOODS_NO = #{goodsNo}
+    </select>
+</mapper>

@@ -1,0 +1,74 @@
+<!--
+* 프로그램명 : 메뉴 조회
+* 작 성 일 : 2021.02.25
+* 작 성 자 : 윤성원
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 메뉴 조회 팝업
+* 이    력 :
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-layout}">
+<body>
+
+<!--Title Area-->
+<th:block layout:fragment="popup-title-area">
+    <th:block layout:insert="~{fragments/popup/popup-title :: popup-title}"
+              th:with="title=${#messages.msg('baseInfoMgmt.label.popup.menuList.title')}"></th:block>
+</th:block>
+<!--Title Area-->
+
+<!--Search Area-->
+<!--Search Area-->
+
+<!--Search Button Area-->
+<!--Search Button Area-->
+
+<!--List Area-->
+<th:block layout:fragment="popup-List-area">
+        <div class="grid">
+            <div class="grid-head"  style="overflow: hidden;">
+                <div class="title-area">
+                    <h2 class="title" th:text="${#messages.msg('baseInfoMgmt.label.popup.menuList.list')}"></h2>
+                </div>
+                <div class="option-area">
+                    <div class="page-option" grid-id="menuGrid">
+                        <span class='total'>총 <span id='menuGrid-totalcount'>0</span>건</span>
+                    </div>
+                </div>
+            </div>
+            <div class="grid-body with-head">
+                <div id="menuGrid" class="rg-root rg-grid" realgrid></div>
+            </div>
+        </div>
+</th:block>
+<!--List Area-->
+
+<!--List Button Area-->
+<th:block layout:fragment="popup-List-button-area">
+    <th:block layout:insert="~{fragments/popup/popup-btn :: popup-List-btn}"/>
+</th:block>
+
+
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+          var _menuList = [(${menuList})];
+          var _gridType = 'N';
+          var _sysGbCd  = [[${requestData.sysGbCd}]];
+        /*]]>*/
+    </script>
+
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'popup/popup.menuList.menuGrid.eventHandler.js?202103050000'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'popup/popup.menuList.menuGrid.provider.js?202103050000'" ></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            menuGrid.eventhandler.init();
+        });
+    </script>
+</th:block>
+</body>
+</html>

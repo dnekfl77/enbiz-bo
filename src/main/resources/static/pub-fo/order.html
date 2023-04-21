@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="ko">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="theme-color" content="#ff384b">
+	<meta name="viewport" content="user-scalable=no,viewport-fit=auto,initial-scale=1,minimum-scale=1,maximum-scale=1,width=device-width,target-densitydpi=device-dpi">
+	<title></title>	
+	<link rel="stylesheet" type="text/css" href="css/common.css">
+	<link rel="stylesheet" type="text/css" href="css/contents.css">
+	<script type="text/javascript" src="js/jquery-3.4.1.min.js"></script>
+	<script type="text/javascript" src="js/swiper.min.js"></script>
+	<script type="text/javascript" src="js/common.js"></script>
+</head>
+<body>
+<div id="wrapper">
+	<header id="header" class="sub">
+		<div class="gnb"><img src="img/@header_order.jpg" alt="구매하기"></div>
+		</div>
+	</header>
+
+	<section id="container">
+		<div class="order-wrap">
+			<div class="order-box address">
+				<div class="head-area">
+					<p class="title type2">김지원님 (집)</p>
+					<div class="head-cont">
+						<button class="btn small c3">배송지 변경</button>
+					</div>
+				</div>
+				<div class="cont-area">
+					<p class="info1">서울특별시 송파구 문정동 377-1 잠실 파크리오오피스텔 11
+						04동 1303호</p>
+					<div class="flex-both ">
+						<p class="info2">010-5634-3937</p>
+						<label class="chk"><input type="checkbox" checked="checked"><span>안심번호 사용하기</span></label>
+					</div>
+					<div class="selector-form mt20">
+						<label for="select">배송메모 선택</label>
+						<select id="select">
+							<option value="" disabled="" selected="" hidden="">배송메모 선택</option>
+							<option value="1">직접 수령하겠습니다.</option>
+							<option value="2">문앞</option>
+						</select>
+					</div>
+				</div>
+			</div>
+			<!-- //주소 -->
+
+			<div class="order-box goods">
+				<div class="head-area">
+					<p class="title">주문상품</p>
+				</div>
+				<div class="cont-area">
+					<ul>
+						<li>
+							<a href="javascript:;">
+								<span class="thumb"><img src="./img/@unit_s.jpg" /></span>
+								<div class="info">
+									<p class="tit">[닥터플티 X 오조플래닛] 주간플티시즌2 다이어트  스튜 나이스튜밋튜 나이스튜밋튜 밀키트</p>
+									<div class="etc">
+										<span class="quantity">구매수량 <em>1</em>개</span>
+										<span class="delivery">/ 무료배송</span>
+									</div>
+									<p class="total"><em>14,800</em>원</p>
+								</div>
+							</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<!-- //주문상품 -->
+
+			<div class="order-box discount">
+				<div class="head-area">
+					<p class="title">할인정보</p>
+					<div class="head-cont">
+						<p class="price"><em>-2,445</em>원</p>
+					</div>
+				</div>
+				<div class="cont-area">
+					<ul class="use-list">
+						<li>
+							<span class="info">쿠폰 할인</span>
+							<span class="price"><em>-1,000</em>원</span>
+						</li>
+						<li>
+							<span class="info">카드 할인</span>
+							<span class="price"><em>-1,000</em>원</span>
+						</li>
+					</ul>
+					<div class="button-area right">
+						<button type="button" class="btn small c3">쿠폰변경</button>
+					</div>				
+				</div>
+			</div>
+			<!-- //할인정보 -->
+
+			<div class="order-box benefit">
+				<div class="head-area">
+					<p class="title">포인트 / 적립금</p>
+				</div>
+				<div class="cont-area">
+					<ul class="use-list">
+						<li>
+							<span class="item">적립금</span>
+							<span class="price right"><em>1,000</em>원 보유</span>
+							<div class="use-point">
+								<div class="form-group">
+									<input type="text" class="right text" />
+									<button type="button" class="btn c4">전액사용</button>
+								</div>
+								<label class="chk"><input type="checkbox"><span>항상전액사용</span></label>
+							</div>
+						</li>
+						<li>
+							<span class="item">예치금</span>
+							<span class="price right"><em>1,000</em>원 보유</span>
+							<div class="use-point">
+								<div class="form-group">
+									<input type="text" class="right text" />
+									<button type="button" class="btn c4">전액사용</button>
+								</div>
+								<label class="chk"><input type="checkbox"><span>항상전액사용</span></label>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<!-- //포인트 적립금 -->
+
+			<div class="order-box payment">
+				<div class="head-area">
+					<p class="title">결제수단</p>
+				</div>
+				<div class="cont-area">
+					<img src="./img/@payment.jpg" alt="결제수단" />
+				</div>
+			</div>
+			<!-- //결제수단 -->
+
+			<div class="order-box total">
+				<div class="head-area">
+					<p class="title type3">최종결제금액</p>
+					<div class="head-cont">
+						<p class="total"><em>-2,445</em>원</p>
+					</div>
+				</div>
+				<div class="cont-area">
+					<ul class="confirm-list">
+						<li>
+							<span class="item">상품금액</span>
+							<span class="num"><em>19,800</em> 원</span>
+						</li>
+						<li>
+							<span class="item">할인금액</span>
+							<span class="price"><em>-4,000</em> 원</span>
+						</li>
+						<li class="discount">
+							<ul class="use-list">
+								<li>
+									<span class="info">즉시 / 쿠폰 할인</span>
+									<span class="num"><em>-1,000</em>원</span>
+								</li>
+								<li>
+									<span class="info">적립금 / 예치금 할인</span>
+									<span class="num"><em>-1,000</em>원</span>
+								</li>
+							</ul>
+						</li>
+						<li>
+							<span class="item">총 배송비</span>
+							<span>무료배송</span>
+						</li>
+					</ul>
+					<p class="right mt10"><a href="" class="link-text">배송비 상세보기</a></p>
+				</div>
+				<div class="cont-area">
+					<ul class="confirm-list">
+						<li>
+							<span class="info">현금영수증</span>
+							<span>신청안함</span>
+						</li>
+					</ul>
+				</div>
+				<div class="cont-area">
+					<div class="check-group col">
+						<label class="chk"><input type="checkbox" checked><span>신청안함</span></label>
+						<label class="chk"><input type="checkbox"><span>개인소득공제용
+						</span></label>
+						<label class="chk"><input type="checkbox"><span>사업자지출증빙용</span></label>
+					</div>
+				</div>
+			</div>
+			<!-- //최종결제금액 -->
+
+			<div class="order-box terms">
+				<div class="head-area">
+					<label class="chk"><input type="checkbox" checked><span>배송지와 결제 정보를 다음 주문에도 적용하기</span></label>
+					<label class="chk"><input type="checkbox"><span>주문 상품정보 및 결제대행 서비스 이용약관에 동의하기</span></label>
+				</div>
+				<div class="cont-area">
+					<p class="tit">주문 상품정보에 대한 동의 (전자상거래법 제8조 2항)</p>
+					<label class="chk"><input type="checkbox"><span>주문하실 상품, 가격, 배송정보, 할인내역 등을 최종 확인하였으며, 구매에 동의합니다.</span></label>
+					
+					<p class="tit mt20">결제대행 서비스 이용약관 동의</p>
+					<ul>
+						<li>
+							<label class="chk"><input type="checkbox"><span>전자금융거래 기본약관 동의</span></label>
+							<a href="" class="link-text">(약관보기)</a>
+						</li>
+						<li>
+							<label class="chk"><input type="checkbox"><span>개인정보 수집 및 이용동의</span></label>
+							<a href="" class="link-text">(약관보기)</a>
+						</li>
+						<li>
+							<label class="chk"><input type="checkbox"><span>개인정보 제공 및 위탁 동의</span></label>
+							<a href="" class="link-text">(약관보기)</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+
+		</div>
+		<div class="button-area full">
+			<button class="btn page c1">결제하기</button>
+		</div>
+	</section>
+
+	<footer id="footer">
+		<img src="img/@footer.jpg" alt="푸터">
+	</footer>
+	<nav id="action-bar">
+		<img src="img/@action_bar.jpg" alt="액션바">
+		<div class="js-top">
+      <a href="javascript:;" title="move to top" role="button">
+          <span class="blind">TOP</span>
+      </a>
+    </div>
+	</nav>
+</div>
+
+<script>
+</script>
+
+</body>
+</html>

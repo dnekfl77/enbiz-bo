@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.system.StUserFvtInfoTrxMapper">
+	<insert id="insertStUserFvtInfo"  parameterType="stUserFvtInfo">
+		INSERT INTO ST_USER_FVT_INFO( 			/* stUserFvtInfo.insertStUserFvtInfo */
+				  USER_ID
+				, RT_TGT_SEQ
+				, SORT_SEQ
+				, USE_YN
+				, SYS_REG_ID
+				, SYS_REG_DTM
+				, SYS_MOD_ID
+				, SYS_MOD_DTM
+		) VALUES (
+			  	  #{userId}
+				, #{rtTgtSeq}
+				, #{sortSeq}
+				, #{useYn}
+				, #{sysRegId}
+				, NOW()
+				, #{sysRegId}
+				, NOW()
+		)
+		ON CONFLICT (USER_ID, RT_TGT_SEQ)
+		DO UPDATE
+		SET
+			  SORT_SEQ = EXCLUDED.SORT_SEQ
+			, USE_YN = EXCLUDED.USE_YN
+			, SYS_MOD_ID = EXCLUDED.SYS_MOD_ID
+			, SYS_MOD_DTM = NOW()
+		WHERE EXISTS (
+			SELECT 1
+			FROM ST_RT_INFO
+			WHERE RT_TGT_SEQ = #{rtTgtSeq}
+			AND USE_YN ='Y'
+			AND RT_GRP_NO = (
+								SELECT RT_GRP_NO
+								FROM ST_USER_BASE
+								WHERE USER_ID = #{userId}
+							)
+			AND ST_USER_FVT_INFO.USER_ID = #{userId}
+			AND CASE WHEN RT_SUB_GB_CD = '01' THEN TRUE
+					 WHEN RT_SUB_GB_CD = '02' THEN TRUE
+					 ELSE FALSE
+				END
+		)
+	</insert>
+
+	<update id="updateStUserFvtInfo" parameterType="stUserFvtInfo">
+		UPDATE    ST_USER_FVT_INFO  /* stUserFvtInfo.updateStUserFvtInfo */
+		SET 	  SORT_SEQ = #{sortSeq}
+				, USE_YN = #{useYn}
+		WHERE 	  USER_ID = #{userId}
+		AND 	  RT_TGT_SEQ = #{rtTgtSeq}
+
+	</update>
+
+	<delete id="deleteStUserFvtInfo" parameterType="stUserFvtInfo">
+		DELETE 			/* stUserFvtInfo.deleteStUserFvtInfo */
+		FROM 	ST_USER_FVT_INFO
+		WHERE 	USER_ID = #{userId}
+		AND 	RT_TGT_SEQ = #{rtTgtSeq}
+	</delete>
+
+</mapper>
+
+

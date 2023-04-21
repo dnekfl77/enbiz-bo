@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.payment.OpClmDcGdBaseTrxMapper">
+
+	<insert id="insertOpClmDcGdBase" parameterType="opNintInstGdBase">
+		<selectKey keyProperty="clmDcGdNo" resultType="String" order="BEFORE">
+			SELECT NEXTVAL('OP_CLM_DC_GD_BASE_SQ01') AS clmDcGdNo
+		</selectKey>
+		INSERT INTO OP_CLM_DC_GD_BASE (  /* OpClmDcGdBase.insertOpClmDcGdBase */
+				  CLM_DC_GD_NO
+				, ACQR_CD
+				, APLY_STR_DTM
+				, APLY_END_DTM
+				, PAY_STD_AMT
+				, FIXAMT_FXRT_GB_CD
+				, DC_RATE_AMT
+				, MAX_DC_AMT
+				, SYS_REG_ID
+				, SYS_REG_DTM
+				, SYS_MOD_ID
+				, SYS_MOD_DTM
+		) VALUES (
+				  #{clmDcGdNo}
+				, #{acqrCd}
+				, TO_TIMESTAMP(#{aplyStrDtm}, 'YYYY-MM-DD HH24:MI:SS')
+				, TO_TIMESTAMP(#{aplyEndDtm}, 'YYYY-MM-DD HH24:MI:SS')
+				, #{payStdAmt}
+				, #{fixamtFxrtGbCd}
+				, #{dcRateAmt}
+				, #{maxDcAmt}
+				, #{sysRegId}
+				, now()
+				, #{sysRegId}
+				, now()
+		)
+	</insert>
+
+	<update id="updateOpClmDcGdBase" parameterType="opNintInstGdBase">
+		UPDATE 	  OP_CLM_DC_GD_BASE   /* OpClmDcGdBase.updateOpClmDcGdBase */
+		SET       ACQR_CD           	= #{acqrCd}
+				, APLY_STR_DTM      	= TO_TIMESTAMP(#{aplyStrDtm}, 'YYYY-MM-DD HH24:MI:SS')
+				, APLY_END_DTM      	= TO_TIMESTAMP(#{aplyEndDtm}, 'YYYY-MM-DD HH24:MI:SS')
+				, PAY_STD_AMT      		= #{payStdAmt}
+				, FIXAMT_FXRT_GB_CD     = #{fixamtFxrtGbCd}
+				, DC_RATE_AMT      		= #{dcRateAmt}
+				, MAX_DC_AMT      		= #{maxDcAmt}
+				, SYS_MOD_ID        	= #{sysRegId}
+				, SYS_MOD_DTM       	= now()
+		WHERE 	  CLM_DC_GD_NO   		= #{clmDcGdNo}
+	</update>
+
+	<delete id="deleteOpClmDcGdBase" parameterType="opNintInstGdBase">
+		DELETE FROM OP_CLM_DC_GD_BASE   /* OpClmDcGdBase.deleteOpClmDcGdBase */
+		WHERE CLM_DC_GD_NO   = #{clmDcGdNo}
+	</delete>
+
+
+</mapper>
+
+

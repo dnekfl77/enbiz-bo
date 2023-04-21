@@ -1,0 +1,221 @@
+<!--
+* 프로그램명 : 상품임시저장관리
+* 작 성 일 : 2021.03.15
+* 작 성 자 : 홍혜리
+* 수 정 자 : 홍혜리
+* 버    전 : 1.0
+* 개    요 : 상품관리 > 상품정보관리 > 상품임시저장관리
+* 이    력 : 2021.10.20 프레임워크 이전
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/page-realgrid-layout}">
+<body>
+<th:block layout:fragment="page-title-area">
+    <!-- title area -->
+    <div class="page-title">
+        <div class="left">
+            <h1 th:text="${#messages.msg('goodsTemporarySaveMgmt.title')}"></h1>
+        </div>
+    </div>
+    <!--// title area -->
+</th:block>
+<th:block layout:fragment="page-contents">
+    <!-- content area -->
+    <div class="page-fixed with-title">
+        <div class="search-cont">
+            <!-- search area -->
+            <div class="search">
+                <form id="goodsTemporarySaveListGridForm">
+                    <table class="search-table fixed">
+                        <colgroup>
+                            <col width="120">
+                            <col>
+                            <col width="120">
+                            <col>
+                            <col width="120">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                        <tr>
+                            <td class="label"><strong th:text="${#messages.msg('goodsTemporarySaveMgmt.search.label.goodsRegDtm')}"></strong></td>
+                            <td>
+                                <div class="picker-group" data-lopicker="basic" id="input-2-1">
+                                    <input type="text" class="form-control disabled" id="goodsRegStartDtm" name="goodsRegStartDtm" readonly>
+                                    <span class="input-group-addon">~</span>
+                                    <input type="text" class="form-control disabled" id="goodsRegEndDtm" name="goodsRegEndDtm" readonly>
+                                    <span class="input-group-addon" id="btn_call_calender"><i class="icon-calendar"></i></span>
+                                </div>
+                            </td>
+                            <td class="label" th:text="${#messages.msg('goodsTemporarySaveMgmt.search.label.pregStatCdNm')}">가등록상태코드</td>
+                            <td>
+                                <select class="form-control w40" id="pregStatCd" name="pregStatCd">
+                                    <option value="" th:text="${#messages.msg('adminCommon.entirety')}"></option>
+                                    <option th:each="list : ${codeList.PR024}" th:value="${list?.cd}" th:utext="${list?.cdNm}"></option>
+                                </select>
+                            </td>
+                            <td class="label" rowspan="3" th:text="${#messages.msg('goodsTemporarySaveMgmt.search.label.pregGoodsNo')}"></td>
+                            <td rowspan="3">
+                                <textarea class="textarea w100" rows="6" id="pregGoodsNoList" name="pregGoodsNoList"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label" th:text="${#messages.msg('goodsTemporarySaveMgmt.search.label.goodsCompCdNm')}">상품구성코드</td>
+                            <td>
+                                <select class="form-control w40" id="goodsCompCd" name="goodsCompCd">
+                                    <option value="" th:text="${#messages.msg('adminCommon.entirety')}"></option>
+                                    <option th:each="list : ${codeList.PR001}" th:value="${list?.cd}" th:utext="${list?.cdNm}"></option>
+                                </select>
+                            </td>
+                            <td class="label" th:text="${#messages.msg('goodsTemporarySaveMgmt.search.label.saleMethCdNm')}">판매방식코드</td>
+                            <td>
+                                <select class="form-control w40" id="saleMethCd" name="saleMethCd">
+                                    <option value="" th:text="${#messages.msg('adminCommon.entirety')}"></option>
+                                    <option th:each="list : ${codeList.PR003}" th:value="${list?.cd}" th:utext="${list?.cdNm}"></option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label" th:text="${#messages.msg('goodsTemporarySaveMgmt.search.label.goodsTypCdNm')}">상품유형코드</td>
+                            <td>
+                                <select class="form-control w40" id="goodsTypCd" name="goodsTypCd">
+                                    <option value="" th:text="${#messages.msg('adminCommon.entirety')}"></option>
+                                    <option th:each="list : ${codeList.PR002}" th:value="${list?.cd}" th:utext="${list?.cdNm}"></option>
+                                </select>
+                            </td>
+                            <td class="label" th:text="${#messages.msg('goodsTemporarySaveMgmt.search.label.buyTypCdNm')}">매입형태코드</td>
+                            <td>
+                                <select class="form-control w40" id="buyTypCd" name="buyTypCd">
+                                    <option value="" th:text="${#messages.msg('adminCommon.entirety')}"></option>
+                                    <option th:each="list : ${codeList.PR006}" th:value="${list?.cd}" th:utext="${list?.cdNm}"></option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label" th:text="${#messages.msg('goodsTemporarySaveMgmt.search.label.entrNoNm')}"></td>
+                            <td>
+                                <div class="input-group">
+                                    <input type="text" class="input disabled w20" id="entrNo" name="entrNo" readonly>
+                                    <input type="text" class="input disabled w40 mr5" id="entrNm" readonly>
+                                    <a href="javascript:;" class="button small" id="btn_call_entr_popup"><i class="icon-sarch"></i></a>
+                                    <a href="javascript:;" class="button small" id="btn_reset_entr_popup"><i class="icon-clear"></i></a>
+                                </div>
+                            </td>
+                            <td class="label" th:text="${#messages.msg('goodsTemporarySaveMgmt.search.label.sysRegId')}"></td>
+                            <td>
+                                <input type="text" class="input w40" id="goodsRegId" name="goodsRegId" maxlength="400">
+                            </td>
+                            <td class="label" th:text="${#messages.msg('goodsTemporarySaveMgmt.search.label.goodsNm')}"></td>
+                            <td>
+                                <input type="text" class="input w100" id="goodsNm" name="goodsNm" maxlength="30">
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+            <!--// search area -->
+
+            <!-- search button area -->
+            <div class="button-group search-btn">
+                <a href="#" class="button white" id="btn_init">
+                    <span class="text"  th:text="${#messages.msg('adminCommon.button.init')}"></span>
+                </a>
+                <a href="#" class="button dark" id="btn_search">
+                    <span class="text" th:text="${#messages.msg('adminCommon.button.search')}"></span>
+                </a>
+            </div>
+            <!--// search button area -->
+
+            <!-- grid area-->
+            <div class="grid-cont">
+                <div class="grid">
+
+                    <!-- grid head -->
+                    <div class="grid-head">
+                        <div class="title-area">
+                            <h2 class="title" th:text="${#messages.msg('goodsTemporarySaveMgmt.grid.title')}"></h2>
+                        </div>
+                        <div class="option-area">
+                            <div class="edit-option">
+                                <div class="button-group">
+                                    <a href="#" class="button inside" id="btn_remove"><span class="text" th:text="${#messages.msg('adminCommon.button.delete')}"></span></a>
+                                    <a href="#" class="button inside" id="btn_request_approval"><span class="text" th:text="${#messages.msg('goodsTemporarySaveMgmt.grid.btn.request.approval')}"></span></a>
+                                </div>
+                            </div>
+                            <div class="page-option" grid-id="goodsTemporarySaveListGrid"></div>
+                        </div>
+                    </div>
+                    <!--// grid head -->
+
+                    <!-- grid body -->
+                    <div class="grid-body with-head" id="goodsTemporarySaveListGrid" realgrid></div>
+                    <!--// grid body -->
+                </div>
+            </div>
+            <!--// grid area-->
+        </div>
+
+        <!-- 반려사유 레이어팝업 -->
+        <div class="layer-popup fix-center" id="layerPop-retnCaus">
+            <div class="scroll-wrap">
+                <div class="win-popup account white">
+                    <div class="login-wrap  editor">
+                        <div class="box">
+                            <h1 style="margin-bottom: 0 !important;"
+                                th:text="${#messages.msg('goodsTemporarySaveMgmt.layer.title')}"></h1>
+                            <button class="btn-close">×</button>
+                            <div class="cont">
+                                <div class="data">
+                                    <div class="data-head">
+                                        <div class="left"><span class="title" th:text="${#messages.msg('goodsTemporarySaveMgmt.layer.label.retnCausDetail')}"></span></div>
+                                    </div>
+                                    <div class="data-body">
+                                        <table class="data-table">
+                                            <colgroup>
+                                                <col width="120">
+                                                <col>
+                                            </colgroup>
+                                            <tbody>
+                                            <tr>
+                                                <td class="label" th:text="${#messages.msg('goodsTemporarySaveMgmt.layer.label.retnDt')}"></td>
+                                                <td>
+                                                    <span id="retnDt"></span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="label" th:text="${#messages.msg('goodsTemporarySaveMgmt.layer.label.retnCausCdNm')}"></td>
+                                                <td colspan="4">
+                                                    <textarea class="textarea" rows="10" name="retnCaus" id="retnCaus" readonly></textarea>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 반려사유 레이어팝업 -->
+    </div>
+    <!--// content area -->
+</th:block>
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        var _defaultPage    = 0;
+        var _gridType       = '';
+    </script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/goodsTemporarySaveListGrid.provider.js?20211020'"></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/goodsTemporarySaveListGrid.eventHandler.js?20211020'"></script>
+    <script th:inline="javascript">
+        $(function(){
+            goodsTemporarySaveListGrid.eventhandler.init();
+        });
+    </script>
+</th:block>
+</body>
+</html>

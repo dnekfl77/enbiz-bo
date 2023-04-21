@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.customerservice.CsCpnsAprmnStdInfoMapper">
+
+    <select id="getCsCompensUserGrade" parameterType="java.lang.String" resultType="java.lang.String">
+        <![CDATA[
+        SELECT CASE WHEN COUNT(USER_ID) <= 1 AND MIN(CPNS_APRMN_GB_CD) = '10' THEN 'A'
+                    WHEN COUNT(USER_ID) <= 1 AND MIN(CPNS_APRMN_GB_CD) = '20' THEN 'P'
+                    WHEN COUNT(USER_ID) > 1  THEN 'ALL'
+                    ELSE 'N' END
+          FROM CS_CPNS_APRMN_STD_INFO
+         WHERE USER_ID = #{loginId}
+         GROUP BY USER_ID
+        ]]>
+    </select>
+
+</mapper>

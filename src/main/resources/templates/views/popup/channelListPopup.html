@@ -1,0 +1,110 @@
+<!--
+* 프로그램명 : 채널 조회 팝업
+* 작 성 일 : 2021.02.25
+* 작 성 자 : 권다솜
+* 수 정 자 : 홍혜리
+* 버    전 : 1.0
+* 개    요 : 채널 조회 팝업 UI
+* 이    력 : 2021.08.02 단일선택시 적용방식 수정
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-layout}">
+<body>
+    <!--Title Area-->
+    <th:block layout:fragment="popup-title-area">
+        <th:block layout:insert="~{fragments/popup/popup-title :: popup-title}"
+                  th:with="title=${#messages.msg('baseInfoMgmt.label.popup.channelListPopup.title')}"></th:block>
+    </th:block>
+    <!--Title Area-->
+
+    <!--Search Area-->
+    <th:block layout:fragment="popup-search-area">
+            <div class="search">
+                <form name="chlGridForm" id="chlGridForm">
+                    <table class="search-table">
+                        <colgroup>
+                            <col style="width:15%;" />
+                            <col style="width:35%;" />
+                            <col style="width:15%;" />
+                            <col style="width:35%;" />
+                        </colgroup>
+                        <tbody>
+                        <tr>
+                            <td class="label" th:text="${#messages.msg('baseInfoMgmt.label.popup.channelListPopup.chlClssCd')}"></td>
+                            <td>
+                                <select class="form-control w50" id="chlClssCd" name="chlClssCd">
+                                    <th:block th:if="${requestData.argChlClssCd} == '' ">
+                                        <option value="" th:text="${#messages.msg('baseInfoMgmt.label.full')}"></option>
+                                        <option th:each="list : ${codeList.CH001}"
+                                                th:value="${list.cd}"
+                                                th:text="${list.cdNm}"></option>
+                                    </th:block>
+                                    <th:block th:unless="${requestData.argChlClssCd} == '' ">
+                                        <option th:each="list : ${codeList.CH001}"
+                                                th:value="${list.cd}"
+                                                th:text="${list.cdNm}"
+                                                th:if="${list.cd}==${requestData.argChlClssCd}"></option>
+                                    </th:block>
+                                </select>
+                            </td>
+                            <td class="label" th:text="${#messages.msg('baseInfoMgmt.label.popup.channelListPopup.chlNumNo')}"></td>
+                            <td>
+                                <div class="input-group w100">
+                                    <input class="input w30" type="text" name="chlNo" id="chlNo" maxlength="7" onKeyup="number(this)"/>
+                                    <input class="input w60" type="text" name="chlNm" id="chlNm" maxlength="200"/>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+    </th:block>
+    <!--Search Area-->
+
+    <!--Search Button Area-->
+    <th:block layout:fragment="popup-search-button-area">
+        <th:block layout:insert="~{fragments/popup/popup-btn :: popup-search-btn}"/>
+    </th:block>
+    <!--Search Button Area-->
+
+    <!--List Area-->
+    <th:block layout:fragment="popup-List-area">
+      <div class="grid">
+          <div class="grid-head" style="overflow: hidden;">
+              <div class="title-area">
+                  <h2 class="title" th:text="${#messages.msg('baseInfoMgmt.label.popup.channelListPopup.qry.rslt')}"></h2>
+              </div>
+              <div class="option-area" grid-id="chlGrid"></div>
+          </div>
+          <div class="grid-body with-head">
+                <div id="chlGrid" class="rg-root rg-grid" realgrid></div>
+          </div>
+        </div>
+    </th:block>
+    <!--List Area-->
+
+<!--List Button Area-->
+<th:block layout:fragment="popup-List-button-area">
+    <th:block layout:insert="~{fragments/popup/popup-btn :: popup-List-btn}"/>
+</th:block>
+
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        var _gridType = [[${requestData.argSelectType}]]; // 선택구분값이 있을경우 필수값
+    </script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'popup/popup.ChannelPopup.chlGrid.eventHandler.js?20210802'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'popup/popup.ChannelPopup.chlGrid.provider.js?20210803'" ></script>
+
+    <script type="text/javascript">
+        $(function() {
+            chlGrid.eventhandler.init();
+        });
+    </script>
+
+</th:block>
+
+</body>
+</html>

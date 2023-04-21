@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enbiz.bo.app.repository.goods.PrRsvSaleHistTrxMapper">
+
+    <update id="stopRsvSaleHist" parameterType="prRsvSaleHist">
+        UPDATE PR_RSV_SALE_HIST /* prRsvSaleHistTrx.stopRsvSaleHist */
+           SET RSV_STOP_YN = 'Y'
+             , RSV_STOP_CAUS_CD = #{rsvStopCausCd}
+             , RSV_STOP_DTM = now()
+             , SYS_MOD_ID = #{sysModId}
+             , SYS_MOD_DTM = now()
+         WHERE GOODS_NO = #{goodsNo}
+           AND RSV_STOP_YN = 'N'
+    </update>
+
+    <insert id="insertRsvSaleHist" parameterType="prRsvSaleHist" useGeneratedKeys="false">
+        INSERT INTO PR_RSV_SALE_HIST (/* prRsvSaleHistTrx.insertRsvSaleHist */
+                    GOODS_NO
+                  , RSV_STRT_DTM
+                  , RSV_END_DTM
+                  , FWDIDC_PRAR_DY
+                  , RSV_END_AF_PROC_METH_CD
+                  , RSV_STOP_YN
+                  , RSV_STOP_CAUS_CD
+                  , RSV_STOP_DTM
+                  , SYS_REG_ID
+                  , SYS_REG_DTM
+                  , SYS_MOD_ID
+                  , SYS_MOD_DTM
+               )
+             VALUES (
+                    #{goodsNo}
+                  , TO_TIMESTAMP(#{rsvStrtDtm}||':00','YYYYMMDD HH24:MI:SS')
+                  , TO_TIMESTAMP(#{rsvEndDtm}||':59','YYYYMMDD HH24:MI:SS')
+                  , #{fwdidcPrarDy}
+                  , #{rsvEndAfProcMethCd}
+                  , #{rsvStopYn}
+                  , #{rsvStopCausCd}
+                  , #{rsvStopDtm}
+                  , #{sysRegId}
+                  , now()
+                  , #{sysRegId}
+                  , now()
+             )
+    </insert>
+
+    <update id="updateRsvSaleHist" parameterType="PrRsvSaleHist">
+        UPDATE PR_RSV_SALE_HIST /* prRsvSaleHistTrx.updateRsvSaleHist */
+           SET FWDIDC_PRAR_DY = #{fwdidcPrarDy}
+             , RSV_END_AF_PROC_METH_CD = #{rsvEndAfProcMethCd}
+             , SYS_MOD_ID = #{sysModId}
+             , SYS_MOD_DTM = now()
+        WHERE GOODS_NO = #{goodsNo}
+          AND RSV_STOP_YN = 'N'
+    </update>
+</mapper>

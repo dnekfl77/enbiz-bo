@@ -1,0 +1,190 @@
+<!--
+* 프로그램명 : 가맹점 등록/수정 팝업
+* 작 성 일 : 2021.07.13
+* 작 성 자 : 권다솜
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 결제관리 > 결제수단관리 > 가맹점관리 > 가맹점 등록/수정 팝업
+* 이    력 :
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-update-layout}">
+<body>
+
+<th:block layout:fragment="header-area">
+    <div class="header">
+        <h1 class="title" th:if="${requestData.argInsertUpdate} == 'I'"
+            th:text="${#messages.msg('franchiseeMgmt.popupInsert.title')}"></h1>
+        <h1 class="title" th:if="${requestData.argInsertUpdate} == 'U'"
+            th:text="${#messages.msg('franchiseeMgmt.popupUpdate.title')}"></h1>
+    </div>
+</th:block>
+
+<th:block layout:fragment="data-area">
+    <div class="data">
+        <div class="data-body">
+            <form name="franchiseeForm" id="franchiseeForm">
+                <table class="data-table">
+                    <colgroup>
+                        <col style="width:120px;"/>
+                        <col />
+                        <col style="width:120px;"/>
+                        <col />
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <td class="label"><strong th:text="${#messages.msg('franchiseeMgmt.popupUpdate.label.mersNo')}"></strong></td>
+                        <td>
+                            <span id="mersNoText"></span>
+                            <input type="hidden" id="mersNo" name="mersNo"/>
+                        </td>
+                        <td class="label"><strong th:text="${#messages.msg('franchiseeMgmt.popupUpdate.label.acqrCd')}"></strong></td>
+                        <td>
+                            <select class="form-control w60" id="acqrCd" name="acqrCd" th:disabled="${requestData.argInsertUpdate} == 'U'">
+                                <option value="" th:text="${#messages.msg('baseInfoMgmt.label.select')}"></option>
+                                <option th:each="list : ${codeList.OM028}" th:value="${list.cd}" th:text="${list.cdNm}"></option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label"><strong th:text="${#messages.msg('franchiseeMgmt.popupUpdate.label.onoffLineGbCd')}"></strong></td>
+                        <td>
+                            <div class="input-group">
+                                <label class="radio-inline" th:for="onoffLineGbCd_ON">
+                                    <input type="radio" name="onoffLineGbCd" th:value="ON" th:id="onoffLineGbCd_ON">
+                                    <span th:text="${#messages.msg('methodsOfPaymentManagement.label.onoffLineGbCd_ON')}"></span>
+                                </label>
+                                <label class="radio-inline" th:for="onoffLineGbCd_OFF">
+                                    <input type="radio" name="onoffLineGbCd" th:value="OFF" th:id="onoffLineGbCd_OFF">
+                                    <span th:text="${#messages.msg('methodsOfPaymentManagement.label.onoffLineGbCd_OFF')}"></span>
+                                </label>
+                            </div>
+                        </td>
+                        <td class="label"><strong th:text="${#messages.msg('franchiseeMgmt.popupUpdate.label.pgGbCd')}"></strong></td>
+                        <td>
+                            <select class="form-control w60" id="pgGbCd" name="pgGbCd" th:disabled="${requestData.argInsertUpdate} == 'U'">
+                                <option value="" th:text="${#messages.msg('baseInfoMgmt.label.select')}"></option>
+                                <option th:each="list : ${codeList.OM030}" th:value="${list.cd}" th:text="${list.cdNm}"></option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label"><strong th:text="${#messages.msg('franchiseeMgmt.popupUpdate.label.pointUseYn')}"></strong></td>
+                        <td>
+                            <div class="input-group">
+                                <label class="radio-inline" th:for="pointUseYn_Y">
+                                    <input type="radio" name="pointUseYn" th:value="Y" th:id="pointUseYn_Y">
+                                    <span th:text="${#messages.msg('baseInfoMgmt.label.use')}"></span>
+                                </label>
+                                <label class="radio-inline" th:for="pointUseYn_N">
+                                    <input type="radio" name="pointUseYn" th:value="N" th:id="pointUseYn_N">
+                                    <span th:text="${#messages.msg('baseInfoMgmt.label.disuse')}"></span>
+                                </label>
+                            </div>
+                        </td>
+                        <td class="label"><strong th:text="${#messages.msg('franchiseeMgmt.popupUpdate.label.nintUseYn')}"></strong></td>
+                        <td>
+                            <div class="input-group">
+                                <label class="radio-inline" th:for="nintUseYn_Y">
+                                    <input type="radio" name="nintUseYn" th:value="Y" th:id="nintUseYn_Y">
+                                    <span th:text="${#messages.msg('baseInfoMgmt.label.use')}"></span>
+                                </label>
+                                <label class="radio-inline" th:for="nintUseYn_N">
+                                    <input type="radio" name="nintUseYn" th:value="N" th:id="nintUseYn_N">
+                                    <span th:text="${#messages.msg('baseInfoMgmt.label.disuse')}"></span>
+                                </label>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label"><strong th:text="${#messages.msg('franchiseeMgmt.popupUpdate.label.termlId')}"></strong></td>
+                        <td>
+                            <input class="input" type="text" name="termlId" id="termlId" maxlength="30"/>
+                        </td>
+                        <td class="label"><strong th:text="${#messages.msg('franchiseeMgmt.popupUpdate.label.useYn')}"></strong></td>
+                        <td>
+                            <div class="input-group">
+                                <label class="radio-inline" th:for="useYn_Y">
+                                    <input type="radio" name="useYn" th:value="Y" th:id="useYn_Y">
+                                    <span th:text="${#messages.msg('baseInfoMgmt.label.use')}"></span>
+                                </label>
+                                <label class="radio-inline" th:for="useYn_N">
+                                    <input type="radio" name="useYn" th:value="N" th:id="useYn_N">
+                                    <span th:text="${#messages.msg('baseInfoMgmt.label.disuse')}"></span>
+                                </label>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label"><strong th:text="${#messages.msg('franchiseeMgmt.popupUpdate.label.siteNm')}"></strong></td>
+                        <td colspan="3">
+                            <div class="input-group">
+                                <th:block th:each="list : ${codeList.OM036}">
+                                    <label class="radio-inline" th:for="${list.cdNm}">
+                                        <input type="radio" name="aplySiteGbCd" th:value="${list.cd}" th:id="${list.cdNm}">
+                                        <span th:text="${list.cdNm}"></span>
+                                    </label>
+                                </th:block>
+                                <a href="#" class="button inside" id="btn_site_insert">
+                                    <span class="text" th:text="${#messages.msg('methodsOfPaymentManagement.label.franchiseeSiteInsert')}" />
+                                </a>
+                            </div>
+                            <br>
+                            <div class="quick-search">
+                                <ul id="apply-site-ul"></ul>
+                            </div>
+                            <input class="input" type="hidden" name="siteList" id="siteList"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label" th:text="${#messages.msg('methodsOfPaymentManagement.methodsOfPaymentControlManagement.popupUpdate.label.sysModId')}"></td>
+                        <td>
+                            <span id="sysModId"></span>
+                        </td>
+                        <td class="label" th:text="${#messages.msg('methodsOfPaymentManagement.methodsOfPaymentControlManagement.popupUpdate.label.sysModDtm')}"></td>
+                        <td>
+                            <span id="sysModDtm"></span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </div>
+</th:block>
+
+<th:block layout:fragment="button-area">
+    <div class="button-group" style="margin-top: 0px !important;" >
+        <a href="#" class="button" id="btn_popup_cancel">
+            <span class="text" th:text="${#messages.msg('adminCommon.button.cancel')}">취소</span>
+        </a>
+        <a href="#" class="button large" id="btn_popup_save">
+            <span class="text" th:text="${#messages.msg('adminCommon.button.save')}">저장</span>
+        </a>
+    </div>
+</th:block>
+
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        var req    = [[${requestData}]];
+        var reqSiteList    = [[${requestSiteList}]];
+
+        var msg = x2coMessage.getMessage( {
+            save : 'franchiseeMgmt.message.save',
+            cancelMessage : 'franchiseeMgmt.message.cancelMessage',
+            necessaryCheckMessage : 'franchiseeMgmt.message.necessaryCheckMessage',
+            siteCheckMessage : 'franchiseeMgmt.message.siteCheckMessage'
+        });
+    </script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'payment/franchiseePopupUpdate.eventHandler.js?202107130001'" ></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            franchiseePopupUpdate.eventhandler.init();
+        });
+    </script>
+</th:block>
+
+</body>
+</html>

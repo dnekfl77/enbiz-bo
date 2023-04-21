@@ -1,0 +1,117 @@
+<!--
+* 프로그램명 : 환불계좌관리 팝업
+* 작 성 일 : 2021.02.24
+* 작 성 자 : 박남훈
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 환불계좌관리 팝업
+* 이    력 :
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-update-layout}">
+<body>
+<th:block layout:fragment="header-area">
+    <div class="header">
+        <h1 class="title" th:text="${#messages.msg('customerMgmt.customerRefundAccountPopup.title')}">환불계좌관리</h1>
+    </div>
+</th:block>
+<th:block layout:fragment="data-area">
+<form name="customerRefundAccountForm" id="customerRefundAccountForm">
+    <input type="hidden" name="mbrNo" id="mbrNo" th:value="${customerRequest.mbrNo}">
+    <div class="search">
+        <table class="search-table">
+            <colgroup>
+                <col width="120">
+                <col>
+                <col width="120">
+                <col>
+            </colgroup>
+            <tbody>
+            <tr>
+                <td class="label" th:text="${#messages.msg('customerMgmt.customerRefundAccountPopup.label.mbrNo')}">회원번호</td>
+                <td th:text="${customerRequest.mbrNo}"></td>
+                <td class="label" th:text="${#messages.msg('customerMgmt.customerRefundAccountPopup.label.mbrNm')}">회원명</td>
+                <td th:text="${customerRequest.mbrNm}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="data-cont">
+        <!-- 기본정보 -->
+        <div class="data">
+            <!-- data-head -->
+            <div class="data-head">
+                <div class="left"><span class="title" th:text="${#messages.msg('customerMgmt.customerRefundAccountPopup.refundAccount.title')}">계좌등록</span></div>
+            </div>
+            <!-- //data-head -->
+
+            <!-- data-body -->
+            <div class="data-body">
+                <table class="data-table fixed">
+                    <colgroup>
+                        <col width="120">
+                        <col>
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <td class="label"><strong th:text="${#messages.msg('customerMgmt.customerRefundAccountPopup.refundAccount.label.rfdBankCd')}">은행</strong></td>
+                        <td>
+                            <select class="form-control" name="rfdBankCd" id="rfdBankCd"
+                                    th:data-msg-empty="#{customerMgmt.customerRefundAccountPopup.valid.empty.rfdBankCd}">
+                                <option value=""
+                                        th:text="${#messages.msg('customerMgmt.customerDetailAndOthersPopup.option.full')}">
+                                </option>
+                                <option th:each="list : ${codeList.OM026}"
+                                        th:value="${list.cd}" th:utext="${list.cdNm}"
+                                        th:selected="${list.cd} == (${customerRefundAccount == null} ? '' : ${customerRefundAccount.rfdBankCd})"></option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label"><strong th:text="${#messages.msg('customerMgmt.customerRefundAccountPopup.refundAccount.label.rfdActnNo')}">계좌번호</strong></td>
+                        <td>
+                            <input type="text" class="input" name="rfdActnNo" id="rfdActnNo" maxlength="150"
+                                   th:data-msg-empty="#{customerMgmt.customerRefundAccountPopup.valid.empty.rfdActnNo}"
+                                   th:value="${customerRefundAccount == null} ? '' : ${customerRefundAccount.rfdActnNo}">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label"><strong th:text="${#messages.msg('customerMgmt.customerRefundAccountPopup.refundAccount.label.rfdActnDepositorNm')}">예금주</strong></td>
+                        <td>
+                            <input type="text" class="input" name="rfdActnDepositorNm" id="rfdActnDepositorNm" maxlength="150"
+                                   th:data-msg-empty="#{customerMgmt.customerRefundAccountPopup.valid.empty.rfdActnDepositorNm}"
+                                   th:value="${customerRefundAccount == null} ? '' : ${customerRefundAccount.rfdActnDepositorNm}">
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- //data-body -->
+        </div>
+        <!-- //기본정보 -->
+    </div>
+</form>
+</th:block>
+<th:block layout:fragment="button-area">
+    <th:block layout:insert="~{fragments/popup/popup-btn :: popup-dtl-btn}"/>
+</th:block>
+
+<!-- Additional Script -->
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+    /*<![CDATA[*/
+    /*]]>*/
+    </script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'popup/customerRefundAccountPopup.eventHandler.js'" ></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            customerRefundAccountPopup.eventhandler.initialize();
+        });
+    </script>
+</th:block>
+</body>
+</html>

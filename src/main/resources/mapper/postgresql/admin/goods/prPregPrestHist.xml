@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enbiz.bo.app.repository.goods.PrPregPrestHistMapper">
+    <select id="getPregPrestHist" parameterType="java.lang.String" resultType="PrPregPrestHist">
+        SELECT PREG_GOODS_NO  /* prPregPrestHist.getPregPrestHist */
+             , SUBSTRING(APLY_STR_DT,1,4)||'-'||SUBSTRING(APLY_STR_DT,5,2)||'-'||SUBSTRING(APLY_STR_DT,7,2) AS APLY_STR_DT
+             , SUBSTRING(APLY_END_DT,1,4)||'-'||SUBSTRING(APLY_END_DT,5,2)||'-'||SUBSTRING(APLY_END_DT,7,2) AS APLY_END_DT
+             , PREST_NM
+             , USE_YN
+             , SYS_REG_ID
+             , TO_CHAR(SYS_REG_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_REG_DTM
+             , SYS_MOD_ID
+             , TO_CHAR(SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+          FROM PR_PREG_PREST_HIST
+         WHERE PREG_GOODS_NO = #{pregGoodsNo}
+         ORDER BY APLY_STR_DT, APLY_END_DT
+    </select>
+</mapper>

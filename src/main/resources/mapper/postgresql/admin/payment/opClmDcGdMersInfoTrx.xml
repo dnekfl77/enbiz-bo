@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.payment.OpClmDcGdMersInfoTrxMapper">
+
+	<insert id="insertOpClmDcGdMersInfo" parameterType="opClmDcGdMersInfo">
+		INSERT INTO OP_CLM_DC_GD_MERS_INFO (  /* OpClmDcGdMersInfo.insertOpClmDcGdMersInfo */
+				  CLM_DC_GD_NO
+				, MERS_NO
+				, SYS_REG_ID
+				, SYS_REG_DTM
+				, SYS_MOD_ID
+				, SYS_MOD_DTM
+		) VALUES (
+				  #{clmDcGdNo}
+				, #{mersNo}
+				, #{sysRegId}
+				, now()
+				, #{sysRegId}
+				, now()
+		)
+	</insert>
+
+	<delete id="deleteOpClmDcGdMersInfo" parameterType="opClmDcGdBase">
+		DELETE FROM OP_CLM_DC_GD_MERS_INFO   /* OpClmDcGdMersInfo.deleteOpClmDcGdMersInfo */
+		WHERE CLM_DC_GD_NO   = #{clmDcGdNo}
+	</delete>
+
+</mapper>
+
+

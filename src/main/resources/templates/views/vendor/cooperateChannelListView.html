@@ -1,0 +1,219 @@
+<!--
+* 프로그램명 : 제휴 채널 관리
+* 작 성 일 : 2021.02.23
+* 작 성 자 : 박남훈
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 제휴 채널 관리 UI
+* 이    력 :
+-->
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/page-realgrid-layout}">
+<head>
+    <title>제휴 채널 관리</title>
+</head>
+<body>
+<th:block layout:fragment="page-title-area">
+    <div class="page-title">
+        <div class="left">
+            <h1 th:text="${#messages.msg('vendorMgmt.cooperateChannelMgmt.title')}"></h1>
+        </div>
+    </div>
+</th:block>
+
+<th:block layout:fragment="page-contents">
+    <div class="page-fixed with-title">
+        <div class="search-cont full-height">
+            <!-- 조회테이블 -->
+            <div class="search">
+                <div class="search-body">
+                    <form name="cooperateChannelGridSearchForm" id="cooperateChannelGridSearchForm">
+                        <table class="search-table">
+                            <colgroup>
+                                <col width="120">
+                                <col>
+                            </colgroup>
+                            <tbody>
+                            <tr>
+                                <td class="label"
+                                    th:text="${#messages.msg('vendorMgmt.cooperateChannelMgmt.search.label.partnerNo')}" />
+                                <td>
+                                    <div class="input-group">
+                                        <input type="text" class="input w20" maxlength="15" name="condxEntrNo" id="condxEntrNo">
+                                        <em>/</em>
+                                        <input type="text" class="input" maxlength="30" name="condxEntrNm" id="condxEntrNm">
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+            </div>
+            <!-- //조회테이블 -->
+            <!-- 검색버튼 -->
+            <div class="button-group search-btn">
+                <a href="#" class="button white" id="btn_init">
+                    <span class="text" th:text="${#messages.msg('vendorMgmt.cooperateChannelMgmt.search.button.initialize')}"></span>
+                </a>
+                <a href="#" class="button dark" id="btn_search">
+                    <span class="text" th:text="${#messages.msg('vendorMgmt.cooperateChannelMgmt.search.button.search')}"></span>
+                </a>
+            </div>
+            <!-- //검색버튼 -->
+
+            <div class="grid-cont col-25">
+                <!-- 제휴사 정보 -->
+                <div class="grid">
+                    <div class="grid-head">
+                        <div class="title-area">
+                            <h2 class="title" th:text="${#messages.msg('vendorMgmt.cooperateChannelGrid.title')}"></h2>
+                        </div>
+                        <div class="option-area">
+                            <div class="edit-option">
+                                <div class="page-option" grid-id="cooperateChannelGrid" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid-body with-head">
+                        <div class="rg-root rg-grid" id="cooperateChannelGrid" realgrid></div>
+                    </div>
+                </div>
+                <!-- //제휴사 정보 -->
+            </div>
+            <!-- 제휴사 상세정보 & ETC -->
+            <div class="grid-cont">
+                <!--데이터테이블-->
+                <!-- 제휴채널 마스터정보 -->
+                <div class="grid">
+                    <div class="grid-head">
+                        <div class="title-area">
+                            <h2 class="title" th:text="${#messages.msg('vendorMgmt.cooperateChannelMasterGrid.title')}"></h2>
+                        </div>
+                        <form id="cooperateChannelMasterForm">
+                            <div class="option-area">
+                                <div class="edit-option">
+                                    <div class="button-group">
+                                        <a href="#" class="button inside" id="btn_cooperateChannelMaster_grid_add">
+                                            <span class="text" th:text="${#messages.msg('vendorMgmt.cooperateChannelMasterGrid.button.label.add')}" />
+                                        </a>
+                                        <a href="#" class="button inside" id="btn_cooperateChannelMaster_grid_remove">
+                                            <span class="text" th:text="${#messages.msg('vendorMgmt.cooperateChannelMasterGrid.button.label.remove')}" />
+                                        </a>
+                                        <a href="#" class="button inside" id="btn_cooperateChannelMaster_grid_reset">
+                                            <span class="text" th:text="${#messages.msg('vendorMgmt.cooperateChannelMasterGrid.button.label.reset')}" />
+                                        </a>
+                                        <a href="#" class="button inside" id="btn_cooperateChannelMaster_grid_save">
+                                            <span class="text" th:text="${#messages.msg('vendorMgmt.cooperateChannelMasterGrid.button.label.save')}"></span>
+                                        </a>
+                                    </div>
+<!--                                    <div class="option-area">-->
+<!--                                        <div class="page-option" grid-id="cooperateChannelMasterGrid" />-->
+<!--                                    </div>-->
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="grid-body with-head" id="cooperateChannelMasterGrid" realgrid></div>
+                </div>
+                <!-- //제휴채널 마스터정보 -->
+                <!-- 제휴채널 상세정보 -->
+                <div class="grid">
+                    <div class="grid-head">
+                        <div class="title-area">
+                            <h2 class="title" th:text="${#messages.msg('vendorMgmt.cooperateChannelDetailGrid.title')}"></h2>
+                        </div>
+                        <form id="cooperateChannelDetailForm">
+                            <div class="option-area">
+                                <div class="edit-option">
+                                    <div class="button-group">
+                                        <a href="#" class="button inside" id="btn_cooperateChannelDetail_grid_add">
+                                            <span class="text" th:text="${#messages.msg('vendorMgmt.cooperateChannelDetailGrid.button.label.add')}" />
+                                        </a>
+                                        <a href="#" class="button inside" id="btn_cooperateChannelDetail_grid_remove">
+                                            <span class="text" th:text="${#messages.msg('vendorMgmt.cooperateChannelDetailGrid.button.label.remove')}" />
+                                        </a>
+                                        <a href="#" class="button inside" id="btn_cooperateChannelDetail_grid_reset">
+                                            <span class="text" th:text="${#messages.msg('vendorMgmt.cooperateChannelDetailGrid.button.label.reset')}" />
+                                        </a>
+                                        <a href="#" class="button inside" id="btn_cooperateChannelDetail_grid_save">
+                                            <span class="text" th:text="${#messages.msg('vendorMgmt.cooperateChannelDetailGrid.button.label.save')}"></span>
+                                        </a>
+                                    </div>
+<!--                                    <div class="option-area">-->
+<!--                                        <div class="page-option" grid-id="cooperateChannelDetailGrid" />-->
+<!--                                    </div>-->
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="grid-body with-head" id="cooperateChannelDetailGrid" realgrid></div>
+                </div>
+                <!-- //제휴채널 상세정보 -->
+                <!-- //데이터테이블 -->
+            </div>
+            <!-- //제휴사 상세정보 & ETC -->
+        </div>
+
+    </div>
+</th:block>
+
+<th:block layout:fragment="add-script">
+
+    <script th:inline="javascript">
+    /*<![CDATA[*/
+        var _baseUrl 		        = [[${@domainConfig.getProperty('baseUrl')}]];
+        var _jsUrl 			        = [[${@domainConfig.getProperty('jsUrl')}]];
+        var _currentLocaleLanguage  = [[${@environmentConfig.getProperty('defaultLocale')}]];
+
+        var _siteNo_select         = {};
+        /*[# th:each="list : ${codeList.SITE}"]*/
+            var key = /*[[${list.cd}]]*/;
+            _siteNo_select[key] = /*[[${list.cdNm}]]*/;
+        /*[/]*/
+        var _chlClssCd_select         = {};
+        /*[# th:each="list : ${codeList.CH001}"]*/
+            var key = /*[[${list.cd}]]*/;
+            _chlClssCd_select[key] = /*[[${list.cdNm}]]*/;
+        /*[/]*/
+        var _chlTypCd_select         = {};
+        /*[# th:each="list : ${codeList.CH002}"]*/
+            var key = /*[[${list.cd}]]*/;
+            _chlTypCd_select[key] = /*[[${list.cdNm}]]*/;
+        /*[/]*/
+
+        var _modeCheckMessage       = [[${#messages.msg("vendorMgmt.partner.popup.msg.modeCheck")}]];
+        var _saveQuestionMessage    = [[${#messages.msg("vendorMgmt.partner.popup.msg.saveQuestionMessage")}]];
+        var _removeRowValidMessage  = [[${#messages.msg("vendorMgmt.grid.valid.msg.removeRowCheck")}]];
+
+    /*]]>*/
+    </script>
+
+    <script type="text/javascript"
+            th:src="${@domainConfig.getProperty('jsUrl')} + 'vendor/cooperateChannelGrid.provider.js?20210401000004'"></script>
+    <script type="text/javascript"
+            th:src="${@domainConfig.getProperty('jsUrl')} + 'vendor/cooperateChannelGrid.eventHandler.js?20210401000004'"></script>
+    <script type="text/javascript"
+            th:src="${@domainConfig.getProperty('jsUrl')} + 'vendor/cooperateChannelMasterGrid.provider.js?20210401000004'"></script>
+    <script type="text/javascript"
+            th:src="${@domainConfig.getProperty('jsUrl')} + 'vendor/cooperateChannelMasterGrid.eventHandler.js?20210401000004'"></script>
+    <script type="text/javascript"
+            th:src="${@domainConfig.getProperty('jsUrl')} + 'vendor/cooperateChannelDetailGrid.provider.js?20210401000004'"></script>
+    <script type="text/javascript"
+            th:src="${@domainConfig.getProperty('jsUrl')} + 'vendor/cooperateChannelDetailGrid.eventHandler.js?20210401000004'"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            cooperateChannelGrid.eventhandler.bindButtonEvent();
+            cooperateChannelMasterGrid.eventhandler.bindButtonEvent();
+            cooperateChannelDetailGrid.eventhandler.bindButtonEvent();
+        });
+    </script>
+</th:block>
+</body>
+</html>

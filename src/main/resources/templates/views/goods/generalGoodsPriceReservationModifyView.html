@@ -1,0 +1,119 @@
+<!--
+* 프로그램명 : 가격 변경 예약 팝업
+* 작 성 일 : 2021.05.25
+* 작 성 자 : 홍혜리
+* 수 정 자 : 홍혜리
+* 버    전 : 1.0
+* 개    요 : 가격 변경 예약 팝업
+* 이    력 : 2021.10.19 프레임워크이전
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-layout}">
+<body>
+<!--Title Area-->
+<th:block layout:fragment="popup-title-area">
+    <script th:inline="javascript">
+        var _priceInfo = [[${priceInfo}]];  // 가격이력정보
+        var _minPrice = [[${minPrice}]];    // 금액최솟값
+    </script>
+    <th:block layout:insert="~{fragments/popup/popup-title :: popup-title}"
+              th:with="title=${#messages.msg('generalGoods.priceInfo.prcRsvModPopup.title')}"></th:block>
+</th:block>
+<!--Title Area-->
+
+<!--Content Area-->
+<th:block layout:fragment="popup-search-area">
+    <div class="data">
+        <div class="data-body toggle-cont">
+            <form id="chgPrcRsvForm">
+                <table class="data-table">
+                    <colgroup>
+                        <col width="150">
+                        <col>
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <!-- 기존판매가 -->
+                        <td class="label" th:text="${#messages.msg('generalGoods.priceInfo.prcRsvModPopup.label.preSalePrc')}"></td>
+                        <td>
+                            <div class="input-group">
+                                <input type="text" id="preSalePrc" class="input price disabled w60" readonly>
+                                <em>원</em>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <!-- 변경판매가 -->
+                        <td class="label"><strong th:text="${#messages.msg('generalGoods.priceInfo.prcRsvModPopup.label.postSalePrc')}"></strong></td>
+                        <td>
+                            <div class="input-group">
+                                <input type="text" name="postSalePrc" id="postSalePrc" class="input price w60">
+                                <em>원</em>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <!-- 판매가변동률 -->
+                        <td class="label" th:text="${#messages.msg('generalGoods.priceInfo.prcRsvModPopup.label.salePrcChgRate')}"></td>
+                        <td>
+                            <div class="input-group">
+                                <input type="text" id="salePrcChgRate" class="input disabled price w60" readonly>
+                                <em>%</em>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <!-- 가격변경적용시작일 -->
+                        <td class="label"><strong th:text="${#messages.msg('generalGoods.priceInfo.prcRsvModPopup.label.histStrDtm')}"></strong></td>
+                        <td>
+                            <div class="picker-group">
+                                <input type="text" class="form-control disabled" id="histStrDtm" name="histStrDtm" readonly>
+                                <span class="input-group-addon" id="btn_call_calender"><i class="icon-calendar"></i></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <!-- 가격변경사유 -->
+                        <td class="label"><strong th:text="${#messages.msg('generalGoods.priceInfo.prcRsvModPopup.label.prcChgCausCd')}"></strong></td>
+                        <td>
+                            <select class="form-control" id="prcChgCausCd" name="prcChgCausCd">
+                                <option value="">:: 선택 ::</option>
+                                <option th:each="code : ${codeList.PR033}" th:value="${code?.cd}" th:utext="${code?.cdNm}"></option>
+                            </select>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </div>
+</th:block>
+<!--Content Area-->
+
+<!--Button Area-->
+<th:block layout:fragment="popup-search-button-area">
+    <div class="button-group search-btn">
+        <a href="#" class="button dark" id="btn_popup_close">
+            <span class="text" th:text="${#messages.msg('adminCommon.button.cancel')}"></span>
+        </a>
+        <a href="#" class="button white" id="btn_popup_apply">
+            <span class="text" th:text="${#messages.msg('generalGoods.priceInfo.prcRsvModPopup.btn.apply')}"></span>
+        </a>
+    </div>
+</th:block>
+<!--Button Area-->
+
+<!-- Additional Script -->
+<th:block layout:fragment="add-script">
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/generalGoods/detailPriceReservationModifyPopup.eventhandler.js?20211019'"></script>
+    <script type="text/javascript">
+        $(function() {
+            detailPriceReservationModifyPopup.eventhandler.init();
+        });
+    </script>
+</th:block>
+<!-- Additional Script -->
+</body>
+</html>

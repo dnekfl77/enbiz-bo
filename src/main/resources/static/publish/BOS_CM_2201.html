@@ -1,0 +1,202 @@
+<html lang="ko-KR">
+<head>
+    <title>x2</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+    <link type="text/css" rel="stylesheet" href="../css/reset.css">
+    <link type="text/css" rel="stylesheet" href="../css/layout.css">
+    <link type="text/css" rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" type="text/css" href="../css/realgrid-style.css">
+    <link type="text/css" rel="stylesheet" href="http://bo.x2commerce.com:8080/static/css/zTree.css">
+    <script src="../js/libs/jquery/jquery-3.4.1.min.js"></script>
+    <script src="../js/contents.js"></script>
+    <script type="text/javascript" src="http://bo.x2commerce.com:8080/static/js/libs/jquery/jquery.ztree.all.js?202102260000"></script>
+</head>
+<body>
+    <div class="page-root">
+        <div class="page-title">
+            <div class="left">
+                <h1>메뉴 관리</h1>
+            </div>
+        </div>
+        <div class="page-fixed with-title"> <!-- page-title 가 있을경우 with-title 클래스 추가 -->
+          <div class="search-cont">
+            <div class="data-cont col-30 col-stretch">
+                <div class="data">
+                  <div class="data-head">
+                    <div class="left"><span class="title">메뉴 관리</span></div>
+                      <div class="right">
+                          <label for="menuSystem">시스템</label>
+                          <select class="form-control" id="menuSystem">
+                              <option value="0">BO</option>
+                              <option value="1">PARTNER</option>
+                          </select>
+                      </div>
+                  </div>
+                  <!-- //data-head -->
+
+                  <div class="data-body">
+                    <!-- Ztree -->
+                    <ul id="pscTree" class="ztree"></ul>
+                    <!-- Ztree -->
+                  </div>
+                  <!-- //data-body -->
+                </div>
+                <!-- //data -->
+
+                <div class="data-cont">
+                  <div class="data">
+                    <div class="data-head">
+                      <div class="left"><span class="title">메뉴상세정보</span>
+                          <div class="button-group">
+                              <a href="#" class="button inside"><span class="text">대메뉴</span></a>
+                              <a href="#" class="button inside"><span class="text">저장</span></a>
+                          </div>
+                      </div>
+                    </div>
+                    <!-- //data-head -->
+  
+                    <div class="data-body">
+                      <table class="data-table">
+                        <colgroup>
+                          <col width="120">
+                          <col>
+                          <col width="120">
+                          <col>
+                        </colgroup>
+                        <tbody>
+                          <tr>
+                            <td class="label">
+                              <strong>메뉴명</strong>
+                            </td>
+                            <td>
+                              <input type="text" name="" value="" class="input disabled w10" disabled>
+                              <input type="text" name="" value="" class="input">
+                            </td>
+                            <td class="label">상위 메뉴명</td>
+                            <td>
+                              <input type="text" name="" value="" class="input disabled w10" disabled>
+                              <input type="text" name="" value="" class="input disabled" disabled>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td class="label">호출URL</td>
+                            <td>
+                              <input type="text" name="" value="" class="input w100">
+                            </td>
+                            <td class="label">버튼 ID</td>
+                            <td>
+                              <input type="text" name="" value="" class="input w100">
+                            </td>
+                          </tr>
+                          <tr>
+                            <td class="label">사용여부</td>
+                            <td>
+                              <input type="checkbox" name="useCheck" value="all" class="js-not-checkall" checked="checked">
+                            </td>
+                            <td class="label">정렬순서</td>
+                            <td>
+                              <input type="text" name="" value="" class="input w10">
+                            </td>
+                          </tr>
+                          <tr>
+                            <td class="label"><strong>권한대상명</strong></td>
+                            <td>
+                              <input type="text" name="" value="" class="input w100">
+                            </td>
+                            <td class="label">메뉴유형</td>
+                            <td>
+                              <select class="form-control">
+                                <option value="0">메뉴</option>
+                                <option value="1">화면</option>
+                                <option value="2">REQUEST</option>
+                                <option value="3">버튼</option>
+                              </select>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td class="label">최하위여부</td>
+                            <td colspan="3">
+                              <input type="checkbox" name="" value="all" class="js-not-checkall">
+                            </td>
+                          </tr>
+                          <tr>
+                            <td class="label">사용자 도움말</td>
+                            <td colspan="3">
+                              <table class="data-table inbox">
+                                <colgroup>
+                                  <col width="70">
+                                  <col>
+                                  <col width="70">
+                                  <col>
+                                  <col width="70">
+                                  <col>
+                                  <col width="70">
+                                  <col>
+                                </colgroup>
+                                <tbody>
+                                  <tr>
+                                    <td class="label">최초<br>등록자</td>
+                                    <td></td>
+                                    <td class="label">최초<br>등록일자</td>
+                                    <td></td>
+                                    <td class="label">최종<br>수정자</td>
+                                    <td></td>
+                                    <td class="label">최종<br>수정일자</td>
+                                    <td></td>
+                                  </tr>
+                                  <tr>
+                                    <td colspan="8">edit</td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <!-- //data-body -->
+                  </div>
+                  <!-- //data -->
+
+                  <div class="grid">
+                    <div class="grid-head">
+                      <div class="title-area">
+                          <h2 class="title">하위 메뉴 리스트</h2>
+                      </div>
+                      <!-- //title-area -->
+
+                      <div class="option-area">
+                          <div class="edit-option">
+                            <input typ="text" class="input">
+                            <div class="button-group">
+                              <a href="#" class="button inside w-30"><span class="text">추가</span></a>
+                              <a href="#" class="button inside"><span class="text">삭제</span></a>
+                              <a href="#" class="button inside"><span class="text">저장</span></a>
+                            </div>
+                          </div>
+                          <div class="page-option">
+                              <span class="total">Rows: <em>4</em></span>
+                              
+                          </div>
+                      </div>
+                      <!-- //option-area -->
+                    </div>
+                    <!-- //grid-head -->
+
+                    <div class="grid-body" id="realgrid" realgrid>
+                      realgrid area
+                    </div>
+                    <!-- //grid-body -->
+                  </div>
+                  <!-- //grid -->
+                </div>
+            </div>
+            <!-- //data-cont -->
+          </div>
+        </div>
+        <!-- //page-fixed -->
+    </div>
+</body>
+</html>

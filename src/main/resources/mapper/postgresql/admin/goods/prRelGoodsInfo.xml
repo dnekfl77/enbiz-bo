@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enbiz.bo.app.repository.goods.PrRelGoodsInfoMapper">
+    <select id="getPrRelGoodsInfoList" parameterType="java.lang.String" resultType="RelatedGoodsResponse">
+        SELECT GI.TGT_GOODS_NO /* prRelGoodsInfo.getPrRelGoodsInfoList */
+             , GB.GOODS_NM
+             , GI.REP_YN
+             , GI.SORT_SEQ
+             , BM.BRAND_NM
+             , GB.ENTR_NO
+             , EB.ENTR_NM
+             , SC.MD_ID
+             , FN_GET_CODENAME('PR005', GB.SALE_STAT_CD) AS SALE_STAT_CD_NM
+             , GB.DISP_YN
+             , FN_GET_CODENAME('PR008', GB.DELI_PROC_TYP_CD) AS DELI_PROC_TYP_CD_NM
+             , FN_GET_CODENAME('PR010', GB.DELI_GOODS_GB_CD) AS DELI_GOODS_GB_CD_NM
+             , PH.SALE_PRC
+             , CASE PB.DLEX_TYP_CD
+                   WHEN '10' THEN '배송비 무료 / 반품비 '|| CASE WHEN RTN_AMT > 0 THEN RTN_AMT::VARCHAR||'원' ELSE ' 무료' END
+                        WHEN '20' THEN '배송비 '||DLEX_AMT::VARCHAR||'원 / 반품비 '||RTN_AMT::VARCHAR||'원'
+                        WHEN '30' THEN STD_AMT::VARCHAR||'원미만 '||DLEX_AMT::VARCHAR||'원 / 반품비 '||RTN_AMT::VARCHAR||'원'
+        END AS DISP_DLEX_AMT
+             , GI.SYS_REG_ID
+             , TO_CHAR(GI.SYS_REG_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_REG_DTM
+             , GI.SYS_MOD_ID
+             , TO_CHAR(GI.SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+          FROM PR_REL_GOODS_INFO GI
+             , PR_GOODS_BASE GB
+          LEFT OUTER JOIN PR_BRAND_MST BM ON (GB.BRAND_NO = BM.BRAND_NO)
+          LEFT OUTER JOIN PR_GOODS_PRC_HIST PH ON (GB.GOODS_NO = PH.GOODS_NO AND NOW() BETWEEN PH.HIST_STR_DTM AND PH.HIST_END_DTM)
+             , ET_ENTR_BASE EB
+             , PR_STD_CTG SC
+             , ET_DELI_POLC_BASE PB
+         WHERE 1 = 1
+           AND GB.GOODS_NO = GI.TGT_GOODS_NO
+           AND GB.ENTR_NO = EB.ENTR_NO
+           AND GB.DELI_POLC_NO = PB.DELI_POLC_NO
+           AND GB.STD_CTG_NO = SC.STD_CTG_NO
+           AND BASE_GOODS_NO = #{baseGoodsNo}
+    </select>
+</mapper>

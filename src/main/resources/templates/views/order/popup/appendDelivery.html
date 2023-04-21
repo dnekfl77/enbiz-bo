@@ -1,0 +1,77 @@
+<!--
+* 프로그램명 : 배송지 추가 - appendDelivery.html
+* 작 성 일 : 2021.05.26
+* 작 성 자 : N.J.Kim
+* 수 정 자 :
+* 버	전 : 1.0
+* 개	요 : 배송지 추가 팝업
+* 이	력 :
+-->
+<!DOCTYPE html>
+<html lang="ko"
+	  xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{layouts/page-realgrid-layout}">
+<head>
+	<!-- 배송지 그리드 -->
+	<script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'order/popup/deliveryGrid.provider.js?202104290006'"></script>
+	<script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'order/popup/deliveryGrid.eventHandler.js?202104290006'"></script>
+</head>
+<body>
+
+	<th:block layout:fragment="page-contents">
+	<div class="win-popup page-root">
+		<div class="page-fixed">
+			<div class="search-cont">
+				<div class="header">
+					<h1 class="title" id="">배송지 추가/변경</h1>
+				</div>
+
+				<form name="deliveryGridForm" id="deliveryGridForm">
+					<input type="hidden" id="mbrNo" name="mbrNo" th:value="${mbrNo}"/><!-- 회원ID -->
+				</form>
+
+				<div class="grid">
+					<div class="grid-head">
+						<!-- //title-area -->
+
+						<div class="option-area">
+							<div class="edit-option">
+								<div class="button-group">
+									<a href="#" class="button inside" id="btnGridAdd"><span class="text">행추가</span></a>	<!-- 행추가 -->
+									<a href="#" class="button inside" id="btnGridReset"><span class="text">변경취소</span></a><!-- 변경취소 -->
+									<a href="#" class="button inside" id="btnGridSave"><span class="text">저장</span></a>	<!-- 저장 -->
+								</div>
+							</div>
+
+						</div>
+						<!-- //option-area -->
+					</div>
+					<!-- //grid-head -->
+
+					<div class="grid-body with-head" id="deliveryGrid" realgrid></div>
+					<!-- //grid-body -->
+				</div>
+				<!-- //grid -->
+
+			</div>
+
+			<!--List Button Area-->
+			<th:block layout:fragment="popup-List-button-area">
+			    <th:block layout:insert="~{fragments/popup/popup-btn :: popup-bottom-btn }"/><!-- 닫기 -->
+			</th:block>
+
+		</div>
+		<!-- //page-fixed -->
+	</div>
+	</th:block>
+
+	<th:block layout:fragment="add-script">
+		<script type="text/javascript">
+			$(document).ready(function() {
+				deliveryGrid.eventhandler.init();//배송지 그리드 초기화
+			});
+		</script>
+	</th:block>
+</body>
+</html>

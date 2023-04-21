@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.display.PrStdCtgDispInfoMapper">
+
+	<sql id="paginatedBase">
+		LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+	</sql>
+
+	<select id="getStandardDisplayCategoryConnectTree" resultType="PrStdCtgResponse">
+		/* prStdCtgDispInfo.getStandardDisplayCategoryConnectTree */
+		WITH RECURSIVE PR_STD_CTG_HIERARCHY AS
+		(
+			SELECT 1 AS LEVEL
+				 , STD_CTG_NO
+				 , STD_CTG_NM
+				 , LEAF_CTG_YN
+				 , USE_YN
+				 , SORT_SEQ
+				 , UPR_STD_CTG_NO
+				 , STD_LRG_CTG_NO
+				 , STD_MID_CTG_NO
+				 , STD_SML_CTG_NO
+				 , STD_THN_CTG_NO
+				 , MD_ID
+				 , SAFE_CERTI_NEED_YN
+				 , GOODS_NOTI_LISART_CD
+				 , CONCAT('\',SORT_SEQ||STD_CTG_NO)  AS HIERARCHY
+				 , CONCAT('',STD_CTG_NM) AS HIERARCHY_TEXT
+			  FROM PR_STD_CTG A
+			 WHERE USE_YN = 'Y'
+			   AND UPR_STD_CTG_NO = '0'
+			 UNION ALL
+			SELECT LEVEL + 1
+				 , T1.STD_CTG_NO
+				 , T1.STD_CTG_NM
+				 , T1.LEAF_CTG_YN
+				 , T1.USE_YN
+				 , T1.SORT_SEQ
+				 , T1.UPR_STD_CTG_NO
+				 , T1.STD_LRG_CTG_NO
+				 , T1.STD_MID_CTG_NO
+				 , T1.STD_SML_CTG_NO
+				 , T1.STD_THN_CTG_NO
+				 , T1.MD_ID
+				 , T1.SAFE_CERTI_NEED_YN
+				 , T1.GOODS_NOTI_LISART_CD
+				 , CONCAT_WS('\', T2.HIERARCHY, TRIM(TO_CHAR(T1.SORT_SEQ,'000'))||T1.STD_CTG_NO) AS HIERARCHY
+				 , CONCAT('',T2.HIERARCHY_TEXT,'>'||T1.std_ctg_nm) AS HIERARCHY_TEXT
+			  FROM PR_STD_CTG T1,
+				   PR_STD_CTG_HIERARCHY T2
+			 WHERE T2.STD_CTG_NO = T1.UPR_STD_CTG_NO
+		)
+		SELECT LEVEL
+			 , STD_CTG_NO
+			 , STD_CTG_NM
+			 , LEAF_CTG_YN
+			 , USE_YN
+			 , SORT_SEQ
+			 , UPR_STD_CTG_NO
+			 , STD_LRG_CTG_NO
+			 , STD_MID_CTG_NO
+			 , STD_SML_CTG_NO
+			 , STD_THN_CTG_NO
+			 , MD_ID
+			 , SAFE_CERTI_NEED_YN
+			 , GOODS_NOTI_LISART_CD
+			 , HIERARCHY
+			 , HIERARCHY_TEXT
+		FROM   PR_STD_CTG_HIERARCHY
+		ORDER BY HIERARCHY
+	</select>
+
+	<select id="getStandardDisplayCategoryConnectCount" parameterType="PrStdCtgDispInfoRequest" resultType="java.lang.Integer">
+		/* prStdCtgDispInfo.getStandardDisplayCategoryConnectCount */
+		SELECT 	COUNT(*)
+		FROM 	PR_STD_CTG_DISP_INFO
+		WHERE 	STD_CTG_NO = #{stdCtgNo}
+	</select>
+
+	<select id="getStandardDisplayCategoryConnect" parameterType="PrStdCtgDispInfoRequest" resultType="PrStdCtgDispInfoResponse" >
+		/* prStdCtgDispInfo.getStandardDisplayCategoryConnect */
+		SELECT
+			STD_CTG_NO
+             , (
+             	SELECT
+					PD1.DISP_CTG_NM ||
+					(CASE WHEN PD2.DISP_CTG_NM IS NULL THEN '' ELSE ' > ' || PD2.DISP_CTG_NM END) ||
+					(CASE WHEN PD3.DISP_CTG_NM IS NULL THEN '' ELSE ' > ' || PD3.DISP_CTG_NM END)
+				FROM
+					PR_DISP_CTG_BASE PD
+					LEFT OUTER JOIN PR_DISP_CTG_BASE PD1	ON (PD.LRG_CTG_NO = PD1.DISP_CTG_NO)
+					LEFT OUTER JOIN PR_DISP_CTG_BASE PD2	ON (PD.MID_CTG_NO = PD2.DISP_CTG_NO)
+					LEFT OUTER JOIN PR_DISP_CTG_BASE PD3	ON (PD.SML_CTG_NO = PD3.DISP_CTG_NO)
+				WHERE PD.DISP_CTG_NO = DI.DISP_CTG_NO
+             ) AS DISP_CTG_NM
+			, DISP_CTG_NO
+			, REP_CTG_YN
+			, USE_YN
+			, SYS_REG_ID
+			, TO_CHAR(SYS_REG_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_REG_DTM
+			, SYS_MOD_ID
+			, TO_CHAR(SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+		FROM PR_STD_CTG_DISP_INFO DI
+		WHERE STD_CTG_NO = #{stdCtgNo}
+		ORDER BY DISP_CTG_NO
+		<include refid="paginatedBase" />
+	</select>
+
+	<select id="getPrStdCtgDispInfoListFromGoods" parameterType="java.lang.String" resultType="StandardCategoryDisplayResponse">
+		SELECT CDI.STD_CTG_NO /* prStdCtgDispInfo.getPrStdCtgDispInfoListFromGoods */
+			 , CDI.DISP_CTG_NO
+			 , CDI.REP_CTG_YN
+			 , CDI.USE_YN
+			 , CDI.SYS_REG_ID
+			 , TO_CHAR(CDI.SYS_REG_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_REG_DTM
+			 , CDI.SYS_MOD_ID
+			 , TO_CHAR(CDI.SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+			 , CSB.SITE_NM
+			 , (SELECT (SELECT DISP_CTG_NM FROM PR_DISP_CTG_BASE WHERE DISP_CTG_NO = PDC.LRG_CTG_NO)
+						   || COALESCE( (SELECT '>' || DISP_CTG_NM FROM PR_DISP_CTG_BASE WHERE DISP_CTG_NO = PDC.MID_CTG_NO) , '')
+						   || COALESCE( (SELECT '>' || DISP_CTG_NM FROM PR_DISP_CTG_BASE WHERE DISP_CTG_NO = PDC.SML_CTG_NO) , '')
+						   || COALESCE( (SELECT '>' || DISP_CTG_NM FROM PR_DISP_CTG_BASE WHERE DISP_CTG_NO = PDC.THN_CTG_NO) , '')
+				FROM PR_DISP_CTG_BASE PDC
+				WHERE PDC.DISP_CTG_NO = CDI.DISP_CTG_NO) AS DISP_CTG_HIERARCHY
+	   	 FROM PR_STD_CTG_DISP_INFO CDI,
+	   		  PR_DISP_CTG_BASE DCB,
+	   		  CC_SITE_BASE CSB
+	   	WHERE CDI.DISP_CTG_NO = DCB.DISP_CTG_NO
+	   	  AND DCB.SITE_NO = CSB.SITE_NO
+	   	  AND CDI.USE_YN = 'Y'
+	   	  AND CDI.STD_CTG_NO = #{stdCtgNo}
+	   	ORDER BY SYS_MOD_DTM DESC
+	</select>
+</mapper>

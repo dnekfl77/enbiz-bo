@@ -1,0 +1,191 @@
+<!--
+* 프로그램명 : 전시연결관리 > 이미지 배너 전시 등록/수정
+* 작 성 일 : 2021.04.23
+* 작 성 자 : 권다솜
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 전시연결관리 > 전시연결관리 > 이미지 배너 탭 > 이미지 배너 추가
+* 이    력 :
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-update-layout}">
+<body>
+
+<th:block layout:fragment="header-area">
+    <div class="header">
+        <h1 class="title" th:if="${requestData.argInsertUpdate} == 'I'"
+            th:text="${#messages.msg('displayConnectManagement.connectTabImgGrid.insertTitle')}"></h1>
+        <h1 class="title" th:if="${requestData.argInsertUpdate} == 'U'"
+            th:text="${#messages.msg('displayConnectManagement.connectTabImgGrid.updateTitle')}"></h1>
+    </div>
+</th:block>
+
+<th:block layout:fragment="data-area">
+    <form name="htmlForm" id="htmlForm">
+        <input type="hidden" id="dispCtgNo" name="dispCtgNo" th:value="${requestData.dispCtgNo}" >
+        <input type="hidden" id="conrNo" name="conrNo" th:value="${requestData.conrNo}" >
+        <input type="hidden" id="conrTgtNo" name="conrTgtNo" th:value="${requestData.conrTgtNo}" >
+        <input type="hidden" id="conrTgtCd" name="conrTgtCd" th:value="${requestData.conrTgtCd}" >
+        <input type="hidden" id="conrContNo" name="conrContNo">
+        <!--data-cont-->
+        <div class="data-cont">
+            <div class="data">
+                <div class="data-body toggle-cont">
+                    <table class="data-table">
+                        <colgroup>
+                            <col width="120">
+                            <col>
+                            <col width="120">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                            <tr>
+                                <td class="label"><strong th:text="${#messages.msg('displayConnectManagement.connectTabImgGrid.dispStrDtm')}"></strong></td>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="picker-group" data-lopicker="basic" id="picker-group-1">
+                                            <input type="text" class="input disabled" name="startDate" id="startDate" disabled>
+                                            <span class="input-group-addon"><i class="icon-calendar" id="calendarButton1"></i></span>
+                                        </div>
+                                        <select class="form-control" id="startHour" name="startHour">
+                                            <option th:each="num,numStat : ${#numbers.sequence(0,23)}"
+                                                    th:value="${#numbers.formatInteger(numStat.index,2)}"
+                                                    th:text="${#numbers.formatInteger(numStat.index,2)}"></option>
+                                        </select>
+                                        <em> : </em>
+                                        <select class="form-control" id="startMinute" name="startMinute">
+                                            <option th:each="num,numStat : ${#numbers.sequence(0,59)}"
+                                                    th:value="${#numbers.formatInteger(numStat.index,2)}"
+                                                    th:text="${#numbers.formatInteger(numStat.index,2)}"></option>
+                                        </select>
+                                        <input class="input" type="hidden" name="dispStrDtm" id="dispStrDtm"/>
+                                    </div>
+                                </td>
+                                <td class="label"><strong th:text="${#messages.msg('displayConnectManagement.connectTabImgGrid.dispEndDtm')}"></strong></td>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="picker-group" data-lopicker="basic">
+                                            <input type="text" class="input disabled" name="endDate" id="endDate" disabled>
+                                            <span class="input-group-addon"><i class="icon-calendar" id="calendarButton2"></i></span>
+                                        </div>
+                                        <select class="form-control" id="endHour" name="endHour">
+                                            <option th:each="num,numStat : ${#numbers.sequence(0,23)}"
+                                                    th:value="${#numbers.formatInteger(numStat.index,2)}"
+                                                    th:text="${#numbers.formatInteger(numStat.index,2)}"></option>
+                                        </select>
+                                        <em> : </em>
+                                        <select class="form-control" id="endMinute" name="endMinute">
+                                            <option th:each="num,numStat : ${#numbers.sequence(0,59)}"
+                                                    th:value="${#numbers.formatInteger(numStat.index,2)}"
+                                                    th:text="${#numbers.formatInteger(numStat.index,2)}"></option>
+                                        </select>
+                                        <input class="input" type="hidden" name="dispEndDtm" id="dispEndDtm"/>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label"><strong th:text="${#messages.msg('displayConnectManagement.connectTabImgGrid.dispSeq')}"></strong></td>
+                                <td>
+                                    <input class="input w20" type="text" id="dispSeq" name="dispSeq" maxlength="3" onkeyup="number(this)"/>
+                                </td>
+                                <td class="label"><strong th:text="${#messages.msg('displayConnectManagement.connectTabImgGrid.dispYn')}"></strong></td>
+                                <td>
+                                    <div class="input-group">
+                                        <label class="radio-inline" th:for="dispYn_Y">
+                                            <input type="radio" name="dispYn" th:value="Y" th:id="dispYn_Y">
+                                            <span th:text="${#messages.msg('displayConnectManagement.label.disp')}"></span>
+                                        </label>
+                                        <label class="radio-inline" th:for="dispYn_N">
+                                            <input type="radio" name="dispYn" th:value="N" th:id="dispYn_N">
+                                            <span th:text="${#messages.msg('displayConnectManagement.label.disdisp')}"></span>
+                                        </label>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label"><strong th:text="${#messages.msg('displayConnectManagement.connectTabImgGrid.ImgBanner')}"></strong></td>
+                                <td colspan="2" >
+                                    <div class="input-group file-upload">
+                                        <a href="#" class="button small gray" id="btn_fileUpload"><span class="text" th:text="${#messages.msg('adminCommon.button.select.file')}"></span></a>
+                                        <input type="text" class="input disabled" disabled="disabled">
+                                        <input type="hidden" name="contPathNm" id="contPathNm">
+                                        <input type="hidden" name="contFileNm" id="contFileNm">
+                                        <div class="tip-wrap">
+                                            <p class="tip">파일 용량은 5M미만이여야 정상적 업로드가 가능합니다.</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="center">
+                                    <div id="imgFile"></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label"><strong th:text="${#messages.msg('displayConnectManagement.connectTabImgGrid.altCont')}"></strong></td>
+                                <td>
+                                    <input class="input w100" type="text" id="altCont" name="altCont" maxlength="1000"/>
+                                </td>
+                                <td class="label"><strong th:text="${#messages.msg('displayConnectManagement.connectTabImgGrid.linkUrlAddr')}"></strong></td>
+                                <td>
+                                    <div class="input-group">
+                                        <select class="form-control" id="movFrmeCd" name="movFrmeCd">
+                                            <option th:each="list : ${codeList.DP007}" th:value="${list.cd}" th:text="${list.cdNm}"></option>
+                                        </select>
+                                        <input class="input" type="text" id="linkUrlAddr" name="linkUrlAddr" maxlength="1000"/>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label"><strong th:text="${#messages.msg('displayConnectManagement.connectTabImgGrid.contDesc')}"></strong></td>
+                                <td colspan="3">
+                                    <input class="input w100" type="text" id="contDesc" name="contDesc" maxlength="4000"/>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!--//data-cont-->
+    </form>
+</th:block>
+
+<th:block layout:fragment="button-area">
+    <div class="button-group" style="margin-top: 0px;" >
+        <a href="#" class="button" id="btn_popup_cancel">
+            <span class="text" th:text="${#messages.msg('adminCommon.button.cancel')}">취소</span>
+        </a>
+        <a href="#" class="button large" id="btn_popup_save">
+            <span class="text" th:text="${#messages.msg('adminCommon.button.save')}">저장</span>
+        </a>
+    </div>
+</th:block>
+
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        var req         = [[${requestData}]];
+        const maxUploadSizePerFile = [[${maxUploadSizePerFile}]];
+
+        var msg = x2coMessage.getMessage( {
+            cancelMessage : 'adminCommon.alert.cancel'
+            , save : 'adminCommon.grid.alert.save'
+            , necessaryCheckMessage : 'adminCommon.alert.required.parameter'
+            , dataCheck1 : 'displayConnectManagement.message.dataCheck1'
+            , dataCheck3 : 'displayConnectManagement.message.dataCheck3'
+            , fileLength : 'displayConnectManagement.message.fileLength'
+            , fileLimitSize : 'displayConnectManagement.message.fileLimitSize'
+            , fileTypeError : 'displayConnectManagement.message.fileTypeError'
+        });
+    </script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/displayConnectMgmt/tab/connectImgUpdate.eventHandler.js?202104230001'" ></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            connectImgUpdate.eventhandler.init();
+        });
+    </script>
+</th:block>
+
+</body>
+</html>

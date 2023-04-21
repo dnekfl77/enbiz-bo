@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.system.StRecvmnInfoMapper">
+
+	<sql id="paginatedBase">
+		LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+	</sql>
+	
+	<!-- 수신자목록 조회 -->
+	<sql id="recvmnListBase">
+		SELECT /* stRecvmnInfo.getRecvmnList */
+				RECV_GRP_NO
+				, SUB.USER_ID
+				, SUB.USER_NM
+				, SDC.DEPT_NM
+				, FN_GET_CODENAME('UR002',SUB.JOB_GRP_CD) AS JOB_GRP_NM
+				, SRI.SYS_MOD_ID
+				, TO_CHAR(SRI.SYS_MOD_DTM,'yyyy-mm-dd hh24:mi:ss') AS SYS_MOD_DTM
+	   FROM ST_RECVMN_INFO SRI
+	   			, ST_USER_BASE SUB
+	   			, ST_DEPT_CD SDC
+	WHERE SUB.USER_ID = SRI.USER_ID 
+		AND SUB.DEPT_CD = SDC.DEPT_CD 
+    <if test='recvGrpNo != null and recvGrpNo != ""'>
+		AND SRI.RECV_GRP_NO = #{recvGrpNo}	
+	</if>
+	  ORDER BY RECV_GRP_NO DESC
+	</sql>
+
+	<select id="getRecvmnList" parameterType="ReceiveManagerRequest" resultType="ReceiveManagerResponse">
+		<include refid="recvmnListBase" />
+		<include refid="paginatedBase" />
+	</select>
+
+	<select id="getRecvmnListCount" parameterType="ReceiveManagerRequest"
+			resultType="java.lang.Integer">
+		SELECT /* stRecvGrpInfo.getRecvGrpListCount */
+		       COUNT(*)
+		  FROM (
+		  	   <include refid="recvmnListBase" />
+		       ) v
+	</select>
+	
+	<!-- 수신자목록 조회(no page) -->
+	<select id="getRecvmnListNoPage" parameterType="ReceiveManagerRequest" resultType="ReceiveManagerResponse">
+		SELECT /* stRecvmnInfo.getRecvmnListNoPage */
+				RECV_GRP_NO
+				, SUB.USER_ID
+				, SUB.USER_NM
+				, SDC.DEPT_NM
+				, FN_GET_CODENAME('UR002',SUB.JOB_GRP_CD) AS JOB_GRP_NM
+				, SRI.SYS_MOD_ID
+				, TO_CHAR(SRI.SYS_MOD_DTM,'yyyy-mm-dd hh24:mi:ss') AS SYS_MOD_DTM
+	   FROM ST_RECVMN_INFO SRI
+	   			, ST_USER_BASE SUB
+	   			, ST_DEPT_CD SDC
+		WHERE SUB.USER_ID = SRI.USER_ID 
+		AND SUB.DEPT_CD = SDC.DEPT_CD 
+    <if test='recvGrpNo != null and recvGrpNo != ""'>
+		AND SRI.RECV_GRP_NO = #{recvGrpNo}	
+	</if>
+	<if test='recvGrpNoList != null'>
+		AND SRI.RECV_GRP_NO IN
+		<foreach collection="recvGrpNoList" item="recvGrpNo" open="(" separator="," close=")">
+			#{recvGrpNo}
+		</foreach>	
+	</if>
+	</select>
+	
+	<!-- 등록하려는 사용자가 이미 수신그룹에 등록되어 있는지 check(수신자 등록 전 호출) -->
+	<select id="getUserForRecvnmToInsertCheck" parameterType="StRecvmnInfo" resultType="java.lang.Integer">
+		SELECT COUNT(*) /* stRecvmnInfo.getUserForRecvnmToInsertCheck */
+		  FROM ST_RECVMN_INFO
+		 WHERE RECV_GRP_NO = #{recvGrpNo}
+		     AND USER_ID = #{userId}
+	</select>	
+
+	<!-- 수신그룹에 매핑된 수신자가 있는지 check(수신그룹 삭제 전 호출) -->
+	<select id="getRecvmnCntMappedToRecvGrp" parameterType="java.lang.String" resultType="java.lang.Integer">
+		SELECT COUNT(*) /* stRecvmnInfo.getRecvmnCntMappedToRecvGrp */
+		  FROM ST_RECVMN_INFO
+		 WHERE RECV_GRP_NO = #{recvGrpNo}
+	</select>
+
+</mapper>

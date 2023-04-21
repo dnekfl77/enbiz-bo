@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enbiz.bo.app.repository.vendor.EtEntrBaseTrxMapper">
+
+     <insert id="insertEtEntrBaseTrx" parameterType="etEntrBase">
+          <selectKey keyProperty="entrNo" resultType="String" order="BEFORE">
+               SELECT NEXTVAL('et_entr_base_sq01') AS entrNo
+          </selectKey>
+          INSERT INTO ET_ENTR_BASE ( /* etEntrBaseTrx.insertEtEntrBaseTrx */
+                 ENTR_NO
+               , ENTR_NM
+               , ENTR_GB_CD
+               , TRD_TYP_CD
+               , TRD_STAT_CD
+               , LGC_ENTR_NO
+               , RPSTMN_NM
+               , BMAN_NO
+               , CORPN_NO
+               , BTYP
+               , BKIND
+               , CONT_STRT_DY
+               , CONT_END_DY
+               , AEMP_NM
+               , AEMP_TEL_RGN_NO
+               , AEMP_TEL_TXNO_NO
+               , AEMP_TEL_END_NO
+               , AEMP_CELL_SCT_NO
+               , AEMP_CELL_TXNO_NO
+               , AEMP_CELL_END_NO
+               , FAX_RGN_NO
+               , FAX_TXNO_NO
+               , FAX_END_NO
+               , BMAN_KIND_CD
+               , ZIP_NO_SEQ
+               , ZIP_NO
+               , ZIP_ADDR
+               , DTL_ADDR
+               , RMK_CMT
+               , SYS_REG_ID
+               , SYS_REG_DTM
+               , SYS_MOD_ID
+               , SYS_MOD_DTM
+          ) VALUES (
+                 #{entrNo}
+               , #{entrNm}
+               , #{entrGbCd}
+               , #{trdTypCd}
+               , #{trdStatCd}
+               , #{lgcEntrNo}
+               , #{rpstmnNm}
+               , #{bmanNo}
+               , #{corpnNo}
+               , #{btyp}
+               , #{bkind}
+               , #{contStrtDy}
+               , #{contEndDy}
+               , #{aempNm}
+               , #{aempTelRgnNo}
+               , #{aempTelTxnoNo}
+               , #{aempTelEndNo}
+               , #{aempCellSctNo}
+               , #{aempCellTxnoNo}
+               , #{aempCellEndNo}
+               , #{faxRgnNo}
+               , #{faxTxnoNo}
+               , #{faxEndNo}
+               , #{bmanKindCd}
+               , #{zipNoSeq}
+               , #{zipNo}
+               , #{zipAddr}
+               , #{dtlAddr}
+               , #{rmkCmt}
+               , #{sysRegId}
+               , now()
+               , #{sysModId}
+               , now()
+          )
+     </insert>
+
+     <update id="updateEtEntrBaseTrx" parameterType="etEntrBase">
+          UPDATE ET_ENTR_BASE /* etEntrBaseTrx.updateEtEntrBaseTrx */
+             SET ENTR_NM = #{entrNm}
+<!--               , ENTR_GB_CD = #{entrGbCd}-->
+               , TRD_TYP_CD = #{trdTypCd}
+               , TRD_STAT_CD = #{trdStatCd}
+               , LGC_ENTR_NO = #{lgcEntrNo}
+               , RPSTMN_NM = #{rpstmnNm}
+               , BMAN_NO = #{bmanNo}
+               , CORPN_NO = #{corpnNo}
+               , BTYP = #{btyp}
+               , BKIND = #{bkind}
+               , CONT_STRT_DY = #{contStrtDy}
+               , CONT_END_DY = #{contEndDy}
+               , AEMP_NM = #{aempNm}
+               , AEMP_TEL_RGN_NO = #{aempTelRgnNo}
+               , AEMP_TEL_TXNO_NO = #{aempTelTxnoNo}
+               , AEMP_TEL_END_NO = #{aempTelEndNo}
+               , AEMP_CELL_SCT_NO = #{aempCellSctNo}
+               , AEMP_CELL_TXNO_NO = #{aempCellTxnoNo}
+               , AEMP_CELL_END_NO = #{aempCellEndNo}
+               , FAX_RGN_NO = #{faxRgnNo}
+               , FAX_TXNO_NO = #{faxTxnoNo}
+               , FAX_END_NO = #{faxEndNo}
+               , BMAN_KIND_CD = #{bmanKindCd}
+               , ZIP_NO_SEQ = #{zipNoSeq}
+               , ZIP_NO = #{zipNo}
+               , ZIP_ADDR = #{zipAddr}
+               , DTL_ADDR = #{dtlAddr}
+               , RMK_CMT = #{rmkCmt}
+               , SYS_MOD_DTM = now()
+               , SYS_MOD_ID = #{sysModId}
+           WHERE ENTR_NO = #{entrNo}
+     </update>
+
+</mapper>

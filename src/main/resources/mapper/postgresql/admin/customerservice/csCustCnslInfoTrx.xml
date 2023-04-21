@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.customerservice.CsCustCnslInfoTrxMapper">
+
+    <update id="postOneToOneInquiry" parameterType="CsCustCnslInfo">
+        UPDATE CS_CUST_CNSL_INFO
+           SET /* CsCustCnslInfo.postOneToOneInquiry */
+               CCN_PRGS_STAT_CD = #{ccnPrgsStatCd}
+             , ANS_DTM=NOW()
+             , ANS_CONT=#{ansCont}
+            <if test='preProcYn != null and preProcYn == "Y"'>
+             , PRE_PROC_YN=#{preProcYn}
+            </if>
+             , SYS_MOD_ID = #{sysModId}
+             , SYS_MOD_DTM = NOW()
+         WHERE CCN_NO = #{ccnNo}
+    </update>
+
+    <insert id="insertCsCustCnslInfo" parameterType="CsCustCnslInfo" useGeneratedKeys="false">
+        <selectKey keyProperty="ccnNo" resultType="String" order="BEFORE">
+            SELECT NEXTVAL('CS_CUST_CNSL_INFO_SQ01') AS ccnNo
+        </selectKey>
+
+        INSERT INTO CS_CUST_CNSL_INFO( /* CsCustCnslInfo.insertCsCustCnslInfo */
+                    CCN_NO
+                  , CUST_CNSL_GB_CD
+                  , ACCP_MEDIA_CD
+                  , ACCP_TYP_CD
+                  , CNSL_SUB_CD
+                  , CCN_PRGS_STAT_CD
+                  , ACCP_DTM
+              <if test='ccnPrgsStatCd != null and ccnPrgsStatCd != "10"'>
+                  , QUOT_DTM
+              </if>
+              <if test='ccnPrgsStatCd != null and ccnPrgsStatCd == "40"'>
+                  , FNSH_DTM
+              </if>
+                  , ACPTMN_ID
+                  , PROCMN_ID
+                  , FNSHMN_ID
+                  , MBR_NO
+                  , INQMN_NM
+                  , CNSL_LRG_TYP_NO
+                  , CNSL_MID_TYP_NO
+                  , CNSL_TYP_NO
+                  , CELL_NO_YN
+                  , TEL_RGN_NO
+                  , TEL_TXNO_NO
+                  , TEL_END_NO
+                  , EMAIL_ADDR
+                  , ACCP_CONT
+                  , SMS_ANS_NTC_YN
+                  , EMAIL_ANS_NTC_YN
+                  , OB_TYP_NO
+                  , CUST_INQ_LRG_TYP_CD
+                  , CUST_INQ_SML_TYP_CD
+                  , ANS_DTM
+                  , ANS_CONT
+                  , QUEST_NO
+                  , GOODS_NO
+                  , PRE_PROC_YN
+                  , SYS_REG_ID
+                  , SYS_REG_DTM
+                  , SYS_MOD_ID
+                  , SYS_MOD_DTM)
+             VALUES (
+                    #{ccnNo}
+                  , #{custCnslGbCd}
+                  , #{accpMediaCd}
+                  , #{accpTypCd}
+                  , #{cnslSubCd}
+                  , #{ccnPrgsStatCd}
+                  , NOW()
+              <if test='ccnPrgsStatCd != null and ccnPrgsStatCd != "10"'>
+                  , NOW()
+              </if>
+              <if test='ccnPrgsStatCd != null and ccnPrgsStatCd == "40"'>
+                  , NOW()
+              </if>
+                  , #{acptmnId}
+                  , #{procmnId}
+                  , #{fnshmnId}
+                  , #{mbrNo}
+                  , #{inqmnNm}
+                  , #{cnslLrgTypNo}
+                  , #{cnslMidTypNo}
+                  , #{cnslTypNo}
+                  , #{cellNoYn}
+                  , #{telRgnNo}
+                  , #{telTxnoNo}
+                  , #{telEndNo}
+                  , #{emailAddr}
+                  , #{accpCont}
+                  , #{smsAnsNtcYn}
+                  , #{emailAnsNtcYn}
+                  , #{obTypNo}
+                  , #{custInqLrgTypCd}
+                  , #{custInqSmlTypCd}
+                  , #{ansDtm}
+                  , #{ansCont}
+                  , #{questNo}
+                  , #{goodsNo}
+                  , #{preProcYn}
+                  , #{sysRegId}
+                  , NOW()
+                  , #{sysModId}
+                  , NOW()
+        )
+    </insert>
+
+    <update id="updateProcNoCallCsCustCnslInfo" parameterType="CsCustCnslInfo">
+       UPDATE CS_CUST_CNSL_INFO
+          SET /* CsCustCnslInfo.updateProcNoCallCsCustCnslInfo */
+              CCN_PRGS_STAT_CD=#{ccnPrgsStatCd}
+        <if test='ccnPrgsStatCd != null and ccnPrgsStatCd != "10"'>
+            , QUOT_DTM= NOW()
+        </if>
+        <if test='ccnPrgsStatCd != null and ccnPrgsStatCd == "40"'>
+            , FNSH_DTM= NOW()
+        </if>
+            , PROCMN_ID=#{procmnId}
+            , FNSHMN_ID=#{fnshmnId}
+        <if test='preProcYn != null and preProcYn == "Y"'>
+            , PRE_PROC_YN=#{preProcYn}
+        </if>
+            , SYS_MOD_ID = #{sysModId}
+            , SYS_MOD_DTM = NOW()
+        WHERE CCN_NO = #{ccnNo}
+    </update>
+
+    <update id="updateProcCsCustCnslInfo" parameterType="CsCustCnslInfo">
+        UPDATE CS_CUST_CNSL_INFO
+           SET /* CsCustCnslInfo.updateProcCsCustCnslInfo */
+               CCN_PRGS_STAT_CD=#{ccnPrgsStatCd}
+        <if test='ccnPrgsStatCd != null and ccnPrgsStatCd != "10"'>
+             , QUOT_DTM= NOW()
+        </if>
+        <if test='ccnPrgsStatCd != null and ccnPrgsStatCd == "40"'>
+             , FNSH_DTM= NOW()
+        </if>
+             , PROCMN_ID=#{procmnId}
+             , FNSHMN_ID=#{fnshmnId}
+             , CELL_NO_YN=#{cellNoYn}
+             , TEL_RGN_NO=#{telRgnNo}
+             , TEL_TXNO_NO=#{telTxnoNo}
+             , TEL_END_NO=#{telEndNo}
+        <if test='preProcYn != null and preProcYn == "Y"'>
+             , PRE_PROC_YN=#{preProcYn}
+        </if>
+             , SYS_MOD_ID = #{sysModId}
+             , SYS_MOD_DTM = NOW()
+         WHERE CCN_NO = #{ccnNo}
+    </update>
+
+    <update id="updateCsInfoPrgsStatCd" parameterType="CsCustCnslInfo">
+        UPDATE CS_CUST_CNSL_INFO
+           SET /* CsCustCnslInfo.updateCsInfoPrgsStatCd */
+               CCN_PRGS_STAT_CD=#{ccnPrgsStatCd}
+             , SYS_MOD_ID = #{sysModId}
+             , SYS_MOD_DTM = NOW()
+         WHERE CCN_NO = #{ccnNo}
+    </update>
+
+    <sql id="retrieveAllocationUpdate">
+        <![CDATA[
+        UPDATE CS_CUST_CNSL_INFO
+           SET PROCMN_ID = NULL
+             , QUOT_DTM = NULL
+             , SYS_MOD_ID = #{sysModId}
+             , SYS_MOD_DTM = NOW()
+         WHERE CCN_PRGS_STAT_CD = '10'
+           AND PROCMN_ID = #{aempId}
+           AND QUOT_DTM >= TO_TIMESTAMP(#{startDate}||':59', 'YYYY-MM-DD HH24:MI:SS')
+           AND QUOT_DTM <= TO_TIMESTAMP(#{endDate}||':59', 'YYYY-MM-DD HH24:MI:SS')
+           AND ACCP_TYP_CD = #{autoDivGbCd}
+        ]]>
+    </sql>
+
+    <update id="retrieveObAllcation" parameterType="CsAssignRetrieveRequest">
+        <include refid="retrieveAllocationUpdate" />
+           AND OB_TYP_NO = #{autoDivDtlNo}
+    </update>
+
+    <update id="retrieveOneToOneAllcation" parameterType="CsAssignRetrieveRequest">
+        <include refid="retrieveAllocationUpdate" />
+           AND CUST_INQ_LRG_TYP_CD = #{autoDivDtlNo}
+    </update>
+
+    <update id="retrieveAllcation" parameterType="CsAssignRetrieveRequest">
+        <include refid="retrieveAllocationUpdate" />
+           AND CUST_INQ_LRG_TYP_CD IS NULL
+           AND OB_TYP_NO IS NULL
+    </update>
+
+</mapper>

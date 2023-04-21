@@ -1,0 +1,125 @@
+<!--
+* 프로그램명 : 기획전 조회 팝업
+* 작 성 일 : 2021.04.12
+* 작 성 자 : N.J.Kim
+* 수 정 자 : 홍혜리
+* 버	전 : 1.0
+* 개	요 : 기획전 조회 팝업 UI
+* 이	력 : 2021.08.02 단일선택시 적용방식 수정
+-->
+<html lang="ko"
+	  xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{layouts/popup-layout}">
+<body>
+	<!--Title Area-->
+	<th:block layout:fragment="popup-title-area">
+		<th:block layout:insert="~{fragments/popup/popup-title :: popup-title}"
+				  th:with="title=${#messages.msg('displayExhibitionGroupManagement.popup.title')}"></th:block><!-- 기획전 조회 -->
+	</th:block>
+	<!--Title Area-->
+
+	<!--Search Area-->
+	<th:block layout:fragment="popup-search-area">
+		<div class="search">
+			<form name="searchForm" id="searchForm">
+				<table class="search-table">
+					<colgroup>
+						<col style="width:15%;"/>
+						<col style="width:35%;"/>
+						<col style="width:15%;"/>
+						<col style="width:35%;"/>
+					</colgroup>
+					<tbody>
+					<tr>
+						<td class="label" th:text="${#messages.msg('displayExhibitionGroupManagement.popup.search.label.dispGrpTypCd')}"></td><!-- 기획전유형코드(DP008) -->
+						<td>
+							<select class="form-control w40" id="mkdpTypCd" name="mkdpTypCd">
+								<option th:text="${#messages.msg('displayExhibitionGroupManagement.popup.search.label.option.all')}" value=""></option>
+								<option th:each="list : ${codeList.DP008}" th:value="${list.cd}" th:text="${list.cdNm}"></option>
+							</select>
+						</td>
+						<td class="label" th:text="${#messages.msg('displayExhibitionGroupManagement.popup.search.label.dispStat')}"></td><!-- 기획전상태(DP020) -->
+						<td>
+							<select class="form-control w40" id="dispStat" name="dispStat">
+								<th:block th:if="${requestData.argDispStat} == null or ${requestData.argDispStat} == ''">
+									<option value="" th:text="${#messages.msg('baseInfoMgmt.label.full')}"></option>
+									<option th:each="list : ${codeList.DP020}" th:value="${list.cd}" th:utext="${list.cdNm}"></option>
+								</th:block>
+								<th:block th:unless="${requestData.argDispStat} == null or ${requestData.argDispStat} == ''">
+									<option value="" th:text="${#messages.msg('baseInfoMgmt.label.full')}"></option>
+									<option th:each="list : ${dispStatList}" th:value="${list.value}" th:utext="${list.key}"></option>
+								</th:block>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<!-- 기획전 그룹 번호/명 -->
+						<td class="label"
+							th:text="${#messages.msg('displayExhibitionGroupManagement.popup.search.label.mkdpNo')}"><!-- 기획전번호/명 -->
+						</td>
+						<td>
+							<input class="input w30" type="text" name="mkdpNo" id="mkdpNo" maxlength="7" onkeyup="number(this)"><!-- 기획전번호 -->
+							<input class="input w60" type="text" name="mkdpNm" id="mkdpNm" maxlength="200"><!-- 기획전명 -->
+						</td>
+						<td class="label" th:text="${#messages.msg('displayExhibitionGroupManagement.popup.search.label.mdId')}"></td><!-- 담당MD -->
+						<td>
+							<input class="input disabled w60" type="text" id="mdNm" th:readonly="true"/>
+							<input type="hidden" id="mdId" name="mdId"/>
+							<a href="#" class="button small" id="btn_call_md_popup"><i class="icon-sarch"></i></a>
+							<a href="#" class="button small" id="btn_reset_md_popup"><i class="icon-clear"></i></a>
+						</td>
+					</tr>
+					</tbody>
+				</table>
+			</form>
+		</div>
+	</th:block>
+	<!--Search Area-->
+
+	<!--Search Button Area-->
+	<th:block layout:fragment="popup-search-button-area">
+		<th:block layout:insert="~{fragments/popup/popup-btn :: popup-search-btn}"/>
+	</th:block>
+	<!--Search Button Area-->
+
+	<!--List Area-->
+	<th:block layout:fragment="popup-List-area">
+	   <div class="grid">
+		   <div class="grid-head" style="overflow: hidden;">
+			   <div class="title-area">
+				   <h2 class="title" th:text="${#messages.msg('displayExhibitionGroupManagement.popup.grid.title')}"></h2><!-- 기획전 조회 결과 -->
+			   </div>
+			   <div class="option-area">
+				   <div class="page-option" grid-id="mkdpGrid"></div>
+			   </div>
+		   </div>
+		   <div class="grid-body with-head">
+			   <div id="mkdpGrid" class="rg-root rg-grid" realgrid></div>
+		   </div>
+		</div>
+	</th:block>
+	<!--List Area-->
+
+<!--List Button Area-->
+<th:block layout:fragment="popup-List-button-area">
+	<th:block layout:insert="~{fragments/popup/popup-btn :: popup-List-btn}"/>
+</th:block>
+
+<th:block layout:fragment="add-script">
+	<script th:inline="javascript">
+		var _defaultPage	= 0;
+		var _gridType	   = [[${requestData.argSelectType}]]; // 선택구분값이 있을경우 필수값
+	</script>
+	<script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'popup/marketDisplayListPopup.mkdpGrid.eventHandler.js?20210802'" ></script>
+	<script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'popup/marketDisplayListPopup.mkdpGrid.provider.js'" ></script>
+
+	<script type="text/javascript">
+		$(document).ready(function() {
+			mkdpGrid.eventhandler.init();
+		});
+	</script>
+</th:block>
+
+</body>
+</html>

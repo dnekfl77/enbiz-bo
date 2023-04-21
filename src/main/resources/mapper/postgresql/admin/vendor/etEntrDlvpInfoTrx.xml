@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enbiz.bo.app.repository.vendor.EtEntrDlvpInfoTrxMapper">
+
+     <insert id="insertEtEntrDlvpInfoTrx" parameterType="etEntrDlvpInfo">
+          <selectKey keyProperty="entrDlvpNo" resultType="String" order="BEFORE">
+               SELECT NEXTVAL('et_entr_dlvp_info_sq01') AS entrDlvpNo
+          </selectKey>
+          INSERT INTO ET_ENTR_DLVP_INFO ( /* etEntrDlvpInfoTrx.getCdCdNmFromCcSiteBaseByEmpty */
+                 ENTR_DLVP_NO
+               , ENTR_NO
+               , DLVP_TYP_CD
+               , DLVP_NM
+               , USE_YN
+               , ZIP_NO_SEQ
+               , ZIP_NO
+               , ZIP_ADDR
+               , DTL_ADDR
+               , UTAKMN_NM
+               , AEMP_TEL_RGN_NO
+               , AEMP_TEL_TXNO_NO
+               , AEMP_TEL_END_NO
+               , AEMP_CELL_SCT_NO
+               , AEMP_CELL_TXNO_NO
+               , AEMP_CELL_END_NO
+               , SYS_REG_ID
+               , SYS_REG_DTM
+               , SYS_MOD_ID
+               , SYS_MOD_DTM
+          ) VALUES (
+                 #{entrDlvpNo}
+               , #{entrNo}
+               , #{dlvpTypCd}
+               , #{dlvpNm}
+               , #{useYn}
+               , #{zipNoSeq}
+               , #{zipNo}
+               , #{zipAddr}
+               , #{dtlAddr}
+               , #{utakmnNm}
+               , #{aempTelRgnNo}
+               , #{aempTelTxnoNo}
+               , #{aempTelEndNo}
+               , #{aempCellSctNo}
+               , #{aempCellTxnoNo}
+               , #{aempCellEndNo}
+               , #{sysRegId}
+               , now()
+               , #{sysModId}
+               , now()
+          )
+     </insert>
+     <update id="updateEtEntrDlvpInfoTrx" parameterType="etEntrDlvpInfo">
+          UPDATE ET_ENTR_DLVP_INFO /* etEntrDlvpInfoTrx.updateEtEntrDlvpInfoTrx */
+             SET ENTR_NO  = #{entrNo}
+               , DLVP_TYP_CD  = #{dlvpTypCd}
+               , DLVP_NM  = #{dlvpNm}
+               , USE_YN = #{useYn}
+               , ZIP_NO_SEQ = #{zipNoSeq}
+               , ZIP_NO = #{zipNo}
+               , ZIP_ADDR = #{zipAddr}
+               , DTL_ADDR = #{dtlAddr}
+               , UTAKMN_NM = #{utakmnNm}
+               , AEMP_TEL_RGN_NO = #{aempTelRgnNo}
+               , AEMP_TEL_TXNO_NO = #{aempTelTxnoNo}
+               , AEMP_TEL_END_NO = #{aempTelEndNo}
+               , AEMP_CELL_SCT_NO = #{aempCellSctNo}
+               , AEMP_CELL_TXNO_NO = #{aempCellTxnoNo}
+               , AEMP_CELL_END_NO = #{aempCellEndNo}
+               , SYS_MOD_DTM = now()
+               , SYS_MOD_ID = #{sysModId}
+           WHERE ENTR_DLVP_NO = #{entrDlvpNo}
+     </update>
+
+     <delete id="deleteEtEntrDlvpInfoTrx" parameterType="etEntrDlvpInfo">
+          DELETE /* etEntrDlvpInfoTrx.deleteEtEntrDlvpInfoTrx */
+            FROM ET_ENTR_DLVP_INFO
+           WHERE ENTR_DLVP_NO = #{entrDlvpNo}
+     </delete>
+
+</mapper>

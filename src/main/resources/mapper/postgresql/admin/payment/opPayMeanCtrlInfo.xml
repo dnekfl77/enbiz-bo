@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.payment.OpPayMeanCtrlInfoMapper">
+
+	<sql id="paginatedBase">
+		LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+	</sql>
+
+	<sql id="methodsOfPaymentControlList">
+		<![CDATA[
+		SELECT  				/* opPayMeanCtrlInfo.methodsOfPaymentControlList */
+				  OPMCI.PAY_MEAN_CTRL_NO
+				, FN_GET_CODENAME('OM031', OPMCI.DVC_GB_CD) AS DVC_GB_CD
+				, ( CASE WHEN OPMCDI.CTRL_GB_CD = '10' THEN FN_GET_CODENAME('OM030', OPMCDI.CTRL_TGT_NO)    -- PG사인 경우
+						 WHEN OPMCDI.CTRL_GB_CD = '20' THEN FN_GET_CODENAME('OM013', OPMCDI.CTRL_TGT_NO)	-- 결제수단인 경우
+				    END ) AS CTRL_TGT_NO
+				, ( CASE WHEN OPMCDI.CTRL_GB_CD = '10' 									THEN ''
+					     WHEN OPMCDI.CTRL_GB_CD = '20' AND OPMCDI.CTRL_TGT_NO = '11'	THEN FN_GET_CODENAME('OM026', OPMCDI.CTRL_TGT_DTL_NO)
+					     WHEN OPMCDI.CTRL_GB_CD = '20' AND OPMCDI.CTRL_TGT_NO = '21'	THEN FN_GET_CODENAME('OM027', OPMCDI.CTRL_TGT_DTL_NO)
+					     WHEN OPMCDI.CTRL_GB_CD = '20' AND OPMCDI.CTRL_TGT_NO = '22'	THEN FN_GET_CODENAME('OM027', OPMCDI.CTRL_TGT_DTL_NO)
+				  END ) AS CTRL_TGT_DTL_NO
+				, TO_CHAR(OPMCI.USE_LMT_STR_DTM,'YYYY-MM-DD HH24:MI') || ' ~ ' || TO_CHAR(OPMCI.USE_LMT_END_DTM,'YYYY-MM-DD HH24:MI') AS USE_LMT_DATE
+				, CASE
+						WHEN OPMCI.USE_LMT_STR_DTM >  NOW()	AND OPMCI.USE_LMT_END_DTM >   NOW() THEN '대기'
+						WHEN OPMCI.USE_LMT_STR_DTM <= NOW()	AND OPMCI.USE_LMT_END_DTM >=  NOW() THEN '진행'
+						WHEN OPMCI.USE_LMT_STR_DTM <  NOW() AND OPMCI.USE_LMT_END_DTM <	  NOW()	THEN '종료'
+				  END AS STATE
+				, OPMCI.USE_YN
+				, OPMCI.DISP_YN
+				, OPMCI.SYS_MOD_ID
+				, TO_CHAR(OPMCI.SYS_MOD_DTM,'YYYY-MM-DD HH24:MI') AS SYS_MOD_DTM
+		FROM 	  OP_PAY_MEAN_CTRL_INFO OPMCI
+				, OP_PAY_MEAN_CTRL_DTL_INFO OPMCDI
+		]]>
+		WHERE 	  OPMCI.PAY_MEAN_CTRL_NO = OPMCDI.PAY_MEAN_CTRL_NO
+		AND 	  OPMCDI.CTRL_GB_CD 	LIKE 	#{ctrlGbCd} 	|| '%'
+		AND 	  OPMCDI.CTRL_TGT_NO 	LIKE 	#{ctrlTgtNo} 	|| '%'
+		AND 	  OPMCI.USE_YN 			LIKE 	#{useYn} 		|| '%'
+
+		<if test='state == "1"'><!-- 대기 -->
+			<![CDATA[
+			AND OPMCI.USE_LMT_STR_DTM > NOW()
+			AND OPMCI.USE_LMT_END_DTM > NOW()
+			]]>
+		</if>
+		<if test='state == "2"'><!-- 진행 -->
+			<![CDATA[
+			AND OPMCI.USE_LMT_STR_DTM <= NOW()
+			AND OPMCI.USE_LMT_END_DTM >= NOW()
+			]]>
+		</if>
+		<if test='state == "3"'><!-- 종료 -->
+			<![CDATA[
+			AND OPMCI.USE_LMT_STR_DTM < NOW()
+			AND OPMCI.USE_LMT_END_DTM < NOW()
+			]]>
+		</if>
+		ORDER BY OPMCI.PAY_MEAN_CTRL_NO
+	</sql>
+
+	<select id="getMethodsOfPaymentControlList" parameterType="OpPayMeanCtrlInfoRequest" resultType="OpPayMeanCtrlInfoResponse">
+		<include refid="methodsOfPaymentControlList" />
+		<include refid="paginatedBase" />
+	</select>
+
+	<select id="getMethodsOfPaymentControlListCount" parameterType="OpPayMeanCtrlInfoRequest" resultType="java.lang.Integer">
+		SELECT   /* opPayMeanCtrlInfo.getMethodsOfPaymentControlListCount */
+				COUNT(*)
+		FROM (
+				<include refid="methodsOfPaymentControlList" />
+		) T1
+	</select>
+
+	<select id="methodsOfPaymentControlDetailInfo" parameterType="OpPayMeanCtrlInfoRequest" resultType="OpPayMeanCtrlInfoResponse">
+		SELECT  				/* opPayMeanCtrlInfo.methodsOfPaymentControlDetail */
+				  OPMCI.PAY_MEAN_CTRL_NO
+				, TO_CHAR(OPMCI.USE_LMT_STR_DTM, 'YYYY-MM-DD HH24:MI') AS USE_LMT_STR_DTM
+				, TO_CHAR(OPMCI.USE_LMT_END_DTM, 'YYYY-MM-DD HH24:MI') AS USE_LMT_END_DTM
+				, OPMCI.DVC_GB_CD
+				, OPMCI.USE_YN
+				, OPMCI.DISP_YN
+				, OPMCI.SYS_MOD_ID
+				, TO_CHAR(OPMCI.SYS_MOD_DTM,'YYYY-MM-DD HH24:MI') AS SYS_MOD_DTM
+				, TO_CHAR(OPMCI.DISP_STR_DTM, 'YYYY-MM-DD HH24:MI') AS DISP_STR_DTM
+				, TO_CHAR(OPMCI.DISP_END_DTM, 'YYYY-MM-DD HH24:MI') AS DISP_END_DTM
+				, OPMCI.TITLE
+				, OPMCI.CONT
+		FROM 	  OP_PAY_MEAN_CTRL_INFO OPMCI
+		WHERE 	  OPMCI.PAY_MEAN_CTRL_NO = #{payMeanCtrlNo}
+	</select>
+
+	<insert id="opPayMeanCtrlInfoInsert" parameterType="opPayMeanCtrlInfo">
+		<selectKey keyProperty="payMeanCtrlNo" resultType="String" order="BEFORE">
+			SELECT NEXTVAL('OP_PAY_MEAN_CTRL_INFO_SQ01') AS payMeanCtrlNo
+		</selectKey>
+		INSERT INTO OP_PAY_MEAN_CTRL_INFO (  /* opPayMeanCtrlInfo.opPayMeanCtrlInfoInsert */
+				  PAY_MEAN_CTRL_NO
+				, USE_LMT_STR_DTM
+				, USE_LMT_END_DTM
+				, DVC_GB_CD
+				, USE_YN
+				, DISP_YN
+				, DISP_STR_DTM
+				, DISP_END_DTM
+				, TITLE
+				, CONT
+				, SYS_REG_ID
+				, SYS_REG_DTM
+				, SYS_MOD_ID
+				, SYS_MOD_DTM
+		) VALUES (
+				  #{payMeanCtrlNo}
+				, TO_TIMESTAMP(#{useLmtStrDtm}, 'YYYY-MM-DD HH24:MI:SS')
+				, TO_TIMESTAMP(#{useLmtEndDtm}, 'YYYY-MM-DD HH24:MI:SS')
+				, #{dvcGbCd}
+				, #{useYn}
+				, #{dispYn}
+				, TO_TIMESTAMP(#{dispStrDtm}, 'YYYY-MM-DD HH24:MI:SS')
+				, TO_TIMESTAMP(#{dispEndDtm}, 'YYYY-MM-DD HH24:MI:SS')
+				, #{title}
+				, #{cont}
+				, #{sysRegId}
+				, now()
+				, #{sysRegId}
+				, now()
+		)
+	</insert>
+
+	<update id="opPayMeanCtrlInfoUpdate" parameterType="opPayMeanCtrlInfo">
+		UPDATE    OP_PAY_MEAN_CTRL_INFO  /* opPayMeanCtrlInfo.opPayMeanCtrlInfoUpdate */
+		SET
+				  USE_LMT_STR_DTM  = TO_TIMESTAMP(#{useLmtStrDtm}, 'YYYY-MM-DD HH24:MI:SS')
+				, USE_LMT_END_DTM  = TO_TIMESTAMP(#{useLmtEndDtm}, 'YYYY-MM-DD HH24:MI:SS')
+				, DVC_GB_CD        = #{dvcGbCd}
+				, USE_YN      	= #{useYn}
+				, DISP_YN      	= #{dispYn}
+				, DISP_STR_DTM  = TO_TIMESTAMP(#{dispStrDtm}, 'YYYY-MM-DD HH24:MI:SS')
+				, DISP_END_DTM  = TO_TIMESTAMP(#{dispEndDtm}, 'YYYY-MM-DD HH24:MI:SS')
+				, TITLE      	= #{title}
+				, CONT    		= #{cont}
+				, SYS_MOD_ID 	= #{sysModId}
+				, SYS_MOD_DTM 	= now()
+		WHERE     PAY_MEAN_CTRL_NO = #{payMeanCtrlNo}
+	</update>
+
+</mapper>
+
+

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.display.CcCmAgmtPolcInfoMapper">
+
+	<sql id="paginatedBase">
+		LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+	</sql>
+
+	<sql id="termsConditionsList">
+		SELECT /* ccCmAgmtPolcInfo.termsConditionsList */
+				  SITE.SITE_NM
+				, AGMT.CM_AGMT_SEQ
+				, FN_GET_CODENAME( 'CH010', AGMT.CM_AGMT_POLC_GB_CD ) AS CMAGMTGBNM
+				, FN_GET_CODENAME( 'CH005', AGMT.AGMT_POLC_CD ) AS AGMTPOLCNM
+				, AGMT.CM_AGMT_POLC_GB_CD
+				, AGMT.AGMT_POLC_CD
+				, AGMT.TITLE
+				, SUBSTRING(AGMT.APLY_STR_DT,1,4)||'-'||SUBSTRING(AGMT.APLY_STR_DT,5,2)||'-'||SUBSTRING(AGMT.APLY_STR_DT,7,2) AS APLY_STR_DT
+				, SUBSTRING(AGMT.APLY_END_DT,1,4)||'-'||SUBSTRING(AGMT.APLY_END_DT,5,2)||'-'||SUBSTRING(AGMT.APLY_END_DT,7,2) AS APLY_END_DT
+				, AGMT.SYS_MOD_ID
+				, TO_CHAR(AGMT.SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+			FROM   CC_CM_AGMT_POLC_INFO AGMT, CC_SITE_BASE SITE
+			WHERE 	AGMT.SITE_NO = site.SITE_NO
+			AND 	AGMT.CM_AGMT_POLC_GB_CD LIKE #{cmAgmtPolcGbCd} 	|| '%'
+			AND 	AGMT.AGMT_POLC_CD 		LIKE #{agmtPolcCd} 		|| '%'
+			AND 	AGMT.SITE_NO 			LIKE #{siteNo} 			|| '%'
+			AND 	AGMT.TITLE 				LIKE '%' || #{title} || '%'
+			ORDER BY AGMT.SYS_MOD_DTM DESC
+	</sql>
+
+	<select id="getTermsConditionsList" parameterType="CcCmAgmtPolcInfoRequest" resultType="CcCmAgmtPolcInfoResponse">
+		<include refid="termsConditionsList" />
+		<include refid="paginatedBase" />
+	</select>
+
+	<select id="getTermsConditionsListCount" parameterType="CcCmAgmtPolcInfoRequest" resultType="java.lang.Integer">
+		SELECT /* ccCmAgmtPolcInfo.getTermsConditionsListCount */
+			COUNT(*)
+		FROM (
+			<include refid="termsConditionsList" />
+		) T1
+	</select>
+
+	<select id="getAgmtUtilGuideByCmAgmtSeq" parameterType="CcCmAgmtPolcInfoRequest" resultType="CcCmAgmtPolcInfoResponse">
+		SELECT 			/* ccCmAgmtPolcInfo.getTermsConditionsList */
+				  AGMT.CM_AGMT_SEQ
+				, AGMT.SITE_NO
+				, AGMT.CM_AGMT_POLC_GB_CD
+				, AGMT.AGMT_POLC_CD
+				, AGMT.TITLE
+				, AGMT.WRD_CONT
+				, SUBSTRING(AGMT.APLY_STR_DT,1,4)||'-'||SUBSTRING(AGMT.APLY_STR_DT,5,2)||'-'||SUBSTRING(AGMT.APLY_STR_DT,7,2) AS APLY_STR_DT
+				, SUBSTRING(AGMT.APLY_END_DT,1,4)||'-'||SUBSTRING(AGMT.APLY_END_DT,5,2)||'-'||SUBSTRING(AGMT.APLY_END_DT,7,2) AS APLY_END_DT
+				, SITE.SITE_NM
+				, CASE WHEN CURRENT_DATE <![CDATA[ >= ]]> 	TO_DATE(AGMT.APLY_STR_DT,'YYYYMMDD') THEN 'Y' ELSE 'N' END AS APLY_STR_YN
+				, CASE WHEN CURRENT_DATE <![CDATA[ > ]]> 	TO_DATE(AGMT.APLY_END_DT,'YYYYMMDD') THEN 'Y' ELSE 'N' END AS APLY_END_YN
+		FROM 	  CC_CM_AGMT_POLC_INFO AGMT, CC_SITE_BASE SITE
+		WHERE 	  AGMT.SITE_NO = SITE.SITE_NO
+		AND 	  AGMT.CM_AGMT_SEQ = #{cmAgmtSeq}
+	</select>
+
+</mapper>
+
+

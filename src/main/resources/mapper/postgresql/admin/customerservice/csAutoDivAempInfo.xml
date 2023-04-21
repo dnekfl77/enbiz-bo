@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.customerservice.CsAutoDivAempInfoMapper">
+
+
+    <sql id="paginatedBase">
+        LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+    </sql>
+
+    <sql id="CsAutoDivAempInfoBase">
+        <![CDATA[
+        WITH CCCIT AS (
+            SELECT *
+              FROM CS_CUST_CNSL_INFO
+             WHERE QUOT_DTM BETWEEN TO_DATE(TO_CHAR(NOW(),'YYYY-MM-DD'),'YYYY-MM-DD') AND TO_DATE(TO_CHAR(NOW(),'YYYY-MM-DD'),'YYYY-MM-DD') + 1
+               AND CCN_PRGS_STAT_CD IN ('10','20','30')
+               AND ACCP_TYP_CD IN ('20','30','50')
+        )
+        SELECT /* CsAutoDivideAempInfo.getAutoDistributionManager */
+               CADAI.AUTO_DIV_NO
+             , CADAI.AEMP_ID
+             , SUB.USER_NM AS AEMP_NM
+             , CADAI.AUTO_DIV_GB_CD
+             , FN_GET_CODENAME('CS023',CADAI.AUTO_DIV_GB_CD) AS AUTO_DIV_GB_NM
+             , CASE WHEN AUTO_DIV_DTL_NO IS NULL THEN 'null'
+                    ELSE AUTO_DIV_DTL_NO END AS AUTO_DIV_DTL_NO
+             , CADAI.DAYCL_QUOT_QTY
+             , CADAI.AUTO_DIV_PSB_YN
+             , CASE WHEN CADAI.AUTO_DIV_PSB_YN = 'Y' THEN
+                        (SELECT CASE WHEN COUNT(*) <= 0 THEN '대기' ELSE '할당진행' END
+                           FROM   CCCIT S1
+                          WHERE  CADAI.AEMP_ID = S1.PROCMN_ID
+                            AND (  ( CADAI.AUTO_DIV_GB_CD = S1.ACCP_TYP_CD AND CADAI.AUTO_DIV_DTL_NO IS NULL)
+                                OR ( CADAI.AUTO_DIV_GB_CD = S1.ACCP_TYP_CD AND CADAI.AUTO_DIV_DTL_NO = S1.CUST_INQ_LRG_TYP_CD)
+                                OR ( CADAI.AUTO_DIV_GB_CD = S1.ACCP_TYP_CD AND CADAI.AUTO_DIV_DTL_NO = S1.OB_TYP_NO )
+                                )
+                        )
+                    WHEN CADAI.AUTO_DIV_PSB_YN = 'N' THEN '할당중단' END STATE
+         FROM CS_AUTO_DIV_AEMP_INFO CADAI
+            , ST_USER_BASE		     SUB
+        WHERE CADAI.AEMP_ID = SUB.USER_ID
+          AND SUB.DEPT_CD = #{deptCd}
+        ]]>
+    </sql>
+
+    <select id="getAutoDistributionManagerList" parameterType="CsDeptUserRequest" resultType="CsDeptAempResponse">
+        <include refid="CsAutoDivAempInfoBase" />
+        <include refid="paginatedBase" />
+    </select>
+
+    <select id="getAutoDistributionManagerListCount" parameterType="CsDeptUserRequest" resultType="java.lang.Integer">
+        SELECT /* CsAutoDivideAempInfo.getAutoDistributionManagerCount */
+               COUNT(*)
+          FROM (
+            <include refid="CsAutoDivAempInfoBase" />
+          ) v
+    </select>
+
+    <select id="checkValidateManager" parameterType="CsAutoDivideAempRequest" resultType="java.lang.Boolean">
+        SELECT /*CsAutoDivideAempInfo.checkValidateManager*/
+               CASE WHEN COUNT(*) > 0 THEN TRUE
+                    ELSE FALSE END RESULT
+          FROM CS_AUTO_DIV_AEMP_INFO CADAI
+             , ST_USER_BASE SUB
+         WHERE CADAI.AEMP_ID = SUB.USER_ID
+           AND CADAI.AEMP_ID = #{aempId}
+           AND CADAI.AUTO_DIV_GB_CD = #{autoDivGbCd}
+           AND CADAI.AUTO_DIV_DTL_NO = #{autoDivDtlNo}
+           AND SUB.DEPT_CD = #{deptCd}
+    </select>
+
+    <select id="checkValidateNoDtlManager" parameterType="CsAutoDivideAempRequest" resultType="java.lang.Boolean">
+        SELECT /*CsAutoDivideAempInfo.checkValidateManager*/
+            CASE WHEN COUNT(*) > 0 THEN TRUE
+                 ELSE FALSE END RESULT
+        FROM CS_AUTO_DIV_AEMP_INFO CADAI
+           , ST_USER_BASE SUB
+        WHERE CADAI.AEMP_ID = SUB.USER_ID
+          AND CADAI.AEMP_ID = #{aempId}
+          AND CADAI.AUTO_DIV_GB_CD = #{autoDivGbCd}
+          AND SUB.DEPT_CD = #{deptCd}
+    </select>
+</mapper>

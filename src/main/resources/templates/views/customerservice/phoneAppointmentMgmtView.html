@@ -1,0 +1,173 @@
+<!--
+* 프로그램명 : 전화약속 관리
+* 작 성 일 : 2021.05.31
+* 작 성 자 : 윤성원
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 고객서비스 > 고객상담처리 > 전화약속관리
+* 이    력 :
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/page-realgrid-layout}">
+<body>
+<th:block layout:fragment="page-title-area">
+    <div class="page-title">
+        <div class="left">
+            <h1><th:block th:text="${#messages.msg('phoneAppointmentMgmt.label.title')}"/></h1>
+        </div>
+    </div>
+</th:block>
+<th:block layout:fragment="page-contents">
+    <div class="page-fixed with-title">
+        <div class="search-cont">
+            <!-- 조회테이블 -->
+            <div class="search">
+                <form name="phoneAppointManageGridForm" id="phoneAppointManageGridForm">
+                    <table class="search-table">
+                        <colgroup>
+                            <col width="120">
+                            <col>
+                            <col width="120">
+                            <col>
+                            <col width="120">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                        <tr>
+                            <td class="label"><strong><th:block th:text="${#messages.msg('phoneAppointmentMgmt.label.period')}"/></strong></td>
+                            <td colspan="3">
+                                <div class="input-group">
+                                    <select class="form-control" name="periodType">
+                                        <option value="0" th:text="${#messages.msg('phoneAppointmentMgmt.label.period1')}"></option>
+                                        <option value="1" th:text="${#messages.msg('phoneAppointmentMgmt.label.period2')}"></option>
+                                    </select>
+                                    <div class="picker-group" data-lopicker="basic" id="input-2-1">
+                                        <input type="text" class="form-control disabled" id="startDate" placeholder="" disabled="disabled">
+                                        <span class="input-group-addon">~</span>
+                                        <input type="text" class="form-control disabled" id="endDate" placeholder="" disabled="disabled">
+                                        <span class="input-group-addon" id="_sch_date_st-button"><i class="icon-calendar"></i></span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="label" th:text="${#messages.msg('phoneAppointmentMgmt.label.callState')}" />
+                            <td>
+                                <select class="form-control" id="procState" name="procState">
+                                    <option value="" th:text="${#messages.msg('adminCommon.entirety')}"></option>
+                                    <option value="R" th:text="${#messages.msg('phoneAppointmentMgmt.label.callStateReservation')}"></option>
+                                    <option value="I" th:text="${#messages.msg('phoneAppointmentMgmt.label.callStateImminent')}"></option>
+                                    <option value="D" th:text="${#messages.msg('phoneAppointmentMgmt.label.callStateDelay')}"></option>
+                                    <option value="C" th:text="${#messages.msg('phoneAppointmentMgmt.label.callStateComplete')}"></option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label" th:text="${#messages.msg('phoneAppointmentMgmt.label.prmsMethCd')}" />
+                            <td>
+                                <select class="form-control" id="prmsMethCd" name="prmsMethCd">
+                                    <option value="" th:text="${#messages.msg('adminCommon.entirety')}"></option>
+                                    <option th:each="list : ${codeList.CS008}" th:value="${list?.cd}" th:utext="${list?.cdNm}"></option>
+                                </select>
+                            </td>
+                            <td class="label" th:text="${#messages.msg('phoneAppointmentMgmt.label.mbr')}" />
+                            <td>
+                                <div class="input-group">
+                                    <select class="form-control" id="mbrType" name="mbrType">
+                                        <option value="" th:text="${#messages.msg('adminCommon.select')}"></option>
+                                        <option value="0" th:text="${#messages.msg('phoneAppointmentMgmt.label.mbrNo')}"></option>
+                                        <option value="1" th:text="${#messages.msg('phoneAppointmentMgmt.label.mbrNm')}"></option>
+                                    </select>
+                                    <input type="text" class="input" id="mbrText" name="mbrText">
+                                </div>
+                            </td>
+                            <td class="label" th:text="${#messages.msg('phoneAppointmentMgmt.label.acptMnAndprocId')}" />
+                            <td>
+                                <div class="input-group">
+                                    <select class="form-control" id="userType" name="userType">
+                                        <option value="0" th:text="${#messages.msg('phoneAppointmentMgmt.label.acptMnId')}"></option>
+                                        <option value="1" th:text="${#messages.msg('phoneAppointmentMgmt.label.procMnId')}"></option>
+                                    </select>
+                                    <input type="text" class="input" id="userText" name="userText" th:value=" ${loginRequest} == null ? '' : ${loginRequest.loginId}">
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label" th:text="${#messages.msg('phoneAppointmentMgmt.label.ordNoAndccnNo')}" />
+                            <td>
+                                <div class="input-group">
+                                    <select class="form-control" id="ordNoCcnNoType" name="ordNoCcnNoType">
+                                        <option value="" th:text="${#messages.msg('adminCommon.select')}"></option>
+                                        <option value="0" th:text="${#messages.msg('phoneAppointmentMgmt.label.ordNo')}"></option>
+                                        <option value="1" th:text="${#messages.msg('phoneAppointmentMgmt.label.ccnNo')}"></option>
+                                    </select>
+                                    <input type="text" class="input" id="ordNoCcnNoText" name="ordNoCcnNoText">
+                                </div>
+                            </td>
+                            <td class="label"></td>
+                            <td></td>
+                            <td class="label"></td>
+                            <td></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+            <!-- //조회테이블 -->
+            <!-- 검색버튼 -->
+            <div class="button-group search-btn">
+                <a href="#" class="btn_gblue button white" id="btn_init">
+                    <span class="text" th:text="${#messages.msg('adminCommon.button.init')}" />
+                </a>
+                <a href="#" class="btn_blue button dark" id="btn_list">
+                    <span class="text" th:text="${#messages.msg('adminCommon.button.search')}" />
+                </a>
+            </div>
+            <!-- //검색버튼 -->
+            <!-- 리얼그리드 -->
+            <div class="grid-cont">
+                <div class="grid" style="overflow: hidden;">
+                    <div class="grid-head">
+                        <div class="title-area">
+                            <h2 class="title" th:text="${#messages.msg('phoneAppointmentMgmt.grid.title')}" />
+                        </div>
+                        <div class="option-area">
+                            <div class="edit-option">
+                                <div class="button-group">
+                                </div>
+                            </div>
+
+                            <div class="page-option" grid-id="phoneAppointManageGrid" />
+                        </div>
+                    </div>
+                    <div class="grid-body">
+                        <div id="phoneAppointManageGrid" realgrid ></div>
+                    </div>
+                </div>
+            </div>
+            <!-- //리얼그리드 -->
+
+        </div>
+        <!--//데이터테이블 -->
+    </div>
+    </div>
+</th:block>
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        var loginRequest = [[${loginRequest}]];
+        /*]]>*/
+    </script>
+
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'customerservice/phoneAppointManageGrid.eventHandler.js?20210601000002'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'customerservice/phoneAppointManageGrid.provider.js?20210601000002'" ></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            phoneAppointManageGrid.eventhandler.init();
+        });
+    </script>
+</th:block>
+
+</body>
+</html>

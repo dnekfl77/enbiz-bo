@@ -1,0 +1,107 @@
+<!--
+* 프로그램명 : 전시연결관리
+* 작 성 일 : 2021.04.09
+* 작 성 자 : 권다솜
+* 수 정 자 : 권다솜
+* 버    전 : 1.0
+* 개    요 : 전시관리 > 전시연결관리 > 전시연결관리
+* 이    력 :
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/page-realgrid-layout}">
+<body>
+<th:block layout:fragment="page-title-area">
+    <div class="page-title">
+        <div class="left">
+            <h1 th:text="${#messages.msg('displayConnectMgmt.title')}"></h1>
+        </div>
+    </div>
+</th:block>
+<th:block layout:fragment="page-contents">
+    <div class="page-fixed with-title">
+            <div class="data-cont col-30 full-height">
+                <!-- 전시 카테고리 관리 Tree -->
+                <div class="data full-height">
+                    <!-- data-head -->
+                    <div class="data-head tree">
+                        <div class="left">
+                            <span class="title" th:text="${#messages.msg('displayConnectMgmt.tree.title')}"></span>
+                        </div>
+                    </div>
+                    <!-- data-head -->
+                    <!-- data-body -->
+                    <div class="data-body bo-none">
+                        <div class="ml10 mb10">
+                            <select class="form-control w40 mr5" id="tree_siteNo" name="tree_siteNo">
+                                <option th:each="list : ${siteList}" th:value="${list.cd}" th:text="${list.cdNm}"></option>
+                            </select>
+                            <select class="form-control w20 mr5" id="tree_shopTypCd" name="tree_shopTypCd">
+                                <option th:each="list : ${codeList.DP003}" th:value="${list.cd}" th:text="${list.cdNm}"></option>
+                            </select>
+                            <select class="form-control w30" id="tree_type" name="tree_shopTypCd">
+                                <option value="1" th:text="${#messages.msg('displayConnectMgmt.tree.label.total')}"></option>
+                                <option value="2" th:text="${#messages.msg('displayConnectMgmt.tree.label.useDisp')}"></option>
+                                <option value="3" th:text="${#messages.msg('displayConnectMgmt.tree.label.useTotal')}"></option>
+                            </select>
+                        </div>
+                        <div class="vh10 of_hide">
+                            <ul id="connectCategoryTree" class="ztree vh10"></ul>
+                        </div>
+                    </div>
+                    <!-- data-body -->
+                </div>
+                <!-- 전시 카테고리 관리 Tree -->
+
+                <div class="data-cont">
+
+                    <!-- (그리드) 전시 코너 조회 목록 -->
+                    <div class="grid-cont">
+                        <div class="grid" style="overflow: hidden;">
+                            <div class="grid-head">
+                                <form name="connectConnerGridForm" id="connectConnerGridForm"></form>
+                                <div class="title-area">
+                                    <h2 class="title" th:text="${#messages.msg('displayConnectMgmt.connectConnerGrid.title')}" />
+                                </div>
+                                <div class="option-area">
+                                    <div class="page-option" grid-id="connectConnerGrid">
+                                        <span class='total'>총 <span id="connectConnerGrid-totalcount">0</span>건</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="grid-body with-head vh1">
+                                <div id="connectConnerGrid" realgrid class="vh1"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- (그리드) 전시 코너 조회 목록 -->
+
+                </div>
+            </div>
+    </div>
+</th:block>
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        var msg = x2coMessage.getMessage({
+              necessaryCheckMessage : 'adminCommon.alert.required.parameter'
+            , noSearchedDataMsg : 'adminCommon.grid.alert.no.searched.data'
+            , NoneTemplate : 'displayConnectMgmt.error.msg.NoneTemplateMsg'
+        });
+    </script>
+
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/displayConnectMgmt/connectCategoryTree.eventHandler.js?202104090001'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/displayConnectMgmt/displayConnectTotal.eventHandler.js?202104090001'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/displayConnectMgmt/connectConnerGrid.eventHandler.js?202104090002'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/displayConnectMgmt/connectConnerGrid.provider.js?202104090002'" ></script>
+
+    <script th:inline="javascript">
+        $(document).ready(function() {
+            connectConnerGrid.eventhandler.init(); // 전시 코너 조회 목록
+            displayConnectTotal.eventhandler.init(); // 전시 연결 관리 통합 제어
+            connectCategoryTree.eventhandler.init(); // 트리 제어
+        });
+    </script>
+</th:block>
+</body>
+</html>

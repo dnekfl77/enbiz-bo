@@ -1,0 +1,44 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.system.StBbTgtInfoTrxMapper">
+
+    <!--
+        제 목 :시스템 공지 대상 등록
+        작성자 : 이광진
+        작성일 : 2021.03.10
+        params : StBbTgtInfo
+        설 명 :
+	-->
+    <insert id="insertStBbTgtInfo" parameterType="StBbTgtInfo">
+        INSERT  /* StBbTgtInfoTrxMapper.insertStBbTgtInfo */
+        INTO ST_BB_TGT_INFO(
+            BBC_NO,
+            ENTR_NO,
+            SYS_REG_ID,
+            SYS_REG_DTM,
+            SYS_MOD_ID,
+            SYS_MOD_DTM
+        ) VALUES (
+            #{bbcNo},
+            #{entrNo},
+            #{sysRegId},
+            now(),
+            #{sysModId},
+            now()
+        )
+    </insert>
+
+    <!--
+        제 목 :시스템 공지 대상 삭제
+        작성자 : 이광진
+        작성일 : 2021.03.10
+        params : StBbTgtInfo
+        설 명 :
+	-->
+    <delete id="deleteStBbTgtInfo" parameterType="StBbTgtInfo">
+        DELETE  /* StBbTgtInfoTrxMapper.deleteStBbTgtInfo */
+        FROM ST_BB_TGT_INFO
+        WHERE BBC_NO = #{bbcNo}
+        AND ENTR_NO = #{entrNo}
+    </delete>
+</mapper>

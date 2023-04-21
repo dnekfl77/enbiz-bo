@@ -1,0 +1,211 @@
+<!--
+* 프로그램명 : 전시 템플릿 관리
+* 작 성 일 : 2021.03.22
+* 작 성 자 : 권다솜
+* 수 정 자 : 권다솜
+* 버    전 : 1.0
+* 개    요 : 전시관리 > 전시템플릿/코너관리 > 전시템플릿관리
+* 이    력 :
+-->
+<html lang="ko-KR"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/page-realgrid-layout}">
+
+<head>
+    <title>sub title</title>
+</head>
+<body>
+<th:block layout:fragment="page-title-area">
+    <div class="page-title">
+        <div class="left">
+            <h1><th:block th:text="${#messages.msg('displayTemplateMgmt.title')}"/></h1>
+        </div>
+    </div>
+</th:block>
+<th:block layout:fragment="page-contents">
+    <div class="page-fixed with-title">
+        <div class="search-cont">
+            <!-- 조회테이블 -->
+            <div class="search">
+                <form name="displayTemplateGridForm" id="displayTemplateGridForm">
+                <table class="search-table">
+                    <colgroup>
+                        <col width="120">
+                        <col>
+                        <col width="120">
+                        <col>
+                        <col width="120">
+                        <col>
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <td class="label" th:text="${#messages.msg('displayTemplateMgmt.search.label.templateNo')}" />
+                        <td>
+                            <input class="input w50" type="text" name="tmplNo" id="tmplNo" maxlength="15"/>
+                        </td>
+                        <td class="label" th:text="${#messages.msg('displayTemplateMgmt.search.label.templateNm')}" />
+                        <td>
+                            <input class="input w100" type="text" name="tmplNm" id="tmplNm" maxlength="200"/>
+                        </td>
+                        <td class="label" th:text="${#messages.msg('displayTemplateMgmt.search.label.templateTypCd')}" />
+                        <td>
+                            <select class="form-control w50" id="tmplTypCd" name="tmplTypCd">
+                                <option value="" th:text="${#messages.msg('adminCommon.entirety')}"></option>
+                                <option th:each="list : ${codeList.DP004}" th:value="${list.cd}" th:text="${list.cdNm}"></option>
+                            </select>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                </form>
+            </div>
+            <!-- //조회테이블 -->
+            <!-- 검색버튼 -->
+            <div class="button-group search-btn">
+                <a href="#" class="btn_gblue button white" id="btn_init">
+                    <span class="text" th:text="${#messages.msg('adminCommon.button.init')}" />
+                </a>
+                <a href="#" class="btn_blue button dark" id="btn_search">
+                    <span class="text" th:text="${#messages.msg('adminCommon.button.search')}" />
+                </a>
+            </div>
+            <!-- //검색버튼 -->
+            <!-- 리얼그리드 -->
+            <div class="grid-cont">
+                <div class="grid">
+                    <div class="grid-head">
+                        <div class="title-area">
+                            <h2 class="title" th:text="${#messages.msg('displayTemplateMgmt.displayTemplateGrid.title')}" />
+                        </div>
+                        <div class="option-area">
+                            <div class="edit-option">
+                                <div class="button-group">
+                                    <a href="#" class="button inside" id="btn_grid_add">
+                                        <span class="text" th:text="${#messages.msg('adminCommon.grid.button.add.row')}" />
+                                    </a>
+                                    <a href="#" class="button inside" id="btn_grid_remove">
+                                        <span class="text" th:text="${#messages.msg('adminCommon.grid.button.delete.row')}" />
+                                    </a>
+                                    <a href="#" class="button inside" id="btn_grid_reset">
+                                        <span class="text" th:text="${#messages.msg('adminCommon.grid.button.cancel')}" />
+                                    </a>
+                                    <a href="#" class="button inside" id="btn_grid_save">
+                                        <span class="text" th:text="${#messages.msg('adminCommon.grid.button.save')}" />
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="page-option" grid-id="displayTemplateGrid">
+                                <span class="total">총 <span id="displayTemplateGrid-totalcount">0</span>건</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid-body with-head vh5">
+                        <div id="displayTemplateGrid" realgrid class="vh0"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- //리얼그리드 -->
+
+            <!-- 리얼그리드 -->
+            <div class="grid-cont mt20">
+                <div class="grid">
+                    <div class="grid-head">
+                        <form name="displayTemplateCornerGridForm" id="displayTemplateCornerGridForm">
+                            <input type="hidden" id="CornerGrid_tmplNo" name="CornerGrid_tmplNo">
+                        </form>
+                        <div class="title-area">
+                            <h2 class="title" th:text="${#messages.msg('displayTemplateMgmt.displayTemplateCornerGrid.title')}" />
+                        </div>
+                        <div class="option-area">
+                            <div class="edit-option">
+                                <div class="button-group">
+                                    <a href="#" class="button inside" id="btn_grid_conr_add">
+                                        <span class="text" th:text="${#messages.msg('displayTemplateMgmt.grid.btn.conrAdd')}" />
+                                    </a>
+                                    <a href="#" class="button inside" id="btn_grid_conr_remove">
+                                        <span class="text" th:text="${#messages.msg('adminCommon.grid.button.delete.row')}" />
+                                    </a>
+                                    <a href="#" class="button inside" id="btn_grid_conr_reset">
+                                        <span class="text" th:text="${#messages.msg('adminCommon.grid.button.cancel')}" />
+                                    </a>
+                                    <a href="#" class="button inside" id="btn_grid_conr_save">
+                                        <span class="text" th:text="${#messages.msg('adminCommon.grid.button.save')}" />
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="page-option" grid-id="displayTemplateCornerGrid">
+                                <span class="total">총 <span id="displayTemplateCornerGrid-totalcount">0</span>건</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid-body with-head vh5">
+                        <div id="displayTemplateCornerGrid" realgrid></div>
+                    </div>
+                </div>
+            </div>
+            <!-- //리얼그리드 -->
+        </div>
+    </div>
+</th:block>
+<th:block layout:fragment="add-script">
+
+    <script th:inline="javascript">
+        // 그리드 내 selectBox 옵션 셋팅 (템플릿 유형)
+        var tmplTypCdList = [[${codeList.DP004}]];
+        var tmplTypCode = [];
+        var tmplTypCdValues = [];
+        for(const job of tmplTypCdList){
+            tmplTypCode.push(job.cd);
+            tmplTypCdValues.push(job.cdNm);
+        }
+
+        var msg = x2coMessage.getMessage( {
+              tmplNo    	    : 'displayTemplateMgmt.grid.field.tmplNo'
+            , tmplNm    		: 'displayTemplateMgmt.grid.field.tmplNm'
+            , tmplTypCd   	    : 'displayTemplateMgmt.grid.field.tmplTypCd'
+            , tmplFilePath      : 'displayTemplateMgmt.grid.field.tmplFilePath'
+            , useYn 		    : 'displayTemplateMgmt.grid.field.useYn'
+            , conrCnt           : 'displayTemplateMgmt.grid.field.conrCnt'
+            , conrInsert        : 'displayTemplateMgmt.grid.field.conrInsert'
+            , sysModId 		    : 'displayTemplateMgmt.grid.field.sysModId'
+            , sysModDtm 		: 'displayTemplateMgmt.grid.field.sysModDtm'
+
+            , conrNo    	    : 'displayTemplateMgmt.cornerGrid.field.dispNo'
+            , conrNm    	    : 'displayTemplateMgmt.cornerGrid.field.dispNm'
+            , dispYn   	        : 'displayTemplateMgmt.cornerGrid.field.dispYn'
+            , dispSeq           : 'displayTemplateMgmt.cornerGrid.field.dispSeq'
+            , dispStrDtm 		: 'displayTemplateMgmt.cornerGrid.field.dispStrDtm'
+            , dispEndDtm        : 'displayTemplateMgmt.cornerGrid.field.dispEndDtm'
+            , dispTgt           : 'displayTemplateMgmt.cornerGrid.field.dispTgt'
+
+            , necessaryCheckMessage : 'adminCommon.alert.required.parameter'
+            , deleteRowCheck : 'adminCommon.alert.no.selected.item.for.delete'
+            , gridInit : 'adminCommon.grid.alert.init'
+            , gridNoSelected : 'adminCommon.grid.alert.no.selected.row'
+            , checkPrTmplConrMappInfoMsg : 'displayTemplateMgmt.error.msg.checkPrTmplConrMappInfoMsg'
+            , checkPrDispConrInfoMsg : 'displayTemplateMgmt.error.msg.checkPrDispConrInfoMsg'
+            , checkDispSeqMsg : 'displayTemplateMgmt.error.msg.checkDispSeqMsg'
+            , checkDispDate1Msg : 'displayTemplateMgmt.error.msg.checkDispDate1Msg'
+            , checkDispDate2Msg : 'displayTemplateMgmt.error.msg.checkDispDate2Msg'
+        });
+    </script>
+
+    <!-- 전시 템플릿 목록 그리드 -->
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/displayTemplateGrid.eventHandler.js?202103220001'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/displayTemplateGrid.provider.js?202103220002'" ></script>
+
+    <!-- 연결된 전시 코너 목록 그리드 -->
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/displayTemplateCornerGrid.eventHandler.js?202103220002'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/displayTemplateCornerGrid.provider.js?202103220003'" ></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            displayTemplateGrid.eventhandler.init();
+            displayTemplateCornerGrid.eventhandler.init();
+        });
+    </script>
+</th:block>
+
+</body>
+</html>

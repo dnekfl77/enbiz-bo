@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.display.PrSitePopupChlAplyInfoMapper">
+
+	<select id="getSitePopupChlAplyInfo" parameterType="PrSitePopupInfoRequest" resultType="PrSitePopupChlAplyInfoResponse">
+		SELECT  /* PrSitePopupChlAplyInfo.getSitePopupChlAplyInfo */
+			      CAI.POPUP_NO
+				, CAI.CHL_NO
+				, CCB.CHL_NM
+				, CAI.LINK_INFO
+		FROM 	  PR_SITE_POPUP_CHL_APLY_INFO CAI
+				, CC_CHL_BASE CCB
+		WHERE 	  CAI.CHL_NO = CCB.CHL_NO
+		AND 	  CAI.POPUP_NO = #{popupNo}
+	</select>
+
+	<select id="getSitePopupChlAplyInfoCount" parameterType="PrSitePopupInfoRequest" resultType="java.lang.Integer">
+		SELECT   /* PrSitePopupChlAplyInfo.getSitePopupChlAplyInfoCount */
+				COUNT(*)
+		FROM (
+				SELECT
+						  CAI.POPUP_NO
+						, CAI.CHL_NO
+						, CCB.CHL_NM
+						, CAI.LINK_INFO
+				FROM	  PR_SITE_POPUP_CHL_APLY_INFO CAI
+						, CC_CHL_BASE CCB
+				WHERE 	  CAI.CHL_NO = CCB.CHL_NO
+				AND 	  CAI.POPUP_NO = #{popupNo}
+		) T1
+	</select>
+
+</mapper>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ko-KR"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <title>enbiz Solution</title>
+</head>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+        var _rtnMessage 		        = [[${result.get('loginReturnMessage')}]];
+        var _rtnUrl 			        = [[${result.get('returnUrl')}]];
+
+        if (_rtnMessage != '') {
+            alert(_rtnMessage);
+        }
+
+        var _isInIframe = (window.location != window.parent.location);
+        var isNotOpener = typeof opener == "undefined" || opener == null;
+
+        if (_isInIframe) {
+            if (isNotOpener) {
+                location.replace(_rtnUrl);
+            } else {
+                opener.location.replace(_rtnUrl);
+                window.close();
+            }
+        } else {
+            if (isNotOpener) {
+                top.location.replace(_rtnUrl);
+            } else {
+                opener.location.replace(_rtnUrl);
+                window.close();
+            }
+        }
+    /*]]>*/
+</script>
+
+</html>

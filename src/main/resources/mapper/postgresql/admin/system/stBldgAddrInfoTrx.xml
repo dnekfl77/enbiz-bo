@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enbiz.bo.app.repository.system.StBldgAddrInfoTrxMapper">
+
+    <!--
+	제 목 :우편번호 수정
+	작성자 : 이광진
+	작성일 : 2021.02.25
+	params : StBldgAddrInfo
+	설 명 : 우편번호 건물명 및 상세건물명 수정.
+	-->
+    <update id="updateBldgAddrInfo" parameterType="StBldgAddrInfo">
+        UPDATE ST_BLDG_ADDR_INFO    /* StBldgAddrInfoTrxMapper.updateBldgAddrInfo */
+        SET
+            BULD_DTL_NM = #{buldDtlNm},
+            SYS_MOD_DTM = now(),
+            SYS_MOD_ID = #{sysModId}
+        WHERE BD_MGT_SN = #{bdMgtSn}
+    </update>
+</mapper>

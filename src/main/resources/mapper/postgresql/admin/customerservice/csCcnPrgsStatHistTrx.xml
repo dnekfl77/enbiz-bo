@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.customerservice.CsCcnPrgsStatHistTrxMapper">
+    <insert id="postCsCcnPrgsStatHist" parameterType="CsCcnPrgsStatHist">
+        INSERT INTO CS_CCN_PRGS_STAT_HIST (/* csCcnPrgsStatHist.postCsCcnPrgsStatHist */
+                    CCN_NO
+                  , STAT_CHG_DTM
+                  , CCN_PRGS_STAT_CD
+                  , SYS_REG_ID
+                  , SYS_REG_DTM
+                  , SYS_MOD_ID
+                  , SYS_MOD_DTM)
+           VALUES (
+                    #{ccnNo}
+                  , NOW()
+                  , #{ccnPrgsStatCd}
+                  , #{sysModId}
+                  , NOW()
+                  , #{sysModId}
+                  , NOW()
+                  )
+    </insert>
+</mapper>

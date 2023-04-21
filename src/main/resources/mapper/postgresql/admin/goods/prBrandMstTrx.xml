@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.goods.PrBrandMstTrxMapper">
+
+    <insert id="insertBrandMst" parameterType="PrBrandMst" useGeneratedKeys="false">
+        <selectKey keyProperty="brandNo" resultType="String" order="BEFORE">
+            SELECT NEXTVAL('PR_BRAND_MST_SQ01') AS brandNo
+        </selectKey>
+        INSERT INTO PR_BRAND_MST( /* PrBrandMstTrx.insertBrandMst */
+                    BRAND_NO
+                  , BRAND_NM
+                  , DISP_OPTN_CD
+                  , KOR_BRAND_NM
+                  , ENG_BRAND_NM
+                  , KOR_SCH_NM
+                  , ENG_SCH_NM
+                  , SCW_1_NM
+                  , SCW_2_NM
+                  , SCW_3_NM
+                  , USE_YN
+                  , BRAND_DESC_CMT
+                  , SYS_REG_ID
+                  , SYS_REG_DTM
+                  , SYS_MOD_ID
+                  , SYS_MOD_DTM)
+            VALUES(
+                    #{brandNo}
+                  , #{brandNm}
+                  , #{dispOptnCd}
+                  , #{korBrandNm}
+                  , #{engBrandNm}
+                  , #{korSchNm}
+                  , #{engSchNm}
+                  , #{scw1Nm}
+                  , #{scw2Nm}
+                  , #{scw3Nm}
+                  , #{useYn}
+                  , #{brandDescCmt}
+                  , #{sysRegId}
+                  , now()
+                  , #{sysRegId}
+                  , now()
+            )
+    </insert>
+
+    <update id="updateBrandMst" parameterType="PrBrandMst">
+        UPDATE PR_BRAND_MST
+           SET /* PrBrandMstTrx.updateBrandMst */
+               BRAND_NM = #{brandNm}
+             , DISP_OPTN_CD = #{dispOptnCd}
+             , KOR_BRAND_NM = #{korBrandNm}
+             , ENG_BRAND_NM = #{engBrandNm}
+             , KOR_SCH_NM = #{korSchNm}
+             , ENG_SCH_NM = #{engSchNm}
+             , SCW_1_NM = #{scw1Nm}
+             , SCW_2_NM = #{scw2Nm}
+             , SCW_3_NM = #{scw3Nm}
+             , USE_YN = #{useYn}
+             , BRAND_DESC_CMT = #{brandDescCmt}
+             , SYS_MOD_ID = #{sysModId}
+             , SYS_MOD_DTM = now()
+         WHERE BRAND_NO = #{brandNo}
+    </update>
+
+    <insert id="insertBrandImg" parameterType="PrBrandImg" useGeneratedKeys="false">
+        INSERT INTO PR_BRAND_IMG( /* PrBrandMstTrx.insertBrandImg */
+                    BRAND_NO
+                  , IMG_NO
+                  , IMG_SIZE_CD
+                  , IMG_ROUTE_NM
+                  , IMG_FILE_NM
+                  , SYS_REG_ID
+                  , SYS_REG_DTM
+                  , SYS_MOD_ID
+                  , SYS_MOD_DTM
+            )
+            VALUES(
+                    #{brandNo}
+                  , #{imgNo}
+                  , #{imgSizeCd}
+                  , #{imgRouteNm}
+                  , #{imgFileNm}
+                  , #{sysRegId}
+                  , now()
+                  , #{sysModId}
+                  , now()
+            )
+    </insert>
+
+    <delete id="deleteBrandImg"  parameterType="PrBrandImg">
+        DELETE /* PrBrandMstTrx.deleteBrandImg */
+          FROM PR_BRAND_IMG
+         WHERE BRAND_NO = #{brandNo}
+           AND IMG_NO = #{imgNo}
+    </delete>
+
+</mapper>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ko-KR"
+      xmlns:th="http://www.thymeleaf.org">
+
+<th:block th:fragment="la-aside-base-cont">
+    <ul id="baseMenu" class="tab-cont">
+        <li class="title"
+            th:if="${not #lists.isEmpty(leftMenuResponseList)}"
+            th:each="parentMenu, parentIter : ${leftMenuResponseList}"
+            th:classappend="${parentIter.index} == 0 ? 'active' ">
+            <a th:data="${parentMenu.rtTgtSeq}">
+                <th:block th:text="${parentMenu.rtTgtNm}" />
+            </a>
+            <ul class="depth2" th:style="${parentIter.index} == 0 ? 'display: block;'"
+                th:if="${not #lists.isEmpty(parentMenu.childMenuList)}"
+                th:id="${parentMenu.rtTgtSeq}">
+                <li th:each="childMenu, childIter : ${parentMenu.childMenuList}">
+                    <th:block th:if="${childMenu.callUrl != null && childMenu.callUrl != ''}">
+                        <a href="javascript:void(0)"
+                           th:data-id="|${childMenu.rtTgtSeq}-${childMenu.uprRtTgtSeq}|"
+                           th:data-link="${childMenu.callUrl}"
+                           th:id="${childMenu.rtTgtSeq}">
+                            <th:block th:text="${childMenu.rtTgtNm}" />
+                        </a>
+                    </th:block>
+                    <th:block th:unless="${childMenu.callUrl != null && childMenu.callUrl != ''}">
+                        <a href="#">
+                            <th:block th:text="${childMenu.rtTgtNm}" />
+                        </a>
+                    </th:block>
+                </li>
+            </ul>
+        </li>
+    </ul>
+    <script th:inline="javascript">
+        //컨텍스트 매뉴 Action S
+		function onCtxMenuAction(paramAct, paramLink, paramId, paramText) {
+            if (paramAct == "new") { // POPUP 클릭
+                if (paramLink === undefined) {
+                    alert("링크 주소가 없습니다. 시스템담당자에게 문의하세요.");
+                    return false;
+                }
+                window.open(paramLink, paramText, 'resizable=no scrollbars=yes width=1200 height=600');
+            } else if (paramAct == "bookmark") { // 마이메뉴 클릭
+                var parameter = {};
+                parameter.rtTgtSeq  = paramId
+
+                common.Ajax.sendJSONRequest(
+                    "GET",
+                    _baseUrl+"main/addBookMark.do",
+                    parameter,
+                    function(res){
+                        if(res.succeeded) {
+                            var url = _baseUrl + 'fvtMenu.do';
+                            common.Ajax.sendRequestSync(
+                                  "GET"
+                                , url
+                                , ''
+                                , function(data) {
+                                    $("#fvtMenu").replaceWith(data);
+                                    com.x2commerce.common.menuUtil.iframeAction(); //iframe 제어
+                                }
+                                , true
+                                , false
+                            );
+                        }
+                    }
+                );
+            }
+		}
+        //컨텍스트 매뉴 Action E
+
+        $(document.body).ready(function(){
+            //컨텍스트 매뉴 S
+            $("#snb")
+                .find('#baseMenu li ul li a')
+                .off('contextmenu')
+                .on('contextmenu', function(event) {
+                    // 기본 Context Menu가 나오지 않게 차단
+                    event.preventDefault();
+
+                    var that = this;
+                    var ctxMenu = document.getElementById('popTreeMenu');
+                    var getLink = $(that).data('link');
+                    var getId = $(that).attr('id');
+                    var getText = $(that).text();
+
+                    if ( getId  == undefined || getId == null ) return false;
+
+                    var callback = function(index, element) {
+                        var getAct = $(element).parent().attr('class');
+                        $(element).attr("href", `javascript:onCtxMenuAction(
+                                    '${getAct.trim()}'
+                                    , '${getLink.trim()}'
+                                    , '${getId.trim()}'
+                                    , '${getText.trim()}');`);
+                    };
+
+                    $("#popTreeMenu").find('li a').each(callback);
+
+                    // 노출 설정
+                    ctxMenu.style.display = 'block';
+
+                    // 위치 설정
+                    ctxMenu.style.top = event.pageY+'px';
+                    ctxMenu.style.left = event.pageX+'px';
+                });
+            //컨텍스트 매뉴 E
+        });
+    </script>
+
+</th:block>
+
+</html>

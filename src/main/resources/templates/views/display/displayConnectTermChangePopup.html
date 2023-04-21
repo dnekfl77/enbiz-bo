@@ -1,0 +1,106 @@
+<!--
+* 프로그램명 : 전시시간 일괄변경
+* 작 성 일 : 2021.04.17
+* 작 성 자 : 권다솜
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 전시연결관리  > 전시연결관리 > 전시연결관리팝업 > 전시기간 일괄변경
+* 이    력 :
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-update-layout}">
+
+<th:block layout:fragment="header-area">
+    <div class="header">
+        <h1><th:block th:text="${#messages.msg('displayConnectManagement.termChange.title')}"/></h1>
+    </div>
+</th:block>
+
+<th:block layout:fragment="data-area">
+<div class="search">
+    <form>
+                <table class="search-table">
+                    <colgroup>
+                        <col width="120px">
+                        <col>
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <td class="label" th:text="${#messages.msg('displayConnectManagement.termChange.dispStrDtm')}"></td>
+                        <td>
+                            <div class="input-group">
+                                <div class="picker-group" data-lopicker="basic" id="picker-group-1">
+                                    <input type="text" class="input disabled" name="startDate" id="startDate" disabled>
+                                    <span class="input-group-addon"><i class="icon-calendar" id="calendarButton1"></i></span>
+                                </div>
+                                <select class="form-control" id="startHour" name="startHour">
+                                    <option th:each="num,numStat : ${#numbers.sequence(0,23)}"
+                                            th:value="${#numbers.formatInteger(numStat.index,2)}"
+                                            th:text="${#numbers.formatInteger(numStat.index,2)}"></option>
+                                </select>
+                                <em> : </em>
+                                <select class="form-control" id="startMinute" name="startMinute">
+                                    <option th:each="num,numStat : ${#numbers.sequence(0,59)}"
+                                            th:value="${#numbers.formatInteger(numStat.index,2)}"
+                                            th:text="${#numbers.formatInteger(numStat.index,2)}"></option>
+                                </select>
+                                <input class="input" type="hidden" name="popupDispStrDtm" id="popupDispStrDtm"/>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label" th:text="${#messages.msg('displayConnectManagement.termChange.dispEndDtm')}"></td>
+                        <td>
+                            <div class="input-group">
+                                <div class="picker-group" data-lopicker="basic">
+                                    <input type="text" class="input disabled" name="endDate" id="endDate" disabled>
+                                    <span class="input-group-addon"><i class="icon-calendar" id="calendarButton2"></i></span>
+                                </div>
+                                <select class="form-control" id="endHour" name="endHour">
+                                    <option th:each="num,numStat : ${#numbers.sequence(0,23)}"
+                                            th:value="${#numbers.formatInteger(numStat.index,2)}"
+                                            th:text="${#numbers.formatInteger(numStat.index,2)}"></option>
+                                </select>
+                                <em> : </em>
+                                <select class="form-control" id="endMinute" name="endMinute">
+                                    <option th:each="num,numStat : ${#numbers.sequence(0,59)}"
+                                            th:value="${#numbers.formatInteger(numStat.index,2)}"
+                                            th:text="${#numbers.formatInteger(numStat.index,2)}"></option>
+                                </select>
+                                <input class="input" type="hidden" name="popupDispEndDtm" id="popupDispEndDtm"/>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </form>
+</div>
+
+<div class="button-group search-btn">
+    <a href="#" class="button white" id="btn_popup_cancle">
+        <span class="text" th:text="${#messages.msg('adminCommon.button.cancel')}"></span>
+    </a>
+    <a href="#" class="button large" id="btn_popup_apply">
+        <span class="text" th:text="${#messages.msg('adminCommon.button.apply')}"></span>
+    </a>
+</div>
+</th:block>
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        var msg = x2coMessage.getMessage( {
+            dataCheck1 : 'displayConnectManagement.message.dataCheck1'
+            , dataCheck3 : 'displayConnectManagement.message.dataCheck3'
+        });
+    </script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/displayConnectMgmt/tab/termChange.eventHandler.js?202104190001'" ></script>
+    <script th:inline="javascript">
+        $(document).ready(function() {
+            termChange.eventhandler.init();
+        });
+    </script>
+</th:block>
+
+</body>
+</html>

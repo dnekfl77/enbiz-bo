@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.marketing.CcPromBaseMapper">
+
+    <sql id="paginatedBase">
+        LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+    </sql>
+
+    <!-- 쿠폰 관리 조회 -->
+    <sql id="couponManagingListBase">
+        SELECT /* CcPromBaseMapper.getCouponManagingList */
+               PROMO_NO
+             , PROMO_NM
+             , PROMO_TYP_CD
+             , FN_GET_CODENAME('MK002',PROMO_TYP_CD) AS PROMO_TYP_NM
+             , PROMO_STAT_CD
+             , FN_GET_CODENAME('MK003',PROMO_STAT_CD) AS PROMO_STAT_NM
+             , FIXAMT_FXRT_GB_CD
+             , FN_GET_CODENAME('MK005',FIXAMT_FXRT_GB_CD) AS FIXAMT_FXRT_GB_NM
+             , DC_RATE_AMT
+             , PROMO_STR_DTM
+             , PROMO_END_DTM
+             , SUBSTRING(USE_PSB_STR_DT,1,4)||'-'||SUBSTRING(USE_PSB_STR_DT,5,2)||'-'||SUBSTRING(USE_PSB_STR_DT,7,2) AS USE_PSB_STR_DT
+             , SUBSTRING(USE_PSB_END_DT,1,4)||'-'||SUBSTRING(USE_PSB_END_DT,5,2)||'-'||SUBSTRING(USE_PSB_END_DT,7,2) AS USE_PSB_END_DT
+             , SYS_MOD_ID
+             , TO_CHAR(SYS_MOD_DTM,'yyyy-mm-dd hh24:mi:ss') AS SYS_MOD_DTM
+          FROM CC_PROM_BASE
+         WHERE 1=1
+        <if test='startType.equals("0")'>
+           AND PROMO_STR_DTM &gt;= TO_TIMESTAMP(#{startDate}||'000000', 'YYYYMMDDHH24MISS')
+           AND PROMO_STR_DTM &lt;= TO_TIMESTAMP(#{endDate}||'235959', 'YYYYMMDDHH24MISS')
+        </if>
+        <if test='startType.equals("1")'>
+           AND USE_PSB_STR_DT &gt;= #{startDate}
+           AND USE_PSB_END_DT &lt;= #{endDate}
+        </if>
+           AND PROMO_TYP_CD  LIKE #{promoTypCd} || '%'
+           AND PROMO_STAT_CD LIKE #{promoStatCd} || '%'
+           AND PROMO_NO      LIKE #{promoNo} || '%'
+           AND PROMO_NM      LIKE #{promoNm} || '%'
+           AND SYS_REG_ID    LIKE #{userId} || '%'
+           AND PROMO_TYP_CD NOT IN ('20','30','40')
+         ORDER BY SYS_REG_DTM DESC
+    </sql>
+
+    <select id="getCouponManagingList" parameterType="CouponRequest" resultType="CouponResponse">
+        <include refid="couponManagingListBase" />
+        <include refid="paginatedBase" />
+    </select>
+
+    <select id="getCouponManagingListCount" parameterType="CouponRequest" resultType="java.lang.Integer">
+        SELECT /* CcPromBaseMapper.getCouponManagingList */
+               COUNT(*)
+          FROM (
+             <include refid="couponManagingListBase" />
+          ) v
+    </select>
+
+
+    <select id="getPromotionData" parameterType="java.lang.String" resultType="PromotionDetailResponse">
+        SELECT PROMO_NO
+             , PROMO_NM
+             , PROMO_TYP_CD
+             , PROMO_STAT_CD
+             , TO_CHAR(PROMO_STR_DTM,'YYYY-MM-DD hh24:mi') AS PROMO_STR_DTM
+             , TO_CHAR(PROMO_END_DTM,'YYYY-MM-DD hh24:mi') AS PROMO_END_DTM
+             , PROMO_DESC
+             , ISSU_SUB_CD
+             , ISSU_METH_CD
+             , APLY_TERM_GB_CD
+             , ISSU_DD_STD_CPN_USE_DDS
+             , TM_CPN_YN
+             , SUBSTRING(USE_PSB_STR_DT,1,4)||'-'||SUBSTRING(USE_PSB_STR_DT,5,2)||'-'||SUBSTRING(USE_PSB_STR_DT,7,2) AS USE_PSB_STR_DT
+             , SUBSTRING(USE_PSB_END_DT,1,4)||'-'||SUBSTRING(USE_PSB_END_DT,5,2)||'-'||SUBSTRING(USE_PSB_END_DT,7,2) AS USE_PSB_END_DT
+             , USE_PSB_STR_TM
+             , USE_PSB_END_TM
+             , ID_ISSU_CNT_CD
+             , ISSU_LMT_YN
+             , ISSU_QTY
+             , AUTO_ISSU_TYP_CD
+             , AUTO_ISSU_POTM_CD
+             , ANVY_BE_ISSU_DAYNUB
+             , CPBOOK_DISP_YN
+             , DC_CPBOOK_CD
+             , CARDCO_CD
+             , MBR_GRADE_CD
+             , MBR_UPR_GRADE_APLY_YN
+             , FIXAMT_FXRT_GB_CD
+             , DC_RATE_AMT
+             , MIN_BUY_AMT
+             , MAX_DC_AMT
+             , SYS_REG_ID
+             , TO_CHAR(SYS_REG_DTM,'yyyy-mm-dd hh24:mi:ss') AS SYS_REG_DTM
+             , SYS_MOD_ID
+             , TO_CHAR(SYS_MOD_DTM,'yyyy-mm-dd hh24:mi:ss') AS SYS_MOD_DTM
+          FROM CC_PROM_BASE
+         WHERE PROMO_NO = #{promoNo}
+    </select>
+
+    <select id="getPromotionAplyInfo" parameterType="java.lang.String" resultType="CouponAplyInfoResponse">
+        SELECT PROMO_NO
+             , FVR_APLY_GB_CD
+             , FVR_APLY_TYP_CD
+             , FVR_TGT_NO
+             , CASE WHEN FVR_APLY_TYP_CD = '01' THEN (SELECT SITE_NM FROM CC_SITE_BASE WHERE SITE_NO = FVR_TGT_NO)
+                    WHEN FVR_APLY_TYP_CD = '02' THEN (SELECT GOODS_NM FROM PR_GOODS_BASE WHERE GOODS_NO = FVR_TGT_NO)
+                    WHEN FVR_APLY_TYP_CD = '03' THEN (SELECT (
+                                                                 SELECT DISP_CTG_NM
+                                                                 FROM PR_DISP_CTG_BASE
+                                                                 WHERE DISP_CTG_NO = PDCB.LRG_CTG_NO
+                                                             )
+                                                                 ||
+                                                             COALESCE(
+                                                                     (SELECT '>'|| DISP_CTG_NM
+                                                                      FROM PR_DISP_CTG_BASE
+                                                                      WHERE DISP_CTG_NO = PDCB.MID_CTG_NO)
+                                                                 ,'')
+                                                                 ||
+                                                             COALESCE(
+                                                                     (SELECT '>'||DISP_CTG_NM
+                                                                      FROM PR_DISP_CTG_BASE
+                                                                      WHERE DISP_CTG_NO = PDCB.SML_CTG_NO)
+                                                                 ,'')
+                                                                 ||
+                                                             COALESCE(
+                                                                     (SELECT '>'||DISP_CTG_NM
+                                                                      FROM PR_DISP_CTG_BASE
+                                                                      WHERE DISP_CTG_NO = PDCB.THN_CTG_NO)
+                                                                 ,'')
+                                                      FROM PR_DISP_CTG_BASE AS PDCB WHERE DISP_CTG_NO = FVR_TGT_NO
+                    )
+                    WHEN FVR_APLY_TYP_CD = '04' THEN (SELECT STD_CTG_NM FROM PR_STD_CTG WHERE STD_CTG_NO = FVR_TGT_NO)
+                    WHEN FVR_APLY_TYP_CD = '05' THEN (SELECT ENTR_NM FROM ET_ENTR_BASE WHERE ENTR_NO = FVR_TGT_NO)
+                    WHEN FVR_APLY_TYP_CD = '06' THEN (SELECT BRAND_NM FROM PR_BRAND_MST WHERE BRAND_NO = FVR_TGT_NO)
+                    WHEN FVR_APLY_TYP_CD = '07' THEN (SELECT CHL_NM FROM CC_CHL_BASE WHERE CHL_NO = FVR_TGT_NO)
+                END AS FVR_TGT_NM
+         FROM CC_PROMO_APLY_INFO
+        WHERE PROMO_NO = #{promoNo}
+    </select>
+
+    <select id="getPromotionMediaInfo" parameterType="java.lang.String" resultType="CouponAplyMediaResponse">
+        SELECT PROMO_NO
+             , APLY_PSB_MEDIA_CD
+          FROM CC_PROMO_APLY_MEDIA_INFO
+         WHERE PROMO_NO = #{promoNo}
+    </select>
+
+    <select id="getPromotionWdayInfo" parameterType="java.lang.String" resultType="CouponUseWdayInfoResponse">
+        SELECT PROMO_NO
+             , USE_WDAY_CD
+          FROM CC_PROMO_USE_WDAY_INFO
+         WHERE PROMO_NO = #{promoNo}
+    </select>
+
+    <!-- 쿠폰 회원 조회 -->
+    <sql id="couponIssuedMemberBase">
+        SELECT /* CcPromBaseMapper.getCouponIssuedMbrList */
+               CPN_ISU_NO
+             , EMB.MBR_NO
+             , EMB.MBR_NM
+             , EMB.LOGIN_ID
+             , EMB.MBR_GRADE_CD
+             , FN_GET_CODENAME('ME024',EMB.MBR_GRADE_CD) AS MBR_GRADE_NM
+             , CPN_NO
+             , CPN_ISU_DTM
+             , TO_CHAR(VALI_STRT_DTM,'yyyy-mm-dd') AS VALI_STRT_DTM
+             , TO_CHAR(VALI_END_DTM,'yyyy-mm-dd') AS VALI_END_DTM
+             , USE_YN
+             , ORD_NO
+             , ORD_SEQ
+             , USE_DTM
+             , MGR_MEMO
+        FROM CC_CPN_ISU_MBR CCIM
+       INNER JOIN ET_MBR_BASE EMB
+               ON CCIM.MBR_NO = EMB.MBR_NO
+        WHERE CCIM.MBR_NO LIKE #{mbrNo} || '%'
+          AND CPN_NO LIKE #{cpnNo} || '%'
+          AND USE_YN LIKE #{useYn} || '%'
+    </sql>
+
+    <select id="getCouponIssuedMbrList" parameterType="CouponIssuedMemberRequest" resultType="CouponIssuedMemberResponse">
+        <include refid="couponIssuedMemberBase" />
+        <include refid="paginatedBase" />
+    </select>
+
+    <select id="getCouponIssuedMbrListCount" parameterType="CouponRequest" resultType="java.lang.Integer">
+        SELECT /* CcPromBaseMapper.getCouponIssuedMbrListCount */
+        COUNT(*)
+        FROM (
+        <include refid="couponIssuedMemberBase" />
+        ) v
+    </select>
+
+    <select id="getMbrList" parameterType="map" resultType="CouponExcelMbrResponse">
+        SELECT /*CcPromBaseMapper.getMbrList*/
+               MBR_NO
+             , MBR_NM
+             , LOGIN_ID
+             , MBR_GRADE_CD
+             , FN_GET_CODENAME('ME024',MBR_GRADE_CD) AS MBR_GRADE_NM
+         FROM ET_MBR_BASE
+        WHERE
+        <foreach collection="array" item="arr" separator="or">
+            LOGIN_ID = #{arr}
+        </foreach>
+    </select>
+
+
+
+    <!-- 쿠폰 비용 조회 -->
+    <sql id="couponCostListBase">
+        SELECT /* CcPromBaseMapper.getCouponCostManageList */
+               V1.CPN_NO
+             , V1.USE_DTM
+             , B.PROMO_TYP_CD
+             , FN_GET_CODENAME('MK002',B.PROMO_TYP_CD) AS PROMO_TYP_NM
+             , B.PROMO_NM
+             , V1.ISU_CNT
+             , V1.USE_CNT
+             , V1.CNCL_CNT
+             , 0 AS ORD_AMT
+             , 0 AS CPN_AMT
+             , ROUND((V1.USE_CNT - V1.CNCL_CNT::numeric) / V1.ISU_CNT * 100,2) AS USE_RT
+             , B.FIXAMT_FXRT_GB_CD
+             , FN_GET_CODENAME('MK005',B.FIXAMT_FXRT_GB_CD) AS FIXAMT_FXRT_GB_NM
+             , B.DC_RATE_AMT
+             , B.SYS_MOD_ID
+             , TO_CHAR(B.SYS_MOD_DTM,'yyyy-mm-dd hh24:mi:ss') AS SYS_MOD_DTM
+          FROM
+               (SELECT A.CPN_NO
+                     , A.USE_DTM
+                     , COUNT(CASE WHEN A.ORG_CPN_ISU_NO IS NULL THEN '1' END) AS ISU_CNT
+                     , COUNT(CASE WHEN A.ORG_CPN_ISU_NO IS NULL AND A.USE_YN = 'Y' THEN '1' END) AS USE_CNT
+                     , COUNT(CASE WHEN A.ORG_CPN_ISU_NO IS NOT NULL THEN '1' END) AS CNCL_CNT
+                  FROM CC_CPN_ISU_MBR A
+                 WHERE 1 = 1
+                   AND A.CPN_ISU_DTM &gt;= TO_TIMESTAMP(#{startDate}||'000000', 'YYYY-MM-DDHH24MISS')
+                   AND A.CPN_ISU_DTM &lt;= TO_TIMESTAMP(#{endDate}||'235959', 'YYYY-MM-DDHH24MISS')
+                 <if test="ordNo != null and ordNo != ''">
+                   AND A.ORD_NO LIKE #{ordNo} || '%'
+                 </if>
+                 GROUP BY A.CPN_NO, A.USE_DTM
+               ) V1 , CC_PROM_BASE B
+         WHERE  V1.CPN_NO = B.PROMO_NO
+           AND B.SYS_REG_ID    LIKE #{userId} || '%'
+           AND B.PROMO_TYP_CD  LIKE #{promoTypCd} || '%'
+           AND B.PROMO_STAT_CD LIKE #{promoStatCd} || '%'
+           AND B.PROMO_NO      LIKE #{promoNo} || '%'
+           AND B.PROMO_NM      LIKE #{promoNm} || '%'
+           AND PROMO_TYP_CD NOT IN ('20','30','40')
+         ORDER BY B.SYS_MOD_DTM DESC
+    </sql>
+
+    <select id="getCouponCostManageList" parameterType="CouponCostRequest" resultType="CouponCostResponse">
+        <include refid="couponCostListBase" />
+        <include refid="paginatedBase" />
+    </select>
+
+    <select id="getCouponCostManageListCount" parameterType="CouponCostRequest" resultType="java.lang.Integer">
+        SELECT /* CcPromBaseMapper.getCouponCostManageListCount */
+               COUNT(*)
+          FROM (
+             <include refid="couponCostListBase" />
+          ) v
+    </select>
+
+
+    <sql id="promotionListBase">
+        SELECT /* CcPromBaseMapper.getPromotionManagingList */
+               PROMO_NO
+             , PROMO_NM
+             , PROMO_TYP_CD
+             , FN_GET_CODENAME('MK002',PROMO_TYP_CD) AS PROMO_TYP_NM
+             , PROMO_STAT_CD
+             , FN_GET_CODENAME('MK003',PROMO_STAT_CD) AS PROMO_STAT_NM
+             , FIXAMT_FXRT_GB_CD
+             , FN_GET_CODENAME('MK005',FIXAMT_FXRT_GB_CD) AS FIXAMT_FXRT_GB_NM
+             , DC_RATE_AMT
+             , PROMO_STR_DTM
+             , PROMO_END_DTM
+             , SYS_MOD_ID
+             , TO_CHAR(SYS_MOD_DTM,'yyyy-mm-dd hh24:mi:ss') AS SYS_MOD_DTM
+          FROM CC_PROM_BASE
+         WHERE PROMO_STR_DTM &gt;= TO_TIMESTAMP(#{startDate}||'000000', 'YYYYMMDDHH24MISS')
+           AND PROMO_STR_DTM &lt;= TO_TIMESTAMP(#{endDate}||'235959', 'YYYYMMDDHH24MISS')
+           AND PROMO_TYP_CD  LIKE #{promoTypCd} || '%'
+           AND PROMO_STAT_CD LIKE #{promoStatCd} || '%'
+           AND PROMO_NO      LIKE #{promoNo} || '%'
+           AND PROMO_NM      LIKE #{promoNm} || '%'
+           AND SYS_MOD_ID    LIKE #{userId} || '%'
+           AND PROMO_TYP_CD IN ('20','30','40')
+         ORDER BY SYS_MOD_DTM DESC
+    </sql>
+
+    <select id="getPromotionManagingList" parameterType="PromotionRequest" resultType="PromotionResponse">
+        <include refid="promotionListBase" />
+        <include refid="paginatedBase" />
+    </select>
+
+    <select id="getPromotionManagingListCount" parameterType="PromotionRequest" resultType="java.lang.Integer">
+        SELECT /* CcPromBaseMapper.getCouponCostManageListCount */
+               COUNT(*)
+          FROM (
+             <include refid="promotionListBase" />
+          ) v
+    </select>
+
+</mapper>
+
+

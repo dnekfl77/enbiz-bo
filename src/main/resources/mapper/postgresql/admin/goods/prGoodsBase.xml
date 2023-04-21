@@ -1,0 +1,465 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.goods.PrGoodsBaseMapper">
+
+    <sql id="paginatedBase">
+        LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+    </sql>
+
+    <sql id="popupGoodsListBase">
+        SELECT /* prGoodsBase.popupGoodsListBase */
+               GB.GOODS_NO
+             , GB.GOODS_NM
+             , GB.MODL_NM
+             , BM.BRAND_NM
+             , EB.ENTR_NM
+             , FN_GET_CODENAME('PR001', GOODS_COMP_CD) AS GOODS_COMP_CD_NM
+             , FN_GET_CODENAME('PR002', GOODS_TYP_CD) AS GOODS_TYP_CD_NM
+             , GB.SALE_STAT_CD
+             , FN_GET_CODENAME('PR005', SALE_STAT_CD) AS SALE_STAT_CD_NM
+             , FN_GET_CODENAME('PR003', SALE_METH_CD) AS SALE_METH_CD_NM
+             , FN_GET_CODENAME('PR006', BUY_TYP_CD) AS BUY_TYP_CD_NM
+             , FN_GET_CODENAME('PR008', DELI_PROC_TYP_CD) AS DELI_PROC_TYP_CD_NM
+             , TO_CHAR(GB.GOODS_REG_DTM,'YYYY-MM-DD') AS GOODS_REG_DTM
+             , UB.USER_NM as MD_NM
+        FROM PR_GOODS_BASE GB
+        LEFT OUTER JOIN PR_BRAND_MST BM
+          ON (GB.BRAND_NO = BM.BRAND_NO)
+            , ET_ENTR_BASE EB
+            , PR_STD_CTG SC
+         LEFT OUTER JOIN ST_USER_BASE UB
+           ON (SC.MD_ID = UB.USER_ID)
+        WHERE 1=1
+          AND GB.ENTR_NO    = EB.ENTR_NO
+          AND GB.STD_CTG_NO = SC.STD_CTG_NO
+    <choose>
+      <when test=" goodsNo != null and goodsNo != '' ">
+          AND GB.GOODS_NO         LIKE #{goodsNo} || '%' /* 상품번호   */
+      </when>
+      <when test=" goodsNm != 'NULL' and goodsNm != '' ">
+          AND GB.GOODS_NM         LIKE #{goodsNm} || '%'      /* 상품명     */
+      </when>
+      <otherwise>
+          <![CDATA[
+          AND GB.GOODS_REG_DTM  >= TO_TIMESTAMP(#{goodsRegStartDtm} || ' 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
+          AND GB.GOODS_REG_DTM  <= TO_TIMESTAMP(#{goodsRegEndDtm} || ' 23:59:59', 'YYYY-MM-DD HH24:MI:SS')
+          AND GB.ENTR_NO          LIKE #{entrNo} || '%'       /* 협력사번호  */
+          AND GB.BRAND_NO         LIKE #{brandNo} || '%'      /* 브랜드번호  */
+          AND SC.MD_ID            LIKE #{mdId} || '%'         /* 담당MD     */
+          AND SC.STD_CTG_NO       LIKE #{stdCtgNo} || '%'     /* 표준분류    */
+          AND GB.SALE_STAT_CD     IN (${saleStatCdList})   /* 판매상태    */
+          AND GB.GOODS_COMP_CD    LIKE #{goodsCompCd} || '%'  /* 상품구성    */
+          AND GB.GOODS_TYP_CD     LIKE #{goodsTypCd} || '%'   /* 상품유형    */
+          AND GB.SALE_METH_CD     LIKE #{saleMethCd} || '%'   /* 판매방식    */
+          AND GB.BUY_TYP_CD       LIKE #{buyTypCd} || '%'     /* 매입형태    */
+          AND GB.DELI_PROC_TYP_CD LIKE #{deliProcTypCd} || '%'/* 배송처리유형 */
+          ]]>
+      </otherwise>
+    </choose>
+        ORDER BY GB.GOODS_NO DESC
+    </sql>
+
+    <select id="getPopupGoodsList" parameterType="GoodsPopupRequest" resultType="GoodsPopupResponse">
+        /* prGoodsBase.getPopupGoodsList */
+        <include refid="popupGoodsListBase" />
+        <include refid="paginatedBase" />
+    </select>
+
+    <select id="getPopupGoodsListCount" parameterType="GoodsPopupRequest" resultType="java.lang.Integer">
+        SELECT COUNT(*) /*prGoodsBase.getPopupGoodsListCount*/
+          FROM (
+            <include refid="popupGoodsListBase"/>
+            ) T1
+    </select>
+
+    <sql id="goodsListBase">
+        <![CDATA[
+            SELECT GB.GOODS_COMP_CD /* prGoodsBase.goodsListBase */
+                 , FN_GET_CODENAME('PR001', GB.GOODS_COMP_CD) AS GOODS_COMP_CD_NM
+                 , FN_GET_CODENAME('PR002', GB.GOODS_TYP_CD) AS GOODS_TYP_CD_NM
+                 , GB.GOODS_NO
+                 , GB.GOODS_NM
+                 , GB.MODL_NM
+                 , BM.BRAND_NM
+                 , FN_GET_CODENAME('PR005', GB.SALE_STAT_CD) AS SALE_STAT_CD_NM
+                 , FN_GET_CODENAME('PR003', GB.SALE_METH_CD) AS SALE_METH_CD_NM
+                 , FN_GET_CODENAME('PR007', GB.TAX_GB_CD) AS TAX_GB_CD_NM
+                 , FN_GET_CODENAME('PR006', GB.BUY_TYP_CD) AS BUY_TYP_CD_NM
+                 , PH.NOR_PRC
+                 , PH.SALE_PRC
+                 , PH.MRGN_RATE
+                 , GB.PRC_COMPA_EXP_YN
+                 , GB.DISP_YN
+                 , GB.ITM_SOUT_NOTI_YN
+                 , EB.ENTR_NM
+                 , UB.USER_NM AS MD_NM
+                 , (SELECT (SELECT STD_CTG_NM FROM PR_STD_CTG WHERE STD_CTG_NO = PSC.STD_LRG_CTG_NO )
+                           || COALESCE( (SELECT '>' || STD_CTG_NM FROM PR_STD_CTG WHERE STD_CTG_NO = PSC.STD_MID_CTG_NO) , '')
+                           || COALESCE( (SELECT '>' || STD_CTG_NM FROM PR_STD_CTG WHERE STD_CTG_NO = PSC.STD_SML_CTG_NO) , '')
+                           || COALESCE( (SELECT '>' || STD_CTG_NM FROM PR_STD_CTG WHERE STD_CTG_NO = PSC.STD_THN_CTG_NO) , '')
+                      FROM PR_STD_CTG AS PSC
+                     WHERE PSC.STD_CTG_NO = GB.STD_CTG_NO) AS STD_CTG_HIERARCHY
+                 , FN_GET_CODENAME('PR008', GB.DELI_PROC_TYP_CD) AS DELI_PROC_TYP_CD_NM
+                 , FN_GET_CODENAME('PR010', GB.DELI_GOODS_GB_CD) AS DELI_GOODS_GB_CD_NM
+                 , TO_CHAR(GB.GOODS_REG_DTM,'YYYY-MM-DD HH24:MI:SS') AS GOODS_REG_DTM
+                 , TO_CHAR(GB.SALE_STR_DTM,'YYYY-MM-DD') AS SALE_STR_DTM
+                 , TO_CHAR(GB.SALE_END_DTM,'YYYY-MM-DD') AS SALE_END_DTM
+              FROM PR_GOODS_BASE GB
+              LEFT OUTER JOIN PR_BRAND_MST BM
+                ON (GB.BRAND_NO = BM.BRAND_NO)
+              LEFT OUTER JOIN PR_GOODS_PRC_HIST PH
+                ON (GB.GOODS_NO = PH.GOODS_NO AND NOW() BETWEEN PH.HIST_STR_DTM AND PH.HIST_END_DTM)
+                 , ET_ENTR_BASE EB
+                 , PR_STD_CTG SC
+              LEFT OUTER JOIN ST_USER_BASE UB
+                ON (SC.MD_ID = UB.USER_ID)
+             WHERE 1 = 1
+               AND GB.ENTR_NO = EB.ENTR_NO
+               AND GB.STD_CTG_NO = SC.STD_CTG_NO
+               AND GB.GOODS_REG_DTM >= TO_TIMESTAMP( #{goodsRegStartDtm} || ' 00:00:00','YYYY-MM-DD HH24:MI:SS')
+               AND GB.GOODS_REG_DTM <= TO_TIMESTAMP( #{goodsRegEndDtm} || ' 23:59:59','YYYY-MM-DD HH24:MI:SS')
+               AND SC.MD_ID             LIKE #{mdId} || '%'
+               AND GB.SALE_STAT_CD      LIKE #{saleStatCd} || '%'
+               AND GB.ENTR_NO           LIKE #{entrNo} || '%'
+               AND GB.STD_CTG_NO        LIKE #{stdCtgNo} || '%'
+               AND GB.BRAND_NO          LIKE #{brandNo} || '%'
+               AND GB.GOODS_COMP_CD     LIKE #{goodsCompCd} || '%'
+               AND GB.GOODS_TYP_CD      LIKE #{goodsTypCd} || '%'
+               AND GB.SALE_METH_CD      LIKE #{saleMethCd} || '%'
+               AND GB.BUY_TYP_CD        LIKE #{buyTypCd} || '%'
+               AND GB.ITM_SOUT_NOTI_YN  LIKE #{itmSoutNotiYn} || '%'
+               AND GB.STK_MGR_YN        LIKE #{stkMgrYn} || '%'
+               AND GB.DELI_PROC_TYP_CD  LIKE #{deliProcTypCd} || '%'
+               AND GB.DELI_GOODS_GB_CD  LIKE #{deliGoodsGbCd} || '%'
+               AND GB.GOODS_NM          LIKE #{goodsNm} || '%'
+          ]]>
+        <if test='goodsNoList != null and goodsNoList.length > 0'>
+            AND
+            <foreach collection="goodsNoList" item="goodsNo" separator="OR" open="(" close=")">
+                <if test='!goodsNo.equals("")'>
+                    GB.GOODS_NO LIKE #{goodsNo} || '%'
+                </if>
+            </foreach>
+        </if>
+        ORDER BY GB.GOODS_REG_DTM DESC, GB.GOODS_NM DESC
+    </sql>
+
+    <select id="getGoodsListCount" parameterType="GoodsMgmtRequest" resultType="java.lang.Integer">
+        SELECT COUNT(*) /* prGoodsBase.getGoodsListCount */
+          FROM (
+            <include refid="goodsListBase"/>
+            ) T1
+    </select>
+
+    <select id="getGoodsList" parameterType="GoodsMgmtRequest" resultType="GoodsMgmtResponse">
+        /* prGoodsBase.getGoodsList */
+        <include refid="goodsListBase" />
+        <include refid="paginatedBase" />
+    </select>
+
+    <select id="getGoodsInfo" parameterType="java.lang.String" resultType="GoodsBaseResponse">
+          SELECT GB.GOODS_NO   /* prGoodsBase.getGoodsInfo */
+	           , GB.GOODS_NM
+	           , GB.SHRT_GOODS_NM
+	           , GB.LGC_GOODS_NO
+	           , GB.ENTR_NO
+               , EB.ENTR_NM
+	           , GB.STD_CTG_NO
+               , (SELECT STD_CTG_NM FROM PR_STD_CTG WHERE STD_CTG_NO = SC.STD_LRG_CTG_NO )
+                             || COALESCE( (SELECT '>' || STD_CTG_NM FROM PR_STD_CTG WHERE STD_CTG_NO = SC.STD_MID_CTG_NO) , '')
+                             || COALESCE( (SELECT '>' || STD_CTG_NM FROM PR_STD_CTG WHERE STD_CTG_NO = SC.STD_SML_CTG_NO) , '')
+                             || COALESCE( (SELECT '>' || STD_CTG_NM FROM PR_STD_CTG WHERE STD_CTG_NO = SC.STD_THN_CTG_NO) , '')
+                 AS STD_CTG_HIERARCHY
+               , SC.MD_ID
+               , SC.GOODS_NOTI_LISART_CD
+               , SC.SAFE_CERTI_NEED_YN
+	           , GB.GOODS_COMP_CD
+	           , GB.GOODS_TYP_CD
+	           , GB.SALE_METH_CD
+	           , GB.BRAND_NO
+               , BM.BRAND_NM
+	           , GB.MODL_NM
+	           , GB.HOME_NM
+	           , GB.MFCO_NM
+	           , GB.INCOM_NM
+	           , GB.SALEMN_NM
+	           , GB.SAFE_CERTI_TGT_YN
+	           , GB.BUYR_AGE_LMT_CD
+	           , GB.DISP_YN
+	           , GB.SALE_STAT_CD
+	           , GB.GOODS_REG_DTM
+	           , TO_CHAR(GB.SALE_STR_DTM,'YYYY-MM-DD') AS SALE_STR_DTM
+	           , TO_CHAR(GB.SALE_END_DTM,'YYYY-MM-DD') AS SALE_END_DTM
+	           , GB.BUY_TYP_CD
+	           , GB.TAX_GB_CD
+	           , GB.STK_MGR_YN
+	           , GB.BUY_QTY_LMT_YN
+	           , GB.MIN_LMT_QTY
+	           , GB.MAX_LMT_QTY
+	           , GB.DELI_PROC_TYP_CD
+	           , GB.DELI_GOODS_GB_CD
+	           , GB.DELI_WAY_CD
+	           , GB.DELI_DDAY
+	           , GB.TDAY_SND_PSB_YN
+	           , GB.WD_SND_PSB_TM
+	           , GB.SDAY_SND_PSB_YN
+	           , GB.SDAY_SND_PSB_TM
+	           , GB.ITM_SOUT_NOTI_YN
+	           , GB.DELI_POLC_NO
+	           , GB.BDL_DELI_PSB_YN
+	           , GB.BDL_RTN_PSB_YN
+	           , GB.RTN_PSB_YN
+	           , GB.EXCH_PSB_YN
+	           , GB.PRC_COMPA_EXP_YN
+	           , GB.SCH_PSB_YN
+	           , GB.SCH_KWD_1_NM
+	           , GB.SCH_KWD_2_NM
+	           , GB.SCH_KWD_3_NM
+	           , GB.PKG_GOODS_PRIO_RNK_CD
+	           , GB.SYS_REG_ID
+               , TO_CHAR(GB.SYS_REG_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_REG_DTM
+	           , GB.SYS_MOD_ID
+          	   , TO_CHAR(GB.SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+            FROM PR_GOODS_BASE GB
+            LEFT OUTER JOIN PR_BRAND_MST BM
+              ON (GB.BRAND_NO = BM.BRAND_NO)
+               , ET_ENTR_BASE EB
+               , PR_STD_CTG SC
+           WHERE GOODS_NO = #{goodsNo}
+             AND GB.ENTR_NO = EB.ENTR_NO
+             AND GB.STD_CTG_NO = SC.STD_CTG_NO
+    </select>
+
+    <select id="getDashboardGoodsTodayNewCnt" resultType="java.lang.Integer">
+        SELECT /* prGoodsBase.getDashboardGoodsTodayNewCnt */
+               COUNT(*) AS CNT
+          FROM PR_GOODS_BASE
+         WHERE GOODS_REG_DTM BETWEEN CURRENT_DATE AND (CURRENT_DATE + '1 DAY'::INTERVAL)
+           AND SALE_STAT_CD IN ('10', '30')
+    </select>
+
+    <select id="getDashboardGoods2WeekSellingCnt" resultType="java.lang.Integer">
+        SELECT /* prGoodsBase.getDashboardGoods2WeekSellingCnt */
+               COUNT(*) AS CNT
+          FROM PR_GOODS_BASE
+         WHERE GOODS_REG_DTM BETWEEN (CURRENT_DATE - '2 WEEK'::INTERVAL) AND CURRENT_DATE
+           AND SALE_STAT_CD IN ('10', '30')
+    </select>
+
+    <sql id="webStockListBase">
+            SELECT GB.GOODS_NO /* prGoodsBase.webStockListBase */
+                 , GB.GOODS_NM
+                 , IB.ITM_NO
+                 , CONCAT(
+                    IB.OPTN_NM_1
+                    , CASE WHEN COALESCE(IB.OPTN_NM_2, '') = '' THEN '' ELSE '/' || IB.OPTN_NM_2 END
+                    , CASE WHEN COALESCE(IB.OPTN_NM_3, '') = '' THEN '' ELSE '/' || IB.OPTN_NM_3 END
+                    , CASE WHEN COALESCE(IB.OPTN_NM_4, '') = '' THEN '' ELSE '/' || IB.OPTN_NM_4 END
+                    , CASE WHEN COALESCE(IB.OPTN_NM_5, '') = '' THEN '' ELSE '/' || IB.OPTN_NM_5 END
+                   ) AS ITM_NM
+                 , BM.BRAND_NM
+                 , FN_GET_CODENAME('PR005',GB.SALE_STAT_CD ) AS SALE_STAT_CD_NM
+                 , FN_GET_CODENAME('PR005',IB.ITM_SALE_STAT_CD ) AS ITM_SALE_STAT_CD_NM
+                 , IB.STK_QTY
+                 , (SELECT (SELECT STD_CTG_NM FROM PR_STD_CTG WHERE STD_CTG_NO = PSC.STD_LRG_CTG_NO )
+                           || COALESCE( (SELECT '>' || STD_CTG_NM FROM PR_STD_CTG WHERE STD_CTG_NO = PSC.STD_MID_CTG_NO) , '')
+                           || COALESCE( (SELECT '>' || STD_CTG_NM FROM PR_STD_CTG WHERE STD_CTG_NO = PSC.STD_SML_CTG_NO) , '')
+                           || COALESCE( (SELECT '>' || STD_CTG_NM FROM PR_STD_CTG WHERE STD_CTG_NO = PSC.STD_THN_CTG_NO) , '')
+                      FROM PR_STD_CTG AS PSC
+                     WHERE PSC.STD_CTG_NO = GB.STD_CTG_NO) AS STD_CTG_HIERARCHY
+                 , GB.ENTR_NO
+                 , EB.ENTR_NM
+                 , SC.MD_ID
+                 , IB.LGC_ITM_NO
+                 , GB.SYS_MOD_ID
+                 , TO_CHAR(GB.SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+              FROM PR_GOODS_BASE GB
+              LEFT OUTER JOIN PR_BRAND_MST BM
+                ON (GB.BRAND_NO = BM.BRAND_NO)
+                 , PR_ITM_BASE IB
+                 , ET_ENTR_BASE EB
+                 , PR_STD_CTG SC
+             WHERE 1 = 1
+               AND GB.GOODS_NO = IB.GOODS_NO
+               AND GB.ENTR_NO = EB.ENTR_NO
+               AND GB.STD_CTG_NO = SC.STD_CTG_NO
+               AND GB.DELI_PROC_TYP_CD = #{deliProcTypCd}
+               AND IB.ITM_SALE_STAT_CD              LIKE #{itmSaleStatCd} || '%'
+               AND GB.GOODS_NM                      LIKE #{goodsNm}    || '%'
+               AND GB.ENTR_NO                       LIKE #{entrNo}     || '%'
+               AND GB.BRAND_NO                      LIKE #{brandNo}    || '%'
+               AND COALESCE(IB.LGC_ITM_NO, '')      LIKE #{lgcItmNo}   || '%'
+               AND GB.SALE_STAT_CD                  LIKE #{saleStatCd} || '%'
+               AND GB.STD_CTG_NO                    LIKE #{stdCtgNo}   || '%'
+               AND SC.MD_ID                         LIKE #{mdId}       || '%'
+           <if test='minStkQty != null'>
+               AND IB.STK_QTY  <![CDATA[ >= ]]>  #{minStkQty}
+           </if>
+           <if test='maxStkQty != null'>
+               AND IB.STK_QTY <![CDATA[ < ]]> #{maxStkQty}
+           </if>
+           <if test='goodsNoList != null and goodsNoList.length > 0'>
+               AND
+               <foreach collection="goodsNoList" item="goodsNo" separator="OR" open="(" close=")">
+                   <if test='!goodsNo.equals("")'>
+                       GB.GOODS_NO LIKE #{goodsNo} || '%'
+                   </if>
+               </foreach>
+           </if>
+        ORDER BY GOODS_NO DESC, ITM_NO DESC
+    </sql>
+
+    <select id="getWebStockListCount" parameterType="WebStockMgmtRequest" resultType="java.lang.Integer">
+        SELECT COUNT(*) /* prGoodsBase.getWebStockListCount */
+          FROM (
+            <include refid="webStockListBase"/>
+            ) T1
+    </select>
+
+    <select id="getWebStockList" parameterType="WebStockMgmtRequest" resultType="WebStockMgmtResponse">
+        /* prGoodsBase.getWebStockList */
+        <include refid="webStockListBase" />
+        <include refid="paginatedBase" />
+    </select>
+
+    <sql id="modifiedGoodsListBase">
+        SELECT EB.ENTR_NM /* prGoodsBase.modifiedGoodsListBase */
+             , GB.GOODS_NO
+             , GB.GOODS_NM
+             , FN_GET_CODENAME('PR005', GB.SALE_STAT_CD) AS SALE_STAT_CD_NM
+             , GB.SAFE_CERTI_TGT_YN
+             , FN_GET_CODENAME('PR004', GB.BUYR_AGE_LMT_CD) || '세' AS BUYR_AGE_LMT_CD_NM
+             , GB.DISP_YN
+             , GB.STK_MGR_YN
+             , GB.BUY_QTY_LMT_YN
+             , GB.MIN_LMT_QTY
+             , GB.MAX_LMT_QTY
+             , FN_GET_CODENAME('PR010', GB.DELI_GOODS_GB_CD) AS DELI_GOODS_GB_CD_NM
+             , GB.ITM_SOUT_NOTI_YN
+             , CASE COALESCE(PB.DLEX_TYP_CD, '')
+                    WHEN '10' THEN '배송비 무료 / 반품비 '|| CASE WHEN RTN_AMT > 0 THEN RTN_AMT::VARCHAR||'원' ELSE ' 무료' END
+                    WHEN '20' THEN '배송비 '||DLEX_AMT::VARCHAR||'원 / 반품비 '||RTN_AMT::VARCHAR||'원'
+                    WHEN '30' THEN STD_AMT::VARCHAR||'원미만 '||DLEX_AMT::VARCHAR||'원 / 반품비 '||RTN_AMT::VARCHAR||'원'
+                    WHEN ''   THEN ''
+                    END AS DISP_DLEX_AMT
+             , GB.PRC_COMPA_EXP_YN
+          FROM PR_GOODS_BASE GB
+          LEFT OUTER JOIN ET_DELI_POLC_BASE PB ON(GB.DELI_POLC_NO = PB.DELI_POLC_NO)
+             , ET_ENTR_BASE EB
+         WHERE 1 = 1
+           AND GB.ENTR_NO = EB.ENTR_NO
+           AND GB.GOODS_NO = #{goodsNo}
+    </sql>
+
+    <select id="getModifiedGoodsListCount" parameterType="GoodsInfoModificationHistoryRequest" resultType="java.lang.Integer">
+        SELECT COUNT(*) /* prGoodsBase.getModifiedGoodsListCount */
+          FROM (
+            <include refid="modifiedGoodsListBase"/>
+        ) T1
+    </select>
+
+    <select id="getModifiedGoodsList" parameterType="GoodsInfoModificationHistoryRequest" resultType="GoodsInfoModificationHistoryResponse">
+        /* prGoodsBase.getModifiedGoodsList */
+        <include refid="modifiedGoodsListBase" />
+        <include refid="paginatedBase" />
+    </select>
+
+    <select id="getRsvGoodsInfo" parameterType="java.lang.String" resultType="ReservationGoodsMgmtResponse">
+        SELECT PGB.GOODS_NO /* prGoodsBase.getRsvGoodsInfo */
+             , PGB.GOODS_NM
+             , EEB.ENTR_NM
+             , SUB.USER_NM AS MD
+        FROM PR_GOODS_BASE    PGB
+           , PR_STD_CTG       PSC
+           , ST_USER_BASE     SUB
+           , ET_ENTR_BASE     EEB
+        WHERE PGB.STD_CTG_NO    = PSC.STD_CTG_NO
+          AND PSC.MD_ID         = SUB.USER_ID
+          AND PGB.ENTR_NO       = EEB.ENTR_NO
+          AND PGB.GOODS_NO LIKE #{goodsNo} || '%'
+    </select>
+
+    <sql id="packageTargetGoodsListBase">
+        SELECT GB.GOODS_NO /* prGoodsBase.packageTargetGoodsListBase */
+             , GB.GOODS_NM
+             , GB.MODL_NM
+             , BM.BRAND_NM
+             , GB.ENTR_NO
+             , EB.ENTR_NM
+             , SC.MD_ID
+             , FN_GET_CODENAME('PR005', GB.SALE_STAT_CD) AS SALE_STAT_CD_NM
+             , TO_CHAR(GB.GOODS_REG_DTM,'YYYY-MM-DD') AS GOODS_REG_DTM
+             , GB.DISP_YN
+             , FN_GET_CODENAME('PR008', GB.DELI_PROC_TYP_CD) AS DELI_PROC_TYP_CD_NM
+             , FN_GET_CODENAME('PR010', GB.DELI_GOODS_GB_CD) AS DELI_GOODS_GB_CD_NM
+             , PH.SALE_PRC
+             , CASE PB.DLEX_TYP_CD
+               WHEN '10' THEN '배송비 무료 / 반품비 '|| CASE WHEN RTN_AMT > 0 THEN RTN_AMT::VARCHAR||'원' ELSE ' 무료' END
+               WHEN '20' THEN '배송비 '||DLEX_AMT::VARCHAR||'원 / 반품비 '||RTN_AMT::VARCHAR||'원'
+               WHEN '30' THEN STD_AMT::VARCHAR||'원미만 '||DLEX_AMT::VARCHAR||'원 / 반품비 '||RTN_AMT::VARCHAR||'원'
+               END AS DISP_DLEX_AMT
+             , GB.SYS_REG_ID
+             , TO_CHAR(GB.SYS_REG_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_REG_DTM
+             , GB.SYS_MOD_ID
+             , TO_CHAR(GB.SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+          FROM PR_GOODS_BASE GB
+          LEFT OUTER JOIN PR_BRAND_MST BM ON (GB.BRAND_NO = BM.BRAND_NO)
+             , ET_ENTR_BASE EB
+             , PR_STD_CTG SC
+             , PR_GOODS_PRC_HIST PH
+             , ET_DELI_POLC_BASE PB
+         WHERE 1 = 1
+           AND GB.ENTR_NO = EB.ENTR_NO
+           AND GB.STD_CTG_NO = SC.STD_CTG_NO
+           AND GB.GOODS_NO = PH.GOODS_NO
+           AND PH.HIST_END_DTM = TO_TIMESTAMP('2999-12-31 23:59:59', 'YYYY-MM-DD HH24:MI:SS')
+           AND GB.DELI_POLC_NO = PB.DELI_POLC_NO
+           AND GB.ENTR_NO = #{entrNo}
+           AND GB.GOODS_COMP_CD = #{goodsCompCd}
+           AND GB.GOODS_TYP_CD = #{goodsTypCd}
+           AND GB.SALE_METH_CD = #{saleMethCd}
+           AND GB.BUY_TYP_CD = #{buyTypCd}
+           AND GB.DELI_PROC_TYP_CD = #{deliProcTypCd}
+        <if test='saleStatCdList != null and saleStatCdList.length > 0'>
+            AND GB.SALE_STAT_CD IN
+            <foreach collection="saleStatCdList" item="saleStatCd" separator="," open="(" close=")">
+                <if test='!saleStatCd.equals("")'>
+                    #{saleStatCd}
+                </if>
+            </foreach>
+        </if>
+        <choose>
+            <when test=" goodsNo != null and goodsNo != '' ">
+                AND GB.GOODS_NO         LIKE #{goodsNo} || '%'
+            </when>
+            <when test=" goodsNm != 'NULL' and goodsNm != '' ">
+                AND GB.GOODS_NM         LIKE #{goodsNm} || '%'
+            </when>
+            <otherwise>
+                <![CDATA[
+				  AND GB.GOODS_REG_DTM  >= TO_TIMESTAMP(#{goodsRegStartDtm} || ' 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
+				  AND GB.GOODS_REG_DTM  <= TO_TIMESTAMP(#{goodsRegEndDtm} || ' 23:59:59', 'YYYY-MM-DD HH24:MI:SS')
+				  AND GB.BRAND_NO       LIKE #{brandNo} || '%'
+				  AND SC.MD_ID          LIKE #{mdId} || '%'
+				  AND SC.STD_CTG_NO     LIKE #{stdCtgNo} || '%'
+				]]>
+            </otherwise>
+        </choose>
+        ORDER BY GB.GOODS_NO DESC
+    </sql>
+
+    <select id="getPackageTargetGoodsListCount" parameterType="PackageTargetGoodsRequest" resultType="java.lang.Integer">
+        SELECT COUNT(*) /* prGoodsBase.getPackageTargetGoodsListCount */
+          FROM (
+        <include refid="packageTargetGoodsListBase"/>
+        ) T1
+    </select>
+
+    <select id="getPackageTargetGoodsList" parameterType="PackageTargetGoodsRequest" resultType="PackageTargetGoodsResponse">
+        /* prGoodsBase.getPackageTargetGoodsList */
+        <include refid="packageTargetGoodsListBase" />
+        <include refid="paginatedBase" />
+    </select>
+</mapper>

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.display.PrStdCtgMapper">
+
+    <sql id="paginatedBase">
+        LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+    </sql>
+
+    <select id="getPrStdCtgListWithHierarchy" resultType="PrStdCtgResponse">
+        WITH RECURSIVE PR_STD_CTG_HIERARCHY AS /* prStdCtg.getPrStdCtgListWithHierarchy */
+        (
+            SELECT 1 AS LEVEL
+                 , STD_CTG_NO
+                 , STD_CTG_NM
+                 , LEAF_CTG_YN
+                 , USE_YN
+                 , SORT_SEQ
+                 , UPR_STD_CTG_NO
+                 , STD_LRG_CTG_NO
+                 , STD_MID_CTG_NO
+                 , STD_SML_CTG_NO
+                 , STD_THN_CTG_NO
+                 , MD_ID
+                 , SAFE_CERTI_NEED_YN
+                 , GOODS_NOTI_LISART_CD
+                 , CONCAT('\',SORT_SEQ||STD_CTG_NO)  AS HIERARCHY
+                 , CONCAT('',STD_CTG_NM) AS HIERARCHY_TEXT
+              FROM PR_STD_CTG A
+             WHERE USE_YN = 'Y'
+               AND UPR_STD_CTG_NO = '0'
+             UNION ALL
+            SELECT LEVEL + 1
+                 , T1.STD_CTG_NO
+                 , T1.STD_CTG_NM
+                 , T1.LEAF_CTG_YN
+                 , T1.USE_YN
+                 , T1.SORT_SEQ
+                 , T1.UPR_STD_CTG_NO
+                 , T1.STD_LRG_CTG_NO
+                 , T1.STD_MID_CTG_NO
+                 , T1.STD_SML_CTG_NO
+                 , T1.STD_THN_CTG_NO
+                 , T1.MD_ID
+                 , T1.SAFE_CERTI_NEED_YN
+                 , T1.GOODS_NOTI_LISART_CD
+                 , CONCAT_WS('\', T2.HIERARCHY, TRIM(TO_CHAR(T1.SORT_SEQ,'000'))||T1.STD_CTG_NO) AS HIERARCHY
+                 , CONCAT('',T2.HIERARCHY_TEXT,'>'||T1.std_ctg_nm) AS HIERARCHY_TEXT
+              FROM PR_STD_CTG T1,
+                   PR_STD_CTG_HIERARCHY T2
+             WHERE T2.STD_CTG_NO = T1.UPR_STD_CTG_NO
+        )
+        SELECT LEVEL
+             , STD_CTG_NO
+             , STD_CTG_NM
+             , LEAF_CTG_YN
+             , USE_YN
+             , SORT_SEQ
+             , UPR_STD_CTG_NO
+             , STD_LRG_CTG_NO
+             , STD_MID_CTG_NO
+             , STD_SML_CTG_NO
+             , STD_THN_CTG_NO
+             , MD_ID
+             , SAFE_CERTI_NEED_YN
+             , GOODS_NOTI_LISART_CD
+             , HIERARCHY
+             , HIERARCHY_TEXT
+        FROM PR_STD_CTG_HIERARCHY
+        ORDER BY HIERARCHY
+    </select>
+
+    <select id="getStandardCategoryInfo" parameterType="PrStdCtgRequest" resultType="PrStdCtgResponse">
+        SELECT /* prStdCtg.getStandardCategoryInfo */
+               SC1.STD_CTG_NO
+             , SC1.STD_CTG_NM
+             , SC1.UPR_STD_CTG_NO
+             , SC2.STD_CTG_NM AS UPR_STD_CTG_NM
+             , SC1.USE_YN
+             , SC1.SORT_SEQ
+             , SC1.LEAF_CTG_YN
+             , SC1.SAFE_CERTI_NEED_YN
+             , SC1.MD_ID
+             , UB.USER_NM AS MD_NM
+             , SC1.GOODS_NOTI_LISART_CD
+             , FN_GET_CODENAME('PR012', SC1.GOODS_NOTI_LISART_CD) AS GOODS_NOTI_LISART_CD_NM
+             , SC1.SYS_MOD_ID
+             , TO_CHAR(SC1.SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+        FROM   PR_STD_CTG SC1
+        LEFT OUTER JOIN ST_USER_BASE UB       ON (SC1.MD_ID = UB.USER_ID)
+        LEFT OUTER JOIN PR_STD_CTG SC2        ON (SC1.UPR_STD_CTG_NO = SC2.STD_CTG_NO)
+        WHERE SC1.STD_CTG_NO = #{stdCtgNo}
+    </select>
+
+    <select id="getStandardCategoryMgmtChildListCount" parameterType="PrStdCtgRequest" resultType="java.lang.Integer">
+        SELECT /* prStdCtg.getStandardCategoryMgmtChildListCount */
+               COUNT(*)
+        FROM PR_STD_CTG SC
+        WHERE SC.UPR_STD_CTG_NO = #{stdCtgNo}
+    </select>
+
+    <select id="getStandardCategoryMgmtChildList" parameterType="PrStdCtgRequest" resultType="PrStdCtgResponse" >
+        SELECT /* prStdCtg.getStandardCategoryMgmtChildList */
+               SC.STD_CTG_NO
+             , SC.STD_CTG_NM
+             , SC.USE_YN
+             , SC.SORT_SEQ
+             , SC.LEAF_CTG_YN
+             , SC.UPR_STD_CTG_NO
+             , SC.SYS_REG_ID
+             , TO_CHAR(SC.SYS_REG_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_REG_DTM
+             , SC.SYS_MOD_ID
+             , TO_CHAR(SC.SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+             , CASE WHEN EXISTS (   SELECT *
+                                    FROM PR_STD_CTG PSC
+                                    WHERE PSC.UPR_STD_CTG_NO IN (SC.STD_CTG_NO)
+               )
+               THEN 'N'
+               ELSE 'Y' END LEAF_CTG_YN_CHANGE_POSSIBLE
+        FROM   PR_STD_CTG SC
+        WHERE  SC.UPR_STD_CTG_NO = #{stdCtgNo}
+        ORDER BY SC.SORT_SEQ
+        <include refid="paginatedBase" />
+    </select>
+
+    <select id="getStandardCategoryMgmtGoodsListCount" parameterType="PrStdCtgRequest" resultType="java.lang.Integer">
+        SELECT /* prStdCtg.getStandardCategoryMgmtGoodsListCount */
+               COUNT(*)
+          FROM PR_GOODS_BASE GB
+         WHERE GB.STD_CTG_NO = #{stdCtgNo}
+    </select>
+
+    <select id="getStandardCategoryMgmtGoodsList" parameterType="PrStdCtgRequest" resultType="PrGoodsBaseResponse" >
+        SELECT /* prStdCtg.getStandardCategoryMgmtGoodsList */
+               GOODS_NO
+             , GOODS_NM
+             , FN_GET_CODENAME('PR005',SALE_STAT_CD) AS SALE_STAT_CD_NM
+          FROM PR_GOODS_BASE GB
+         WHERE GB.STD_CTG_NO = #{stdCtgNo}
+         ORDER BY GB.GOODS_NO
+        <include refid="paginatedBase" />
+    </select>
+
+    <select id="getStandardCategoryDisplayListCount" parameterType="PrStdCtgRequest" resultType="java.lang.Integer">
+        SELECT /* prStdCtg.getStandardCategoryDisplayListCount */
+            COUNT(*)
+        FROM PR_STD_CTG_DISP_INFO DI
+        WHERE DI.STD_CTG_NO = #{stdCtgNo}
+    </select>
+</mapper>

@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enbiz.bo.app.repository.goods.PrPregGoodsBaseTrxMapper">
+
+    <insert id="insertPregGoods" parameterType="PrPregGoodsBase" useGeneratedKeys="false">
+        <selectKey keyProperty="pregGoodsNo" resultType="String" order="BEFORE">
+            SELECT 'G'||TO_CHAR(NOW(),'YYMM')||LPAD(CAST(NEXTVAL('PR_PREG_GOODS_BASE_SQ01') AS VARCHAR(7)),7,'0') AS pregGoodsNo
+        </selectKey>
+
+        INSERT INTO PR_PREG_GOODS_BASE ( /* prPregGoodsBaseTrx.insertPregGoods */
+                    PREG_GOODS_NO
+                  , GOODS_NM
+                  , SHRT_GOODS_NM
+                  , LGC_GOODS_NO
+                  , ENTR_NO
+                  , STD_CTG_NO
+                  , REG_INF_PATH_CD
+                  , PREG_STAT_CD
+                  , APRV_REQ_DT
+                  , SALE_METH_CD
+                  , GOODS_COMP_CD
+                  , GOODS_TYP_CD
+                  , BRAND_NO
+                  , MODL_NM
+                  , HOME_NM
+                  , MFCO_NM
+                  , INCOM_NM
+                  , SALEMN_NM
+                  , SAFE_CERTI_TGT_YN
+                  , BUYR_AGE_LMT_CD
+                  , DISP_YN
+                  , GOODS_REG_DTM
+                  , SALE_STR_DTM
+                  , SALE_END_DTM
+                  , BUY_TYP_CD
+                  , TAX_GB_CD
+                  , STK_MGR_YN
+                  , BUY_QTY_LMT_YN
+                  , MIN_LMT_QTY
+                  , MAX_LMT_QTY
+                  , DELI_PROC_TYP_CD
+                  , DELI_GOODS_GB_CD
+                  , DELI_WAY_CD
+                  , DELI_DDAY
+                  , TDAY_SND_PSB_YN
+                  , WD_SND_PSB_TM
+                  , SDAY_SND_PSB_YN
+                  , SDAY_SND_PSB_TM
+                  , ITM_SOUT_NOTI_YN
+                  , DELI_POLC_NO
+                  , BDL_DELI_PSB_YN
+                  , BDL_RTN_PSB_YN
+                  , RTN_PSB_YN
+                  , EXCH_PSB_YN
+                  , PRC_COMPA_EXP_YN
+                  , SCH_PSB_YN
+                  , SCH_KWD_1_NM
+                  , SCH_KWD_2_NM
+                  , SCH_KWD_3_NM
+                  , PKG_GOODS_PRIO_RNK_CD
+                  , SYS_REG_ID
+                  , SYS_REG_DTM
+                  , SYS_MOD_ID
+                  , SYS_MOD_DTM
+        ) VALUES (
+                    #{pregGoodsNo}
+                  , #{goodsNm}
+                  , #{shrtGoodsNm}
+                  , #{lgcGoodsNo}
+                  , #{entrNo}
+                  , #{stdCtgNo}
+                  , #{regInfPathCd}
+                  , #{pregStatCd}
+                  , #{aprvReqDt}
+                  , #{saleMethCd}
+                  , #{goodsCompCd}
+                  , #{goodsTypCd}
+                  , #{brandNo}
+                  , #{modlNm}
+                  , #{homeNm}
+                  , #{mfcoNm}
+                  , #{incomNm}
+                  , #{salemnNm}
+                  , #{safeCertiTgtYn}
+                  , #{buyrAgeLmtCd}
+                  , #{dispYn}
+                  , now()
+                  , TO_TIMESTAMP(#{saleStrDtm}||' 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
+                  , TO_TIMESTAMP(#{saleEndDtm}||' 23:59:59', 'YYYY-MM-DD HH24:MI:SS')
+                  , #{buyTypCd}
+                  , #{taxGbCd}
+                  , #{stkMgrYn}
+                  , #{buyQtyLmtYn}
+                  , #{minLmtQty}
+                  , #{maxLmtQty}
+                  , #{deliProcTypCd}
+                  , #{deliGoodsGbCd}
+                  , #{deliWayCd}
+                  , #{deliDday}
+                  , #{tdaySndPsbYn}
+                  , #{wdSndPsbTm}
+                  , #{sdaySndPsbYn}
+                  , #{sdaySndPsbTm}
+                  , #{itmSoutNotiYn}
+                  , #{deliPolcNo}
+                  , #{bdlDeliPsbYn}
+                  , #{bdlRtnPsbYn}
+                  , #{rtnPsbYn}
+                  , #{exchPsbYn}
+                  , #{prcCompaExpYn}
+                  , #{schPsbYn}
+                  , #{schKwd1Nm}
+                  , #{schKwd2Nm}
+                  , #{schKwd3Nm}
+                  , #{pkgGoodsPrioRnkCd}
+                  , #{sysRegId}
+                  , now()
+                  , #{sysRegId}
+                  , now()
+        )
+    </insert>
+
+    <update id="updatePregGoodsInfo" parameterType="PrPregGoodsBase">
+        UPDATE PR_PREG_GOODS_BASE /* prPregGoodsBaseTrx.updatePregGoodsInfo */
+           SET GOODS_NM              = #{goodsNm}
+             , SHRT_GOODS_NM         = #{shrtGoodsNm}
+             , LGC_GOODS_NO          = #{lgcGoodsNo}
+             , STD_CTG_NO            = #{stdCtgNo}
+             , PREG_STAT_CD          = #{pregStatCd}
+             , APRV_REQ_DT           = #{aprvReqDt}
+             , RETN_CAUS_CD          = #{retnCausCd}
+             , RETN_CAUS             = #{retnCaus}
+             , RETN_DT               = #{retnDt}
+             , BRAND_NO              = #{brandNo}
+             , MODL_NM               = #{modlNm}
+             , HOME_NM               = #{homeNm}
+             , MFCO_NM               = #{mfcoNm}
+             , INCOM_NM              = #{incomNm}
+             , SALEMN_NM             = #{salemnNm}
+             , SAFE_CERTI_TGT_YN     = #{safeCertiTgtYn}
+             , BUYR_AGE_LMT_CD       = #{buyrAgeLmtCd}
+             , DISP_YN               = #{dispYn}
+             , SALE_STR_DTM          = TO_TIMESTAMP(#{saleStrDtm}||' 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
+             , SALE_END_DTM          = TO_TIMESTAMP(#{saleEndDtm}||' 23:59:59', 'YYYY-MM-DD HH24:MI:SS')
+             , TAX_GB_CD             = #{taxGbCd}
+             , STK_MGR_YN            = #{stkMgrYn}
+             , BUY_QTY_LMT_YN        = #{buyQtyLmtYn}
+             , MIN_LMT_QTY           = #{minLmtQty}
+             , MAX_LMT_QTY           = #{maxLmtQty}
+             , DELI_GOODS_GB_CD      = #{deliGoodsGbCd}
+             , DELI_WAY_CD           = #{deliWayCd}
+             , DELI_DDAY             = #{deliDday}
+             , TDAY_SND_PSB_YN       = #{tdaySndPsbYn}
+             , WD_SND_PSB_TM         = #{wdSndPsbTm}
+             , SDAY_SND_PSB_YN       = #{sdaySndPsbYn}
+             , SDAY_SND_PSB_TM       = #{sdaySndPsbTm}
+             , ITM_SOUT_NOTI_YN      = #{itmSoutNotiYn}
+             , DELI_POLC_NO          = #{deliPolcNo}
+             , BDL_DELI_PSB_YN       = #{bdlDeliPsbYn}
+             , BDL_RTN_PSB_YN        = #{bdlRtnPsbYn}
+             , RTN_PSB_YN            = #{rtnPsbYn}
+             , EXCH_PSB_YN           = #{exchPsbYn}
+             , PRC_COMPA_EXP_YN      = #{prcCompaExpYn}
+             , SCH_PSB_YN            = #{schPsbYn}
+             , SCH_KWD_1_NM          = #{schKwd1Nm}
+             , SCH_KWD_2_NM          = #{schKwd2Nm}
+             , SCH_KWD_3_NM          = #{schKwd3Nm}
+             , SYS_MOD_ID            = #{sysModId}
+             , SYS_MOD_DTM           = now()
+         WHERE PREG_GOODS_NO         = #{pregGoodsNo}
+    </update>
+
+    <update id="updatePkgPregGoodsInfo" parameterType="PrPregGoodsBase">
+        UPDATE PR_PREG_GOODS_BASE /* prPregGoodsBaseTrx.updatePkgPregGoodsInfo */
+           SET GOODS_NM              = #{goodsNm}
+             , STD_CTG_NO            = #{stdCtgNo}
+             , PREG_STAT_CD          = #{pregStatCd}
+             , APRV_REQ_DT           = #{aprvReqDt}
+             , RETN_CAUS_CD          = #{retnCausCd}
+             , RETN_CAUS             = #{retnCaus}
+             , RETN_DT               = #{retnDt}
+             , BRAND_NO              = #{brandNo}
+             , MODL_NM               = #{modlNm}
+             , HOME_NM               = #{homeNm}
+             , MFCO_NM               = #{mfcoNm}
+             , INCOM_NM              = #{incomNm}
+             , SALEMN_NM             = #{salemnNm}
+             , DISP_YN               = #{dispYn}
+             , SALE_STR_DTM          = TO_TIMESTAMP(#{saleStrDtm}||' 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
+             , SALE_END_DTM          = TO_TIMESTAMP(#{saleEndDtm}||' 23:59:59', 'YYYY-MM-DD HH24:MI:SS')
+             , PRC_COMPA_EXP_YN      = #{prcCompaExpYn}
+             , SCH_PSB_YN            = #{schPsbYn}
+             , SCH_KWD_1_NM          = #{schKwd1Nm}
+             , SCH_KWD_2_NM          = #{schKwd2Nm}
+             , SCH_KWD_3_NM          = #{schKwd3Nm}
+             , SYS_MOD_ID            = #{sysModId}
+             , SYS_MOD_DTM           = now()
+        WHERE PREG_GOODS_NO          = #{pregGoodsNo}
+    </update>
+
+    <delete id="deletePregGoods" parameterType="java.lang.String">
+        DELETE /* prPregGoodsBaseTrx.deletePregGoods */
+          FROM PR_PREG_GOODS_BASE
+         WHERE PREG_GOODS_NO = #{pregGoodsNo}
+    </delete>
+
+    <update id="requestPregGoodsApproval" parameterType="PrPregGoodsBase">
+        UPDATE PR_PREG_GOODS_BASE /* prPregGoodsBaseTrx.requestPregGoodsApproval */
+           SET PREG_STAT_CD    = '20'
+             , APRV_REQ_DT     = TO_CHAR(now(),'YYYYMMDD')
+             , SYS_MOD_ID      = #{sysModId}
+             , SYS_MOD_DTM     = now()
+         WHERE PREG_GOODS_NO   = #{pregGoodsNo}
+    </update>
+
+    <update id="approvePregGoods" parameterType="PrPregGoodsBase">
+        UPDATE PR_PREG_GOODS_BASE /* prPregGoodsBaseTrx.approvePregGoods */
+           SET PREG_STAT_CD    = '40'
+             , APRV_DT         = TO_CHAR(now(),'YYYYMMDD')
+             , GOODS_NO        = #{goodsNo}
+             , SYS_MOD_ID      = #{sysModId}
+             , SYS_MOD_DTM     = now()
+         WHERE PREG_GOODS_NO   = #{pregGoodsNo}
+    </update>
+
+    <update id="returnPregGoods" parameterType="PrPregGoodsBase">
+        UPDATE PR_PREG_GOODS_BASE /* prPregGoodsBaseTrx.returnPregGoods */
+           SET PREG_STAT_CD    = '30'
+             , RETN_CAUS       = #{retnCaus}
+             , RETN_DT         = TO_CHAR(now(),'YYYYMMDD')
+             , RETN_CAUS_CD    = #{retnCausCd}
+             , SYS_MOD_ID      = #{sysModId}
+             , SYS_MOD_DTM     = now()
+         WHERE PREG_GOODS_NO   = #{pregGoodsNo}
+    </update>
+
+    <insert id="applyPregGoods" parameterType="PrPregGoodsBase" useGeneratedKeys="false">
+        <selectKey keyProperty="goodsNo" resultType="String" order="BEFORE">
+            SELECT TO_CHAR(NOW(),'YYMM')||LPAD(CAST(NEXTVAL('PR_GOODS_BASE_SQ01') AS VARCHAR(7)),7,'0') AS goodsNo
+        </selectKey>
+
+        INSERT INTO PR_GOODS_BASE ( /* prPregGoodsBaseTrx.applyPregGoods */
+               GOODS_NO
+             , GOODS_NM
+             , SHRT_GOODS_NM
+             , LGC_GOODS_NO
+             , ENTR_NO
+             , STD_CTG_NO
+             , GOODS_COMP_CD
+             , GOODS_TYP_CD
+             , SALE_METH_CD
+             , BRAND_NO
+             , MODL_NM
+             , HOME_NM
+             , MFCO_NM
+             , INCOM_NM
+             , SALEMN_NM
+             , SAFE_CERTI_TGT_YN
+             , BUYR_AGE_LMT_CD
+             , DISP_YN
+             , SALE_STAT_CD
+             , GOODS_REG_DTM
+             , SALE_STR_DTM
+             , SALE_END_DTM
+             , BUY_TYP_CD
+             , TAX_GB_CD
+             , STK_MGR_YN
+             , BUY_QTY_LMT_YN
+             , MIN_LMT_QTY
+             , MAX_LMT_QTY
+             , DELI_PROC_TYP_CD
+             , DELI_GOODS_GB_CD
+             , DELI_WAY_CD
+             , DELI_DDAY
+             , TDAY_SND_PSB_YN
+             , WD_SND_PSB_TM
+             , SDAY_SND_PSB_YN
+             , SDAY_SND_PSB_TM
+             , ITM_SOUT_NOTI_YN
+             , DELI_POLC_NO
+             , BDL_DELI_PSB_YN
+             , BDL_RTN_PSB_YN
+             , RTN_PSB_YN
+             , EXCH_PSB_YN
+             , PRC_COMPA_EXP_YN
+             , SCH_PSB_YN
+             , SCH_KWD_1_NM
+             , SCH_KWD_2_NM
+             , SCH_KWD_3_NM
+             , PKG_GOODS_PRIO_RNK_CD
+             , SYS_REG_ID
+             , SYS_REG_DTM
+             , SYS_MOD_ID
+             , SYS_MOD_DTM
+             )
+        SELECT #{goodsNo}
+             , GOODS_NM
+             , SHRT_GOODS_NM
+             , LGC_GOODS_NO
+             , ENTR_NO
+             , STD_CTG_NO
+             , GOODS_COMP_CD
+             , GOODS_TYP_CD
+             , SALE_METH_CD
+             , BRAND_NO
+             , MODL_NM
+             , HOME_NM
+             , MFCO_NM
+             , INCOM_NM
+             , SALEMN_NM
+             , SAFE_CERTI_TGT_YN
+             , BUYR_AGE_LMT_CD
+             , DISP_YN
+             , '10'
+             , now()
+             , SALE_STR_DTM
+             , SALE_END_DTM
+             , BUY_TYP_CD
+             , TAX_GB_CD
+             , STK_MGR_YN
+             , BUY_QTY_LMT_YN
+             , MIN_LMT_QTY
+             , MAX_LMT_QTY
+             , DELI_PROC_TYP_CD
+             , DELI_GOODS_GB_CD
+             , DELI_WAY_CD
+             , DELI_DDAY
+             , TDAY_SND_PSB_YN
+             , WD_SND_PSB_TM
+             , SDAY_SND_PSB_YN
+             , SDAY_SND_PSB_TM
+             , ITM_SOUT_NOTI_YN
+             , DELI_POLC_NO
+             , BDL_DELI_PSB_YN
+             , BDL_RTN_PSB_YN
+             , RTN_PSB_YN
+             , EXCH_PSB_YN
+             , PRC_COMPA_EXP_YN
+             , SCH_PSB_YN
+             , SCH_KWD_1_NM
+             , SCH_KWD_2_NM
+             , SCH_KWD_3_NM
+             , PKG_GOODS_PRIO_RNK_CD
+             , #{sysRegId}
+             , now()
+             , #{sysRegId}
+             , now()
+          FROM PR_PREG_GOODS_BASE
+         WHERE PREG_GOODS_NO = #{pregGoodsNo}
+    </insert>
+</mapper>

@@ -1,0 +1,136 @@
+<!--
+* 프로그램명 : 회원 조회 팝업
+* 작 성 일 : 2021.02.22
+* 작 성 자 : 박남훈
+* 수 정 자 : 홍혜리
+* 버    전 : 1.0
+* 개    요 : 회원 조회 팝업
+* 이    력 : 2021.08.02 단일선택시 적용방식 수정
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-layout}">
+<body>
+<!--Title Area-->
+<th:block layout:fragment="popup-title-area">
+    <th:block layout:insert="~{fragments/popup/popup-title :: popup-title}"
+              th:with="title=${#messages.msg('baseInfoMgmt.label.popup.mbrlist.title')}"></th:block>
+</th:block>
+<!--Title Area-->
+
+<!--Search Area-->
+<th:block layout:fragment="popup-search-area">
+    <div class="search">
+        <form name="mbrGridForm" id="mbrGridForm">
+            <input type="hidden" name="afterNoYn" id="afterNoYn">
+            <table class="search-table">
+                <colgroup>
+                    <col style="width:120px;" />
+                    <col />
+                    <col style="width:120px;" />
+                    <col />
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td class="label" th:text="${#messages.msg('baseInfoMgmt.label.popup.mbrlist.search.label.loginId')}"></td>
+                    <td><input type="text" class="input w50" name="loginId" id="loginId" maxlength="15"></td>
+                    <td class="label" th:text="${#messages.msg('baseInfoMgmt.label.popup.mbrlist.search.label.mbrNm')}"></td>
+                    <td><input type="text" class="input w50" name="mbrNm" id="mbrNm" maxlength="30"></td>
+                </tr>
+                <tr>
+                    <td class="label" th:text="${#messages.msg('baseInfoMgmt.label.popup.mbrlist.search.label.contact')}"></td>
+                    <td>
+                        <input type="text" class="input w50" name="contactNo" id="contactNo" maxlength="12">
+                        <em><label class="p-cursor"><input type="checkbox" name="afterNo" id="afterNo">뒤 4자리 검색</label></em>
+                    </td>
+                    <td class="label" th:text="${#messages.msg('baseInfoMgmt.label.popup.mbrlist.search.label.grade')}"></td>
+                    <td>
+                        <select class="form-control w50" id="mbrGradeCd" name="mbrGradeCd">
+                            <th:block th:if="${requestData.mbrGradeCd} == null or ${requestData.mbrGradeCd} == ''">
+                                <option value="" th:text="${#messages.msg('baseInfoMgmt.label.full')}"></option>
+                                <option th:each="list : ${codeList.ME024}"
+                                        th:value="${list?.cd}" th:utext="${list?.cdNm}"></option>
+                            </th:block>
+                            <th:block th:unless="${requestData.mbrGradeCd} == null or ${requestData.mbrGradeCd} == ''">
+                                <option th:each="list : ${codeList.ME024}"
+                                        th:value="${list?.cd}" th:utext="${list?.cdNm}"
+                                        th:if="${requestData.mbrGradeCd} == ${list?.cd}"></option>
+                            </th:block>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label" th:text="${#messages. msg('baseInfoMgmt.label.popup.mbrlist.search.label.emailAddr')}"></td>
+                    <td><input type="text" class="input w80" name="emailAddr" id="emailAddr" maxlength="100"></td>
+                    <td class="label" th:text="${#messages.msg('baseInfoMgmt.label.popup.mbrlist.search.label.mbrStatCd')}"></td>
+                    <td>
+                        <select class="form-control w50" id="mbrStatCd" name="mbrStatCd">
+                            <th:block th:if="${requestData.argMbrStatCd} == null or ${requestData.argMbrStatCd} == ''">
+                                <option value="" th:text="${#messages.msg('baseInfoMgmt.label.full')}"></option>
+                                <option th:each="list : ${codeList.ME003}"
+                                        th:value="${list?.cd}" th:utext="${list?.cdNm}"></option>
+                            </th:block>
+                            <th:block th:unless="${requestData.argMbrStatCd} == null or ${requestData.argMbrStatCd} == ''">
+                                <option th:each="list : ${codeList.ME003}"
+                                        th:value="${list?.cd}" th:utext="${list?.cdNm}"
+                                        th:if="${requestData.argMbrStatCd} == ${list?.cd}"></option>
+                            </th:block>
+                        </select>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+</th:block>
+<!--Search Area-->
+
+<!--Search Button Area-->
+<th:block layout:fragment="popup-search-button-area">
+    <th:block layout:insert="~{fragments/popup/popup-btn :: popup-search-btn}"/>
+</th:block>
+<!--Search Button Area-->
+
+<!--List Area-->
+<th:block layout:fragment="popup-List-area">
+    <div class="grid" style="overflow: hidden;">
+        <div class="grid-head">
+            <div class="title-area">
+                <h2 class="title" th:text="${#messages.msg('baseInfoMgmt.label.popup.mbrlist.grid.title')}"></h2>
+            </div>
+            <div class="option-area">
+                <div class="page-option" grid-id="mbrGrid"></div>
+            </div>
+        </div>
+        <div class="grid-body with-head">
+            <div class="rg-root rg-grid" id="mbrGrid" realgrid></div>
+        </div>
+    </div>
+</th:block>
+<!--List Area-->
+
+<!--List Button Area-->
+<th:block layout:fragment="popup-List-button-area">
+    <th:block layout:insert="~{fragments/popup/popup-btn :: popup-List-btn}"/>
+</th:block>
+
+<!-- Additional Script -->
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        var _gridType      = [[${requestData.argSelectType}]]; // 선택구분값이 있을경우 필수값
+        var _argMbrStatCd  = [[${requestData.argMbrStatCd}]]; // 회원상태가 있을경우 필수값
+        /*]]>*/
+    </script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'popup/popup.memberSearch.mbrGrid.eventHandler.js?20210802'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'popup/popup.memberSearch.mbrGrid.provider.js?2021030505'" ></script>
+
+    <script type="text/javascript">
+        $(function() {
+             mbrGrid.eventhandler.init();
+        });
+    </script>
+</th:block>
+</body>
+</html>

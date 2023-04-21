@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.display.CcChlBaseMapper">
+
+	<sql id="paginatedBase">
+		LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+	</sql>
+
+	<sql id="ChannelList">
+		SELECT  /* CcChlBaseMapper.ChannelList */
+				  CCB.CHL_NO
+				, CCB.CHL_NM
+				, FN_GET_CODENAME( 'CH001', CCB.CHL_CLSS_CD ) AS CHL_CLSS_CD
+				, FN_GET_CODENAME( 'CH002', CCB.CHL_TYP_CD ) AS CHL_TYP_CD
+		FROM
+				CC_CHL_BASE CCB
+		WHERE 	CCB.CHL_NO LIKE #{chlNo} || '%'
+		AND 	CCB.CHL_NM LIKE #{chlNm} || '%'
+		AND 	CCB.CHL_CLSS_CD LIKE #{chlClssCd} || '%'
+		ORDER BY CCB.CHL_NO
+	</sql>
+
+	<select id="getChannelList" parameterType="CcChlBaseRequest" resultType="CcChlBaseResponse">
+		<include refid="ChannelList" />
+	</select>
+
+	<select id="getChannelListCount" parameterType="CcChlBaseRequest" resultType="java.lang.Integer">
+		SELECT   /* CcChlBaseMapper.getChannelListCount */
+				COUNT(*)
+		FROM (
+				<include refid="ChannelList" />
+		) T1
+	</select>
+
+	<sql id="ccChlBaseByEntrNo">
+		SELECT /* CcChlBaseMapper.ccChlBaseByEntrNo */
+		       CHL_NO
+		     , SITE_NO
+		     , CHL_CLSS_CD
+		     , CHL_TYP_CD
+		     , CHL_NM
+		     , APLY_STR_DT
+		     , APLY_END_DT
+		     , CHL_DESC
+		     , ENTR_NO
+		     , SYS_REG_ID
+		     , SYS_REG_DTM
+		     , SYS_MOD_ID
+		     , SYS_MOD_DTM
+		  FROM CC_CHL_BASE
+		 WHERE ENTR_NO = #{entrNo}
+	</sql>
+
+	<select id="getCcChlBaseByEntrNoCount" parameterType="String" resultType="java.lang.Integer">
+		SELECT /* EtEntrBaseMapper.getDeliveryPolicySearchListCount */
+		COUNT(*)
+		FROM (
+		<include refid="ccChlBaseByEntrNo" />
+		) v
+	</select>
+
+	<select id="getCcChlBaseByEntrNoList" parameterType="String" resultType="CcChlBase">
+		/* EtEntrBaseMapper.getDeliveryPolicySearchList */
+		<include refid="ccChlBaseByEntrNo" />
+		<!--        <include refid="paginatedBase" />-->
+	</select>
+
+	<sql id="ccChlDtlInfoByChlNo">
+		SELECT /* CcChlBaseMapper.ccChlDtlInfoByChlNo */
+		       CHL_DTL_NO
+		     , CHL_NO
+		     , CHL_DTL_NM
+		     , CHL_DTL_DESC
+		     , USE_YN
+		     , SYS_REG_ID
+		     , SYS_REG_DTM
+		     , SYS_MOD_ID
+		     , SYS_MOD_DTM
+		  FROM CC_CHL_DTL_INFO
+		 WHERE CHL_NO = #{chlNo}
+	</sql>
+
+	<select id="getCcChlDtlInfoByChlNoCount" parameterType="String" resultType="java.lang.Integer">
+		SELECT /* CcChlBaseMapper.getCcChlDtlInfoByChlNoCount */
+		       COUNT(*)
+		FROM (
+		<include refid="ccChlDtlInfoByChlNo" />
+		) v
+	</select>
+
+	<select id="getCcChlDtlInfoByChlNoList" parameterType="String" resultType="CcChlDtlInfo">
+		<include refid="ccChlDtlInfoByChlNo" />
+		<!--        <include refid="paginatedBase" />-->
+	</select>
+
+</mapper>

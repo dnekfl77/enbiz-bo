@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.customerservice.CsAutoDivAempInfoTrxMapper">
+    <insert id="insertCsAutoDivAempInfo" parameterType="CsAutoDivideAempInfo" useGeneratedKeys="false">
+        <selectKey keyProperty="autoDivNo" resultType="String" order="BEFORE">
+            SELECT NEXTVAL('CS_AUTO_DIV_AEMP_INFO_SQ01') AS autoDivNo
+        </selectKey>
+         INSERT INTO CS_AUTO_DIV_AEMP_INFO( /* CsAutoDivideAempInfo.insertCsAutoDivAempInfo */
+                     AUTO_DIV_NO
+                   , AEMP_ID
+                   , AUTO_DIV_GB_CD
+                   , AUTO_DIV_DTL_NO
+                   , DAYCL_QUOT_QTY
+                   , AUTO_DIV_PSB_YN
+                   , SYS_REG_ID
+                   , SYS_REG_DTM
+                   , SYS_MOD_ID
+                   , SYS_MOD_DTM
+              )
+              VALUES(
+                     #{autoDivNo}
+                   , #{aempId}
+                   , #{autoDivGbCd}
+                   , #{autoDivDtlNo}
+                   , #{dayclQuotQty}
+                   , #{autoDivPsbYn}
+                   , #{sysRegId}
+                   , NOW()
+                   , #{sysModId}
+                   , NOW()
+              )
+    </insert>
+    <update id="updateCsAutoDivAempInfo" parameterType="CsAutoDivideAempInfo">
+        UPDATE CS_AUTO_DIV_AEMP_INFO
+           SET /* CsAutoDivideAempInfo.updateCsAutoDivAempInfo */
+               AUTO_DIV_GB_CD = #{autoDivGbCd}
+             , AUTO_DIV_DTL_NO = #{autoDivDtlNo}
+             , DAYCL_QUOT_QTY = #{dayclQuotQty}
+             , SYS_MOD_ID = #{sysModId}
+             , SYS_MOD_DTM = NOW()
+         WHERE AUTO_DIV_NO = #{autoDivNo}
+    </update>
+    <delete id="deleteCsAutoDivAempInfo" parameterType="CsAutoDivideAempInfo">
+        DELETE /* CsAutoDivideAempInfo.deleteCsAutoDivAempInfo */
+          FROM CS_AUTO_DIV_AEMP_INFO
+         WHERE AUTO_DIV_NO = #{autoDivNo}
+    </delete>
+    <update id="changeAutoDivPsbYn" parameterType="CsAutoMangersRequest">
+        UPDATE CS_AUTO_DIV_AEMP_INFO
+           SET AUTO_DIV_PSB_YN = #{state}
+             , SYS_MOD_ID = #{sysModId}
+             , SYS_MOD_DTM = NOW()
+         WHERE 1=1
+           AND AUTO_DIV_NO IN
+        <foreach collection="autoDivNoList" item="autoDivNoList" open="(" close=")" separator=",">
+                #{autoDivNoList}
+        </foreach>
+    </update>
+</mapper>

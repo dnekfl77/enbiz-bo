@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.customerservice.CsCnslTypInfoMapper">
+
+    <sql id="paginatedBase">
+        LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+    </sql>
+
+    <select id="getConsultationTypeList" parameterType="CounselingTypeRequest" resultType="CounselingTypeResponse">
+        WITH RECURSIVE CS_CNSL_TYP_INFO_HIERARCHY AS /* csCnslTypInfo.getConsultationTypeList */
+        (
+            SELECT 0 AS LEVEL
+                 , CNSL_TYP_NO
+                 , CNSL_TYP_NM
+                 , USE_YN
+                 , SORT_SEQ
+                 , CUST_CNSL_GB_CD
+                 , GOODS_SEL_MDTY_YN
+                 , RESP_BASE_MEMO
+                 , CNSL_LRG_TYP_NO
+                 , CNSL_MID_TYP_NO
+                 , CNSL_SML_TYP_NO
+                 , UPR_CNSL_TYP_NO
+                 , SYS_REG_ID
+                 , SYS_REG_DTM
+                 , SYS_MOD_ID
+                 , SYS_MOD_DTM
+                 , CONCAT('\',SORT_SEQ||CNSL_TYP_NO)  AS HIERARCHY
+                 , CONCAT('',CNSL_TYP_NM) AS HIERARCHY_TEXT
+              FROM CS_CNSL_TYP_INFO A
+             WHERE USE_YN = 'Y'
+               AND CNSL_TYP_NO = #{rootCnslTypNo}
+             UNION ALL
+            SELECT LEVEL + 1
+                 , T1.CNSL_TYP_NO
+                 , T1.CNSL_TYP_NM
+                 , T1.USE_YN
+                 , T1.SORT_SEQ
+                 , T1.CUST_CNSL_GB_CD
+                 , T1.GOODS_SEL_MDTY_YN
+                 , T1.RESP_BASE_MEMO
+                 , T1.CNSL_LRG_TYP_NO
+                 , T1.CNSL_MID_TYP_NO
+                 , T1.CNSL_SML_TYP_NO
+                 , T1.UPR_CNSL_TYP_NO
+                 , T1.SYS_REG_ID
+                 , T1.SYS_REG_DTM
+                 , T1.SYS_MOD_ID
+                 , T1.SYS_MOD_DTM
+                 , CONCAT_WS('\', T2.HIERARCHY, TRIM(TO_CHAR(T1.SORT_SEQ,'000'))||T1.CNSL_TYP_NO) AS HIERARCHY
+                 , CONCAT('',T2.HIERARCHY_TEXT,'>'||T1.CNSL_TYP_NM) AS HIERARCHY_TEXT
+              FROM CS_CNSL_TYP_INFO T1,
+                   CS_CNSL_TYP_INFO_HIERARCHY T2
+             WHERE T2.CNSL_TYP_NO = T1.UPR_CNSL_TYP_NO
+        )
+        SELECT LEVEL
+             , CNSL_TYP_NO
+             , CNSL_TYP_NM
+             , USE_YN
+             , SORT_SEQ
+             , CUST_CNSL_GB_CD
+             , GOODS_SEL_MDTY_YN
+             , RESP_BASE_MEMO
+             , CNSL_LRG_TYP_NO
+             , CNSL_MID_TYP_NO
+             , CNSL_SML_TYP_NO
+             , UPR_CNSL_TYP_NO
+             , SYS_REG_ID
+             , SYS_REG_DTM
+             , SYS_MOD_ID
+             , SYS_MOD_DTM
+             , HIERARCHY
+             , HIERARCHY_TEXT
+          FROM CS_CNSL_TYP_INFO_HIERARCHY
+         ORDER BY HIERARCHY
+    </select>
+
+
+    <sql id="lowerConsultationTypeListBase">
+        SELECT /* csCnslTypInfo.getLowerConsultationTypeList */
+               CNSL_TYP_NO
+             , CNSL_TYP_NM
+             , USE_YN
+             , SORT_SEQ
+             , CUST_CNSL_GB_CD
+             , GOODS_SEL_MDTY_YN
+             , CASE WHEN RESP_BASE_MEMO IS NOT NULL AND RESP_BASE_MEMO != '' THEN 'Y'
+                    ELSE 'N' END AS RESP_BASE_MEMO
+             , CNSL_LRG_TYP_NO
+             , CNSL_MID_TYP_NO
+             , CNSL_SML_TYP_NO
+             , UPR_CNSL_TYP_NO
+             , SYS_MOD_ID
+             , TO_CHAR(SYS_MOD_DTM,'yyyy-mm-dd hh24:mi:ss') AS SYS_MOD_DTM
+             , CASE WHEN CNSL_SML_TYP_NO IS NOT NULL AND CNSL_SML_TYP_NO != '' THEN 3
+                    WHEN CNSL_MID_TYP_NO IS NOT NULL AND CNSL_MID_TYP_NO != '' THEN 2
+                    ELSE 1
+                END AS LEVEL
+             , RESP_BASE_MEMO AS RESP_BASE_MEMO_DATA
+          FROM CS_CNSL_TYP_INFO
+         WHERE UPR_CNSL_TYP_NO =  #{uprCnslTypNo}
+    </sql>
+
+    <select id="getLowerConsultationTypeList" parameterType="CounselingTypeRequest" resultType="CounselingTypeResponse">
+        <include refid="lowerConsultationTypeListBase" />
+        <include refid="paginatedBase" />
+    </select>
+
+    <select id="getLowerConsultationTypeListCount" parameterType="CounselingTypeRequest" resultType="java.lang.Integer">
+        SELECT /* csCnslTypInfo.getLowerConsultationTypeListCount */
+               COUNT(*)
+          FROM (
+            <include refid="lowerConsultationTypeListBase" />
+          ) v
+    </select>
+
+    <select id="getConsultationTypeNo" resultType="java.lang.String">
+        SELECT /*csCnslTypInfo.getConsultationTypeNo*/ NEXTVAL('CS_CNSL_TYP_INFO_SQ01') AS cnslTypNo
+    </select>
+
+    <select id="getCnslTypNoList" parameterType="java.lang.String" resultType="CounselingTypeResponse">
+        SELECT /* csCnslTypInfo.getCnslTypNoList */
+               CNSL_TYP_NO
+             , CNSL_TYP_NM
+             , CNSL_LRG_TYP_NO
+             , CNSL_MID_TYP_NO
+             , CNSL_SML_TYP_NO
+             , UPR_CNSL_TYP_NO
+          FROM CS_CNSL_TYP_INFO
+         WHERE UPR_CNSL_TYP_NO = #{cnslTypNo}
+           AND USE_YN = 'Y'
+         ORDER BY SORT_SEQ
+    </select>
+
+    <sql id="consultationTypeListBase">
+        SELECT /* csCnslTypInfo.getConsultationTypeListPopup */
+               CNSL_TYP_NO
+             , CNSL_TYP_NM
+             , CNSL_LRG_TYP_NO
+             , (SELECT TEMP.CNSL_TYP_NM FROM CS_CNSL_TYP_INFO AS TEMP WHERE CNSL_TYP_NO = CSTI.CNSL_LRG_TYP_NO) AS CNSL_LRG_TYP_NM
+             , CNSL_MID_TYP_NO
+             , (SELECT TEMP.CNSL_TYP_NM FROM CS_CNSL_TYP_INFO AS TEMP WHERE CNSL_TYP_NO = CSTI.CNSL_MID_TYP_NO) AS CNSL_MID_TYP_NM
+             , CNSL_SML_TYP_NO
+             , (SELECT TEMP.CNSL_TYP_NM FROM CS_CNSL_TYP_INFO AS TEMP WHERE CNSL_TYP_NO = CSTI.CNSL_SML_TYP_NO) AS CNSL_SML_TYP_NM
+             , UPR_CNSL_TYP_NO
+             , GOODS_SEL_MDTY_YN
+             , RESP_BASE_MEMO
+          FROM CS_CNSL_TYP_INFO CSTI
+         WHERE CSTI.USE_YN = 'Y'
+           AND CSTI.CNSL_TYP_NM LIKE #{cnslTypNm}||'%'
+           AND CSTI.CNSL_TYP_NO != #{rootCnslTypNo}
+           AND CSTI.CNSL_LRG_TYP_NO IS NOT NULL
+           AND CSTI.CNSL_MID_TYP_NO IS NOT NULL
+           AND CSTI.CNSL_SML_TYP_NO IS NOT NULL
+      <if test='cnslLrgTypNo != null and !cnslLrgTypNo.equals("")'>
+           AND CSTI.CNSL_LRG_TYP_NO = #{cnslLrgTypNo}
+      </if>
+      <if test='cnslMidTypNo != null and !cnslMidTypNo.equals("")'>
+           AND CSTI.CNSL_MID_TYP_NO = #{cnslMidTypNo}
+      </if>
+      <if test='cnslSmlTypNo != null and !cnslSmlTypNo.equals("")'>
+           AND CSTI.CNSL_SML_TYP_NO = #{cnslSmlTypNo}
+      </if>
+      <if test='custCnslGbCd != null and !custCnslGbCd.equals("")'>
+           AND CSTI.CUST_CNSL_GB_CD = #{custCnslGbCd}
+      </if>
+        ORDER BY CNSL_TYP_NO
+    </sql>
+
+    <select id="getConsultationTypeListPopup" parameterType="CounselingTypePopupRequest" resultType="CounselingTypeResponse">
+        <include refid="consultationTypeListBase" />
+        <include refid="paginatedBase" />
+    </select>
+
+    <select id="getConsultationTypeListPopupCount" parameterType="CounselingTypePopupRequest" resultType="java.lang.Integer">
+        SELECT /* csCnslTypInfo.getConsultationTypeListPopupCount */
+               COUNT(*)
+          FROM (
+            <include refid="consultationTypeListBase" />
+          ) v
+    </select>
+
+    <select id="getCnslTypInfoData" parameterType="java.lang.String" resultType="CounselingTypeResponse">
+        SELECT /* csCnslTypInfo.getCnslTypInfoData */
+               CNSL_TYP_NO
+             , CNSL_TYP_NM
+             , CNSL_LRG_TYP_NO
+             , CNSL_MID_TYP_NO
+             , CNSL_SML_TYP_NO
+        FROM CS_CNSL_TYP_INFO
+        WHERE CNSL_TYP_NO = #{cnslTypNo}
+          AND USE_YN = 'Y'
+    </select>
+
+</mapper>

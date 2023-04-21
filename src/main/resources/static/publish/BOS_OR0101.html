@@ -1,0 +1,349 @@
+<html lang="ko-KR">
+
+<head>
+  <title>x2</title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+  <link type="text/css" rel="stylesheet" href="../css/reset.css">
+  <link type="text/css" rel="stylesheet" href="../css/layout.css">
+  <link type="text/css" rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" type="text/css" href="../css/realgrid-style.css">
+  <script src="../js/libs/jquery/jquery-3.4.1.min.js"></script>
+  <script src="../js/contents.js"></script>
+</head>
+
+<body>
+  <div class="page-root">
+    <div class="page-title">
+      <div class="left">
+        <h1>수기주문 등록</h1>
+      </div>
+    </div>
+    <div class="page-fixed with-title">
+      <!-- page-title 가 있을경우 with-title 클래스 추가 -->
+      <div class="search-cont">
+        
+        <!-- 01. 주문자 정보 -->
+        <div class="data">
+          <div class="data-head">
+            <div class="left">
+              <span class="title">01. 주문자 정보</span>
+            </div>
+            <div class="right">
+              <span class="data-toggle">
+                <button type="button" class="toggle-button"><span>닫힘</span></button>
+              </span>
+            </div>
+          </div>
+
+          <div class="data-body">
+            <table class="data-table fixed">
+              <colgroup>
+                <col width="120">
+                <col>
+                <col width="120">
+                <col>
+                <col width="120">
+                <col>
+              </colgroup>
+              <tbody>
+                <tr>
+                  <td class="label">회원명/ID</td>
+                  <td>홍길동(hong@plateer.com)</td>
+                  <td class="label"><strong>주문자명</strong></td>
+                  <td><input type="text" id="" class="input"></td>
+                  <td class="label">회원구분</td>
+                  <td>온라인회원/Gold</td>
+                </tr>
+                <tr>
+                  <td class="label">전화번호</td>
+                  <td>02-0000-0000</td>
+                  <td class="label">휴대폰번호</td>
+                  <td>010-0000-0000</td>
+                  <td class="label">이메일</td>
+                  <td>hong@plateer.cpm</td>
+                </tr>
+                <tr>
+                  <td colspan="6"><label><input class="checkbox-inline" type="checkbox" name="">주문 결제 및 배송을 위한 개인정보 제3자 제공 및 주문 동의</label></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <!-- //01. 주문자 정보 -->
+
+        <!-- 02. 상품 선택 -->
+        <div class="data">
+          <div class="data-head">
+            <div class="left">
+              <span class="title">02. 상품 선택</span>
+            </div>
+            <div class="right">
+              <span class="data-toggle hide">
+                <button type="button" class="toggle-button"><span>열림</span></button>
+              </span>
+            </div>
+          </div>
+
+          <div class="data-body hide">
+            <div class="grid mb0">
+              <div class="grid-head">
+                <div class="option-area bo-none">
+                  <div class="edit-option">
+                    <div class="button-group">
+                      <a href="#" class="button inside"><span class="text">삭제</span></a>
+                      <a href="#" class="button inside"><span class="text">상품 추가</span></a>
+                      <a href="#" class="button inside"><span class="text">배송지 추가</span></a>
+                      <a href="#" class="button inside"><span class="text">주문상품 선택완료</span></a>
+                    </div>
+                  </div>
+                </div>
+                <!-- //option-area -->
+              </div>
+              <!-- //grid-head -->
+
+              <div class="grid-body with-head bo-none" id="realgrid" realgrid>realgrid area</div>
+            </div>
+            <!-- //grid -->
+          </div>
+        </div>
+        <!-- //02. 상품 선택 -->
+
+        <!-- 03. 사은품 선택 -->
+        <div class="data">
+          <div class="data-head">
+            <div class="left">
+              <span class="title">03. 사은품 선택</span>
+              <div class="tooltip">
+                <a href="#" class="trigger">설명</a>
+                <div class="cont">
+                  <h3 class="title">사은품안내</h3>
+                  <div class="text">
+                    <ul class="list-dotted">
+                      <li>고객님을 위한 사은품입니다. 원하는 사은품을 선택해 주세요.</li>
+                      <li>사은행사의 사은품은 한정수령으로 조기 소진될 수 있습니다.</li>
+                      <li>사은행사는 당사 사정에 의해 변경 및 조기 종료될 수 있습니다.</li>
+                    </ul>
+                  </div>
+                  <a href="#" class="close">닫기</a>
+                </div>
+              </div>
+            </div>
+            <div class="right">
+              <span class="data-toggle hide">
+                <button type="button" class="toggle-button"><span>열림</span></button>
+              </span>
+            </div>
+          </div>
+
+          <div class="data-body hide">
+            <div class="grid mb0">
+              <div class="grid-head">
+                <div class="option-area bo-none">
+                  <div class="edit-option">
+                    <div class="button-group">
+                      <a href="#" class="button inside"><span class="text">사은품 선택완료</span></a>
+                    </div>
+                  </div>
+                </div>
+                <!-- //option-area -->
+              </div>
+              <!-- //grid-head -->
+
+              <div class="grid-body with-head bo-none" id="realgrid" realgrid>realgrid area</div>
+            </div>
+            <!-- //grid -->
+          </div>
+        </div>
+        <!-- //03. 사은품 선택 -->
+
+        <!-- 04. 배송비 -->
+        <div class="data">
+          <div class="data-head">
+            <div class="left">
+              <span class="title">04. 배송비</span>
+            </div>
+            <div class="right">
+              <span class="data-toggle hide">
+                <button type="button" class="toggle-button"><span>열림</span></button>
+              </span>
+            </div>
+          </div>
+
+          <div class="data-body hide">
+            <div class="grid mb0">
+              <div class="grid-head">
+                <div class="option-area bo-none">
+                  <div class="edit-option">
+                    <div class="button-group">
+                      <a href="#" class="button inside"><span class="text">완료</span></a>
+                    </div>
+                  </div>
+                </div>
+                <!-- //option-area -->
+              </div>
+              <!-- //grid-head -->
+
+              <div class="grid-body with-head bo-none" id="realgrid" realgrid>realgrid area</div>
+            </div>
+            <!-- //grid -->
+          </div>
+        </div>
+        <!-- //04. 배송비 -->
+
+        <!-- 05. 혜택적용 -->
+        <div class="data">
+          <div class="data-head">
+            <div class="left">
+              <span class="title">05. 혜택적용</span>
+            </div>
+            <div class="right">
+              <span class="data-toggle hide">
+                <button type="button" class="toggle-button"><span>열림</span></button>
+              </span>
+            </div>
+          </div>
+
+          <div class="data-body hide">
+            <div class="grid mb0">
+              <div class="grid-head">
+                <div class="option-area bo-none">
+                  <div class="edit-option">
+                    <div class="button-group">
+                      <a href="#" class="button inside"><span class="text">완료</span></a>
+                    </div>
+                  </div>
+                </div>
+                <!-- //option-area -->
+              </div>
+              <!-- //grid-head -->
+
+              <div class="grid-body with-head bo-none" id="realgrid" realgrid>realgrid area</div>
+            </div>
+            <!-- //grid -->
+          </div>
+        </div>
+        <!-- //05. 혜택적용 -->
+
+        <!-- 06. 결제 -->
+        <div class="data">
+          <div class="data-head">
+            <div class="left">
+              <span class="title">06. 결제</span>
+            </div>
+            <div class="right">
+              <span class="data-toggle hide">
+                <button type="button" class="toggle-button"><span>열림</span></button>
+              </span>
+            </div>
+          </div>
+
+          <div class="data-body hide">
+            <table class="data-table">
+              <colgroup>
+                <col width="120">
+                <col>
+                <col width="120">
+                <col>
+                <col width="120">
+                <col>
+              </colgroup>
+              <tbody>
+                <tr>
+                  <td class="label">상품금액</td>
+                  <td>A</td>
+                  <td class="label">총배송비</td>
+                  <td>B</td>
+                  <td class="label">할인금액</td>
+                  <td>C</td>
+                </tr>
+                <tr>
+                  <td class="label">결제대상금액</td>
+                  <td>가=A+B-C</td>
+                  <td class="label">입력금액</td>
+                  <td>나</td>
+                  <td class="label">남은금액</td>
+                  <td>다=가-나</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="grid mb0 bo-top">
+              <div class="grid-body with-head bo-none" id="realgrid" realgrid>realgrid area</div>
+            </div>
+            <!-- //grid -->
+          </div>
+        </div>
+        <!-- //06. 결제 -->
+
+        <!-- 07. 현금영수증 발급신청 -->
+        <div class="data">
+          <div class="data-head">
+            <div class="left">
+              <span class="title">07. 현금영수증 발급신청</span>
+            </div>
+            <div class="right">
+              <span class="data-toggle hide">
+                <button type="button" class="toggle-button"><span>열림</span></button>
+              </span>
+            </div>
+          </div>
+
+          <div class="data-body hide">
+            <table class="data-table">
+              <colgroup>
+                <col width="120">
+                <col>
+              </colgroup>
+              <tbody>
+                <tr>
+                  <td class="label">신청구분</td>
+                  <td>
+                    <label class="radio-inline"><input type="radio" name="cashBill" value="" checked="checked">소득공제용(개인)</label>
+                    <label class="radio-inline"><input type="radio" name="cashBill" value="">지출증빙용(사업자)</label>
+                    <label class="radio-inline"><input type="radio" name="cashBill" value="">신청안함</label>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="label">인증수단</td>
+                  <td>
+                    <div class="input-group">
+                      <select class="form-control">
+                        <option value="">휴대전화번호</option>
+                        <option value="">신용카드번호</option>
+                        <option value="">현금영수증번호</option>
+                      </select>
+                      <input type="text" name="" value="" class="price input w10">
+                      <em>-</em>
+                      <input type="text" name="" value="" class="price input w10">
+                      <em>-</em>
+                      <input type="text" name="" value="" class="price input w10">
+                      <em>-</em>
+                      <input type="text" name="" value="" class="price input w10">
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="label center" colspan="2">현금영수증 발급대상이 아닙니다.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <!-- //07. 현금영수증 발급신청 -->
+
+        <div class="button-group search-btn">
+          <a href="#" class="button white"><span class="text">취소</span></a>
+          <a href="#" class="button dark"><span class="text">신규주문</span></a>
+        </div>
+        <!-- //search-btn -->
+
+      </div>
+
+    </div>
+    <!-- //page-fixed -->
+  </div>
+</body>
+
+</html>

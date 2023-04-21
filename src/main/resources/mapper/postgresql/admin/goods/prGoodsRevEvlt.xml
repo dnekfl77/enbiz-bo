@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enbiz.bo.app.repository.goods.PrGoodsRevEvltMapper">
+    <select id="getReviewEvaluationList" parameterType="java.lang.String" resultType="PrGoodsRevEvlt">
+        SELECT REV_NO /* prGoodsRevEvlt.getReviewEvaluationList */
+             , EVLT_ITEM_NO
+             , EVLT_VAL_NO
+             , EVLT_ITEM_NM
+             , EVLT_VAL
+             , SYS_REG_ID
+             , TO_CHAR(SYS_REG_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_REG_DTM
+             , SYS_MOD_ID
+             , TO_CHAR(SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+          FROM PR_GOODS_REV_EVLT
+         WHERE REV_NO = #{revNo}
+         ORDER BY SORT_SEQ
+    </select>
+</mapper>

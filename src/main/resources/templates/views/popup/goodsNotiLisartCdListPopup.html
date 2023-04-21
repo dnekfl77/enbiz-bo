@@ -1,0 +1,56 @@
+<!--
+* 프로그램명 : 상품 고시 품목 조회 팝업
+* 작 성 일 : 2021.02.24
+* 작 성 자 : 홍혜리
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 상품 고시 품목 조회 팝업
+* 이    력 :
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-layout}">
+<body>
+<!--List Area-->
+<th:block layout:fragment="popup-List-area">
+    <div class="grid">
+        <div class="grid-head"  style="overflow: hidden;">
+            <div class="title-area">
+                <h2 class="title" th:text="${#messages.msg('baseInfoMgmt.label.popup.goodsNotiLisartCdList.grid.title')}"></h2>
+            </div>
+            <div class="option-area">
+                <div class="page-option" grid-id="gnlcGrid">
+                    <span class='total'>총 <span id='gnlcGrid-totalcount'>0</span>건</span>
+                </div>
+            </div>
+        </div>
+        <div class="grid-body with-head">
+            <div class="rg-root rg-grid" id="gnlcGrid" realgrid></div>
+        </div>
+    </div>
+</th:block>
+<!--List Area-->
+
+<!--List Button Area-->
+<th:block layout:fragment="popup-List-button-area">
+    <th:block layout:insert="~{fragments/popup/popup-btn :: popup-bottom-btn}"/>
+</th:block>
+
+<!-- Additional Script -->
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        var _gnlcList = [(${goodsNotiLisartCdList})];
+        var _gridType = '1';
+    </script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'popup/popup.goodsNotiLisartCdList.gnlcGrid.eventHandler.js?20210802'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'popup/popup.goodsNotiLisartCdList.gnlcGrid.provider.js?2021030801'" ></script>
+
+    <script type="text/javascript">
+        $(function() {
+            gnlcGrid.eventhandler.init();
+        });
+    </script>
+</th:block>
+</body>
+</html>

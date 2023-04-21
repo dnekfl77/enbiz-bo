@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enbiz.bo.app.repository.goods.PrGoodsBaseModLogTrxMapper">
+    <insert id="insertPrGoodsBaseModLog" parameterType="prGoodsBaseModLog" useGeneratedKeys="false">
+        <selectKey keyProperty="goodsChgSeq" resultType="String" order="BEFORE">
+            SELECT NEXTVAL('PR_GOODS_BASE_MOD_LOG_SQ01') AS goodsChgSeq
+        </selectKey>
+
+        INSERT INTO PR_GOODS_BASE_MOD_LOG (/* prGoodsBaseModLogTrx.insertPrGoodsBaseModLog */
+               GOODS_CHG_SEQ
+             , GOODS_NO
+             , GOODS_MOD_ITEM_CD
+             , GOODS_MOD_CONT
+             , SYS_REG_ID
+             , SYS_REG_DTM
+        )
+        VALUES (
+               #{goodsChgSeq}
+             , #{goodsNo}
+             , #{goodsModItemCd}
+             , #{goodsModCont}
+             , #{sysRegId}
+             , now()
+        )
+    </insert>
+</mapper>

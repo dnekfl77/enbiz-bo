@@ -1,0 +1,136 @@
+<!--
+* 프로그램명 : 예약상품 일괄등록/해제
+* 작 성 일 : 2021.04.15
+* 작 성 자 : 윤성원
+* 수 정 자 : 홍혜리
+* 버    전 : 1.0
+* 개    요 : 상품관리  > 상품관리 > 단품관리 > 재고수량 일괄변경
+* 이    력 : 2021.09.30 프레임워크 이전
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/page-normal-layout}" xmlns="http://www.w3.org/1999/html">
+<body>
+<th:block layout:fragment="page-contents">
+    <div class="win-popup">
+    <div class="page-fixed">
+        <div class="header">
+            <h1 class="title"><th:block th:text="${#messages.msg('reservationGoodsMgmt.reservationGoodsModify.title')}"/></h1>
+        </div>
+        <div>
+            <ul class="list-info left">
+                <li>저장 버튼 클릭 시 선택된 상품의 정보가 설정된 내용으로 일괄 변경됩니다.</li>
+            </ul>
+        </div>
+        <br/>
+        <div class="search-cont">
+            <div class="search">
+                <form>
+                    <table class="data-table fixed">
+                        <colgroup>
+                            <col width="50px">
+                            <col width="100px">
+                        </colgroup>
+                        <tbody>
+                        <tr>
+                            <td class="label center" th:text="${#messages.msg('reservationGoodsMgmt.reservationGoodsModify.label.item')}"></td>
+                            <td class="label center" th:text="${#messages.msg('reservationGoodsMgmt.reservationGoodsModify.label.content')}"></td>
+                        </tr>
+                        <tr>
+                            <td class="center" th:text="${#messages.msg('reservationGoodsMgmt.reservationGoodsModify.label.methChange')}"></td>
+                            <td>
+                                <div class="input-group">
+                                    <label class="radio-inline"><input type="radio" name="sale-type" id="normalSale" value="10"  th:checked="${saleMethCd} == '20'" disabled="disabled">
+                                        <th:block th:text="${#messages.msg('reservationGoodsMgmt.reservationGoodsModify.select.normalSale')}"/>
+                                    </label>
+                                    <label class="radio-inline"><input type="radio" name="sale-type" id="reservSale" value="20" th:checked="${saleMethCd} == '10'" disabled="disabled">
+                                        <th:block th:text="${#messages.msg('reservationGoodsMgmt.reservationGoodsModify.select.reservSale')}"/>
+                                    </label>
+                                </div>
+                                <ul class="list-info left">
+                                    <li>일반판매 선택 시 예약된 상품은 저장 시점부로 예약이 해제됩니다.</li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <th:block th:if="${saleMethCd} == '10'">
+                            <tr id="reserv-dtm">
+                                <td class="center" th:text="${#messages.msg('reservationGoodsMgmt.reservationGoodsModify.label.rsvDtm')}"></td>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="picker-group time" data-lopicker="basic" id="input-2-1">
+                                            <input type="text" class="form-control disabled" id="rsv-strt-dtm" placeholder="" disabled="disabled">
+                                            <span class="input-group-addon">~</span>
+                                            <input type="text" class="form-control disabled"  id="rsv-end-dtm" placeholder="" disabled="disabled">
+                                            <span class="input-group-addon" id="rsvDtm-calendar"><i class="icon-calendar"></i></span>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr id="prar-dy">
+                                <td class="center" th:text="${#messages.msg('reservationGoodsMgmt.reservationGoodsModify.label.prarDy')}"></td>
+                                <td>
+                                    <div class="input-group">
+                                        <div class="picker-group" data-lopicker="basic">
+                                            <input type="text" class="form-control disabled" id="fwdidcPrarDy" name="fwdidcPrarDy" readonly>
+                                            <span class="input-group-addon" id="fwdidcPrarDy-calendar"><i class="icon-calendar"></i></span>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr id="meth-change">
+                                <td class="center" th:text="${#messages.msg('reservationGoodsMgmt.reservationGoodsModify.label.afterMethChange')}"></td>
+                                <td>
+                                    <div class="input-group">
+                                        <label class="radio-inline" th:each="list : ${codeList.PR011}" >
+                                            <input type="radio" name="after-method" th:value="${list?.cd}">
+                                            <th:block th:text="${list?.cdNm}"/>
+                                        </label>
+                                    </div>
+                                </td>
+                            </tr>
+                        </th:block>
+                        <th:block th:unless="${saleMethCd} == '10'">
+                            <tr id="reserve-stop" th:if="${saleMethCd} == '20'">
+                                <td class="center" th:text="${#messages.msg('reservationGoodsMgmt.reservationGoodsModify.label.rservStopCausCd')}"></td>
+                                <td>
+                                    <div class="input-group">
+                                        <label class="radio-inline" th:each="list : ${codeList.PR034}" >
+                                            <input type="radio" name="stop-code" th:value="${list?.cd}">
+                                            <th:block th:text="${list?.cdNm}"/>
+                                        </label>
+                                    </div>
+                                </td>
+                            </tr>
+                        </th:block>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </div>
+        <div class="button-group search-btn">
+            <a href="#" class="button white" id="btn_close">
+                <span class="text" th:text="${#messages.msg('adminCommon.button.close')}"></span>
+            </a>
+            <a href="#" class="button large" id="btn_apply">
+                <span class="text" th:text="${#messages.msg('adminCommon.button.apply')}"></span>
+            </a>
+        </div>
+    </div>
+    </div>
+</th:block>
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        var goodsNoList = [[${goodsNoList}]];
+        /*]]>*/
+    </script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/reservationGoodsModify.eventHandler.js?20211001'" ></script>
+    <script type="text/javascript">
+        $(function () {
+            reservationGoodsModify.eventhandler.init();
+        });
+    </script>
+</th:block>
+</body>
+</html>

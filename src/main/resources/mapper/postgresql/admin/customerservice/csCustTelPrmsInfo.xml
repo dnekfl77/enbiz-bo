@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.customerservice.CsCustTelPrmsInfoMapper">
+
+    <sql id="paginatedBase">
+        LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+    </sql>
+
+    <sql id="getPhoneAppointmentBase">
+        SELECT /* CsCustTelPrmsInfo.getPhoneAppointManagement */
+               CASE WHEN TCCTRI.PROC_STATE = 'C' THEN '완료'
+                    WHEN TCCTRI.PROC_STATE = 'R' THEN '예약'
+                    WHEN TCCTRI.PROC_STATE = 'I' THEN '임박'
+                    WHEN TCCTRI.PROC_STATE = 'D' THEN '지연' END PROC_STATE
+             , TO_CHAR(TCCTRI.PRMS_DTM,'YYYY-MM-DD HH24:MI:SS') AS PRMS_DTM
+             , FN_GET_CODENAME('CS013',NOTI_TM_CD) || '분전' AS NOTI_TM_CD
+             , FN_GET_CODENAME('CS008',PRMS_METH_CD) AS PRMS_METH_CD
+             , TCCTRI.CNSL_MEMO
+             , EMB.LOGIN_ID AS MBR_ID
+             , EMB.MBR_NM
+             , CCCI.TEL_RGN_NO
+             , CCCI.TEL_TXNO_NO
+             , CCCI.TEL_END_NO
+             , ( SELECT ORD_NO
+                   FROM CS_CCN_ORD_GOODS_INFO CCOGI
+                  WHERE (CCOGI.ORD_NO IS NOT NULL AND CCOGI.ORD_NO != '')
+                    AND CCOGI.CCN_NO = CCCI.CCN_NO
+                <if test='ordNoCcnNoType != null and ordNoCcnNoType eq "0" and ordNoCcnNoText !=null and ordNoCcnNoText != ""'>
+                    AND CCOGI.ORD_NO = #{ordNoCcnNoText}
+                </if>
+                  LIMIT 1
+               )
+             , CCCI.CCN_NO
+             , (SELECT USER_NM FROM ST_USER_BASE SUB WHERE SUB.USER_ID = CCCI.ACPTMN_ID) AS ACPTMN_NM
+             , (SELECT SDC.DEPT_NM
+                  FROM ST_USER_BASE SUB
+                  LEFT OUTER JOIN ST_DEPT_CD SDC
+                               ON SUB.DEPT_CD = SDC.DEPT_CD
+                 WHERE SUB.USER_ID = CCCI.ACPTMN_ID) AS ACPTMN_DEPT
+             , (SELECT USER_NM FROM ST_USER_BASE SUB WHERE SUB.USER_ID = CCCI.PROCMN_ID) AS PROCMN_NM
+             , (SELECT SDC.DEPT_NM
+                  FROM ST_USER_BASE SUB
+                  LEFT OUTER JOIN ST_DEPT_CD SDC
+                               ON SUB.DEPT_CD = SDC.DEPT_CD
+                 WHERE SUB.USER_ID = CCCI.PROCMN_ID) AS PROCMN_DEPT
+             , TO_CHAR(TCCTRI.AEMP_PROC_DTM,'YYYY-MM-DD HH24:MI:SS') AS AEMP_PROC_DTM
+          FROM CS_CUST_CNSL_INFO CCCI
+             , ET_MBR_BASE EMB
+             , (
+                 SELECT CCN_NO
+                      , CNSL_PROC_SEQ
+                      , TEL_PRMS_SEQ
+                      , PRMS_DTM
+                      , NOTI_TM_CD
+                      , PRMS_METH_CD
+                      , PRMS_STAT_CD
+                      , CNSL_MEMO
+                      , AEMP_ID
+                      , AEMP_CONF_DTM
+                      , AEMP_PROC_DTM
+                      , TEL_TRY_CNT
+                      , CASE WHEN PRMS_STAT_CD = '20'                         THEN 'C'
+                             WHEN PROC_STATE &lt; -10                         THEN 'R'
+                             WHEN PROC_STATE &gt;= -10 AND PROC_STATE &lt; 0  THEN 'I'
+                             WHEN PROC_STATE &gt;= 0 					      THEN 'D' END PROC_STATE
+                   FROM (
+                         SELECT  *
+                              ,  ( DATE_PART('DAY', NOW() - PRMS_DTM) * 24 +
+                                   DATE_PART('HOUR',NOW() - PRMS_DTM)) * 60 +
+                                   DATE_PART('MINUTE', NOW() - PRMS_DTM) AS PROC_STATE
+                           FROM CS_CUST_TEL_PRMS_INFO
+                   ) AS TEMP
+             ) TCCTRI
+         WHERE CCCI.CCN_NO = TCCTRI.CCN_NO
+           AND CCCI.MBR_NO = EMB.MBR_NO
+        <if test='periodType != null and periodType eq "0"'>
+           AND TCCTRI.PRMS_DTM &gt;= TO_TIMESTAMP(#{startDate}||'000000', 'YYYYMMDDHH24MISS')
+           AND TCCTRI.PRMS_DTM &lt;= TO_TIMESTAMP(#{endDate}||'235959', 'YYYYMMDDHH24MISS')
+        </if>
+        <if test='periodType != null and periodType eq "1"'>
+           AND TCCTRI.AEMP_PROC_DTM &gt;= TO_TIMESTAMP(#{startDate}||'000000', 'YYYYMMDDHH24MISS')
+           AND TCCTRI.AEMP_PROC_DTM &lt;= TO_TIMESTAMP(#{endDate}||'235959', 'YYYYMMDDHH24MISS')
+        </if>
+        <if test='procState != null and procState != ""'>
+           AND PROC_STATE LIKE #{procState}
+        </if>
+        <if test='prmsMethCd != null and prmsMethCd != ""'>
+           AND PRMS_METH_CD LIKE #{prmsMethCd}
+        </if>
+        <if test='mbrType != null and mbrType eq "0" and mbrText !=null and mbrText != "" '>
+            AND EMB.LOGIN_ID LIKE #{mbrText}
+        </if>
+        <if test='mbrType != null and mbrType eq "1" and mbrText !=null and mbrText != ""'>
+            AND EMB.MBR_NM LIKE #{mbrText}
+        </if>
+        <if test='userType != null and userType eq "0" and userText !=null and userText != "" '>
+            AND CCCI.ACPTMN_ID LIKE #{userText}
+        </if>
+        <if test='userType != null and userType eq "1" and userText !=null and userText != ""'>
+            AND CCCI.PROCMN_ID LIKE #{userText}
+        </if>
+        <if test='ordNoCcnNoType != null and ordNoCcnNoType eq "0" and ordNoCcnNoText !=null and ordNoCcnNoText != ""'>
+            AND EXISTS (SELECT *
+                          FROM CS_CCN_ORD_GOODS_INFO CCOGI
+                         WHERE CCOGI.CCN_NO = CCCI.CCN_NO
+                           AND CCOGI.ORD_NO = #{ordNoCcnNoText}
+                       )
+        </if>
+        <if test='ordNoCcnNoType != null and ordNoCcnNoType eq "1" and ordNoCcnNoText !=null and ordNoCcnNoText != ""'>
+            AND CCCI.CCN_NO LIKE #{ordNoCcnNoText}
+        </if>
+         ORDER BY TCCTRI.PRMS_DTM DESC , CCCI.ACPTMN_ID DESC
+    </sql>
+
+    <select id="getPhoneAppointmentList" parameterType="PhoneAppointmentRequest" resultType="PhoneAppointmentResponse">
+        <include refid="getPhoneAppointmentBase" />
+        <include refid="paginatedBase" />
+    </select>
+
+    <select id="getPhoneAppointmentCount" parameterType="PhoneAppointmentRequest" resultType="java.lang.Integer">
+        SELECT /* CsCustTelPrmsInfo.getPhoneAppointmentCount */
+               COUNT(*)
+          FROM (
+                <include refid="getPhoneAppointmentBase" />
+          ) v
+    </select>
+</mapper>

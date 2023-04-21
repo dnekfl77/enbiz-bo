@@ -1,0 +1,109 @@
+<!--
+* 프로그램명 : 상담 템플릿 등록/수정
+* 작 성 일 : 2021.05.10
+* 작 성 자 : 권다솜
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 상담 템플릿 관리 > 템플릿 등록/수정
+* 이    력 :
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-update-layout}">
+<body>
+
+<th:block layout:fragment="header-area">
+    <div class="header">
+        <h1 class="title" th:if="${requestData.argInsertUpdate} == 'I'"
+            th:text="${#messages.msg('counselingTemplateMgmt.popup.insertTitle')}"></h1>
+        <h1 class="title" th:if="${requestData.argInsertUpdate} == 'U'"
+            th:text="${#messages.msg('counselingTemplateMgmt.popup.updateTitle')}"></h1>
+    </div>
+</th:block>
+
+<th:block layout:fragment="data-area">
+    <form name="counselingTemplateForm" id="counselingTemplateForm">
+        <input type="hidden" id="cnslAempId" name="cnslAempId" th:value="${requestData.cnslAempId}"/>
+        <input type="hidden" id="cnslTmplNo" name="cnslTmplNo" th:value="${requestData.cnslTmplNo}"/>
+        <input type="hidden" id="typeCode" name="typeCode" th:value="${requestData.typeCode}"/>
+        <div class="data-cont">
+            <div class="data">
+                <div class="data-body">
+                    <table class="data-table">
+                        <colgroup>
+                            <col width="120">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                        <tr>
+                            <td class="label"><strong th:text="${#messages.msg('counselingTemplateMgmt.popup.search.label.cnslGbCd_cnslTypCd')}"></strong></td>
+                            <td>
+                                <div class="input-group w100">
+                                    <select class="form-control w30" id="cnslGbCd" name="cnslGbCd">
+                                        <option value="" th:text="${#messages.msg('adminCommon.entirety')}"></option>
+                                        <option th:each="list : ${codeList.CS015}" th:value="${list.cd}" th:text="${list.cdNm}"></option>
+                                    </select>
+                                    <select class="form-control w30" id="cnslTypCd" name="cnslTypCd">
+                                        <option value="" th:text="${#messages.msg('adminCommon.entirety')}"></option>
+                                        <option th:each="list : ${codeList.CS016}" th:value="${list.cd}" th:text="${list.cdNm}"></option>
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label"><strong th:text="${#messages.msg('counselingTemplateMgmt.popup.search.label.templateNm')}"></strong></td>
+                            <td>
+                                <input type="text" class="input w100" th:id="tmplNm" th:name="tmplNm" maxlength="1000">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label"><strong th:text="${#messages.msg('counselingTemplateMgmt.popup.templateCont')}"></strong></td>
+                            <td>
+                                <textarea class="textarea mt5 w100" id="tmplCont" name="tmplCont" rows="10" cols="50" checkByte data-limitByte="4000" data-markId="tmplCont_byte"></textarea>
+                                <em><span id="tmplCont_byte">0</span>/4000</em>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+</th:block>
+
+
+
+<th:block layout:fragment="button-area">
+    <div class="button-group" style="margin-top: 0px !important;" >
+        <a href="#" class="button" id="btn_popup_cancel">
+            <span class="text" th:text="${#messages.msg('adminCommon.button.cancel')}">취소</span>
+        </a>
+        <a href="#" class="button large" id="btn_popup_save">
+            <span class="text" th:text="${#messages.msg('adminCommon.button.save')}">저장</span>
+        </a>
+    </div>
+</th:block>
+
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        var req                         = [[${requestData}]];
+
+        var msg = x2coMessage.getMessage( {
+            cancelMessage : 'adminCommon.alert.cancel'
+            , save : 'adminCommon.alert.save'
+            , necessaryCheckMessage : 'counselingTemplateMgmt.message.necessaryCheckMessage'
+            , dataCheck : 'counselingTemplateMgmt.message.dataCheck'
+        });
+    </script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'customerservice/counselingTemplatePopup.eventHandler.js?202105120001'"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            counselingTemplatePopup.eventhandler.init();
+        });
+    </script>
+</th:block>
+
+</body>
+</html>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.payment.OpNintInstGdDtlInfoTrxMapper">
+
+	<insert id="insertOpNintInstGdDtlInfo" parameterType="opNintInstGdDtlInfo">
+		INSERT INTO OP_NINT_INST_GD_DTL_INFO (  /* opNintInstGdDtlInfoTrx.insertOpNintInstGdDtlInfo */
+				NINT_INST_GD_NO
+				, TGT_AMT
+				, NINT_2_MON_YN
+				, NINT_3_MON_YN
+				, NINT_4_MON_YN
+				, NINT_5_MON_YN
+				, NINT_6_MON_YN
+				, NINT_7_MON_YN
+				, NINT_8_MON_YN
+				, NINT_9_MON_YN
+				, NINT_10_MON_YN
+				, NINT_11_MON_YN
+				, NINT_12_MON_YN
+				, SYS_REG_ID
+				, SYS_REG_DTM
+				, SYS_MOD_ID
+				, SYS_MOD_DTM
+		) VALUES (
+				  #{nintInstGdNo}
+				, #{tgtAmt}
+				, #{nint2MonYn}
+				, #{nint3MonYn}
+				, #{nint4MonYn}
+				, #{nint5MonYn}
+				, #{nint6MonYn}
+				, #{nint7MonYn}
+				, #{nint8MonYn}
+				, #{nint9MonYn}
+				, #{nint10MonYn}
+				, #{nint11MonYn}
+				, #{nint12MonYn}
+				, #{sysRegId}
+				, now()
+				, #{sysRegId}
+				, now()
+		)
+	</insert>
+
+	<delete id="deleteOpNintInstGdDtlInfo" parameterType="opNintInstGdBase">
+		DELETE FROM OP_NINT_INST_GD_DTL_INFO   /* opNintInstGdDtlInfoTrx.deleteOpNintInstGdDtlInfo */
+		WHERE NINT_INST_GD_NO   = #{nintInstGdNo}
+	</delete>
+
+</mapper>
+
+

@@ -1,0 +1,114 @@
+<html lang="ko-KR">
+
+<head>
+
+    <title>Hellow RealGrid!</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link type="text/css" rel="stylesheet" href="../css/luplina-reset.css">
+    <link type="text/css" rel="stylesheet" href="../css/luplina.css">
+    <link type="text/css" rel="stylesheet" href="../css/entypoplus.css">
+    <script src="../js/libs/jquery/jquery-3.4.1.min.js"></script>
+
+
+</head>
+
+<body>
+    <nav id="navigation">
+        <ul id="manageSideMenu">
+            <li class="title over">
+                <a class="mid over" data="2000"><span class="arrow" onmouseover="midToolTip(event, this)" onmouseout="hideToolTip();"></span>상품관리</a>
+                <ul id="pgcode2000" class="sideSmall" style="display:block;">
+                    <li class='over'>
+                        <a href="" target="" class="small">상품조회</a>
+                    </li>
+                    <li>
+                        <a href="" target="" class="small">상품등록</a>
+                    </li>
+                    <li>
+                        <a href="" target="" class="small">상품진열순서 </a>
+                    </li>
+                    <li>
+                        <a href="" target="" class="small">기본 매장분류관리 </a>
+                    </li>
+                    <li>
+                        <a href="" target="" class="small">매장분류(브랜드) </a>
+                        <a href="" id='sm_2030' class='set btt' tooltip='설정'>미사용</a>
+                    </li>
+                    <li>
+                        <a href="" target="" class="small">매장분류(삼분류) </a><a href="" id='sm_2040' class='set btt' tooltip='설정'>미사용</a>
+                    </li>
+                    <li>
+                        <a href="" target="" class="small">상품 메모 </a>
+                    </li>
+                    <li>
+                        <a href="" target="" class="small">상품수정 내역 </a>
+                    </li>
+                    <li>
+                        <a href="" target="" class="small">판매가변경 내역 </a>
+                    </li>
+                    <li>
+                        <a href="" target="" class="small">상품 휴지통 </a><a href="" id='sm_2380' class='set btt' tooltip='설정'>설정</a>
+                    </li>
+                </ul>
+            </li>
+            <li class="title over">
+                <a class="mid" data="2200"><span class="arrow" onmouseover="midToolTip(event, this)" onmouseout="hideToolTip();"></span>메인/기획전관리</a>
+                <ul id="pgcode2200" class="sideSmall" style="display:none;">
+                    <li><a href="" target="" class="small">기획전 분류 </a>
+                    </li>
+                    <li>
+                         <a href="" target="" class="small">기획전 상품진열순서 </a>
+                    </li>
+                    <li>
+                        <a href="" target="" class="small">프로모션 기획전 </a>
+                    </li>
+                    <li>
+                        <a href="" target="" class="small">프로모션 상품그룹 관리 </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+        <script type="text/javascript">
+            $(function () {
+                $('#manageSideMenu .big').click(function () {
+                    if ($($(this).attr('href')).css('display') == 'block') $($(this).attr('href')).slideUp('fast');
+                    else $($(this).attr('href')).slideDown('fast');
+                    return false;
+                });
+            });
+
+            $("#manageSideMenu .title .mid").click(function () {
+                var midcate = $(this).parent();
+                var smallcate = $(this).parent().find('.sideSmall');
+                var mode = 1;
+                if (smallcate.css('display') == 'block') {
+                    midcate.addClass('over');
+                    smallcate.slideUp('fast');
+                    mode = 0;
+                } else {
+                    midcate.removeClass('over');
+                    smallcate.slideDown('fast');
+                }
+
+                // 중단메뉴 ON,OFF 쿠키
+                var midCookie = getCookie('midCookie');
+                var pgcode = $(this).attr('data');
+                if (mode == 0) {
+                    if (midCookie.search('@' + pgcode + '@') < 0) {
+                        if (!midCookie) midCookie = '@';
+                        midCookie += pgcode + '@';
+                    }
+                } else {
+                    midCookie = midCookie.replace(pgcode + '@', '');
+                }
+                setCookie('midCookie', midCookie, 365);
+            });
+        </script>
+    </nav>
+
+
+</body>
+
+</html>

@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.common.StJobCnctRecvmnInfoMapper">
+
+	<sql id="paginatedBase">
+		LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+	</sql>
+	
+	<!-- 업무연락 - 보낸문의 목록 조회 -->
+	<sql id="jobCnctRecvmnnInfoListBase">
+		SELECT	/* stJobCnctRecvmnInfo.getJobCnctRecvmnnInfoList */
+				JCRI.JOB_CNCT_NO
+				, JCI.TITLE
+				, JCRI.CNCT_PRGS_STAT_CD
+				, FN_GET_CODENAME('CM016',JCRI.CNCT_PRGS_STAT_CD) AS CNCT_PRGS_STAT_NM
+				, JCI.USER_ID
+				, SUB.USER_NM AS USER
+				, SDC.DEPT_NM AS USER_DEPT
+				, CASE JCI.EMERG_YN WHEN 'Y' THEN '긴급' ELSE '일반' END AS EMERG_YN
+				, TO_CHAR(JCRI.SYS_REG_DTM,'yyyy-mm-dd hh24:mi:ss') AS RECV_DTM
+				, TO_CHAR(JCRI.ANS_DTM,'yyyy-mm-dd hh24:mi:ss') AS ANS_DTM
+	   FROM ST_JOB_CNCT_RECVMN_INFO JCRI
+				, ST_JOB_CNCT_INFO JCI
+				, ST_USER_BASE SUB
+				, ST_DEPT_CD SDC
+	WHERE JCRI.JOB_CNCT_NO = JCI.JOB_CNCT_NO 
+		AND JCI.USER_ID = SUB.USER_ID
+		AND SUB.DEPT_CD = SDC.DEPT_CD
+		AND JCRI.RECVMN_ID = #{loginId}
+	<if test='termGbCd == "01"'>	
+		AND JCRI.SYS_REG_DTM BETWEEN TO_TIMESTAMP(#{searchStartDtm}||' 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
+						AND TO_TIMESTAMP(#{searchEndDtm}||' 23:59:59', 'YYYY-MM-DD HH24:MI:SS')
+	</if>
+	<if test='termGbCd == "02"'>
+		AND JCRI.ANS_DTM BETWEEN TO_TIMESTAMP(#{searchStartDtm}||' 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
+						AND TO_TIMESTAMP(#{searchEndDtm}||' 23:59:59', 'YYYY-MM-DD HH24:MI:SS')
+	</if>
+	<if test='searchUserId != null and searchUserId != ""'>
+		AND JCI.USER_ID = #{searchUserId}
+	</if>	
+	<if test='emergYn != null and emergYn != ""'>
+		AND JCI.EMERG_YN = #{emergYn}
+	</if>	
+	<if test='title != null and title != ""'>
+		AND JCI.TITLE LIKE #{title} || '%' 
+	</if>	
+	<if test='cnctPrgsStatCd != null and cnctPrgsStatCd != ""'>
+		AND JCRI.CNCT_PRGS_STAT_CD = #{cnctPrgsStatCd} 
+	</if>	
+	ORDER BY JCRI.JOB_CNCT_NO DESC, JCRI.SYS_REG_DTM DESC	
+	</sql>
+
+	<select id="getJobCnctRecvmnnInfoList" parameterType="JobCnctListRequest" resultType="JobCnctListResponse">
+		<include refid="jobCnctRecvmnnInfoListBase" />
+		<include refid="paginatedBase" />
+	</select>
+
+	<select id="getJobCnctRecvmnnInfoListCount" parameterType="JobCnctListRequest" resultType="java.lang.Integer">
+		SELECT /* stJobCnctRecvmnInfo.getJobCnctRecvmnnInfoListCount */
+		       COUNT(*)
+		  FROM (
+		  	   <include refid="jobCnctRecvmnnInfoListBase" />
+		       ) v
+	</select>
+	
+	<insert id="insertJobCnctRecvmnInfo" parameterType="StJobCnctRecvmnInfo" useGeneratedKeys="false">
+		INSERT INTO ST_JOB_CNCT_RECVMN_INFO (	/* stJobCnctRecvmnInfo.insertJobCnctRecvmnInfo */
+			JOB_CNCT_NO
+			, RECVMN_ID
+			, CNCT_PRGS_STAT_CD
+			, RECV_DTM
+			, DSMN_ANS_CONF_YN
+			, SYS_REG_ID
+			, SYS_REG_DTM
+			, SYS_MOD_ID
+			, SYS_MOD_DTM
+		) VALUES (
+			  #{jobCnctNo}
+			 , #{recvmnId}
+			 , #{cnctPrgsStatCd}
+			 , now()
+			 , #{dsmnAnsConfYn}
+			 , #{sysRegId}
+			 , now()
+			 , #{sysModId}
+			 , now()
+		)
+	</insert>
+	
+	<!-- 업무연락 수신자 상세 정보 조회 -->
+	<select id="getJobCnctRecvmnInfo" parameterType="JobCnctRequest" resultType="JobCnctResponse">
+		SELECT	/* stJobCnctRecvmnInfo.getJobCnctRecvmnInfo */ 
+				JOB_CNCT_NO
+				, CNCT_PRGS_STAT_CD
+				, RECV_DTM
+				, QRY_DTM
+				, ANS_DTM
+				, ANS_CONT
+				, DSMN_ANS_CONF_YN
+				, DSMN_ANS_CONF_DTM
+				, SYS_REG_ID
+				, SYS_REG_DTM
+				, SYS_MOD_ID
+				, SYS_MOD_DTM				
+	   FROM ST_JOB_CNCT_RECVMN_INFO
+	WHERE JOB_CNCT_NO = #{jobCnctNo}
+		 AND RECVMN_ID = #{recvmnId}
+	</select>	
+
+	<!-- 업무연락 답변 정보 조회 -->
+	<select id="getJobCnctAnsInfo" parameterType="JobCnctRequest" resultType="JobCnctResponse">
+		SELECT	/* stJobCnctRecvmnInfo.getJobCnctAnsInfo */
+				JCRI.JOB_CNCT_NO
+				, SUB.USER_NM AS RECVMN
+				, SDC.DEPT_NM AS RECVMN_DEPT
+				, TO_CHAR(JCRI.ANS_DTM,'YYYY-MM-DD HH24:MI:SS') AS ANS_DTM
+				, JCRI.ANS_CONT
+				, CASE 
+					WHEN ANS_DTM IS NULL THEN '' 
+					WHEN ANS_DTM IS NOT NULL AND DSMN_ANS_CONF_YN = 'N' THEN '미확인' 
+					ELSE TO_CHAR(JCRI.DSMN_ANS_CONF_DTM,'YYYY-MM-DD HH24:MI:SS')
+				  END AS DSMN_ANS_CONF_DTM
+				, JCRI.DSMN_ANS_CONF_YN
+				, JCAF.ATCH_FILE_ROUTE_NM
+				, JCAF.ATCH_FILE_NM
+	   FROM ST_JOB_CNCT_RECVMN_INFO JCRI
+ 		LEFT JOIN (SELECT JOB_CNCT_NO, ATCH_FILE_ROUTE_NM, ATCH_FILE_NM
+	             			FROM ST_JOB_CNCT_ATCH_FILE WHERE DSP_RECV_GB_CD = #{dspRecvGbCd}) JCAF 
+				ON JCRI.JOB_CNCT_NO = JCAF.JOB_CNCT_NO	   
+			    , ST_JOB_CNCT_INFO JCI
+			    , ST_USER_BASE SUB
+			    , ST_DEPT_CD SDC
+	WHERE JCRI.JOB_CNCT_NO = JCI.JOB_CNCT_NO
+		AND JCRI.RECVMN_ID = SUB.USER_ID
+		AND SUB.DEPT_CD = SDC.DEPT_CD
+		AND JCI.JOB_CNCT_NO = #{jobCnctNo}
+		AND JCRI.RECVMN_ID = #{recvmnId}
+	</select>	
+	
+	<!-- 업무연락 수신자 정보 변경 -->
+	<update id="updateJobCnctRecvmnInfo" parameterType="StJobCnctRecvmnInfo">
+		UPDATE	/* stJobCnctRecvmnInfo.updateJobCnctRecvmnInfo */
+				ST_JOB_CNCT_RECVMN_INFO
+			SET SYS_MOD_ID = #{sysModId}
+				   , SYS_MOD_DTM = now()
+			   <if test='cnctPrgsStatCd != null and cnctPrgsStatCd != ""'>
+			       , CNCT_PRGS_STAT_CD = #{cnctPrgsStatCd}
+				   <if test='cnctPrgsStatCd == "20"'>
+			       , QRY_DTM = now()
+				   </if>
+			   </if>
+			   <if test='ansCont != null and ansCont != ""'>
+				   , ANS_CONT = #{ansCont}
+				   , ANS_DTM = now()
+			   </if>
+			   <if test='dsmnAnsConfYn != null and dsmnAnsConfYn != ""'>
+			       , DSMN_ANS_CONF_YN = #{dsmnAnsConfYn}
+			       , DSMN_ANS_CONF_DTM = now()
+			   </if>
+	WHERE JOB_CNCT_NO = #{jobCnctNo}
+		AND RECVMN_ID = #{recvmnId}
+	</update>	
+
+
+</mapper>
+
+

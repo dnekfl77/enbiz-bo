@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.order.OpOrdBaseMapper">
+
+    <sql id="paginatedBase">
+        LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+    </sql>
+
+
+    <select id="existsOrdNo" parameterType="java.lang.String" resultType="java.lang.Boolean">
+        SELECT /* OpOrdBase.existsOrdNo */
+               CASE WHEN count(*) = 1 THEN 1
+                                      ELSE 0 END
+          FROM OP_ORD_BASE
+         WHERE ORD_NO = #{ordNo}
+    </select>
+
+</mapper>

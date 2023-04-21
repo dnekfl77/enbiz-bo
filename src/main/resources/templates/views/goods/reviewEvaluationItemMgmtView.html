@@ -1,0 +1,281 @@
+<!--
+* 프로그램명 : 리뷰평가항목관리
+* 작 성 일 : 2021.07.07
+* 작 성 자 : 홍혜리
+* 수 정 자 : 홍혜리
+* 버    전 : 1.0
+* 개    요 : 상품관리 > 상품리뷰관리 > 리뷰평가항목관리
+* 이    력 : 2021.09.15 프레임워크 이전
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/page-realgrid-layout}">
+<body>
+<th:block layout:fragment="page-title-area">
+    <div class="page-title">
+        <div class="left">
+            <h1 th:text="${#messages.msg('reviewEvaluationItemMgmt.title')}"></h1>
+        </div>
+    </div>
+</th:block>
+<th:block layout:fragment="page-contents">
+    <div class="page-fixed with-title">
+        <div class="search-cont">
+            <!-- tabs-area -->
+            <div class="tabs-area">
+
+                <!-- tabs-head -->
+                <ul class="tabs">
+                    <li>
+                        <a href="javascript:void(0);" th:text="${#messages.msg('reviewEvaluationItemMgmt.mappingTab.title')}"></a>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0);" th:text="${#messages.msg('reviewEvaluationItemMgmt.itemMgmtTab.title')}"></a>
+                    </li>
+                </ul>
+                <!--// tabs-head -->
+
+                <!-- tabs-body -->
+                <div class="tabs-body">
+
+                    <!-- tabs1 -->
+                    <div class="tab-cont">
+                        <div class="data-cont col-30 full-height">
+                            <!-- 표준분류목록 -->
+                            <div class="data full-height">
+                                <div class="data-head">
+                                    <div class="left"><span class="title" th:text="${#messages.msg('reviewEvaluationItemMgmt.mappingTab.tree.title')}"></span></div>
+                                </div>
+                                <div class="data-body">
+                                    <ul id="stdCtgTree" class="ztree"></ul>
+                                </div>
+                            </div>
+                            <!-- 표준분류목록 -->
+
+                            <!-- 평가항목매핑목록 -->
+                            <div class="data-cont full-height">
+                                <div class="grid full-height">
+                                    <div class="grid-head">
+                                        <div class="title-area">
+                                            <h2 class="title" th:text="${#messages.msg('reviewEvaluationItemMgmt.mappingTab.grid.title')}"></h2>
+                                        </div>
+                                        <div class="option-area">
+                                            <div class="edit-option">
+                                                <div class="button-group">
+                                                    <a href="#" class="button inside" id="btn_first_grid_add"><span class="text" th:text="${#messages.msg('reviewEvaluationItemMgmt.mappingTab.grid.btn.add')}" /></a>
+                                                    <a href="#" class="button inside" id="btn_first_grid_delete"><span class="text" th:text="${#messages.msg('adminCommon.grid.button.delete.row')}" /></a>
+                                                    <a href="#" class="button inside" id="btn_first_grid_cancel"><span class="text" th:text="${#messages.msg('adminCommon.grid.button.cancel')}" /></a>
+                                                    <a href="#" class="button inside" id="btn_first_grid_save"><span class="text" th:text="${#messages.msg('adminCommon.grid.button.save')}" /></a>
+                                                </div>
+                                            </div>
+                                            <div class="page-option" grid-id="reviewEvaluationItemCategoryListGrid">
+                                                <p class="tip warning button-group mr10">표준분류 2depth 기준(필요시 3depth)으로 매핑해주세요.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="grid-body with-head vh1">
+                                        <div id="reviewEvaluationItemCategoryListGrid" class="rg-root rg-grid vh1" realgrid></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 평가항목매핑목록 -->
+                            <form id="reviewEvaluationItemCategoryListForm"></form>
+                        </div>
+                    </div>
+                    <!-- tabs1 -->
+
+                    <!-- tabs2 -->
+                    <div class="tab-cont">
+
+                        <!-- search -->
+                        <div class="search">
+                            <form name="reviewEvaluationItemListForm" id="reviewEvaluationItemListForm">
+                                <table class="search-table">
+                                    <colgroup>
+                                        <col width="120">
+                                        <col>
+                                        <col width="120">
+                                        <col>
+                                    </colgroup>
+                                    <tbody>
+                                        <tr>
+                                            <!-- 등록기간 -->
+                                            <td class="label">
+                                                <strong th:text="${#messages.msg('reviewEvaluationItemMgmt.itemMgmtTab.search.label.sysRegDtm')}"></strong>
+                                            </td>
+                                            <td>
+                                                <div class="picker-group">
+                                                    <input type="text" class="form-control" id="regStartDtm" name="regStartDtm" readonly>
+                                                    <span class="input-group-addon">~</span>
+                                                    <input type="text" class="form-control" id="regEndDtm" name="regEndDtm" readonly>
+                                                    <span class="input-group-addon" id="btn_call_calender"><i class="icon-calendar"></i></span>
+                                                </div>
+                                            </td>
+                                            <!-- 평가항목명 -->
+                                            <td class="label" th:text="${#messages.msg('reviewEvaluationItemMgmt.itemMgmtTab.search.label.evltItemNm')}"></td>
+                                            <td>
+                                                <input type="text" class="input w40" id="evltItemNm" name="evltItemNm" maxlength="100">
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </form>
+                        </div>
+                        <!-- //search -->
+
+                        <!-- search-btn -->
+                        <div class="button-group search-btn mb0">
+                            <a href="#" class="button white" id="btn_reset"><span class="text" th:text="${#messages.msg('adminCommon.button.init')}"></span></a>
+                            <a href="#" class="button dark" id="btn_search"><span class="text" th:text="${#messages.msg('adminCommon.button.search')}"></span></a>
+                        </div>
+                        <!-- //search-btn -->
+
+                        <!-- grid -->
+                        <!-- 평가항목목록 -->
+                        <div class="grid-cont">
+                            <div class="grid" style="overflow: hidden;">
+                                <div class="grid-head">
+                                    <div class="title-area">
+                                        <h2 class="title" th:text="${#messages.msg('reviewEvaluationItemMgmt.itemMgmtTab.evltItemListGrid.title')}"></h2>
+                                    </div>
+                                    <div class="option-area">
+                                        <div class="edit-option">
+                                            <div class="button-group">
+                                                <a href="#" class="button inside" id="btn_second_grid_add"><span class="text" th:text="${#messages.msg('adminCommon.grid.button.add.row')}" /></a>
+                                                <a href="#" class="button inside" id="btn_second_grid_cancel"><span class="text" th:text="${#messages.msg('adminCommon.grid.button.cancel')}" /></a>
+                                                <a href="#" class="button inside" id="btn_second_grid_save"><span class="text" th:text="${#messages.msg('adminCommon.grid.button.save')}" /></a>
+                                            </div>
+                                        </div>
+                                        <div class="page-option" grid-id="reviewEvaluationItemListGrid">
+                                            <p class="tip warning button-group mr10">사용여부를 Y --> N으로 변경 시 매핑된 카테고리 연결이 모두 해제됩니다.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="grid-body with-head vh5">
+                                    <div id="reviewEvaluationItemListGrid" realgrid class="vh0"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--// 평가항목목록 -->
+
+                        <!-- 평가값목록 -->
+                        <div class="grid-cont mt20">
+                            <div class="grid">
+                                <div class="grid-head">
+                                    <div class="title-area">
+                                        <h2 class="title" th:text="${#messages.msg('reviewEvaluationItemMgmt.itemMgmtTab.evltValueListGrid.title')}"></h2>
+                                    </div>
+                                    <div class="option-area">
+                                        <div class="edit-option">
+                                            <div class="button-group">
+                                                <a href="#" class="button inside" id="btn_third_grid_add"><span class="text" th:text="${#messages.msg('adminCommon.grid.button.add.row')}" /></a>
+                                                <a href="#" class="button inside" id="btn_third_grid_delete"><span class="text" th:text="${#messages.msg('adminCommon.grid.button.delete.row')}" /></a>
+                                                <a href="#" class="button inside" id="btn_third_grid_cancel"><span class="text" th:text="${#messages.msg('adminCommon.grid.button.cancel')}" /></a>
+                                                <a href="#" class="button inside" id="btn_third_grid_save"><span class="text" th:text="${#messages.msg('adminCommon.grid.button.save')}" /></a>
+                                            </div>
+                                        </div>
+                                        <div class="page-option" grid-id="reviewEvaluationValueListGrid">
+                                            <p class="tip warning button-group mr10">평가항목 신규 추가 시 평가값을 반드시 추가해 주세요.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="grid-body with-head vh5">
+                                    <div id="reviewEvaluationValueListGrid" realgrid class="vh0"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--// 평가값목록 -->
+                        <!-- //grid -->
+                    </div>
+                    <!-- tabs2 -->
+                </div>
+                <!--// tabs-body -->
+            </div>
+            <!--// tabs-area -->
+        </div>
+
+        <!-- 매핑된 표준분류 목록 레이어팝업 -->
+        <div class="layer-popup fix-center" id="layerPop-mappingStdCtgList">
+            <div class="scroll-wrap">
+                <div class="win-popup account white" style="padding-bottom: 0;">
+                    <div class="login-wrap editor">
+                        <div class="box">
+                            <h1 style="margin-bottom: 0 !important;"
+                                th:text="${#messages.msg('reviewEvaluationItemMgmt.itemMgmtTab.mappingCategoryLayer.title')}"></h1>
+                            <button class="btn-close">×</button>
+                            <div class="cont">
+                                <div class="data">
+                                    <div class="data-head">
+                                        <div class="left"><span class="title" th:text="${#messages.msg('reviewEvaluationItemMgmt.itemMgmtTab.mappingCategoryLayer.subtitle')}"></span></div>
+                                    </div>
+                                    <div class="data-body">
+                                        <table class="data-table">
+                                            <colgroup>
+                                                <col width="60">
+                                                <col>
+                                            </colgroup>
+                                            <thead>
+                                                <tr>
+                                                    <th th:text="${#messages.msg('reviewEvaluationItemMgmt.itemMgmtTab.mappingCategoryLayer.num')}"></th>
+                                                    <th th:text="${#messages.msg('reviewEvaluationItemMgmt.itemMgmtTab.mappingCategoryLayer.stdCtgHierarchy')}"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 매핑된 표준분류 목록 레이어팝업 -->
+    </div>
+</th:block>
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        var _stdCtgList = [[${stdCtgList}]];
+    </script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/reviewEvaluationItemCategoryListGrid.eventHandler.js?20210915'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/reviewEvaluationItemCategoryListGrid.provider.js?20210915'" ></script>
+
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/reviewEvaluationItemListGrid.eventHandler.js?20210915'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/reviewEvaluationItemListGrid.provider.js?20210915'" ></script>
+
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/reviewEvaluationValueListGrid.eventHandler.js?20210915'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/reviewEvaluationValueListGrid.provider.js?20210915'" ></script>
+    <script th:inline="javascript">
+        $(function(){
+            reviewEvaluationItemCategoryListGrid.eventhandler.init();
+            reviewEvaluationItemListGrid.eventhandler.init();
+            reviewEvaluationValueListGrid.eventhandler.init();
+
+            $('.tabs-area').each(function(){
+                $(this).children('.tabs-body').children('.tab-cont:first').show();
+                var tab_type = $(this).children('.tabs').children('li');
+
+                tab_type.on('click',function(){
+                    var inx = $(this).index();
+                    var tab_body = $(this).parent().siblings('.tabs-body');
+                    $(this).siblings().removeClass('active');
+                    $(this).addClass('active');
+
+                    if(inx == 1) {
+                        reviewEvaluationItemListGrid.eventhandler.grid.resetSize();
+                        reviewEvaluationValueListGrid.eventhandler.grid.resetSize();
+                    }
+
+                    tab_body.children('.tab-cont').hide();
+                    tab_body.children('.tab-cont:eq(' + inx + ')').show();
+                });
+            });
+            $('.tabs-area > .tabs > li:eq(0)').click();
+
+        });
+    </script>
+</th:block>
+</body>
+</html>

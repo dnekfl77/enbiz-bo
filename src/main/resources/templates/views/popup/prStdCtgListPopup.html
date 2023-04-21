@@ -1,0 +1,54 @@
+<!--
+* 프로그램명 : 상품표준분류카테고리 팝업
+* 작 성 일 : 2021.02.26
+* 작 성 자 : 홍혜리
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 상품표준분류카테고리 팝업
+* 이    력 :
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-layout}">
+<body>
+    <!--Title Area-->
+    <th:block layout:fragment="popup-title-area">
+        <th:block layout:insert="~{fragments/popup/popup-title :: popup-title}"
+                  th:with="title=${#messages.msg('baseInfoMgmt.label.popup.prStdCtgList.title')}"></th:block>
+    </th:block>
+    <!--Title Area-->
+
+    <!--Ztree Area-->
+    <th:block layout:fragment="popup-List-area">
+        <div class="data-cont" style="height: 80%;">
+            <div class="data full-height" >
+                <div class="full-height" style="overflow: auto;">
+                    <ul id="pscTree" class="ztree"></ul>
+                </div>
+            </div>
+        </div>
+    </th:block>
+    <!--Ztree Area-->
+
+    <!--List Button Area-->
+    <th:block layout:fragment="popup-List-button-area">
+        <th:block layout:insert="~{fragments/popup/popup-btn :: popup-bottom-btn}"/>
+    </th:block>
+    <!--List Button Area-->
+
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        var _zNodes = [[${zNodes}]];
+    </script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'popup/popup.prStdCtgList.pscTree.eventHandler.js?2021030801'" ></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            pscTree.eventhandler.init();
+        });
+    </script>
+</th:block>
+
+</body>
+</html>

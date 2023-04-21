@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.system.StRtInfoMapper">
+
+    <select id="getUserMenuRtInfoList" parameterType="String" resultType="UserMenuRtInfoResponse">
+        SELECT RT_GRP_NO /* StRtInfoMapper.getUserMenuRtInfoList */
+             , A.RT_TGT_SEQ
+             , A.RT_SUB_GB_CD
+             , A.USE_YN
+             , B.RT_TGT_NM
+             , A.SYS_REG_ID
+             , A.SYS_REG_DTM
+             , A.SYS_MOD_ID
+             , A.SYS_MOD_DTM
+        FROM ST_RT_INFO A
+        LEFT OUTER JOIN ST_RT_TGT_BASE B
+        ON A.RT_TGT_SEQ = B.RT_TGT_SEQ
+        WHERE RT_GRP_NO = #{userId}
+    </select>
+
+</mapper>

@@ -1,0 +1,140 @@
+<html lang="ko-KR">
+<head>
+    <title>x2</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+    <link type="text/css" rel="stylesheet" href="../css/reset.css">
+    <link type="text/css" rel="stylesheet" href="../css/layout.css">
+    <link type="text/css" rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" type="text/css" href="../css/realgrid-style.css">
+    <script src="../js/libs/jquery/jquery-3.4.1.min.js"></script>
+    <script src="../js/contents.js"></script>
+</head>
+<body>
+    <div class="page-root">
+        <div class="page-title">
+            <div class="left">
+                <h1>전시 코너 관리</h1>
+            </div>
+        </div>
+        <div class="page-fixed with-title"> <!-- page-title 가 있을경우 with-title 클래스 추가 -->
+          <div class="search-cont">
+            <!-- search -->
+            <div class="search">
+              <table class="search-table">
+                  <colgroup>
+                      <col width="120">
+                      <col>
+                      <col width="120">
+                      <col>
+                      <col width="120">
+                      <col>
+                  </colgroup>
+                  <tbody>
+                      <tr>
+                        <td class="label">전시대상</td>
+                        <td>
+                          <select class="form-control">
+                              <option value="0">전체</option>
+                              <option value="1">전시대상</option>
+                          </select>
+                        </td>
+                        <td class="label">템플릿 유형</td>
+                        <td>
+                          <select class="form-control">
+                            <option value="0">전체</option>
+                            <option value="1">템플릿유형</option>
+                          </select>
+                        </td>
+                        <td class="label">사용여부</td>
+                        <td>
+                          <select class="form-control">
+                            <option value="0">전체</option>
+                            <option value="1">사용</option>
+                            <option value="2">사용안함</option>
+                          </select>
+                        </td>
+                      </tr>
+                      <tr>
+                          <td class="label">전시 담당자</td>
+                          <td>
+                            <div class="input-group">
+                              <input type="text" id="input-1-1" class="input">
+                              <a href="javascript:;" class="button small"
+                                  onclick="window.open('popup.html','name',' resizable=no scrollbars=yes width=1000 height=700');return false"><i
+                                      class="icon-sarch"></i></a>
+                            </div>
+                          </td>
+                          <td class="label">전시코너</td>
+                          <td>
+                            <div class="input-group">
+                              <select class="form-control">
+                                <option value="0">전시코너명</option>
+                                <option value="1">전시코너번호</option>
+                              </select>
+                              <input type="text" class="input">
+                            </div>
+                          </td>
+                          <td class="label">템플릿</td>
+                          <td>
+                            <div class="input-group">
+                              <select class="form-control">
+                                <option value="0">템플릿명</option>
+                                <option value="1">템플릿번호</option>
+                              </select>
+                              <input type="text" class="input">
+                            </div>
+                          </td>
+                      </tr>
+                  </tbody>
+              </table>
+          </div>
+          <!-- //search -->
+
+          <!-- search-btn -->
+          <div class="button-group search-btn">
+            <a href="#" class="button white"><span class="text">초기화</span></a>
+            <a href="#" class="button dark"><span class="text">조회</span></a>
+          </div>
+
+          <!-- grid -->
+          <div class="grid-cont">
+            <div class="grid">
+              <div class="grid-head">
+                <div class="title-area">
+                    <h2 class="title">전시 코너 목록</h2>
+                </div>
+                <!-- //title-area -->
+
+                <div class="option-area">
+                    <div class="edit-option">
+                      <div class="button-group">
+                        <a href="javascript:void(0);" class="button inside" onclick="window.open('BOS_DP_0402.html','name','resizable=no width=1000 height=700');return false"><span class="text">등록</span></a>
+                        <a href="javascript:void(0);" class="button inside"><span class="text">삭제</span></a>
+                        <a href="#" class="button inside"><span class="text">저장</span></a>
+                      </div>
+                    </div>
+
+                    <div class="page-option">
+                      <span class="total">총 <em>24</em>건</span>
+                    </div>
+                </div>
+                <!-- //option-area -->
+              </div>
+              <!-- //grid-head -->
+
+              <div class="grid-body" id="realgrid" realgrid>
+                realgrid area
+              </div>
+              <!-- //grid-body -->
+            </div>
+          </div>
+
+        </div>
+        
+      </div>
+      <!-- //page-fixed -->
+    </div>
+</body>
+</html>

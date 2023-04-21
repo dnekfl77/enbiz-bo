@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.customer.EtMbrBaseTrxMapper">
+
+	<update id="updateEtMbrBaseByCustomerDetail" parameterType="EtMbrBase">
+		UPDATE ET_MBR_BASE /* etMbrBase.updateEtMbrBaseByCustomerDetail */
+		   SET MBR_NM = #{mbrNm}
+		     , TEL_RGN_NO = #{telRgnNo}
+			 , TEL_TXNO_NO = #{telTxnoNo}
+			 , TEL_END_NO = #{telEndNo}
+			 , CELL_SCT_NO = #{cellSctNo}
+			 , CELL_TXNO_NO = #{cellTxnoNo}
+			 , CELL_END_NO = #{cellEndNo}
+			 , EMAIL_ADDR = #{emailAddr}
+			 , ZIP_NO_SEQ = #{zipNoSeq}
+			 , ZIP_NO = #{zipNo}
+			 , ZIP_ADDR = #{zipAddr}
+			 , DTL_ADDR = #{dtlAddr}
+			 , SYS_MOD_ID = #{sysModId}
+			 , SYS_MOD_DTM = now()
+		 WHERE MBR_NO = #{mbrNo}
+	</update>
+
+	<insert id="insertEtMbrDlvpInfo" parameterType="EtMbrDlvpInfo" useGeneratedKeys="false">
+		<selectKey keyProperty="mbrDlvpSeq" resultType="String" order="BEFORE">
+			SELECT COALESCE(MAX(MBR_DLVP_SEQ::INTEGER), 0) + 1 as mbrDlvpSeq
+			  FROM ET_MBR_DLVP_INFO
+			 WHERE MBR_NO = #{mbrNo}
+		</selectKey>
+		INSERT INTO ET_MBR_DLVP_INFO ( /* etMbrBase.insertEtMbrDlvpInfo */
+		       MBR_NO
+		     , MBR_DLVP_SEQ
+		     , DLVP_NM
+		     , RCVMN_NM
+		     , BASE_DLVP_YN
+		     , USE_YN
+		     , USER_SORT_SEQ
+		     , ZIP_NO_SEQ
+		     , ZIP_NO
+		     , ZIP_ADDR
+		     , DTL_ADDR
+		     , TEL_RGN_NO
+		     , TEL_TXNO_NO
+		     , TEL_END_NO
+		     , CELL_SCT_NO
+		     , CELL_TXNO_NO
+		     , CELL_END_NO
+		     , SYS_REG_ID
+		     , SYS_REG_DTM
+		     , SYS_MOD_ID
+		     , SYS_MOD_DTM
+		) VALUES (
+			   #{mbrNo}	        	--회원번호
+			 , #{mbrDlvpSeq}	    --회원배송지순번
+			 , #{dlvpNm}	        --배송지명
+			 , #{rcvmnNm}	        --수취인명
+			 , #{baseDlvpYn}	    --기본배송지여부
+			 , #{useYn}	        	--사용여부
+			 , #{userSortSeq}	    --사용자정렬순서
+			 , #{zipNoSeq}	        --우편번호순번
+			 , #{zipNo}	        	--우편번호
+			 , #{zipAddr}	        --우편주소
+			 , #{dtlAddr}	        --상세주소
+			 , #{telRgnNo}	    	--전화지역번호
+			 , #{telTxnoNo}	    	--전화국번번호
+			 , #{telEndNo}	    	--전화끝번호
+			 , #{cellSctNo}	    	--휴대폰구분번호
+			 , #{cellTxnoNo}	    --휴대폰국번번호
+			 , #{cellEndNo}	    	--휴대폰끝번호
+			 , #{sysRegId}
+			 , now()
+			 , #{sysModId}
+			 , now()
+		)
+	</insert>
+
+	<update id="updateEtMbrDlvpInfo" parameterType="EtMbrDlvpInfo">
+		UPDATE ET_MBR_DLVP_INFO /* etMbrBase.updateEtMbrDlvpInfo */
+		   SET DLVP_NM 			= #{dlvpNm}	        	--배송지명
+			 , RCVMN_NM 		= #{rcvmnNm}	        --수취인명
+			 , BASE_DLVP_YN 	= #{baseDlvpYn}	    	--기본배송지여부
+			 , USE_YN 			= #{useYn}	        	--사용여부
+			 , USER_SORT_SEQ 	= #{userSortSeq}	    --사용자정렬순서
+			 , ZIP_NO_SEQ 		= #{zipNoSeq}	        --우편번호순번
+			 , ZIP_NO 			= #{zipNo}	        	--우편번호
+			 , ZIP_ADDR 		= #{zipAddr}	        --우편주소
+			 , DTL_ADDR 		= #{dtlAddr}	        --상세주소
+			 , TEL_RGN_NO  		= #{telRgnNo}	    	--전화지역번호
+			 , TEL_TXNO_NO   	= #{telTxnoNo}	    	--전화국번번호
+			 , TEL_END_NO 		= #{telEndNo}	    	--전화끝번호
+			 , CELL_SCT_NO 		= #{cellSctNo}	    	--휴대폰구분번호
+			 , CELL_TXNO_NO 	= #{cellTxnoNo}	    	--휴대폰국번번호
+			 , CELL_END_NO 		= #{cellEndNo}	    	--휴대폰끝번호
+			 , SYS_MOD_ID 		= #{sysModId}			--수정자
+			 , SYS_MOD_DTM 		= now()					--수정일시
+		 WHERE MBR_NO = #{mbrNo}
+		   AND MBR_DLVP_SEQ= #{mbrDlvpSeq}
+	</update>
+
+	<delete id="deleteEtMbrDlvpInfo" parameterType="EtMbrDlvpInfo">
+		DELETE /* etMbrBase.deleteEtMbrDlvpInfo */
+		  FROM ET_MBR_DLVP_INFO
+ 		 WHERE MBR_NO = #{mbrNo}
+		   AND MBR_DLVP_SEQ= #{mbrDlvpSeq}
+	</delete>
+
+	<update id="saveCustomerRefundAccount" parameterType="EtMbrRfdActnInfo">
+		INSERT INTO ET_MBR_RFD_ACTN_INFO ( /* etMbrBase.saveCustomerRefundAccount */
+			   MBR_NO
+			 , RFD_BANK_CD
+			 , RFD_ACTN_NO
+			 , RFD_ACTN_DEPOSITOR_NM
+			 , RFD_ACTN_CERTI_YN
+			 , SYS_REG_ID
+			 , SYS_REG_DTM
+			 , SYS_MOD_ID
+			 , SYS_MOD_DTM
+		) VALUES (
+			   #{mbrNo}	            	--회원번호
+			 , #{rfdBankCd}	        	--환불은행코드(OM026)
+			 , #{rfdActnNo}	        	--환불계좌번호
+			 , #{rfdActnDepositorNm}	--환불계좌예금주명
+			 , 'N'						--환불계좌인증여부
+			 , #{sysRegId}
+			 , now()
+			 , #{sysModId}
+			 , now()
+		)
+		ON CONFLICT (MBR_NO)
+		DO UPDATE
+			  SET RFD_BANK_CD 				= #{rfdBankCd}	        --환불은행코드(OM026)
+				, RFD_ACTN_NO 				= #{rfdActnNo}	        --환불계좌번호
+				, RFD_ACTN_DEPOSITOR_NM 	= #{rfdActnDepositorNm}	--환불계좌예금주명
+				, RFD_ACTN_CERTI_YN 		= 'N'				    --환불계좌인증여부
+				, SYS_MOD_ID 				= #{sysModId}
+				, SYS_MOD_DTM 				= now()
+	</update>
+
+	<update id="unlockWatchCustomer" parameterType="WatchCustomerRequest">
+		UPDATE ET_MGR_MBR_INFO /* etMbrBase.unlockWatchCustomer */
+		   SET RVC_DTM = now()
+		     , MGR_MBR_RVC_ID = #{mgrMbrRvcId}
+			 , SYS_MOD_ID = #{mgrMbrRvcId}
+		     , SYS_MOD_DTM = now()
+		 WHERE MGR_MBR_NO IN
+		<foreach collection="mgrMbrNoArray" item="mgrMbrNo" index="index" open="(" separator="," close=")">
+			#{mgrMbrNo}
+		</foreach>
+	</update>
+
+	<insert id="saveWatchCustomer" parameterType="EtMgrMbrInfo" useGeneratedKeys="false">
+		<selectKey keyProperty="mgrMbrNo" resultType="String" order="BEFORE">
+			SELECT NEXTVAL('et_mgr_mbr_info_sq01') AS mgrMbrNo
+		</selectKey>
+		INSERT INTO ET_MGR_MBR_INFO ( /* etMbrBase.saveWatchCustomer */
+			   MGR_MBR_NO
+			 , MBR_NO
+			 , MGR_GB_CD
+			 , MGR_TYP_CD
+			 , REG_CAUS_CONT
+			 , ORD_NO
+			 , REG_DTM
+			 , RVC_DTM
+			 , MGR_MBR_REG_ID
+			 , MGR_MBR_RVC_ID
+			 , SYS_REG_ID
+			 , SYS_REG_DTM
+			 , SYS_MOD_ID
+			 , SYS_MOD_DTM
+		) VALUES (
+			   #{mgrMbrNo}
+ 			 , #{mbrNo}
+ 			 , #{mgrGbCd}
+ 			 , #{mgrTypCd}
+ 			 , #{regCausCont}
+ 			 , #{ordNo}
+ 			 , now()
+ 			 , #{rvcDtm}
+ 			 , #{mgrMbrRegId}
+ 			 , #{mgrMbrRvcId}
+ 			 , #{sysRegId}
+ 			 , now()
+ 			 , #{sysModId}
+ 			 , now()
+		)
+	</insert>
+</mapper>

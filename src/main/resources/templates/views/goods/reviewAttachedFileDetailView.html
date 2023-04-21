@@ -1,0 +1,60 @@
+<!--
+* 프로그램명 : 리뷰사진상세팝업
+* 작 성 일 : 2021.07.06
+* 작 성 자 : 홍혜리
+* 수 정 자 : 홍혜리
+* 버    전 : 1.0
+* 개    요 : 상품관리  > 상품리뷰관리 > 리뷰상세 > 리뷰사진상세팝업
+* 이    력 : 2021.09.23 프레임워크 이전
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-update-layout}">
+<body>
+    <th:block layout:fragment="header-area">
+        <div style="margin-bottom: 20px;">
+            <h1><th:block th:text="${#messages.msg('reviewMgmt.reviewDetail.attachedFileDetail.title')}"/></h1>
+        </div>
+    </th:block>
+    <th:block layout:fragment="data-area">
+        <div class="data-cont">
+            <div class="data">
+                <div class="data-body">
+                    <div class="data-cont col-80 mg20">
+                        <div class="center">
+                            <th:block  th:if="${not #lists.isEmpty(revFiles)}" th:each="file,index : ${revFiles}">
+                                <img class="thumbnail-l" th:if="${index.index} == 0" th:src="${@domainConfig.getProperty('imageUrl') + file.atchFileRouteNm + file.atchFileNm}">
+                            </th:block>
+                        </div>
+                        <div class="right" style="height: 500px; overflow: auto;">
+                            <th:block  th:if="${not #lists.isEmpty(revFiles)}" th:each="file,index : ${revFiles}">
+                                <img class="thumbnail" name="atchFiles" th:src="${@domainConfig.getProperty('imageUrl') + file.atchFileRouteNm + file.atchFileNm}">
+                            </th:block>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </th:block>
+    <th:block layout:fragment="button-area">
+        <div class="button-group">
+            <a href="#" class="button" id="btn_close"><span class="text" th:text="${#messages.msg('adminCommon.button.close')}"></span></a>
+        </div>
+    </th:block>
+    <th:block layout:fragment="add-script">
+        <script th:inline="javascript">
+            $(function(){
+                $('.thumbnail').on( 'click', function () {
+                    var src = $(this).attr('src');
+                    $('.thumbnail-l').attr('src',src);
+                });
+
+                $('#btn_close').on('click', function () {
+                   window.close();
+                });
+            });
+        </script>
+    </th:block>
+</body>
+</html>

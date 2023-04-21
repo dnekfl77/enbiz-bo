@@ -1,0 +1,116 @@
+<html lang="ko-KR">
+<head>
+    <title>x2</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+    <link type="text/css" rel="stylesheet" href="../css/reset.css">
+    <link type="text/css" rel="stylesheet" href="../css/layout.css">
+    <link type="text/css" rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" type="text/css" href="../css/realgrid-style.css">
+    <script src="../js/libs/jquery/jquery-3.4.1.min.js"></script>
+    <script src="../js/contents.js"></script>
+</head>
+<body>
+  <div class="page-root">
+    <div class="page-title">
+        <div class="left">
+            <h1>옵션 관리</h1>
+        </div>
+    </div>
+    <div class="page-fixed with-title"> <!-- page-title 가 있을경우 with-title 클래스 추가 -->
+      <div class="search-cont"><!-- 높이갚 최대일때 full-height 클래스 추가 -->
+        <div class="search">
+          <table class="search-table">
+            <colgroup>
+              <col width="120">
+              <col>
+              <col width="120">
+              <col>
+            </colgroup>
+            <tbody>
+              <tr>
+                <td class="label">옵션 분류 유형</td>
+                <td>
+                  <select class="form-control">
+                    <option value="0">전체</option>
+                    <option value="1">색상</option>
+                    <option value="2">사이즈</option>
+                    <option value="2">성별</option>
+                  </select>
+                </td>
+                <td class="label">사용여부</td>
+                <td>
+                  <select class="form-control">
+                    <option value="0">전체</option>
+                    <option value="1">사용</option>
+                    <option value="2">미사용</option>
+                  </select>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <!-- //search -->
+
+        <div class="button-group search-btn">
+          <a href="#" class="button white"><span class="text">초기화</span></a>
+          <a href="#" class="button dark"><span class="text">조회</span></a>
+        </div>
+        <!-- //search-btn -->
+
+        <div class="grid-cont">
+          <div class="grid">
+            <div class="grid-head">
+              <div class="title-area">
+                <h2 class="title">옵션 분류 코드 목록</h2>
+              </div>
+              <div class="option-area">
+                <div class="edit-option">
+                  <div class="button-group">
+                    <a href="#" class="button inside"><span class="text">행추가</span></a>
+                    <a href="#" class="button inside"><span class="text">변경취소</span></a>
+                    <a href="#" class="button inside"><span class="text">저장</span></a>
+                  </div>
+                </div>
+                <div class="page-option">
+                  <span class="total">총 <em>24</em>건</span>
+                </div>
+              </div>
+            </div>
+            <div class="grid-body with-head" id="realgrid" realgrid>realgrid area</div>
+            <!-- //grid-body -->
+          </div>
+        </div>
+        <!-- //옵션 분류 코드 목록 -->
+        
+        <div class="grid-cont"> 
+          <div class="grid">
+            <div class="grid-head">
+              <div class="title-area">
+                <h2 class="title">옵션 코드 목록</h2>
+              </div>
+              <div class="option-area">
+                <div class="edit-option">
+                  <div class="button-group">
+                    <a href="#" class="button inside"><span class="text">행추가</span></a>
+                    <a href="#" class="button inside"><span class="text">변경취소</span></a>
+                    <a href="#" class="button inside"><span class="text">저장</span></a>
+                  </div>
+                </div>
+                <div class="page-option">
+                  <span class="total">총 <em>24</em>건</span>
+                </div>
+              </div>
+            </div>
+            <div class="grid-body with-head" id="realgrid" realgrid>realgrid area</div>
+            <!-- //grid-body -->
+          </div>
+        </div>
+      </div>
+      <!-- //search-cont -->
+    </div>
+    <!-- //page-fixed -->
+  </div>
+</body>
+</html>

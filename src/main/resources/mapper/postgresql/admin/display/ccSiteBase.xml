@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enbiz.bo.app.repository.display.CcSiteBaseMapper">
+
+	<sql id="paginatedBase">
+		LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+	</sql>
+
+	<sql id="siteBaseList">
+		SELECT 					/* ccSiteBase.siteBaseList */
+			  SITE_NO
+			, SITE_NM
+			, TO_CHAR(TO_TIMESTAMP(TRD_STRT_DT, 'YYYYMMDD'), 'YYYY-MM-DD') AS TRD_STRT_DT
+			, TO_CHAR(TO_TIMESTAMP(TRD_END_DT, 'YYYYMMDD'), 'YYYY-MM-DD') AS TRD_END_DT
+			, SITE_DOM
+			, SYS_MOD_ID
+			, TO_CHAR(SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+		FROM CC_SITE_BASE
+		WHERE SITE_NO LIKE #{siteNo} || '%'
+		ORDER BY SITE_NO DESC
+	</sql>
+
+	<select id="getSiteBaseList" parameterType="CcSiteBaseRequest" resultType="CcSiteBaseResponse">
+		<include refid="siteBaseList" />
+		<include refid="paginatedBase" />
+	</select>
+
+	<select id="getSiteBaseListCount" parameterType="CcSiteBaseRequest" resultType="java.lang.Integer">
+		SELECT 		/* ccSiteBase.getSiteBaseListCount */
+				COUNT(*)
+		FROM (
+			<include refid="siteBaseList" />
+		) T1
+	</select>
+
+	<select id="getSiteNmList"  resultType="CcSiteBaseResponse">
+		SELECT 	/* ccSiteBase.getSiteNmList */
+			  SITE_NO
+			, SITE_NM
+		FROM  CC_SITE_BASE
+		ORDER BY SITE_NO DESC
+	</select>
+
+	<select id="getSitePopupList" resultType="CcSitePopupResponse">
+		SELECT 			/* ccSiteBase.getSitePopupList */
+		       SITE_NO
+		     , SITE_NM
+		     , SUBSTRING(TRD_STRT_DT,1,4)||'-'||SUBSTRING(TRD_STRT_DT,5,2)||'-'||SUBSTRING(TRD_STRT_DT,7,2) AS TRD_STRT_DT
+		     , SUBSTRING(TRD_END_DT,1,4)||'-'||SUBSTRING(TRD_END_DT,5,2)||'-'||SUBSTRING(TRD_END_DT,7,2) AS TRD_END_DT
+		  FROM CC_SITE_BASE
+		 WHERE TRD_STRT_DT <![CDATA[ <= ]]> TO_CHAR(NOW(),'YYYYMMDD')
+		   AND TRD_END_DT <![CDATA[ >= ]]> TO_CHAR(NOW(),'YYYYMMDD')
+		ORDER BY SITE_NO DESC
+	</select>
+
+</mapper>
+
+

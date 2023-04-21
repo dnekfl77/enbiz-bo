@@ -1,0 +1,131 @@
+<!--
+* 프로그램명 : 제휴사 관리
+* 작 성 일 : 2021.02.23
+* 작 성 자 : 박남훈
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 제휴사 관리 UI
+* 이    력 :
+-->
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/page-realgrid-layout}">
+<head>
+    <title>제휴사 관리</title>
+</head>
+<body>
+<th:block layout:fragment="page-title-area">
+    <div class="page-title">
+        <div class="left">
+            <h1 th:text="${#messages.msg('vendorMgmt.cooperateMgmt.title')}"></h1>
+        </div>
+    </div>
+</th:block>
+
+<th:block layout:fragment="page-contents">
+    <div class="page-fixed with-title">
+        <div class="search-cont full-height">
+            <!-- 조회테이블 -->
+            <div class="search">
+                <div class="search-body">
+                    <form name="cooperateSearchForm" id="cooperateSearchForm">
+                        <table class="search-table">
+                            <colgroup>
+                                <col width="120">
+                                <col>
+                                <col width="120">
+                                <col>
+                            </colgroup>
+                            <tbody>
+                            <tr>
+                                <td class="label"
+                                    th:text="${#messages.msg('vendorMgmt.cooperateMgmt.search.label.partnerNoNm')}" />
+                                <td>
+                                    <div class="input-group w100">
+                                        <input type="text" class="input w20" maxlength="15" name="condxEntrNo" id="condxEntrNo">
+                                        <em>/</em>
+                                        <input type="text" class="input w50" maxlength="30" name="condxEntrNm" id="condxEntrNm">
+                                    </div>
+                                </td>
+                                <td class="label"
+                                    th:text="${#messages.msg('vendorMgmt.cooperateMgmt.search.label.trdStatNm')}" />
+                                <td>
+                                    <select class="form-control w30" id="condxTrdStatCd" name="condxTrdStatCd">
+                                        <option value=""
+                                                th:text="${#messages.msg('vendorMgmt.cooperateMgmt.search.option.full')}">
+                                        </option>
+                                        <option th:each="list : ${codeList.VD003}"
+                                                th:value="${list?.cd}" th:utext="${list?.cdNm}"></option>
+                                    </select>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+            </div>
+            <!-- //조회테이블 -->
+            <!-- 검색버튼 -->
+            <div class="button-group search-btn">
+                <a href="#" class="button white" id="btn_init">
+                    <span class="text" th:text="${#messages.msg('vendorMgmt.cooperateMgmt.search.button.initialize')}"></span>
+                </a>
+                <a href="#" class="button dark" id="btn_search">
+                    <span class="text" th:text="${#messages.msg('vendorMgmt.cooperateMgmt.search.button.search')}"></span>
+                </a>
+            </div>
+            <!-- //검색버튼 -->
+
+            <div class="grid-cont">
+                <!-- 리얼그리드 -->
+                <div class="grid" style="overflow: hidden;">
+                    <div class="grid-head">
+                        <div class="title-area">
+                            <h2 class="title" th:text="${#messages.msg('vendorMgmt.cooperateMgmt.result.title')}"></h2>
+                        </div>
+                        <div class="option-area">
+                            <div class="edit-option">
+                                <div class="button-group">
+                                    <a href="#" class="button inside" id="btnCooperateRegister">
+                                        <span class="text" th:text="${#messages.msg('vendorMgmt.cooperateMgmt.button.register')}" />
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="page-option" grid-id="cooperateGrid" />
+                        </div>
+                    </div>
+                    <div class="grid-body with-head">
+                        <div class="rg-root rg-grid" id="cooperateGrid" realgrid></div>
+                    </div>
+                </div>
+                <!-- //리얼그리드 -->
+            </div>
+        </div>
+
+    </div>
+</th:block>
+
+<th:block layout:fragment="add-script">
+
+    <script th:inline="javascript">
+    /*<![CDATA[*/
+    /*]]>*/
+    </script>
+
+    <script type="text/javascript"
+            th:src="${@domainConfig.getProperty('jsUrl')} + 'vendor/cooperateGrid.provider.js?20210401000001'"></script>
+    <script type="text/javascript"
+            th:src="${@domainConfig.getProperty('jsUrl')} + 'vendor/cooperateGrid.eventHandler.js?20210401000001'"></script>
+
+    <script type="text/javascript">
+        var _gridType = '1'; // 선택구분값이 있을경우 필수값
+        $(function () {
+            cooperateGrid.eventhandler.bindButtonEvent();
+        });
+    </script>
+</th:block>
+</body>
+</html>

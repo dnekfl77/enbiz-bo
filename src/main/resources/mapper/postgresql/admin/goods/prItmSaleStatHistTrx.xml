@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.goods.PrItmSaleStatHistTrxMapper">
+
+    <update id="updatePrItmSaleStatHist" parameterType="prItmSaleStatHist">
+        UPDATE PR_ITM_SALE_STAT_HIST /* prItmSaleStatHistTrx.updatePrItemBase */
+           SET HIST_END_DTM = now()
+             , SYS_MOD_ID = #{sysModId}
+             , SYS_MOD_DTM = now()
+         WHERE GOODS_ITM_GB_CD = #{goodsItmGbCd}
+           AND GOODS_NO = #{goodsNo}
+           AND ITM_NO = #{itmNo}
+           AND HIST_END_DTM = TO_TIMESTAMP('29991231235959', 'YYYYMMDDHH24MISS')
+    </update>
+
+    <insert id="insertPrItmSaleStatHist" parameterType="prItmSaleStatHist" useGeneratedKeys="false">
+        INSERT INTO PR_ITM_SALE_STAT_HIST (/* prItmSaleStatHistTrx.insertPrItmSaleStatHist */
+                    GOODS_ITM_GB_CD
+                  , GOODS_NO
+                  , ITM_NO
+                  , HIST_END_DTM
+                  , HIST_STR_DTM
+                  , ITM_SALE_STAT_CD
+                  , SOUT_CAUS_CD
+                  , SYS_REG_ID
+                  , SYS_REG_DTM
+                  , SYS_MOD_ID
+                  , SYS_MOD_DTM
+             )
+             VALUES (
+                    #{goodsItmGbCd}
+                  , #{goodsNo}
+                  , #{itmNo}
+                  , TO_TIMESTAMP('29991231235959', 'YYYYMMDDHH24MISS')
+                  , now()
+                  , #{itmSaleStatCd}
+                  , #{soutCausCd}
+                  , #{sysRegId}
+                  , now()
+                  , #{sysRegId}
+                  , now()
+             )
+    </insert>
+
+    <insert id="applyPrItmSaleStatHist" parameterType="PrPregGoodsBase">
+        INSERT INTO PR_ITM_SALE_STAT_HIST ( /* prItmSaleStatHistTrx.applyPrItmSaleStatHist */
+                     GOODS_ITM_GB_CD
+                   , GOODS_NO
+                   , ITM_NO
+                   , HIST_END_DTM
+                   , HIST_STR_DTM
+                   , ITM_SALE_STAT_CD
+                   , SOUT_CAUS_CD
+                   , SYS_REG_ID
+                   , SYS_REG_DTM
+                   , SYS_MOD_ID
+                   , SYS_MOD_DTM
+        )
+              SELECT '20'
+                   , #{goodsNo}
+                   , ITM_NO
+                   , TO_TIMESTAMP('29991231235959', 'YYYYMMDDHH24MISS')
+                   , now()
+                   , '10'
+                   , null
+                   , #{sysRegId}
+                   , now()
+                   , #{sysRegId}
+                   , now()
+                FROM PR_PREG_ITM_BASE
+               WHERE PREG_GOODS_NO = #{pregGoodsNo}
+    </insert>
+</mapper>
+
+

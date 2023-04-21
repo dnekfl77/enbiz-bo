@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.customerservice.CsCustTelPrmsInfoTrxMapper">
+    <insert id="insertCsCustTelPrmsInfo" parameterType="CsCustTelPrmsInfo" useGeneratedKeys="false">
+            INSERT INTO CS_CUST_TEL_PRMS_INFO(/* CsCustTelPrmsInfo.insertCsCustTelPrmsInfo */
+                        CCN_NO
+                      , CNSL_PROC_SEQ
+                      , TEL_PRMS_SEQ
+                      , PRMS_DTM
+                      , NOTI_TM_CD
+                      , PRMS_METH_CD
+                      , PRMS_STAT_CD
+                      , CNSL_MEMO
+                      , AEMP_ID
+                      , AEMP_CONF_DTM
+                      , AEMP_PROC_DTM
+                      , TEL_TRY_CNT
+                      , SYS_REG_ID
+                      , SYS_REG_DTM
+                      , SYS_MOD_ID
+                      , SYS_MOD_DTM )
+                VALUES(
+                        #{ccnNo}
+                      , (SELECT MAX(CNSL_PROC_SEQ) FROM CS_CCN_PROC_INFO WHERE CCN_NO = #{ccnNo})
+                      , #{telPrmsSeq}
+                      , TO_TIMESTAMP(#{prmsDtm}||':59', 'YYYY-MM-DD HH24:MI:SS')
+                      , #{notiTmCd}
+                      , #{prmsMethCd}
+                      , #{prmsStatCd}
+                      , #{cnslMemo}
+                      , #{aempId}
+                      , #{aempConfDtm}
+                      , #{aempProcDtm}
+                      , 0
+                      , #{sysRegId}
+                      , NOW()
+                      , #{sysModId}
+                      , NOW()
+                )
+    </insert>
+
+</mapper>

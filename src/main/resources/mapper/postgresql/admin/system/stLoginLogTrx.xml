@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.system.StLoginLogTrxMapper">
+	<!--  로그인 이력 -->
+	<insert id="insertStLoginLog" parameterType="stLoginLog">
+		<selectKey keyProperty="loginLogSeq" resultType="long" order="BEFORE">
+			SELECT NEXTVAL('st_login_log_sq01') AS loginLogSeq
+		</selectKey>
+		INSERT INTO ST_LOGIN_LOG (	/* StLoginLogTrxMapper.insertStLoginLog */
+			   LOGIN_LOG_SEQ
+			 , USER_ID
+			 , SYS_GB_CD
+			 , LOGIN_DTM
+			 , LOGIN_IP_ADDR
+			 , LOUT_DTM
+			 , LOUT_CAUS_CD
+			 , SYS_REG_DTM
+			 , SYS_REG_ID
+			 , SYS_MOD_DTM
+			 , SYS_MOD_ID
+		) VALUES (
+			   #{loginLogSeq}
+			 , #{userId}
+			 , #{sysGbCd}
+			 , #{loginDtm}
+			 , #{loginIpAddr}
+			 , #{loutDtm}
+			 , #{loutCausCd}
+			 , NOW()
+			 , #{sysRegId}
+			 , NOW()
+			 , #{sysModId}
+		)
+    </insert>
+
+	<!-- 로그 아웃 이력 -->
+     <update id="updateStLoginLog" parameterType="stLoginLog">
+		UPDATE ST_LOGIN_LOG  /* StLoginLogTrxMapper.updateStLoginLog */
+		   SET LOUT_DTM = NOW()
+			 , SYS_MOD_DTM = NOW()
+		 	 , SYS_MOD_ID = #{userId}
+		WHERE
+			USER_ID = #{userId}
+			AND LOGIN_IP_ADDR = #{loginIpAddr}
+			AND LOUT_DTM IS NULL
+    </update>
+</mapper>

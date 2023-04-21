@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.goods.PrGoodsRevInfoMapper">
+
+    <sql id="paginatedBase">
+        LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+    </sql>
+
+    <sql id="displayGoodsReviewList">
+        SELECT /* prGoodsRevInfo.displayGoodsReviewList */
+               PGRI.REV_NO
+             , PGRI.REV_CONT
+             , PGRI.REV_SCR_VAL
+             , TO_CHAR(PGRI.REV_WRT_DTM, 'YYYY-MM-DD HH24:MI:SS') AS REV_WRT_DTM
+             , PGRI.GOODS_NO
+             , PGB.GOODS_NM
+             , PSC.MD_ID
+             , SUB.USER_NM AS MD_NM
+             , PGRI.LOGIN_ID
+             , EMB.MBR_NM
+             , PGPH.SALE_PRC
+          FROM PR_GOODS_REV_INFO PGRI
+             , PR_GOODS_BASE PGB 	     -- 상품기본 테이블
+             , PR_STD_CTG PSC 		     -- 표준카테고리 테이블
+             , ST_USER_BASE SUB 	     -- 사용자 기본 테이블
+             , ET_MBR_BASE EMB 		     -- 회원 테이블
+             , PR_GOODS_PRC_HIST PGPH    -- 상품가격이력 테이블
+         WHERE PGRI.GOODS_NO  		    = PGB.GOODS_NO 		-- 상품번호
+           AND PGRI.GOODS_NO  		    = PGPH.GOODS_NO 	-- 상품번호
+           AND PGRI.STD_CTG_NO  	    = PSC.STD_CTG_NO 	-- 표준카테고리번호
+           AND PSC.MD_ID  		        = SUB.USER_ID 		-- 사용자 아이디
+           AND PGRI.MBR_NO  		    = EMB.MBR_NO 		-- 회원번호
+           AND PGRI.DEL_YN		        = 'N'
+           AND PGRI.REV_DISP_STAT_CD    = '20'
+           AND PGRI.REV_WRT_DTM <![CDATA[ >= ]]> TO_TIMESTAMP(#{startDate}||'000000', 'YYYYMMDDHH24MISS')
+           AND PGRI.REV_WRT_DTM <![CDATA[ <= ]]> TO_TIMESTAMP(#{endDate}||'235959', 'YYYYMMDDHH24MISS')
+           AND PSC.MD_ID  	 	LIKE #{mdId} || '%'
+           AND PGB.GOODS_NM  	LIKE #{goodsNm} || '%'
+           AND PGRI.LOGIN_ID	LIKE #{loginId} || '%'
+           AND EMB.MBR_NM  		LIKE #{mbrNm} || '%'
+            <if test="revScrVal != null and revScrVal != ''">
+                AND PGRI.REV_SCR_VAL = #{revScrVal}::numeric
+            </if>
+         ORDER BY PGRI.GOODS_NO, PGRI.REV_NO
+    </sql>
+
+    <select id="getDisplayGoodsReviewList" parameterType="PrGoodsRevInfoRequest" resultType="PrGoodsRevInfoResponse">
+        <include refid="displayGoodsReviewList" />
+    </select>
+
+    <select id="getDisplayGoodsReviewListCount" parameterType="PrGoodsRevInfoRequest" resultType="java.lang.Integer">
+        SELECT   /* prGoodsRevInfo.getDisplayGoodsReviewListCount */
+                COUNT(*)
+        FROM (
+                <include refid="displayGoodsReviewList" />
+        ) T1
+    </select>
+
+    <sql id="reviewListBase">
+        SELECT RI.GOODS_NO  /* prGoodsRevInfo.reviewListBase */
+             , GB.GOODS_NM
+             , RI.REV_SCR_VAL
+             , RI.REV_NO
+             , RI.REV_CONT
+             , RI.REV_GB_CD
+             , FN_GET_CODENAME('PR021',RI.REV_GB_CD ) AS REV_GB_CD_NM
+             , RI.REV_TYP_CD
+             , FN_GET_CODENAME('PR036',RI.REV_TYP_CD ) AS REV_TYP_CD_NM
+             , RI.LOGIN_ID
+             , TO_CHAR(RI.REV_WRT_DTM,'YYYY-MM-DD HH24:MI:SS') AS REV_WRT_DTM
+             , RI.ORD_NO
+             , (SELECT COUNT(*)
+                  FROM PR_GOODS_REV_REPLY_INFO
+                 WHERE REV_NO = RI.REV_NO) AS REPLY_CNT
+             , RI.HLPFUL_CNT
+             , RI.REV_DISP_STAT_CD
+             , FN_GET_CODENAME('PR022',RI.REV_DISP_STAT_CD ) AS REV_DISP_STAT_CD_NM
+             , EB.ENTR_NM
+             , RI.DISP_PROCMN_ID
+             , TO_CHAR(RI.DISP_PROC_DTM,'YYYY-MM-DD HH24:MI:SS') AS DISP_PROC_DTM
+          FROM PR_GOODS_REV_INFO RI
+             , PR_GOODS_BASE GB
+             , ET_ENTR_BASE EB
+             , ET_MBR_BASE MB
+         WHERE 1 = 1
+           AND RI.GOODS_NO = GB.GOODS_NO
+           AND GB.ENTR_NO = EB.ENTR_NO
+           AND RI.MBR_NO = MB.MBR_NO
+           AND RI.DEL_YN = 'N'
+           AND RI.REV_WRT_DTM <![CDATA[ >= ]]> TO_TIMESTAMP( #{revWrtStartDtm} || ' 00:00:00','YYYY-MM-DD HH24:MI:SS')
+           AND RI.REV_WRT_DTM <![CDATA[ <= ]]> TO_TIMESTAMP( #{revWrtEndDtm} || ' 23:59:59','YYYY-MM-DD HH24:MI:SS')
+           AND RI.REV_GB_CD         LIKE #{revGbCd} || '%'
+           AND RI.REV_DISP_STAT_CD  LIKE #{revDispStatCd} || '%'
+           AND RI.GOODS_NO          LIKE #{goodsNo} || '%'
+           AND GB.GOODS_NM          LIKE #{goodsNm} || '%'
+           AND RI.LOGIN_ID          LIKE #{loginId} || '%'
+           AND MB.MBR_NM            LIKE #{mbrNm} || '%'
+            <if test='wrtrIsUserYn != null and wrtrIsUserYn != ""'>
+                <if test='wrtrIsUserYn=="Y"'>
+                    AND EXISTS (
+                        SELECT '1'
+                          FROM PR_GOODS_REV_REPLY_INFO RRI
+                         WHERE RI.REV_NO = RRI.REV_NO
+                           AND WRTMN_GB_CD = '20'
+                           AND WRTMN_ID = #{sysRegId}
+                    )
+                </if>
+                <if test='wrtrIsUserYn=="N"'>
+                    AND NOT EXISTS (
+                            SELECT '1'
+                              FROM PR_GOODS_REV_REPLY_INFO RRI
+                             WHERE RI.REV_NO = RRI.REV_NO
+                               AND WRTMN_GB_CD = '20'
+                               AND WRTMN_ID = #{sysRegId}
+                    )
+                </if>
+            </if>
+         ORDER BY REV_WRT_DTM DESC
+    </sql>
+
+    <select id="getReviewListCount" parameterType="ReviewMgmtRequest" resultType="java.lang.Integer">
+        SELECT COUNT(*) /* prGoodsRevInfo.getReviewListCount */
+          FROM (
+            <include refid="reviewListBase"/>
+        ) T1
+    </select>
+
+    <select id="getReviewList" parameterType="ReviewMgmtRequest" resultType="ReviewMgmtResponse">
+        /* prGoodsRevInfo.getReviewList */
+        <include refid="reviewListBase" />
+        <include refid="paginatedBase" />
+    </select>
+
+    <select id="getReviewInfo" parameterType="java.lang.String" resultType="ReviewDetailResponse">
+        SELECT RI.GOODS_NO  /* prGoodsRevInfo.getReviewInfo */
+             , GB.GOODS_NM
+             , RI.LOGIN_ID
+             , SUBSTRING(RI.ORD_NO,1,8) || '-' || SUBSTRING(RI.ORD_NO,9,6) AS ORD_NO
+             , RI.REV_NO
+             , TO_CHAR(RI.REV_WRT_DTM,'YYYY-MM-DD HH24:MI:SS') AS REV_WRT_DTM
+             , FN_GET_CODENAME('PR036',RI.REV_TYP_CD ) AS REV_TYP_CD_NM
+             , FN_GET_CODENAME('PR021',RI.REV_GB_CD ) AS REV_GB_CD_NM
+             , RI.HLPFUL_CNT
+             , (SELECT COUNT(*)
+                FROM PR_GOODS_REV_REPLY_INFO
+                WHERE REV_NO = RI.REV_NO) AS REPLY_CNT
+             , RI.REV_SCR_VAL
+             , RI.STFD_1_YN
+             , RI.STFD_2_YN
+             , RI.STFD_3_YN
+             , RI.REV_DISP_STAT_CD
+             , RI.DISP_PROCMN_ID
+             , TO_CHAR(RI.DISP_PROC_DTM,'YYYY-MM-DD HH24:MI:SS') AS DISP_PROC_DTM
+             , RI.PHOTO_DISP_STAT_CD
+             , RI.REV_CONT
+          FROM PR_GOODS_REV_INFO RI
+             , PR_GOODS_BASE GB
+         WHERE 1 = 1
+           AND RI.GOODS_NO = GB.GOODS_NO
+           AND RI.REV_NO = #{revNo}
+    </select>
+</mapper>

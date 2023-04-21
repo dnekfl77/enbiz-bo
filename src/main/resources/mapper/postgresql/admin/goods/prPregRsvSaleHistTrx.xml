@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enbiz.bo.app.repository.goods.PrPregRsvSaleHistTrxMapper">
+
+	<insert id="insertPregRsvSalesHist" parameterType="PrPregRsvSaleHist">
+		INSERT INTO PR_PREG_RSV_SALE_HIST ( /* cmPrPregRsvSaleHist.insertPregRsvSalesHist */
+				  	PREG_GOODS_NO
+				  , RSV_STRT_DTM
+				  , RSV_END_DTM
+				  , FWDIDC_PRAR_DY
+				  , RSV_END_AF_PROC_METH_CD
+				  , SYS_REG_ID
+				  , SYS_REG_DTM
+				  , SYS_MOD_ID
+				  , SYS_MOD_DTM
+		) VALUES (
+				 	#{pregGoodsNo}
+				  , TO_TIMESTAMP(#{rsvStrtDtm}, 'YYYY-MM-DD HH24:MI:SS')
+				  , TO_TIMESTAMP(#{rsvEndDtm}, 'YYYY-MM-DD HH24:MI:SS')
+				  , #{fwdidcPrarDy}
+				  , #{rsvEndAfProcMethCd}
+				  , #{sysRegId}
+				  , now()
+				  , #{sysRegId}
+				  , now()
+				 )
+	</insert>
+
+	<update id="updatePregRsvSalesHist" parameterType="PrPregRsvSaleHist">
+		UPDATE PR_PREG_RSV_SALE_HIST /* prPregRsvSaleHistTrx.updatePregRsvSalesHist */
+		   SET RSV_STRT_DTM            = TO_TIMESTAMP(#{rsvStrtDtm}, 'YYYY-MM-DD HH24:MI:SS')
+		     , RSV_END_DTM             = TO_TIMESTAMP(#{rsvEndDtm}, 'YYYY-MM-DD HH24:MI:SS')
+		     , FWDIDC_PRAR_DY          = #{fwdidcPrarDy}
+		     , RSV_END_AF_PROC_METH_CD = #{rsvEndAfProcMethCd}
+		     , SYS_MOD_ID              = #{sysModId}
+		     , SYS_MOD_DTM             = now()
+		 WHERE PREG_GOODS_NO 		   = #{pregGoodsNo}
+	</update>
+
+    <insert id="applyPregRsvSaleHist" parameterType="PrPregGoodsBase">
+        INSERT INTO PR_RSV_SALE_HIST( /* prPregRsvSaleHistTrx.applyPregRsvSaleHist */
+			   GOODS_NO
+			 , RSV_STRT_DTM
+			 , RSV_END_DTM
+			 , FWDIDC_PRAR_DY
+			 , RSV_END_AF_PROC_METH_CD
+			 , RSV_STOP_YN
+			 , RSV_STOP_CAUS_CD
+			 , RSV_STOP_DTM
+			 , SYS_REG_ID
+			 , SYS_REG_DTM
+			 , SYS_MOD_ID
+			 , SYS_MOD_DTM
+	    )
+	    SELECT #{goodsNo}
+			 , RSV_STRT_DTM
+			 , RSV_END_DTM
+			 , FWDIDC_PRAR_DY
+			 , RSV_END_AF_PROC_METH_CD
+			 , 'N'
+			 , NULL
+			 , NULL
+	         , #{sysRegId}
+	         , now()
+	         , #{sysRegId}
+	         , now()
+	      FROM PR_PREG_RSV_SALE_HIST
+		 WHERE PREG_GOODS_NO = #{pregGoodsNo}
+    </insert>
+
+	<delete id="deletePregRsvSaleHist" parameterType="java.lang.String">
+		DELETE /* prPregRsvSaleHistTrx.deletePregRsvSaleHist */
+		  FROM PR_PREG_RSV_SALE_HIST
+		 WHERE PREG_GOODS_NO = #{pregGoodsNo}
+	</delete>
+</mapper>

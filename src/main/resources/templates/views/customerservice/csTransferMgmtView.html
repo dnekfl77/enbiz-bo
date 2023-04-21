@@ -1,0 +1,337 @@
+<!--
+* 프로그램명 : 업무이관처리
+* 작 성 일 : 2021.05.31
+* 작 성 자 : 윤성원
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 고객서비스 > 고객상담처리 > 업무이관처리
+* 이    력 :
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/page-realgrid-layout}">
+<body>
+<th:block layout:fragment="page-title-area">
+    <div class="page-title">
+        <div class="left">
+            <h1><th:block th:text="${#messages.msg('csTransferProcessing.label.title')}"/></h1>
+        </div>
+    </div>
+</th:block>
+<th:block layout:fragment="page-contents">
+    <div class="page-fixed with-title">
+        <div class="search-cont">
+            <!-- 조회테이블 -->
+            <div class="search">
+                <form name="csTransferManageGridForm" id="csTransferManageGridForm">
+                    <table class="search-table">
+                        <colgroup>
+                            <col width="120">
+                            <col>
+                            <col width="120">
+                            <col>
+                            <col width="120">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                        <tr>
+                            <td class="label"><strong><th:block th:text="${#messages.msg('csTransferProcessing.label.period')}"/></strong></td>
+                            <td colspan="3">
+                                <div class="input-group">
+                                    <select class="form-control" name="periodType">
+                                        <option value="0" th:text="${#messages.msg('csTransferProcessing.label.period1')}"></option>
+                                        <option value="1" th:text="${#messages.msg('csTransferProcessing.label.period2')}"></option>
+                                        <option value="2" th:text="${#messages.msg('csTransferProcessing.label.period2')}"></option>
+                                    </select>
+                                    <div class="picker-group" data-lopicker="basic" id="input-2-1">
+                                        <input type="text" class="form-control disabled" id="startDate" placeholder="" disabled="disabled">
+                                        <span class="input-group-addon">~</span>
+                                        <input type="text" class="form-control disabled" id="endDate" placeholder="" disabled="disabled">
+                                        <span class="input-group-addon" id="_sch_date_st-button"><i class="icon-calendar"></i></span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="label" th:text="${#messages.msg('csTransferProcessing.label.mvotProcStatCd')}" />
+                            <td>
+                                <select class="form-control" id="mvotProcStatCd" name="mvotProcStatCd">
+                                    <option value="" th:text="${#messages.msg('adminCommon.entirety')}"></option>
+                                    <option th:each="list : ${codeList.CS006}" th:value="${list?.cd}" th:utext="${list?.cdNm}"></option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label" th:text="${#messages.msg('csTransferProcessing.label.csMvotTypNo')}" />
+                            <td>
+                                <select class="form-control" id="csMvotTypNo" name="csMvotTypNo">
+                                    <option value="" th:text="${#messages.msg('adminCommon.entirety')}"></option>
+                                    <option th:each="list : ${csMvotTypCdList}" th:value="${list?.csMvotTypNo}" th:utext="${list?.csMvotTypNm}" th:data-memo="${list?.tmplMemo}" ></option>
+                                </select>
+                            </td>
+                            <td class="label" th:text="${#messages.msg('csTransferProcessing.label.mbr')}" />
+                            <td>
+                                <div class="input-group">
+                                    <select class="form-control" id="mbrType" name="mbrType">
+                                        <option value="" th:text="${#messages.msg('adminCommon.select')}"></option>
+                                        <option value="0" th:text="${#messages.msg('csTransferProcessing.label.mbrId')}"></option>
+                                        <option value="1" th:text="${#messages.msg('csTransferProcessing.label.mbrNm')}"></option>
+                                    </select>
+                                    <input type="text" class="input" id="mbrText" name="mbrText">
+                                </div>
+                            </td>
+                            <td class="label" th:text="${#messages.msg('csTransferProcessing.label.userID')}" />
+                            <td>
+                                <div class="input-group">
+                                    <select class="form-control" id="userType" name="userType">
+                                        <option value="0" th:text="${#messages.msg('csTransferProcessing.label.userID1')}"></option>
+                                        <option value="1" th:text="${#messages.msg('csTransferProcessing.label.userID2')}"></option>
+                                        <option value="1" th:text="${#messages.msg('csTransferProcessing.label.userID3')}"></option>
+                                    </select>
+                                    <input type="text" class="input" id="userText" name="userText">
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label" th:text="${#messages.msg('csTransferProcessing.label.ordCcnNo')}" />
+                            <td>
+                                <div class="input-group">
+                                    <select class="form-control" id="ordNoCcnNoType" name="ordNoCcnNoType">
+                                        <option value="" th:text="${#messages.msg('adminCommon.select')}"></option>
+                                        <option value="0" th:text="${#messages.msg('csTransferProcessing.label.ordNo')}"></option>
+                                        <option value="1" th:text="${#messages.msg('csTransferProcessing.label.ccnNo')}"></option>
+                                    </select>
+                                    <input type="text" class="input" id="ordNoCcnNoText" name="ordNoCcnNoText">
+                                </div>
+                            </td>
+                            <td class="label" th:text="${#messages.msg('csTransferProcessing.label.emergMvotYn')}" />
+                            <td>
+                                <select class="form-control" id="emergMvotYn" name="emergMvotYn">
+                                    <option value="" th:text="${#messages.msg('adminCommon.entirety')}"></option>
+                                    <option value="Y" th:text="${#messages.msg('csTransferProcessing.label.Y')}"></option>
+                                    <option value="N" th:text="${#messages.msg('csTransferProcessing.label.N')}"></option>
+                                </select>
+                            </td>
+                            <td class="label"></td>
+                            <td></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+            <!-- //조회테이블 -->
+            <!-- 검색버튼 -->
+            <div class="button-group search-btn">
+                <a href="#" class="btn_gblue button white" id="btn_init">
+                    <span class="text" th:text="${#messages.msg('adminCommon.button.init')}" />
+                </a>
+                <a href="#" class="btn_blue button dark" id="btn_list">
+                    <span class="text" th:text="${#messages.msg('adminCommon.button.search')}" />
+                </a>
+            </div>
+            <!-- //검색버튼 -->
+            <!-- 리얼그리드 -->
+            <div class="grid-cont">
+                <div class="grid" style="overflow: hidden;">
+                    <div class="grid-head">
+                        <div class="title-area">
+                            <h2 class="title" th:text="${#messages.msg('csTransferProcessing.grid.title')}" />
+                        </div>
+                        <div class="option-area">
+                            <div class="edit-option">
+                                <div class="button-group">
+                                </div>
+                            </div>
+
+                            <div class="page-option" grid-id="csTransferManageGrid" />
+                        </div>
+                    </div>
+                    <div class="grid-body">
+                        <div id="csTransferManageGrid" realgrid ></div>
+                    </div>
+                </div>
+            </div>
+            <!-- //리얼그리드 -->
+
+
+            <div class="data-cont mt20" id="transInfoDetail" style ="display:none;">
+                <div class="data">
+                    <div class="data-head">
+                        <div class="left">
+                            <span class="title" th:text="${#messages.msg('csTransferProcessing.detail.title1')}"></span>
+                        </div>
+                    </div>
+                    <div class="data-body">
+                            <table class="data-table">
+                                <colgroup>
+                                    <col width="120">
+                                    <col>
+                                    <col width="120">
+                                    <col>
+                                    <col width="120">
+                                    <col>
+                                </colgroup>
+                            <tbody>
+                            <tr>
+                                 <td class="label" th:text="${#messages.msg('csTransferProcessing.detail.ccnNo')}"/>
+                                 <td>
+                                     <a><span id="detail-ccnNo" class="detailInfo"></span></a>
+                                 </td>
+                                <td class="label" th:text="${#messages.msg('csTransferProcessing.detail.acpData')}"/>
+                                 <td>
+                                         <span id="detail-acpData" class="detailInfo"></span>
+                                     </td>
+                                <td class="label" th:text="${#messages.msg('csTransferProcessing.detail.userData')}"/>
+                                 <td class="ls0">
+                                     <span id="detail-userData" class="detailInfo"></span>
+                                     <a class="mr5 vm"><img src="../../static/img/ic_phone.gif"></a><a class="vm"><img src="../../static/img/ic_sms.gif"></a>
+                                 </td>
+                            </tr>
+                            <tr>
+                                <td class="label" th:text="${#messages.msg('csTransferProcessing.detail.gbcdMedia')}"/>
+                                 <td>
+                                     <span id="detail-gbcdMedia" class="detailInfo"></span>
+                                 </td>
+                                <td class="label" th:text="${#messages.msg('csTransferProcessing.detail.accpTypNm')}"/>
+                                 <td>
+                                     <span id="detail-accpTypNm" class="detailInfo"></span>
+                                 </td>
+                                <td class="label" th:text="${#messages.msg('csTransferProcessing.detail.telNo')}"/>
+                                 <td>
+                                     <span id="detail-telNo" class="detailInfo"></span>
+                                 </td>
+                            </tr>
+                            <tr>
+                                <td class="label" th:text="${#messages.msg('csTransferProcessing.detail.ccnPrgsStatNm')}"/>
+                                <td>
+                                     <span id="detail-ccnPrgsStatNm" class="detailInfo"></span>
+                                </td>
+                                <td class="label" th:text="${#messages.msg('csTransferProcessing.detail.cnslTypText')}"/>
+                                <td>
+                                     <span id="detail-cnslTypText" class="detailInfo"></span>
+                                </td>
+                                <td class="label" th:text="${#messages.msg('csTransferProcessing.detail.obTypNm')}"/>
+                                <td>
+                                     <span id="detail-obTypNm" class="detailInfo"></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label" th:text="${#messages.msg('csTransferProcessing.detail.accpCont')}"/>
+                                <td colspan="5">
+                                   <span id="detail-accpCont" class="detailInfo"></span>
+                                </td>
+                            </tr>
+                            </tbody>
+                            </table>
+                     </div>
+                </div>
+                <div class="data">
+                    <div class="data-head">
+                        <div class="left">
+                            <span class="title" th:text="${#messages.msg('csTransferProcessing.detail.title2')}"></span>
+                            <div class="button-group">
+                                <a href="#" class="button inside" id="btn_temp_save">
+                                    <span class="text" th:text="${#messages.msg('csTransferProcessing.detail.btnTempSave')}"></span>
+                                </a>
+                                <a href="#" class="button inside" id="btn_complete_save">
+                                    <span class="text" th:text="${#messages.msg('csTransferProcessing.detail.btnCompleteSave')}"></span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="data-body">
+                            <table class="data-table">
+                                <colgroup>
+                                    <col width="120">
+                                    <col>
+                                    <col width="120">
+                                    <col>
+                                    <col width="120">
+                                    <col>
+                                </colgroup>
+                                <tbody>
+                                <tr>
+                                    <td class="label" th:text="${#messages.msg('csTransferProcessing.detail.csMvotTypNm')}"></td>
+                                    <td>
+                                        <span id="detail-csMvotTypNm" class="detailInfo"></span>
+                                    </td>
+                                    <td class="label" th:text="${#messages.msg('csTransferProcessing.detail.mvotProcStatNm')}"></td>
+                                    <td>
+                                        <span id="detail-mvotProcStatNm" class="detailInfo"></span>
+                                    </td>
+                                    <td class="label" th:text="${#messages.msg('csTransferProcessing.detail.emergMvotYn')}"></td>
+                                    <td class="ls0">
+                                        <span id="detail-emergMvotYn" class="detailInfo"></span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="label" th:text="${#messages.msg('csTransferProcessing.detail.reqmnNm')}"></td>
+                                    <td>
+                                        <span id="detail-reqmnNm" class="detailInfo"></span>
+                                    </td>
+                                    <td class="label" th:text="${#messages.msg('csTransferProcessing.detail.quotNm')}"></td>
+                                    <td>
+                                        <span id="detail-quotNm" class="detailInfo"></span>
+                                    </td>
+                                    <td class="label" th:text="${#messages.msg('csTransferProcessing.detail.fnshmnNm')}"></td>
+                                    <td>
+                                        <span id="detail-fnshmnNm" class="detailInfo"></span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="label" th:text="${#messages.msg('csTransferProcessing.detail.mvotReqDtm')}"></td>
+                                    <td>
+                                        <span id="detail-mvotReqDtm" class="detailInfo"></span>
+                                    </td>
+                                    <td class="label" th:text="${#messages.msg('csTransferProcessing.detail.quotDtm')}"></td>
+                                    <td>
+                                        <span id="detail-quotDtm" class="detailInfo"></span>
+                                    </td>
+                                    <td class="label" th:text="${#messages.msg('csTransferProcessing.detail.fnshDtm')}"></td>
+                                    <td>
+                                        <span id="detail-fnshDtm" class="detailInfo"></span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="label" th:text="${#messages.msg('csTransferProcessing.detail.mvotReqCont')}"></td>
+                                    <td colspan="5">
+                                        <span id="detail-mvotReqCont" class="detailInfo"></span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="label"><strong><th:block th:text="${#messages.msg('csTransferProcessing.detail.mvotAnsProcCont')}"/></strong></td>
+                                    <td colspan="5">
+                                        <textarea class="detailInfo mt5 w100" id="detail-mvotAnsProcCont" name="detail-mvotAnsProcCont" rows="5" cols="50"></textarea>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                    </div>
+                    <!-- //문의내역 -->
+                </div>
+            </div>
+
+        </div>
+        <!--//데이터테이블 -->
+    </div>
+    </div>
+</th:block>
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        var loginRequest = [[${loginRequest}]];
+        var detailInfo = {};
+        /*]]>*/
+    </script>
+
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'customerservice/csTransferManageGrid.eventHandler.js?20210601000028'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'customerservice/csTransferManageGrid.provider.js?20210601000028'" ></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            csTransferManageGrid.eventhandler.init();
+        });
+    </script>
+</th:block>
+
+</body>
+</html>

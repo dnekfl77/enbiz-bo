@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.marketing.CcAeBaseTrxMapper">
+
+    <insert id="insertAppreciation" parameterType="ccAeBase" useGeneratedKeys="false">
+        <selectKey keyProperty="aeNo" resultType="String" order="BEFORE">
+            SELECT NEXTVAL('CC_AE_BASE_SQ01') AS aeNo
+        </selectKey>
+        INSERT INTO CC_AE_BASE (/* CcAeBaseTrxMapper.insertAppreciation */
+                    AE_NO
+                  , AE_NM
+                  , ADD_EVT_TYP_CD
+                  , AE_STR_DTM
+                  , AE_END_DTM
+                  , PAY_STR_DT
+                  , PAY_END_DT
+                  , APLY_STR_TM
+                  , APLY_END_TM
+                  , AE_PRGS_STAT_CD
+                  , MBR_TYP_CD
+                  , AE_DESC
+                  , SYS_REG_ID
+                  , SYS_REG_DTM
+                  , SYS_MOD_ID
+                  , SYS_MOD_DTM
+                  , TM_EVT_YN
+             )
+             VALUES (
+                    #{aeNo}
+                  , #{aeNm}
+                  , #{addEvtTypCd}
+                  , TO_TIMESTAMP(#{aeStrDtm}||'00', 'YYYYMMDDHH24MISS')
+                  , TO_TIMESTAMP(#{aeEndDtm}||'59', 'YYYYMMDDHH24MISS')
+                  , #{payStrDt}
+                  , #{payEndDt}
+                  , #{aplyStrTm}
+                  , #{aplyEndTm}
+                  , #{aePrgsStatCd}
+                  , #{mbrTypCd}
+                  , #{aeDesc}
+                  , #{sysRegId}
+                  , now()
+                  , #{sysModId}
+                  , now()
+                  , #{tmEvtYn}
+             )
+    </insert>
+
+    <update id="updateAppreciation" parameterType="ccAeBase">
+        UPDATE CC_AE_BASE
+           SET /* CcAeBaseTrxMapper.updateAppreciation */
+               AE_NM = #{aeNm}
+             , ADD_EVT_TYP_CD = #{addEvtTypCd}
+             , AE_STR_DTM = TO_TIMESTAMP(#{aeStrDtm}||'00', 'YYYYMMDDHH24MISS')
+             , AE_END_DTM = TO_TIMESTAMP(#{aeEndDtm}||'59', 'YYYYMMDDHH24MISS')
+             , PAY_STR_DT = #{payStrDt}
+             , PAY_END_DT = #{payEndDt}
+             , APLY_STR_TM = #{aplyStrTm}
+             , APLY_END_TM = #{aplyEndTm}
+             , AE_PRGS_STAT_CD = #{aePrgsStatCd}
+             , MBR_TYP_CD = #{mbrTypCd}
+             , AE_DESC = #{aeDesc}
+             , SYS_MOD_ID = #{sysModId}
+             , SYS_MOD_DTM = now()
+             , TM_EVT_YN = #{tmEvtYn}
+         WHERE AE_NO = #{aeNo}
+    </update>
+
+    <insert id="insertAplyMediaInfo" parameterType="ccAeAplyMediaInfo" useGeneratedKeys="false">
+        INSERT INTO CC_AE_APLY_MEDIA_INFO (/* CcAeBaseTrxMapper.insertAplyMediaInfo */
+                    AE_NO
+                  , APLY_PSB_MEDIA_CD
+                  , SYS_REG_ID
+                  , SYS_REG_DTM
+                  , SYS_MOD_ID
+                  , SYS_MOD_DTM
+               )
+             VALUES (
+                   #{aeNo}
+                  , #{aplyPsbMediaCd}
+                  , #{sysRegId}
+                  , now()
+                  , #{sysModId}
+                  , now()
+             )
+    </insert>
+
+    <insert id="insertCcAeFvrInfo" parameterType="ccAeFvrInfo" useGeneratedKeys="false">
+        INSERT INTO CC_AE_FVR_INFO (/* CcAeBaseTrxMapper.insertCcAeFvrInfo */
+                    AE_NO
+                  , AE_FVR_SEQ
+                  , APLY_MIN_AMT
+                  , GOODS_NO
+                  , SYS_REG_ID
+                  , SYS_REG_DTM
+                  , SYS_MOD_ID
+                  , SYS_MOD_DTM
+               )
+             VALUES (
+                    #{aeNo}
+                  , #{aeFvrSeq}
+                  , #{aplyMinAmt}
+                  , #{goodsNo}
+                  , #{sysRegId}
+                  , now()
+                  , #{sysModId}
+                  , now()
+             )
+    </insert>
+
+    <insert id="insertCcAeAplyInfo" parameterType="ccAeAplyInfo" useGeneratedKeys="false">
+        INSERT INTO CC_AE_APLY_INFO (/* CcAeBaseTrxMapper.insertCcAeAplyInfo */
+                    AE_NO
+                  , FVR_APLY_GB_CD
+                  , FVR_APLY_TYP_CD
+                  , FVR_TGT_NO
+                  , SYS_REG_ID
+                  , SYS_REG_DTM
+                  , SYS_MOD_ID
+                  , SYS_MOD_DTM
+               )
+             VALUES (
+                    #{aeNo}
+                  , #{fvrAplyGbCd}
+                  , #{fvrAplyTypCd}
+                  , #{fvrTgtNo}
+                  , #{sysRegId}
+                  , now()
+                  , #{sysModId}
+                  , now()
+             )
+    </insert>
+
+    <delete id="deleteAplyMediaInfo"  parameterType="ccAeAplyMediaInfo">
+        DELETE /* CcAeBaseTrxMapper.deleteAplyMediaInfo */
+          FROM CC_AE_APLY_MEDIA_INFO
+         WHERE AE_NO = #{aeNo}
+    </delete>
+
+    <delete id="deleteCcAeFvrInfo"  parameterType="ccAeFvrInfo">
+        DELETE /* CcAeBaseTrxMapper.deleteCcAeFvrInfo */
+          FROM CC_AE_FVR_INFO
+         WHERE AE_NO = #{aeNo}
+    </delete>
+
+    <delete id="deleteCcAeAplyInfo"  parameterType="ccAeAplyInfo">
+        DELETE /* CcAeBaseTrxMapper.deleteCcAeAplyInfo */
+          FROM CC_AE_APLY_INFO
+         WHERE AE_NO = #{aeNo}
+    </delete>
+
+    <delete id="deleteAppreciation"  parameterType="ccAeBase">
+        DELETE /* CcAeBaseTrxMapper.deleteAppreciation */
+          FROM CC_AE_BASE
+         WHERE AE_NO = #{aeNo}
+    </delete>
+
+</mapper>
+
+

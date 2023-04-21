@@ -1,0 +1,105 @@
+<!--
+* 프로그램명 : 예약상품이력조회
+* 작 성 일 : 2021.04.19
+* 작 성 자 : 윤성원
+* 수 정 자 : 홍혜리
+* 버    전 : 1.0
+* 개    요 : 상품관리 > 상품정보관리 > 예약상품관리 예약상품이력조회 popup
+* 이    력 : 2021.09.30 프레임워크 이전
+-->
+<html lang="ko-KR"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-update-layout}">
+<body>
+<th:block layout:fragment="header-area">
+    <div class="header">
+        <h1 class="title" th:text="${#messages.msg('reservationGoodsMgmt.reservationGoodsHistory.title')}"></h1>
+    </div>
+</th:block>
+<th:block layout:fragment="data-area">
+    <div class="data">
+        <div class="data-head">
+            <div class="left">
+                <span class="title">
+                    <th:block th:text="${#messages.msg('reservationGoodsMgmt.reservationGoodsHistory.goodsInfo.title')}"/>
+                </span>
+            </div>
+        </div>
+        <div class="data-body">
+            <table class="data-table">
+                <colgroup>
+                    <col width="120">
+                    <col>
+                    <col width="120">
+                    <col>
+                </colgroup>
+                <tbody>
+                    <tr>
+                        <td class="label">
+                            <th:block th:text="${#messages.msg('reservationGoodsMgmt.reservationGoodsHistory.goodsInfo.label.goodsNo')}"/>
+                        </td>
+                        <td>
+                            <span th:text="${goodsInfo.goodsNo}"></span>
+                        </td>
+                        <td class="label">
+                            <th:block th:text="${#messages.msg('reservationGoodsMgmt.reservationGoodsHistory.goodsInfo.label.goodsNm')}"/>
+                        </td>
+                        <td>
+                            <span th:text="${goodsInfo.goodsNm}"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">
+                            <th:block th:text="${#messages.msg('reservationGoodsMgmt.reservationGoodsHistory.goodsInfo.label.md')}"/>
+                        </td>
+                        <td>
+                            <span th:text="${goodsInfo.md}"></span>
+                        </td>
+                        <td class="label">
+                            <th:block th:text="${#messages.msg('reservationGoodsMgmt.reservationGoodsHistory.goodsInfo.label.entrNm')}"/>
+                        </td>
+                        <td>
+                            <span th:text="${goodsInfo.entrNm}"></span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="grid-cont">
+        <div class="grid">
+            <div class="grid-head">
+                <div class="title-area">
+                    <h2 class="title" th:text="${#messages.msg('reservationGoodsMgmt.reservationGoodsHistory.grid.title')}"></h2>
+                </div>
+                <div class="option-area pd0 h0"></div>
+                <div class="page-option" grid-id="reservationGoodsHistoryGrid"/>
+            </div>
+            <div class="grid-body">
+                <div id="reservationGoodsHistoryGrid" class="" realgrid ></div>
+            </div>
+        </div>
+    </div>
+</th:block>
+<th:block layout:fragment="button-area">
+    <div class="button-group search-btn">
+        <a href="#" class="button" id="btn_close">
+            <span class="text" th:text="${#messages.msg('adminCommon.button.close')}"></span>
+        </a>
+    </div>
+</th:block>
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        var goodsInfo = [[${goodsInfo}]];
+    </script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/reservationGoodsHistoryGrid.eventHandler.js?20211005'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/reservationGoodsHistoryGrid.provider.js?20211005'" ></script>
+    <script type="text/javascript">
+        $(function() {
+            reservationGoodsHistoryGrid.eventhandler.init();
+        });
+    </script>
+</th:block>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!--
+* 프로그램명 : 평가항목 조회 팝업
+* 작 성 일 : 2021.07.08
+* 작 성 자 : 홍혜리
+* 수 정 자 : 홍혜리
+* 버    전 : 1.0
+* 개    요 : 평가항목 조회 팝업
+* 이    력 : 2021.09.15 프레임워크 이전
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-layout}">
+<body>
+
+<!--Title Area-->
+<th:block layout:fragment="popup-title-area">
+    <th:block layout:insert="~{fragments/popup/popup-title :: popup-title}"
+              th:with="title=${#messages.msg('reviewEvaluationItemMgmt.reviewEvaluationItemListPopup.title')}"></th:block>
+</th:block>
+<!--Title Area-->
+
+<!--Search Area-->
+<th:block layout:fragment="popup-search-area">
+    <div class="search">
+        <form name="reviewEvaluationItemListForAddForm" id="reviewEvaluationItemListForAddForm">
+            <table class="search-table">
+                <colgroup>
+                    <col width="120">
+                    <col>
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td class="label" th:text="${#messages.msg('reviewEvaluationItemMgmt.reviewEvaluationItemListPopup.search.label.evltItemNm')}"></td>
+                    <td>
+                        <input class="input inputtxt w60" type="text" name="evltItemNm"/>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+</th:block>
+<!--Search Area-->
+
+<!--Search Button Area-->
+<th:block layout:fragment="popup-search-button-area">
+    <th:block layout:insert="~{fragments/popup/popup-btn :: popup-search-btn}"/>
+</th:block>
+<!--Search Button Area-->
+
+<!--List Area-->
+<th:block layout:fragment="popup-List-area">
+    <div class="grid">
+        <div class="grid-head" style="overflow: hidden;">
+            <div class="title-area">
+                <h2 class="title" th:text="${#messages.msg('reviewEvaluationItemMgmt.reviewEvaluationItemListPopup.grid.title')}"></h2>
+            </div>
+            <div class="option-area">
+                <div class="page-option" grid-id="reviewEvaluationItemListForAddGrid">
+                </div>
+            </div>
+        </div>
+        <div class="grid-body with-head">
+            <div id="reviewEvaluationItemListForAddGrid" class="rg-root rg-grid" realgrid></div>
+        </div>
+    </div>
+</th:block>
+<!--List Area-->
+
+<!--List Button Area-->
+<th:block layout:fragment="popup-List-button-area">
+    <th:block layout:insert="~{fragments/popup/popup-btn :: popup-List-btn}"/>
+</th:block>
+<!--List Button Area-->
+
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        var _gridType = 'N';
+        var _evltItemNoList = [[${evltItemNoList}]];
+
+    </script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/reviewEvaluationItemListForAddGrid.eventHandler.js?20210915'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/reviewEvaluationItemListForAddGrid.provider.js?20210915'" ></script>
+    <script type="text/javascript">
+        $(function(){
+            reviewEvaluationItemListForAddGrid.eventhandler.init();
+        });
+    </script>
+</th:block>
+</body>
+</html>

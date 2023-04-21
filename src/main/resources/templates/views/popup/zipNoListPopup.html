@@ -1,0 +1,105 @@
+<!--
+* 프로그램명 : 우편번호 조회 팝업
+* 작 성 일 : 2021.02.26
+* 작 성 자 : 윤성원
+* 수 정 자 : 홍혜리
+* 버    전 : 1.0
+* 개    요 : 우편번호 조회 팝업
+* 이    력 : 2021.08.02 단일선택시 적용방식 수정
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-layout}">
+<body>
+
+<!--Title Area-->
+<th:block layout:fragment="popup-title-area">
+    <th:block layout:insert="~{fragments/popup/popup-title :: popup-title}"
+              th:with="title=${#messages.msg('baseInfoMgmt.label.popup.zipNoListPopup.title')}"></th:block>
+</th:block>
+<!--Title Area-->
+
+<!--Search Area-->
+<th:block layout:fragment="popup-search-area">
+    <div class="search">
+            <form name="zipNoGridListForm" id="zipNoGridListForm">
+                <table class="search-table">
+                    <colgroup>
+                        <col style="width:20%;" />
+                        <col style="width:80%;" />
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <td class="label"><strong><th:block th:text="${#messages.msg('baseInfoMgmt.label.popup.zipNoListPopup.search.label.roadNm')}"/></strong></td>
+                        <td>
+                            <input class="input inputtxt" type="text" name="zipNoRoadNm" id="zipNoRoadNm" maxlength="100"/>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </form>
+            <div class="comment-pop">
+                <ul class="list-info left">
+                  <li><span class="t-wid">도로명+건물번호</span><u>월드컵북로 396</u></li>
+                  <li><span class="t-wid">건물명</span><u>누리꿈스퀘어</u></li>
+                  <li><span class="t-wid">지역명(동/리)+번지</span><u>상암동 1605</u></li>
+                  <li><span class="t-wid">지역명(동/리)+건물명</span><u>상암동 1605 누리꿈 스퀘어</u></li>
+                </ul>
+              </div>
+    </div>
+</th:block>
+<!--Search Area-->
+ <!-- comment -->
+  <!-- //comment -->
+<!--Search Button Area-->
+<th:block layout:fragment="popup-search-button-area">
+    <th:block layout:insert="~{fragments/popup/popup-btn :: popup-search-btn}"/>
+</th:block>
+<!--Search Button Area-->
+
+<!--List Area-->
+<th:block layout:fragment="popup-List-area">
+        <div class="grid">
+            <div class="grid-head" style="overflow: hidden;">
+                <div class="title-area">
+                    <h2 class="title" th:text="${#messages.msg('baseInfoMgmt.label.popup.zipNoListPopup.grid.title')}"></h2>
+                </div>
+                <div class="option-area">
+	                <div class="page-option" grid-id="zipNoListGrid"></div>
+	            </div>
+            </div>
+            <div class="grid-body with-head">
+                <div class="rg-root rg-grid" id="zipNoListGrid" realgrid ></div>
+            </div>
+        </div>
+</th:block>
+<!--List Area-->
+
+<!--List Button Area-->
+<th:block layout:fragment="popup-List-button-area">
+    <th:block layout:insert="~{fragments/popup/popup-btn :: popup-List-btn}"/>
+</th:block>
+
+
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        var _gridType               = [[${requestData.argSelectType}]]; // 선택구분값이 있을경우 필수값
+        var _checkMsg = x2coMessage.getMessage( {
+            roadNm  : 'baseInfoMgmt.label.popup.zipNoListPopup.alert.msg.checkRoadNmMsg'
+        });
+        /*]]>*/
+    </script>
+
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'popup/popup.zipNoList.zipNoListGrid.eventHandler.js?20210802'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'popup/popup.zipNoList.zipNoListGrid.provider.js?202103050000'" ></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            zipNoListGrid.eventhandler.init();
+        });
+    </script>
+</th:block>
+</body>
+</html>

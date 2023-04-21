@@ -1,0 +1,141 @@
+<!--
+* 프로그램명 : OB 업무등록
+* 작 성 일 : 2021.06.09
+* 작 성 자 : 윤성원
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 고객서비스 > 센터관리 > 상담할당관리 > OB 업무등록
+* 이    력 :
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-layout}">
+<body>
+<!--Title Area-->
+<th:block layout:fragment="popup-title-area">
+    <th:block layout:insert="~{fragments/popup/popup-title :: popup-title}"
+              th:with="title=${#messages.msg('csAllocationMgmt.obBusinessRegistPop.title')}"></th:block>
+</th:block>
+<!--Title Area-->
+
+<!--Search Area-->
+<th:block layout:fragment="popup-search-area">
+    <div class="search">
+        <form name="obBusinessRegistPopForm" id="obBusinessRegistPopForm">
+            <table class="search-table">
+                <colgroup>
+                    <col style="width:15%;" />
+                    <col style="width:35%;" />
+                    <col style="width:15%;" />
+                    <col style="width:35%;" />
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td class="label" th:text="${#messages.msg('csAllocationMgmt.obBusinessRegistPop.label.uploadType')}"></td>
+                    <td colspan="3">
+                        <div class="input-group">
+                            <label class="radio-inline">
+                                <input type="radio" name="uploadFormDoc" value="xls" id="file01" checked>
+                                <span th:text="${#messages.msg('displayCategoryMgmt.goodsInsert.label.fileType_xls')}"></span>
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="uploadFormDoc" value="csv" id="file02">
+                                <span th:text="${#messages.msg('displayCategoryMgmt.goodsInsert.label.fileType_csv')}"></span>
+                            </label>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label" th:text="${#messages.msg('csAllocationMgmt.obBusinessRegistPop.label.uploadSampleDown')}"></td>
+                    <td>
+                        <a href="#" class="button small gray" id="filedown"><span class="text" th:text="${#messages.msg('csAllocationMgmt.obBusinessRegistPop.btn.download')}"></span></a>
+                        <iframe name="download" width="0" height="0" style="display: none;"></iframe>
+                    </td>
+                    <td class="label" th:text="${#messages.msg('csAllocationMgmt.obBusinessRegistPop.label.uploadFile')}"></td>
+                    <td>
+                        <a href="#" class="button small gray" id="btn_file_search"><span class="text" th:text="${#messages.msg('csAllocationMgmt.obBusinessRegistPop.btn.fileSearch')}"></span></a>
+                        <input type="file" id="obBussinessBatchFile" name="obBussinessBatchFile" style="display: none;">
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+</th:block>
+<!--Search Area-->
+
+<!--List Area-->
+<th:block layout:fragment="popup-List-area">
+    <div class="grid" style="overflow: hidden;">
+        <div class="grid-head">
+            <div class="title-area">
+                <h2 class="title" th:text="${#messages.msg('csAllocationMgmt.obBusinessRegistPop.grid.title')}"></h2>
+            </div>
+            <div class="option-area">
+                <div class="edit-option">
+                    <div class="button-group">
+                        <select class="form-control" id="obTypeCodeList" name="obTypeCodeList" style="width:200px">
+                            <option th:each="list : ${obTypeCodeList}" th:value="${list?.obTypNo}" th:utext="${list?.obTypNm}" th:data-cnslTypNo="${list?.cnslTypNo}"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="page-option">
+                    <span class="total">총 <span id="obBusinessRegistPopGrid-totalCount">0</span> 건</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid-body with-head">
+            <div id="obBusinessRegistPopGrid" realgrid></div>
+        </div>
+    </div>
+    <div class="data mt10 f-upload">
+        <table class="data-table">
+            <colgroup>
+                <col style="width:33%">
+                <col style="width:33%">
+                <col style="width:34%">
+            </colgroup>
+            <thead>
+            <tr>
+                <th>총 항목수</th>
+                <th>업로드 성공</th>
+                <th>업로드 실패</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td><span id="total_count">0</span></td>
+                <td><span id="complate_count">0</span></td>
+                <td><span id="error_count">0</span></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</th:block>
+<!--List Area-->
+
+
+<!--List Button Area-->
+<th:block layout:fragment="popup-List-button-area">
+    <th:block layout:insert="~{fragments/popup/popup-btn :: popup-List-btn}"/>
+</th:block>
+
+<!-- Additional Script -->
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+
+    </script>
+
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'customerservice/obBusinessRegistPopGrid.eventHandler.js?20210609000010'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'customerservice/obBusinessRegistPopGrid.provider.js?20210609000010'" ></script>
+
+    <script th:inline="javascript">
+        $(document).ready(function() {
+            obBusinessRegistPopGrid.eventhandler.init();
+        });
+    </script>
+</th:block>
+</body>
+</html>

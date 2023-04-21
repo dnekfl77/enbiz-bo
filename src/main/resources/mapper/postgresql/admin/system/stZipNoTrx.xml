@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enbiz.bo.app.repository.system.StZipNoTrxMapper">
+
+    <!--
+	제 목 :우편번호 수정
+	작성자 : 이광진
+	작성일 : 2021.02.25
+	params : ZipNoMgmtCudRequest
+	설 명 : 우편번호 상세 내용 수정
+	-->
+    <update id="updateStZipNo" parameterType="StZipNo">
+        UPDATE ST_ZIP_NO /* StZipNoTrx.updateStZipNo */
+           SET CTP_NM = #{ctpNm}
+             , SIG_NM = #{sigNm}
+             , HEMD_NM = #{hemdNm}
+             , LNBR_MNNM = #{lnbrMnnm}
+             , LNBR_SLNO = #{lnbrSlno}
+             , ROAD_NM = #{roadNm}
+             , BULD_MNNM = #{buldMnnm}
+             , BULD_SLNO = #{buldSlno}
+             , POS_BUL_NM = #{posBulNm}
+             , SYS_MOD_DTM = now()
+             , SYS_MOD_ID = #{sysModId}
+         WHERE ZIP_NO_SEQ = #{zipNoSeq}
+    </update>
+
+    <!--
+	제 목 :우편번호 사용여부 수정
+	작성자 : 이광진
+	작성일 : 2021.02.25
+	params : ZipNoMgmtCudRequest
+	설 명 : 우편번호 삭제 시 사용여부만 수정
+	-->
+    <update id="deleteStZipNo" parameterType="StZipNo">
+        UPDATE ST_ZIP_NO    /* StZipNoTrx.deleteStZipNo */
+           SET USE_YN = 'N',
+               SYS_MOD_DTM = now(),
+               SYS_MOD_ID = #{sysModId}
+         WHERE ZIP_NO_SEQ = #{zipNoSeq}
+    </update>
+</mapper>

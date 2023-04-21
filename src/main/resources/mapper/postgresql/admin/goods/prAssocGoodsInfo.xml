@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enbiz.bo.app.repository.goods.PrAssocGoodsInfoMapper">
+    <select id="getAssociatedGoodsList" parameterType="java.lang.String" resultType="AssociatedGoodsResponse">
+        SELECT GI.GOODS_NO     /* prAssocGoodsInfo.getAssociatedGoodsList */
+             , GI.ASCT_GOODS_NO
+             , GB.GOODS_NM AS ASCT_GOODS_NM
+             , GI.ASCT_GB_CD
+             , GI.SORT_SEQ
+             , FN_GET_CODENAME('PR005', GB.SALE_STAT_CD) AS SALE_STAT_CD_NM
+             , GI.SYS_REG_ID
+             , TO_CHAR(GI.SYS_REG_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_REG_DTM
+             , GI.SYS_MOD_ID
+             , TO_CHAR(GI.SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+          FROM PR_ASSOC_GOODS_INFO GI
+             , PR_GOODS_BASE GB
+         WHERE GI.GOODS_NO = #{goodsNo}
+           AND GB.GOODS_NO = GI.ASCT_GOODS_NO
+         ORDER BY GI.SORT_SEQ
+    </select>
+</mapper>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.customerservice.CsCcnProcAempHistTrxMapper">
+
+    <insert id="insertCsCcnProcAempHist" parameterType="CsCcnProcAempHist">
+        INSERT INTO CS_CCN_PROC_AEMP_HIST( /* csCcnProcAempHist.insertCsCcnProcAempHist */
+                    CCN_NO
+                  , STAT_CHG_DTM
+                  , AEMP_ID
+                  , SYS_REG_ID
+                  , SYS_REG_DTM
+                  , SYS_MOD_ID
+                  , SYS_MOD_DTM)
+            VALUES(
+                    #{ccnNo}
+                  , NOW()
+                  , #{aempId}
+                  , #{sysRegId}
+                  , NOW()
+                  , #{sysModId}
+                  , NOW()
+            )
+    </insert>
+
+</mapper>

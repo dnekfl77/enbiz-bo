@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.customerservice.CsCnslTmplInfoTrxMapper">
+	<delete id="deleteCsCnslTmplInfoList" parameterType="CsCnslTmplInfo">
+		DELETE                  /* csCnslTmplInfoTrx.deleteCsCnslTmplInfoList */
+		FROM 	CS_CNSL_TMPL_INFO
+		WHERE 	CNSL_AEMP_ID = #{cnslAempId}
+		AND 	CNSL_TMPL_NO = #{cnslTmplNo}
+	</delete>
+	<insert id="insertCsCnslTmplInfo" parameterType="CsCnslTmplInfo">
+		<selectKey keyProperty="cnslTmplNo" resultType="String" order="BEFORE">
+			SELECT NEXTVAL('CS_CNSL_TMPL_INFO_SQ01') AS cnslTmplNo
+		</selectKey>
+		INSERT INTO CS_CNSL_TMPL_INFO (  /* csCnslTmplInfoTrx.csCnslTmplInfoInsert */
+				  CNSL_AEMP_ID
+				, CNSL_TMPL_NO
+				, CNSL_GB_CD
+				, CNSL_TYP_CD
+				, TMPL_NM
+				, TMPL_CONT
+				, SYS_REG_ID
+				, SYS_REG_DTM
+				, SYS_MOD_ID
+				, SYS_MOD_DTM
+		) VALUES (
+				  #{cnslAempId}
+				, #{cnslTmplNo}
+				, #{cnslGbCd}
+				, #{cnslTypCd}
+				, #{tmplNm}
+				, #{tmplCont}
+				, #{sysRegId}
+				, now()
+				, #{sysModId}
+				, now()
+		)
+	</insert>
+	<update id="updateCsCnslTmplInfo" parameterType="CsCnslTmplInfo">
+		UPDATE 		CS_CNSL_TMPL_INFO                  /* csCnslTmplInfoTrx.csCnslTmplInfoUpdate */
+		SET 		CNSL_GB_CD 	= #{cnslGbCd}
+				  , CNSL_TYP_CD = #{cnslTypCd}
+				  , TMPL_NM 	= #{tmplNm}
+				  , TMPL_CONT 	= #{tmplCont}
+				  , SYS_MOD_ID 	= #{sysModId}
+				  , SYS_MOD_DTM = now()
+		WHERE 		CNSL_AEMP_ID = #{cnslAempId}
+		AND 		CNSL_TMPL_NO = #{cnslTmplNo}
+	</update>
+</mapper>
+
+

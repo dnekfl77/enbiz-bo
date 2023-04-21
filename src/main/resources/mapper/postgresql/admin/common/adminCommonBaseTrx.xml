@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.common.AdminCommonBaseTrxMapper">
+
+    <insert id="insertInitPassWordSms" parameterType="SmsMsg">
+        <selectKey keyProperty="msgkey" resultType="long" order="BEFORE">
+            SELECT NEXTVAL('sms_msg_sq01') AS msgkey
+        </selectKey>
+        INSERT INTO SMS_MSG (   /* AdminCommonBaseTrxMapper.insertInitPassWordSms */
+               MSGKEY
+             , REQDATE
+             , STATUS
+             , TYPE
+             , PHONE
+             , CALLBACK
+             , MSG
+             , ETC1
+             , ETC2
+             , ETC3
+        ) VALUES (
+             #{msgkey}
+             , NOW()
+             , '1'
+             , '0'
+             , REPLACE(REPLACE(#{phone},'-',''),' ','')
+             , REPLACE(REPLACE(#{callback},'-',''),' ','')
+             , #{msg}
+             , ''
+             , ''
+             , ''
+        )
+    </insert>
+
+    <select id="getMaskingCUD" resultType="MaskingCUD">
+        select
+			'홍길동만만세'									as userNmKr
+			, 'William'									as userNmEn
+			, '20210318'								as userBirth
+			, '0011034168233'							as userRrn
+			, '567'										as userPhoneNum
+			, '1234'									as userMobileNum
+			, '서울특별시 종로구 사직로8길 60 (세종로)'			as userAddress
+			, '3층 304호'									as userAddressDtl
+			, '192.168.2.31'							as userIP
+			, '2001:0DB8:FFFF:FFFF:FFFF:FFFF:FFFF:FFFF'	as userIP2
+			, 'kimdd@naver.com'							as userEmail
+			, 'N.J.Kim'									as userID
+			, '1234567890'								as userActn
+			, '1234567890123456'						as userCard
+    </select>
+
+    <select id="getEncryptCUD" resultType="EncryptCUD">
+        select
+			'Bhh2286IUx7Zu+ArILz/GzbnOgbixcX/XBzp5Ayib0o='							as userNmKr
+			, '+paIGZZLWqOOnWE982Wt+g=='											as userNmEn
+			, '39743ffcfb179ceba590b68fff1a7c65a9db72b3a5ad63ee01a66c6896a07311'	as userPw
+    </select>
+
+</mapper>
+
+

@@ -1,0 +1,135 @@
+<html lang="ko-KR">
+
+<head>
+    <title>x2</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+    <link type="text/css" rel="stylesheet" href="../css/reset.css">
+    <link type="text/css" rel="stylesheet" href="../css/layout.css">
+    <link type="text/css" rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" type="text/css" href="../css/realgrid-style.css">
+    <script src="../js/libs/jquery/jquery-3.4.1.min.js"></script>
+    <script src="../js/contents.js"></script>
+</head>
+
+<body>
+    
+ <!-- toast message -->
+    <div class="toast fade show">
+        <div class="toast-body">
+          처리되었습니다
+        </div>
+      </div>
+    <div class="page-root">
+        <div class="page-title">
+            <div class="left">
+                <h1>프로그램 관리</h1>
+            </div>
+            <div class="right">
+                <div class="button-group">
+                    <a href="#" class="button white"><span class="text">목록</span></a>
+                    <a href="#" class="button disabled"><span class="text">삭제</span></a>
+                    <a href="#" class="button sky"><span class="text">저장</span></a>
+                </div>
+            </div>
+        </div>
+        <div class="page-fixed with-title">
+            <!-- page-title 가 있을경우 with-title 클래스 추가 -->
+            <div class="spinner-back">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+            <div class="search-cont">
+                <!-- 높이갚 최대일때 full-height 클래스 추가 -->
+                <!-- search -->
+                <div class="search">
+                    <table class="search-table">
+                    </table>
+                </div>
+                <!-- //search -->
+
+                <div class="button-group search-btn">
+                    <a href="#" class="button white"><span class="text">초기화</span></a>
+                    <a href="#" class="button dark"><span class="text">조회</span></a>
+                </div>
+                <!-- //search-btn -->
+
+                <!-- grid -->
+                <div class="grid-cont col-50">
+                    <div class="grid">
+                        <div class="grid-head">
+                        </div>
+                        <!-- //grid-head -->
+
+                        <div class="grid-body with-head" id="realgrid" realgrid>realgrid area</div>
+                        <!-- //grid-body -->
+                    </div>
+                </div>
+                <!-- //grid -->
+
+                <!-- data -->
+                <div class="data-cont">
+                    <div class="data">
+                        <div class="data-head">
+                        </div>
+                        <!-- //data-head -->
+
+                        <div class="data-body">
+                        </div>
+                        <!-- //data-body -->
+                    </div>
+                </div>
+                <!-- //data -->
+
+            </div>
+            <!-- //search-cont -->
+        </div>
+        <!-- //page-fixed -->
+    </div>
+
+    <!-- radio -->
+    <label class="radio-inline"><input type="radio" name="" value="" checked="checked">전체</label>
+    <label class="radio-inline"><input type="radio" name="" value="">전체</label>
+
+    <!-- input -->
+    <input type="text" name="" value="" class="price input"><em>이상 ~</em>
+    <input type="text" name="" value="" class="input">
+    <input type="text" name="" value="" class="input disabled" readonly>
+
+    <!-- checkbox -->
+    <div class="checkbox">
+        <label class="checkbox-inline"><input type="checkbox" name="" value="all"checked="checked">전체</label>
+        <label><input class="checkbox-inline" type="checkbox" name="">신용카드</label>
+    </div>
+
+    <!-- select -->
+    <select class="form-control">
+        <option value="">option1</option>
+    </select>
+
+    <!-- 검색입력 + 지우개 -->
+    <div class="input-group">
+        <input type="text" id="" class="input disabled" readonly>
+        <a href="javascript:;" class="button small" onclick=""><i class="icon-sarch"></i></a>
+        <a href="javascript:;" class="button small"><i class="icon-clear"></i></a>
+    </div>
+
+    <!-- 달력 -->
+    <div class="picker-group">
+        <input type="text" class="form-control disabled" readonly>
+        <span class="input-group-addon">~</span>
+        <input type="text" class="form-control disabled" readonly>
+        <span class="input-group-addon"><i class="icon-calendar"></i></span>
+    </div>
+    <select class="form-control">
+        <option value="">최근7일</option>
+        <option value="">최근15일</option>
+        <option value="">최근30일</option>
+    </select>
+
+    <span class="tip warning">기간 종료 후 일반판매로 전환 (미 체크시 품절)</span>
+</body>
+
+</html>

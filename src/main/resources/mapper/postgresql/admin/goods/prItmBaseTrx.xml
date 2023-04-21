@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.goods.PrItmBaseTrxMapper">
+    <update id="updatePrItemBase" parameterType="PrItmBase">
+        UPDATE PR_ITM_BASE /* prItmBaseTrx.updatePrItemBase */
+           SET STK_QTY  = #{stkQty}
+             , ITM_SALE_STAT_CD = #{itmSaleStatCd}
+             , SOUT_NOTI_YN = #{soutNotiYn}
+             , SOUT_NOTI_STD_QTY = #{soutNotiStdQty}
+             , SOUT_CAUS_CD = #{soutCausCd}
+             , LGC_ITM_NO = #{lgcItmNo}
+             , DISP_SEQ = #{dispSeq}
+             , SYS_MOD_ID = #{sysModId}
+             , SYS_MOD_DTM = NOW()
+         WHERE GOODS_NO = #{goodsNo}
+           AND ITM_NO = #{itmNo}
+    </update>
+
+    <update id="updatePrItemStkQty" parameterType="PrItmBase">
+        UPDATE PR_ITM_BASE /* prItmBaseTrx.updatePrItemStkQty */
+           SET STK_QTY  = #{stkQty}
+             , SYS_MOD_ID = #{sysModId}
+             , SYS_MOD_DTM = now()
+         WHERE GOODS_NO = #{goodsNo}
+           AND ITM_NO = #{itmNo}
+    </update>
+</mapper>
+
+

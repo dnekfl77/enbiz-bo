@@ -1,0 +1,134 @@
+<!--
+* 프로그램명 : 상담유형관리
+* 작 성 일 : 2021.05.06
+* 작 성 자 : 윤성원
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 고객서비스 > 센터관리 > 상담유형관리
+* 이    력 :
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/page-realgrid-layout}">
+
+<head>
+    <title>sub title</title>
+</head>
+<body>
+<th:block layout:fragment="page-title-area">
+    <div class="page-title">
+        <div class="left">
+            <h1 th:text="${#messages.msg('counselingTypeMgmt.title')}"></h1>
+        </div>
+    </div>
+</th:block>
+<th:block layout:fragment="page-contents">
+    <div class="page-fixed with-title">
+        <!--layer Popop-->
+        <div class="layer-popup fix-center" id="layerPop-memo">
+            <div class="scroll-wrap">
+                <div class="win-popup account white">
+                    <div class="login-wrap  editor">
+                        <div class="box">
+                            <h1 class="memo" th:text="${#messages.msg('counselingTypeMgmt.layer.popup.title')}">팝업제목</h1>
+                            <span id="sub-title" class="category"></span>
+                            <button class="btn-close">×</button>
+                            <div class="cont">
+                                <textarea class="textarea" name="memo-text" id="memo-text" style="height: 80px;"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- button-group -->
+                    <div class="button-group mt0">
+                        <a href="javascript:;" class="button white" id="memo-cancel">
+                            <span class="text">취소</span>
+                        </a>
+                        <a href="javascript:;" class="button"  id="memo-apply">
+                            <span class="text">적용</span>
+                        </a>
+                    </div>
+                    <!-- //button-group -->
+                </div>
+            </div>
+        </div>
+        <!--layer Popop-->
+
+
+        <div class="data-cont col-30 full-height">
+            <div class="data full-height">
+                <div class="data-head">
+                    <div class="left"><span class="title" th:text="${#messages.msg('counselingTypeMgmt.tree.title')}"></span></div>
+                </div>
+                <div class="data-body">
+                    <!-- Ztree -->
+                    <ul id="consultationTypeList" class="ztree"></ul>
+                    <!-- Ztree -->
+                </div>
+            </div>
+
+            <div class="data-cont full-height">
+                <form id="consultationTypeListForm"></form>
+                <div class="grid full-height">
+                    <div class="grid-head">
+                        <div class="title-area">
+                            <h2 class="title" th:text="${#messages.msg('counselingTypeMgmt.grid.title')}"></h2>
+                        </div>
+                        <div class="option-area">
+                            <div class="edit-option">
+                                <div class="button-group">
+                                    <a href="#" class="button inside" id="btn_grid_add">
+                                        <span class="text" th:text="${#messages.msg('counselingTypeMgmt.grid.btn.add')}" />
+                                    </a>
+                                    <a href="#" class="button inside" id="btn_grid_reset">
+                                        <span class="text" th:text="${#messages.msg('adminCommon.grid.button.cancel')}" />
+                                    </a>
+                                    <a href="#" class="button inside" id="btn_grid_save">
+                                        <span class="text"th:text="${#messages.msg('adminCommon.grid.button.save')}" />
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="page-option" grid-id="consultationTypeListGrid"></div>
+                        </div>
+                    </div>
+                    <div class="grid-body with-head vh1">
+                        <div id="consultationTypeListGrid" class="rg-root rg-grid vh1" realgrid></div>
+                    </div>
+                </div>
+                <!-- 하위표준분류목록 그리드 -->
+            </div>
+        </div>
+    </div>
+</th:block>
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        var _values = [];
+        var _labels = [];
+        var cs001 = [[${codeList.CS001}]];
+
+        for(var data of cs001){
+            _values.push(data.cd);
+            _labels.push(data.cdNm);
+        }
+
+        _values.unshift('');
+        _labels.unshift('선택');
+
+        /*]]>*/
+    </script>
+
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'customerservice/consultationTypeListGrid.eventHandler.js?20210512000018'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'customerservice/consultationTypeListGrid.provider.js?20210512000017'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'customerservice/consultationTypeList.tree.js?20210512000000'" ></script>
+    <script th:inline="javascript">
+        $(document).ready(function() {
+            listTree.init();
+            consultationTypeListGrid.eventhandler.init();
+        });
+    </script>
+</th:block>
+
+</body>
+</html>

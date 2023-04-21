@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.customerservice.CsMvotTypCdMapper">
+    <select id="getCsTransferTypeCodeList" resultType="CsTransferTypeCodeResponse">
+        SELECT /* CsMvotTypCd.getCsTransferTypeCodeList */
+               CS_MVOT_TYP_NO
+             , CS_MVOT_TYP_NM
+             , CS_TYP_DESC
+             , TMPL_MEMO
+             , USE_YN
+          FROM CS_MVOT_TYP_CD
+         WHERE USE_YN = 'Y'
+    </select>
+
+    <sql id="transferTypeList">
+        SELECT 				/* csMvotTypCd.transferTypeList */
+                      CS_MVOT_TYP_NO
+                    , CS_MVOT_TYP_NM
+                    , CS_TYP_DESC
+                    , TMPL_MEMO
+                    , CASE WHEN TMPL_MEMO IS NULL THEN 'N'
+                          WHEN TMPL_MEMO = '' THEN 'N'
+                          ELSE 'Y' END
+                          AS TMPL_MEMO_YN
+                    , USE_YN
+                    , SYS_MOD_ID
+                    , TO_CHAR(SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+        FROM 	  	  CS_MVOT_TYP_CD
+        WHERE 	  	  USE_YN LIKE #{useYn} || '%'
+        ORDER BY 	  CS_MVOT_TYP_NM
+    </sql>
+
+    <select id="getTransferTypeList" parameterType="CsMvotTypeCodeRequest" resultType="CsTransferTypeCodeResponse">
+        <include refid="transferTypeList" />
+    </select>
+
+    <select id="getTransferTypeListCount" parameterType="CsMvotTypeCodeRequest" resultType="java.lang.Integer">
+        SELECT   /* csMvotTypCd.getTransferTypeListCount */
+                COUNT(*)
+        FROM (
+                <include refid="transferTypeList" />
+        ) T1
+    </select>
+
+    <select id="checkCsMvotTypNm" parameterType="CsMvotTypeCodeRequest" resultType="java.lang.Integer">
+        SELECT 				/* csMvotTypCd.checkCsMvotTypNm */
+                      COUNT(CS_MVOT_TYP_NM)
+        FROM 	  	  CS_MVOT_TYP_CD
+        WHERE 	  	  CS_MVOT_TYP_NM = #{csMvotTypNm}
+    </select>
+
+</mapper>

@@ -1,0 +1,50 @@
+<html lang="ko-KR">
+
+<head>
+
+    <title>X2COMMERCE</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+    <link type="text/css" rel="stylesheet" href="../css/reset.css">
+    <link type="text/css" rel="stylesheet" href="../css/layout.css">
+    <link type="text/css" rel="stylesheet" href="../css/common.css">
+    <script src="../js/libs/jquery/jquery-3.4.1.min.js"></script>
+    <script src="../js/contents.js"></script>
+</head>
+<body>
+    <a href="javascript:layerPopOpen('layerPop-sample')" class="button"><span class="text">layer popup open</span></a>
+    <div class="layer-popup fix-center" id="layerPop-sample">
+        <div class="scroll-wrap">
+            <div class="box">
+                <h1>팝업제목</h1>
+                <button class="btn-close">×</button>
+
+                <div class="cont">
+                    1. 레이어팝업의 코딩 위치는 최하단<br>
+                    2. 컨텐츠는 무조건 cont안에만 넣습니다.<br>
+                    3. 타이틀과 컨텐츠 그리고 하단버튼간의 간격은 30px로 지정<br />
+                    4. button-group 위치 무조건 준수<br />
+                    5. 팝업 컨텐츠가 윈도우보다 길어질시 자동스크롤<br />
+                    6. 기본 width 600px, 조정을 원할경우 box에 style="width:000px"로 지정가능
+                    7. 팝업호출 layerPopOpen('id'), 팝업닫기 layerPopClose('id');
+                </div>
+
+                <!-- button-group -->
+                <div class="button-group">
+                    <a href="javascript:;" class="button white"><span class="text">취소</span></a> 
+                    <a href="javascript:;" class="button"><span class="text">확인</span></a>
+                    <a href="javascript:;" class="button sky"><span class="text">저장</span></a>
+                </div>
+                <!-- //button-group -->
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function(){
+            layerPopOpen('layerPop-sample');
+        })
+    </script>
+</body>
+
+</html>

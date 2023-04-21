@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.customerservice.CsCpnsTypCdMapper">
+    <select id="getRewardTypeList" parameterType="CsCompensTypeCodeRequest" resultType="CsCompensTypeCodeResponse">
+        WITH RECURSIVE CS_CPNS_TYP_CD_HIERARCHY AS    /* csCpnsTypCd.getRewardTypeList */
+        (
+            SELECT    1 AS LEVEL
+                    , CPNS_TYP_NO
+                    , CPNS_TYP_NM
+                    , USE_YN
+                    , SORT_SEQ
+                    , UPR_CPNS_TYP_CD
+                    , CONCAT('\',SORT_SEQ||CPNS_TYP_NO) AS HIERARCHY
+                    , CONCAT('',CPNS_TYP_NM) AS HIERARCHY_TEXT
+            FROM      CS_CPNS_TYP_CD A
+            WHERE     CPNS_TYP_NO = '0'
+            UNION ALL
+            SELECT    LEVEL + 1 AS LEVEL
+                    , T1.CPNS_TYP_NO
+                    , T1.CPNS_TYP_NM
+                    , T1.USE_YN
+                    , T1.SORT_SEQ
+                    , T1.UPR_CPNS_TYP_CD
+                    , CONCAT_WS('\', T2.HIERARCHY, TRIM(TO_CHAR(T1.SORT_SEQ,'000'))||T1.CPNS_TYP_NO) AS HIERARCHY
+                    , CONCAT('',T2.HIERARCHY_TEXT,'>'||T1.CPNS_TYP_NM) AS HIERARCHY_TEXT
+            FROM      CS_CPNS_TYP_CD T1
+                    , CS_CPNS_TYP_CD_HIERARCHY T2
+            WHERE     T2.CPNS_TYP_NO = T1.UPR_CPNS_TYP_CD
+            AND       T1.USE_YN LIKE #{useYn} || '%'
+        )
+        SELECT        LEVEL
+                    , CPNS_TYP_NO
+                    , CPNS_TYP_NM
+                    , USE_YN
+                    , SORT_SEQ
+                    , UPR_CPNS_TYP_CD
+                    , HIERARCHY
+                    , HIERARCHY_TEXT
+        FROM          CS_CPNS_TYP_CD_HIERARCHY
+        ORDER BY      HIERARCHY, SORT_SEQ
+    </select>
+    <sql id="rewardTypeList">
+        SELECT 				/* csCpnsTypCd.rewardTypeList */
+                      CPNS_TYP_NO
+                    , #{level} + 1 AS LEVEL
+                    , CPNS_TYP_NM
+                    , USE_YN
+                    , SORT_SEQ
+                    , CPNS_SUB_CD
+                    , CPNS_STD_CD
+                    , CPNS_STD_RATE
+                    , MAX_PAY_LIM
+                    , CPNS_STD_DESC
+                    , CASE WHEN CPNS_STD_DESC IS NULL THEN 'N'
+                           WHEN CPNS_STD_DESC = '' THEN 'N'
+                           ELSE 'Y' END
+                      AS CPNS_STD_DESC_YN
+                    , UPR_CPNS_TYP_CD
+                    , SYS_MOD_ID
+                    , TO_CHAR(SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+        FROM 	  	  CS_CPNS_TYP_CD
+        WHERE 	  	  UPR_CPNS_TYP_CD = #{uprCpnsTypCd}
+        AND           USE_YN LIKE #{useYn} || '%'
+        ORDER BY 	  SORT_SEQ
+    </sql>
+    <select id="getLowerRewardTypeList" parameterType="CsCompensTypeCodeRequest" resultType="CsCompensTypeCodeResponse">
+        <include refid="rewardTypeList" />
+    </select>
+    <select id="getLowerRewardTypeListCount" parameterType="CsCompensTypeCodeRequest" resultType="java.lang.Integer">
+        SELECT   /* csCpnsTypCd.getLowerRewardTypeListCount */
+                COUNT(*)
+        FROM (
+                <include refid="rewardTypeList" />
+        ) T1
+    </select>
+    <sql id="csCpnsTypCdPopup">
+        SELECT        CCTC.CPNS_TYP_NO          /* csCpnsTypCd.csCpnsTypCdPopup */
+                    , (SELECT TMP.CPNS_TYP_NM FROM CS_CPNS_TYP_CD AS TMP WHERE TMP.CPNS_TYP_NO = CCTC.UPR_CPNS_TYP_CD) AS CPNS_TYP_LRG_NM
+                    , CCTC.CPNS_TYP_NM AS CPNS_TYP_SML_NM
+                    , CCTC.CPNS_SUB_CD
+                    , FN_GET_CODENAME( 'CS017', CCTC.CPNS_SUB_CD ) AS  CPNS_SUB_NM
+                    , CCTC.CPNS_STD_CD
+                    , FN_GET_CODENAME( 'CS018', CCTC.CPNS_STD_CD ) AS  CPNS_STD_NM
+                    , CCTC.CPNS_STD_RATE
+                    , CCTC.MAX_PAY_LIM
+        FROM          CS_CPNS_TYP_CD CCTC
+        WHERE         CCTC.USE_YN = 'Y'
+        AND			  CCTC.UPR_CPNS_TYP_CD != '0'
+        AND 		  CCTC.UPR_CPNS_TYP_CD IS NOT NULL
+        AND           CCTC.CPNS_TYP_NM LIKE #{cpnsTypNm} || '%'
+        ORDER BY      UPR_CPNS_TYP_CD, SORT_SEQ
+    </sql>
+    <select id="getCsCpnsTypCdPopup" parameterType="CsCompensTypeCodeRequest" resultType="CsCompensTypeCodeResponse">
+        <include refid="csCpnsTypCdPopup" />
+    </select>
+    <select id="getCsCpnsTypCdPopupCount" parameterType="CsCompensTypeCodeRequest" resultType="java.lang.Integer">
+        SELECT   /* csCpnsTypCd.getCsCpnsTypCdPopupCount */
+                COUNT(*)
+        FROM (
+                <include refid="csCpnsTypCdPopup" />
+        ) T1
+    </select>
+</mapper>

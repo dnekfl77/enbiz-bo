@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enbiz.bo.app.repository.goods.PrPregItmBaseTrxMapper">
+
+     <insert id="insertPregItem" parameterType="PrPregItmBase">
+          INSERT INTO PR_PREG_ITM_BASE ( /* prPregItmBaseTrx.insertPregItem */
+                 PREG_GOODS_NO
+               , ITM_NO
+               , STK_QTY
+               , LGC_ITM_NO
+               , SOUT_CAUS_CD
+               , SOUT_NOTI_YN
+               , SOUT_NOTI_STD_QTY
+               , OPTN_CAT_NM_1
+               , OPTN_CAT_NO_1
+               , OPTN_NM_1
+               , OPTN_NO_1
+               , OPTN_CAT_NM_2
+               , OPTN_CAT_NO_2
+               , OPTN_NM_2
+               , OPTN_NO_2
+               , OPTN_CAT_NM_3
+               , OPTN_CAT_NO_3
+               , OPTN_NM_3
+               , OPTN_NO_3
+               , OPTN_CAT_NM_4
+               , OPTN_CAT_NO_4
+               , OPTN_NM_4
+               , OPTN_NO_4
+               , OPTN_CAT_NM_5
+               , OPTN_CAT_NO_5
+               , OPTN_NM_5
+               , OPTN_NO_5
+               , SYS_REG_ID
+               , SYS_REG_DTM
+               , SYS_MOD_ID
+               , SYS_MOD_DTM
+          ) VALUES (
+                 #{pregGoodsNo}
+               , #{itmNo}
+               , #{stkQty}
+               , #{lgcItmNo}
+               , #{soutCausCd}
+               , #{soutNotiYn}
+               , #{soutNotiStdQty}
+               , #{optnCatNm1}
+               , #{optnCatNo1}
+               , #{optnNm1}
+               , #{optnNo1}
+               , #{optnCatNm2}
+               , #{optnCatNo2}
+               , #{optnNm2}
+               , #{optnNo2}
+               , #{optnCatNm3}
+               , #{optnCatNo3}
+               , #{optnNm3}
+               , #{optnNo3}
+               , #{optnCatNm4}
+               , #{optnCatNo4}
+               , #{optnNm4}
+               , #{optnNo4}
+               , #{optnCatNm5}
+               , #{optnCatNo5}
+               , #{optnNm5}
+               , #{optnNo5}
+               , #{sysRegId}
+               , now()
+               , #{sysRegId}
+               , now()
+          )
+     </insert>
+
+    <insert id="applyPregItmBase" parameterType="PrPregGoodsBase">
+        INSERT INTO PR_ITM_BASE( /* prPregItmBaseTrx.applyPregItmBase */
+               GOODS_NO
+             , ITM_NO
+             , STK_QTY
+             , LGC_ITM_NO
+             , ITM_SALE_STAT_CD
+             , DISP_SEQ
+             , SOUT_CAUS_CD
+             , SOUT_NOTI_YN
+             , SOUT_NOTI_STD_QTY
+             , OPTN_CAT_NM_1
+             , OPTN_NM_1
+             , OPTN_CAT_NM_2
+             , OPTN_NM_2
+             , OPTN_CAT_NM_3
+             , OPTN_NM_3
+             , OPTN_CAT_NM_4
+             , OPTN_NM_4
+             , OPTN_CAT_NM_5
+             , OPTN_NM_5
+             , OPTN_CAT_NO_1
+             , OPTN_NO_1
+             , OPTN_CAT_NO_2
+             , OPTN_NO_2
+             , OPTN_CAT_NO_3
+             , OPTN_NO_3
+             , OPTN_CAT_NO_4
+             , OPTN_NO_4
+             , OPTN_CAT_NO_5
+             , OPTN_NO_5
+             , SYS_REG_ID
+             , SYS_REG_DTM
+             , SYS_MOD_ID
+             , SYS_MOD_DTM
+        )
+        SELECT #{goodsNo}
+             , ITM_NO
+             , STK_QTY
+             , LGC_ITM_NO
+             , '10'
+             , DISP_SEQ
+             , SOUT_CAUS_CD
+             , SOUT_NOTI_YN
+             , SOUT_NOTI_STD_QTY
+             , OPTN_CAT_NM_1
+             , OPTN_NM_1
+             , OPTN_CAT_NM_2
+             , OPTN_NM_2
+             , OPTN_CAT_NM_3
+             , OPTN_NM_3
+             , OPTN_CAT_NM_4
+             , OPTN_NM_4
+             , OPTN_CAT_NM_5
+             , OPTN_NM_5
+             , OPTN_CAT_NO_1
+             , OPTN_NO_1
+             , OPTN_CAT_NO_2
+             , OPTN_NO_2
+             , OPTN_CAT_NO_3
+             , OPTN_NO_3
+             , OPTN_CAT_NO_4
+             , OPTN_NO_4
+             , OPTN_CAT_NO_5
+             , OPTN_NO_5
+             , #{sysRegId}
+             , now()
+             , #{sysRegId}
+             , now()
+          FROM PR_PREG_ITM_BASE
+         WHERE PREG_GOODS_NO = #{pregGoodsNo}
+    </insert>
+
+     <delete id="deletePregItmBase" parameterType="java.lang.String">
+          DELETE /* prPregItmBaseTrx.deletePregItmBase */
+            FROM PR_PREG_ITM_BASE
+           WHERE PREG_GOODS_NO = #{pregGoodsNo}
+     </delete>
+</mapper>

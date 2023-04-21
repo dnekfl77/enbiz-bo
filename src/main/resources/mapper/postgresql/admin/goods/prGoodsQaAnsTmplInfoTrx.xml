@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enbiz.bo.app.repository.goods.PrGoodsQaAnsTmplInfoTrxMapper">
+
+    <insert id="insertPrGoodsQaAnsTmplInfo" parameterType="PrGoodsQaAnsTmplInfo">
+        INSERT INTO PR_GOODS_QA_ANS_TMPL_INFO ( /* prGoodsQaAnsTmplInfoTrx.insertPrGoodsQaAnsTmplInfo */
+               ANS_TMPL_NO
+             , ANS_TMPL_NM
+             , ANS_TMPL_CONT
+             , USE_YN
+             , SYS_REG_ID
+             , SYS_REG_DTM
+             , SYS_MOD_ID
+             , SYS_MOD_DTM
+        ) VALUES (
+               NEXTVAL('PR_GOODS_QA_ANS_TMPL_INFO_SQ01')
+             , #{ansTmplNm}
+             , #{ansTmplCont}
+             , #{useYn}
+             , #{sysRegId}
+             , now()
+             , #{sysRegId}
+             , now()
+        )
+    </insert>
+
+    <update id="updatePrGoodsQaAnsTmplInfo" parameterType="PrGoodsQaAnsTmplInfo">
+        UPDATE PR_GOODS_QA_ANS_TMPL_INFO /* prGoodsQaAnsTmplInfoTrx.updatePrGoodsQaAnsTmplInfo */
+           SET ANS_TMPL_NM = #{ansTmplNm}
+             , ANS_TMPL_CONT = #{ansTmplCont}
+             , USE_YN = #{useYn}
+             , SYS_MOD_ID = #{sysModId}
+             , SYS_MOD_DTM = now()
+         WHERE ANS_TMPL_NO = #{ansTmplNo}
+    </update>
+
+    <delete id="deletePrGoodsQaAnsTmplInfo" parameterType="PrGoodsQaAnsTmplInfo">
+        DELETE /* prGoodsQaAnsTmplInfoTrx.deletePrGoodsQaAnsTmplInfo */
+          FROM PR_GOODS_QA_ANS_TMPL_INFO
+         WHERE ANS_TMPL_NO = #{ansTmplNo}
+    </delete>
+
+</mapper>

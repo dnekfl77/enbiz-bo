@@ -1,0 +1,100 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.system.StSysBbInfoTrxMapper">
+
+    <!--
+        제 목 :시스템 공지 정보 등록
+        작성자 : 이광진
+        작성일 : 2021.03.10
+        params : StSysBbInfo
+        설 명 :
+	-->
+    <insert id="insertStSysBbInfo" parameterType="StSysBbInfo">
+        INSERT  /* stSysBbInfoTrxMapper.insertStSysBbInfo */
+        INTO ST_SYS_BB_INFO(
+            BBC_NO,
+            SYS_GB_CD,
+            BB_GB_CD,
+            TITLE,
+            FXDC_YN,
+            NTC_GB_CD,
+            NTC_TYP_CD,
+            SMS_SND_YN,
+            EMAIL_SND_YN,
+            BB_YN,
+            BB_STR_DTM,
+            BB_END_DTM,
+            POP_YN,
+            POP_BB_STR_DTM,
+            POP_BB_END_DTM,
+            BBC_CONT,
+            QRY_CNT,
+            SYS_REG_ID,
+            SYS_REG_DTM,
+            SYS_MOD_ID,
+            SYS_MOD_DTM
+        ) VALUES (
+            #{bbcNo},
+            #{sysGbCd},
+            #{bbGbCd},
+            #{title},
+            #{fxdcYn},
+            #{ntcGbCd},
+            #{ntcTypCd},
+            #{smsSndYn},
+            #{emailSndYn},
+            #{bbYn},
+            to_timestamp(#{bbStrDtm}, 'YYYY-MM-DD HH24:MI:SS'),
+            to_timestamp(#{bbEndDtm}, 'YYYY-MM-DD HH24:MI:SS'),
+            #{popYn},
+            to_timestamp(#{popBbStrDtm}, 'YYYY-MM-DD HH24:MI:SS'),
+            to_timestamp(#{popBbEndDtm}, 'YYYY-MM-DD HH24:MI:SS'),
+            #{bbcCont},
+            COALESCE(#{qryCnt}, 0),
+            #{sysRegId},
+            now(),
+            #{sysModId},
+            now()
+        )
+    </insert>
+
+    <update id="updateStSysBbInfoQryCnt" parameterType="String">
+    	UPDATE ST_SYS_BB_INFO
+    	<set>
+    		QRY_CNT = QRY_CNT +1
+    	</set>
+    	WHERE
+    		BBC_NO = #{bbcNo}
+    </update>
+
+    <!--
+        제 목 :시스템 공지 정보 수정
+        작성자 : 이광진
+        작성일 : 2021.03.10
+        params : StSysBbInfo
+        설 명 :
+	-->
+    <update id="updateStSysBbInfo" parameterType="StSysBbInfo">
+        UPDATE ST_SYS_BB_INFO   /* stSysBbInfoTrxMapper.updateStSysBbInfo */
+        SET
+            BBC_NO = #{bbcNo},
+            SYS_GB_CD = #{sysGbCd},
+            BB_GB_CD = #{bbGbCd},
+            TITLE = #{title},
+            FXDC_YN = #{fxdcYn},
+            NTC_GB_CD = #{ntcGbCd},
+            NTC_TYP_CD = #{ntcTypCd},
+            SMS_SND_YN = #{smsSndYn},
+            EMAIL_SND_YN = #{emailSndYn},
+            BB_YN = #{bbYn},
+            BB_STR_DTM = to_timestamp(#{bbStrDtm}, 'YYYY-MM-DD HH24:MI:SS'),
+            BB_END_DTM = to_timestamp(#{bbEndDtm}, 'YYYY-MM-DD HH24:MI:SS'),
+            POP_YN = #{popYn},
+            POP_BB_STR_DTM = to_timestamp(#{popBbStrDtm}, 'YYYY-MM-DD HH24:MI:SS'),
+            POP_BB_END_DTM = to_timestamp(#{popBbEndDtm}, 'YYYY-MM-DD HH24:MI:SS'),
+            BBC_CONT = #{bbcCont},
+            SYS_MOD_ID = #{sysModId},
+            SYS_MOD_DTM = now()
+        WHERE BBC_NO = #{bbcNo}
+    </update>
+</mapper>

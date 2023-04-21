@@ -1,0 +1,321 @@
+<!--
+* 프로그램명 : 고객보상팝업 상세화면(update)
+* 작 성 일 : 2021.06.21
+* 작 성 자 : 윤성원
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 고객보상팝업
+* 이    력 :
+-->
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-update-layout}">
+
+<body>
+<!--Title Area-->
+<th:block layout:fragment="header-area">
+    <div class="header">
+        <h1 class="title" th:text="${#messages.msg('customerCompensMgmt.detail.title')}"></h1>
+    </div>
+</th:block>
+<!--Title Area-->
+
+<th:block layout:fragment="data-area">
+
+    <div class="data-cont">
+        <div class="data">
+            <div class="data-body bo-tnone">
+                    <table class="data-table fixed">
+                        <colgroup>
+                            <col width="120">
+                            <col>
+                            <col width="120">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                        <tr>
+                            <td class="label">
+                                <th:block th:text="${#messages.msg('customerCompensMgmt.mbrData')}" />
+                            </td>
+                            <td>
+                                <th:block th:text="${data.mbrNm} == null ? '' : |${data.mbrNm} / ${data.loginId}|"></th:block>
+                            </td>
+                            <td class="label">
+                                <th:block th:text="${#messages.msg('customerCompensMgmt.ccnNo')}" />
+                            </td>
+                            <td>
+                                <th:block th:text="${data.ccnNo} == null ? '' : ${data.ccnNo}"></th:block>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">
+                                <th:block th:text="${#messages.msg('customerCompensMgmt.ordNo')}" />
+                            </td>
+                            <td>
+                                <th:block th:text="${data.ordNo} == null ? '' : ${data.ordNo} "></th:block>
+                            </td>
+                            <td class="label">
+                                <th:block th:text="${#messages.msg('customerCompensMgmt.goodsData')}" />
+                            </td>
+                            <td>
+                                <th:block th:text="${data.goodsNo} == null ? '' : |${data.goodsNo} / ${data.goodsNm}|"></th:block>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+            </div>
+            <!-- //data-body -->
+        </div>
+    </div>
+
+    <div class="data-cont">
+        <div class="data">
+            <div class="data-head">
+                <div class="left"><span class="title"><th:block th:text="${#messages.msg('customerCompensMgmt.detail.info2.title')}"/></span>
+                </div>
+            </div>
+            <!-- //data-head -->
+
+            <div class="data-body">
+                <table class="data-table">
+                    <colgroup>
+                        <col width="120">
+                        <col>
+                        <col width="120">
+                        <col>
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <td class="label"><strong><th:block th:text="${#messages.msg('customerCompensMgmt.detail.info2.cpnsMeanCd')}"/></strong></td>
+                        <td>
+                            <select class="form-control" id="cpnsMeanCd" name="cpnsMeanCd" disabled="disabled">
+                                <option th:each="list : ${codeList.CS019}" th:value="${list?.cd}" th:utext="${list?.cdNm}"
+                                        th:selected="${data.cpnsMeanCd} == ${list?.cd}" ></option>
+                            </select>
+                        </td>
+                        <td class="label"></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="label"><strong><th:block th:text="${#messages.msg('customerCompensMgmt.detail.info2.cpnsTypNo')}"/></strong></td>
+                        <td>
+                            <div class="input-group">
+                                <input type="text" class="input disabled" id="cpnsTypNm" name="cpnsTypNm" disabled="disabled" th:value="${data.cpnsTypNm}">
+                                <input type="hidden" id="cpnsTypNo" name="cpnsTypNo">
+                                <a href="javascript:;" class="button small" id="btn-regist-cpnsTyp"><i class="icon-sarch"></i></a>
+                                <a href="#" class="button small" id="btn-reset-cpnsTyp"><i class="icon-clear"></i></a>
+                            </div>
+                        </td>
+                        <td class="label"><strong><th:block th:text="${#messages.msg('customerCompensMgmt.detail.info2.rspnGbCd')}"/></strong></td>
+                        <td>
+                            <select class="form-control" id="rspnGbCd" name="rspnGbCd" disabled="disabled">
+                                <option th:each="list : ${codeList.CS020}" th:value="${list?.cd}" th:utext="${list?.cdNm}"
+                                        th:selected="${data.rspnGbCd} == ${list?.cd}" ></option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label"><th:block th:text="${#messages.msg('customerCompensMgmt.detail.info2.cpnsStdRate')}"/></td>
+                        <td colspan="3">
+                            <input type="text" class="input disabled w50"
+                                   id="cpnsStdRate" name="cpnsStdRate" disabled="disabled"
+                                   th:value="${data.standard}">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label"><th:block th:text="${#messages.msg('customerCompensMgmt.detail.info2.maxPayLim')}"/></td>
+                        <td>
+                            <div class="input-group">
+                                <input type="text" class="input disabled price" id="maxPayLim" disabled="disabled" th:value="${data.maxPayLim}">원
+                            </div>
+                        </td>
+                        <td class="label"><strong><th:block th:text="${#messages.msg('customerCompensMgmt.detail.info2.cpnsAmt')}"/></strong></td>
+                        <td>
+                            <div class="input-group">
+                                <input type="text" class="input price" id="cpnsAmt" maxlength="10"
+                                       th:value="${data.cpnsAmt}" disabled="disabled" numberOnly>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label"><th:block th:text="${#messages.msg('customerCompensMgmt.detail.info2.payBankCd')}"/></td>
+                        <td>
+                            <select class="form-control" id="payBankCd" name="payBankCd" disabled="disabled">
+                                <option th:each="list : ${codeList.OM026}" th:value="${list?.cd}" th:utext="${list?.cdNm}"
+                                        th:selected="${data.payBankCd} == ${list?.cd}" ></option>
+                            </select>
+                        </td>
+                        <td class="label"><th:block th:text="${#messages.msg('customerCompensMgmt.detail.info2.payDepositorNm')}"/></td>
+                        <td>
+                            <div class="input-group">
+                                <input type="text" class="input" id="payDepositorNm" name="payDepositorNm" th:value="${data.payDepositorNm}"
+                                       maxlength="20" disabled="disabled">
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label"><th:block th:text="${#messages.msg('customerCompensMgmt.detail.info2.payActnNo')}"/></td>
+                        <td colspan="3">
+                            <div class="input-group">
+                                <input type="text" class="input" id="payActnNo" name="payActnNo" th:value="${data.payActnNo}"
+                                       maxlength="30" disabled="disabled" numberOnly>
+                                <a href="#" class="button inside" id="btn_accNumValid"><span class="text">계좌인증</span></a>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- //data-body -->
+        </div>
+    </div>
+
+    <div class="data-cont">
+        <div class="data">
+            <div class="data-head">
+                <div class="left"><span class="title"><th:block th:text="${#messages.msg('customerCompensMgmt.detail.info3.title')}"/></span>
+                </div>
+            </div>
+            <!-- //data-head -->
+
+            <div class="data-body">
+                <table class="data-table">
+                    <colgroup>
+                        <col width="120">
+                        <col>
+                        <col width="120">
+                        <col>
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <td class="label"><th:block th:text="${#messages.msg('customerCompensMgmt.detail.info3.cpnsAprvStatNm')}"/></td>
+                        <td>
+                            <th:block th:text="${data.cpnsAprvStatNm}"></th:block>
+                        </td>
+                        <td class="label"><th:block th:text="${#messages.msg('customerCompensMgmt.detail.info3.cpnsPayStatNm')}"/></td>
+                        <td>
+                            <th:block th:text="${data.cpnsPayStatNm}"></th:block>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- //data-body -->
+        </div>
+    </div>
+
+
+    <div class="data-cont">
+        <div class="data">
+            <div class="data-head">
+                <div class="left"><span class="title"><th:block th:text="${#messages.msg('customerCompensMgmt.detail.info4.title')}"/></span>
+                </div>
+            </div>
+            <!-- //data-head -->
+
+            <div class="data-body">
+                <table class="data-table">
+                    <colgroup>
+                        <col width="120">
+                        <col>
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <td class="label"><strong><th:block th:text="${#messages.msg('customerCompensMgmt.detail.info4.accpCont')}"/></strong></td>
+                        <td>
+                            <textarea id="accpCont" name="accpCont" class="textarea mt5 w100 dataCont" rows="5" disabled="disabled"
+                                      data-limitByte="4000" data-markId="accpContByte" th:text="${data.accpCont}"></textarea>
+                            <em><span id="accpContByte">0</span>/4000</em>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label"><th:block th:text="${#messages.msg('customerCompensMgmt.detail.info4.payReqMemo')}"/></td>
+                        <td>
+                            <textarea id="payReqMemo" name="payReqMemo" class="textarea mt5 w100 dataCont" rows="5" disabled="disabled"
+                                      data-limitByte="4000" data-markId="payReqMemoByte" th:text="${data.payReqMemo} == null ? '' : ${data.payReqMemo}"></textarea>
+                            <em><span id="payReqMemoByte">0</span>/4000</em>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- //data-body -->
+        </div>
+    </div>
+
+    <div class="layer-popup fix-center" id="layerPop-memo">
+        <div class="scroll-wrap">
+            <div class="win-popup account white">
+                <div class="login-wrap  editor">
+                    <div class="box">
+                        <h1 class="memo" th:text="${#messages.msg('integratedCounselMgmt.customerCompensRegist.detail.return')}">팝업제목</h1>
+                        <span id="sub-title" class="category"></span>
+                        <button class="btn-close">×</button>
+                        <div class="cont">
+<!--                            <textarea class="textarea" name="memo-text" id="memo-text" style="height: 80px;"></textarea>-->
+                            <textarea id="returnMemo" name="returnMemo" class="textarea mt5 w100 dataCont" rows="5" data-limitByte="4000" data-markId="returnMemoByte"></textarea>
+                            <em><span id="returnMemoByte">0</span>/4000</em>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- button-group -->
+                <div class="button-group mt0">
+                    <a href="javascript:;" class="button white" id="returnCancel">
+                        <span class="text">취소</span>
+                    </a>
+                    <a href="javascript:;" class="button"  id="returnApply">
+                        <span class="text">반려처리</span>
+                    </a>
+                </div>
+                <!-- //button-group -->
+            </div>
+        </div>
+    </div>
+
+
+    <div class="button-group search-btn">
+        <a href="#" class="button" id="btn_close"><span class="text">취소</span></a>
+        <a href="#" class="button" id="btn_apply" style="display:none;"><span class="text">변경적용</span></a>
+        <a href="#" class="button" id="btn_cancel" style="display:none;"><span class="text">접수취소</span></a>
+        <a href="#" class="button" id="btn_cpApproval" style="display:none;"><span class="text">보상승인</span></a>
+        <a href="#" class="button" id="btn_rewardReturn" style="display:none;"><span class="text">반려</span></a>
+        <a href="#" class="button" id="btn_payApproval" style="display:none;"><span class="text">지급승인</span></a>
+        <a href="#" class="button" id="btn_payReturn" style="display:none;"><span class="text">반려</span></a>
+    </div>
+
+
+</th:block>
+
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        var receiptCd = [[${T(com.enbiz.bo.app.enums.CS021).RECEIPT.getCd()}]]; // 접수
+        var unpaidCd = [[${T(com.enbiz.bo.app.enums.CS022).UNPAID.getCd()}]];   // 미지급
+        var paymentRequestCd = [[${T(com.enbiz.bo.app.enums.CS022).PAYMENT_REQUEST.getCd()}]]; // 지급요청
+        var rewardApprovalCd = [[${T(com.enbiz.bo.app.enums.CS021).REWARD_APPROVAL.getCd()}]]; // 보상승인
+        var payApprovalCd = [[${T(com.enbiz.bo.app.enums.CS021).PAYMENT_APPROVAL.getCd()}]]; // 지급승인
+
+        var cashCode = [[${T(com.enbiz.bo.app.enums.CS019).CASH.getCd()}]];
+        var data = [[${data}]];
+        var loginId = [[${loginId}]];
+        var csCpGradeAmtCode = [[${csCpGradeAmtCode}]];
+        var csCpUserGrade = [[${csCpUserGrade}]];  // N:없음  A:승인요청자 , P:지급승인자 , All:승인요청자 & 지급승인자
+
+        console.log(data);
+        console.log(csCpGradeAmtCode);
+        console.log(csCpUserGrade);
+        /*]]>*/
+    </script>
+
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'customerservice/customerCompensDetailRegist.eventHandler.js?202106250000027'" ></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            customerCompensDetailRegist.eventhandler.init();
+        });
+    </script>
+</th:block>
+
+</body>
+
+</html>

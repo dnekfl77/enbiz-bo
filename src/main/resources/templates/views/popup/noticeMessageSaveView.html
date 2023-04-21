@@ -1,0 +1,152 @@
+<!--
+* 프로그램명 : 알림메시지 조회/등록 팝업
+* 작 성 일 : 2021.02.24
+* 작 성 자 : 박슬기
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 알림 메시지 조회/등록 팝업
+* 이    력 :
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-layout}">
+<body>
+
+<!--Title Area-->
+<th:block layout:fragment="popup-title-area">
+    <th:block layout:insert="~{fragments/popup/popup-title :: popup-title}"
+              th:with="title=${#messages.msg('noticeMessageMgmt.label.popup.title.ntc.msg.management')}"></th:block>
+</th:block>
+<!--Title Area-->
+
+<!--Search Area-->
+<th:block layout:fragment="popup-search-area">
+    <div class="search">
+        <div class="search-body">
+            <form name="ntcMsgRegModPopForm" id="ntcMsgRegModPopForm">
+                <input hidden name="notiMsgSeq" id="notiMsgSeq" th:value="${stNtcInfo.notiMsgSeq}"/>
+                <input hidden name="stateCd" id="stateCd" th:value="${stNtcInfo.stateCd}"/>
+
+                <table class="search-table">
+                    <colgroup>
+                        <col style="width:15%;" />
+                        <col style="width:35%;" />
+                        <col style="width:15%;" />
+                        <col style="width:35%;" />
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <td class="label"><strong th:text="${#messages.msg('noticeMessageMgmt.label.ntc.msg.gbcd')}"></strong>
+                        <td>
+                            <select id="msgGbCd" name="msgGbCd" th:disabled="${stNtcInfo.stateCd == 'PAST'}">
+                                <option value="" th:text="${#messages.msg('adminCommon.entirety')}"></option>
+                                <option th:each="list : ${codeList.CH008}" th:value="${list?.cd}" th:utext="${list?.cdNm}" th:selected="${list?.cd==stNtcInfo.msgGbCd}"></option>
+                            </select>
+                        </td>
+                        <td class="label"><strong th:text="${#messages.msg('noticeMessageMgmt.label.ntc.msg.mthd')}"></strong>
+                        <td>
+                            <select id="baseNotiMethodCd" name="baseNotiMethodCd" th:disabled="${stNtcInfo.stateCd == 'PAST'}">
+                                <option value="" th:text="${#messages.msg('adminCommon.entirety')}"></option>
+                                <option value="01" th:text="${#messages.msg('noticeMessageMgmt.label.kakao') }" th:selected="${'01'==stNtcInfo.baseNotiMethodCd}"></option>
+                                <option value="02" th:text="${#messages.msg('noticeMessageMgmt.label.sms')}" th:selected="${'02'==stNtcInfo.baseNotiMethodCd}"></option>
+                            </select>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label"><strong th:text="${#messages.msg('noticeMessageMgmt.label.ntc.msg.aply.srt')}"></strong>
+                        <td>
+                            <div class="picker-group" data-lopicker="basic">
+                                <input type="text" class="form-control " maxlength="10" name="aplyStrDt" id="aplyStrDt" th:value="${stNtcInfo.aplyStrDt}" th:disabled="${stNtcInfo.stateCd == 'PAST' || stNtcInfo.stateCd == 'ONGOING'}"/>
+                                <span class="input-group-addon" id="_sch_date_st-button"><i class="icon-calendar"></i></span>
+                            </div>
+                        </td>
+                        <td class="label"><strong th:text="${#messages.msg('noticeMessageMgmt.label.ntc.msg.aply.end')}"></strong>
+                        <td>
+                            <div class="picker-group" data-lopicker="basic">
+                                <input type="text" class="form-control " maxlength="10" name="aplyEndDt" id="aplyEndDt" th:value="${stNtcInfo.aplyEndDt}" th:disabled="${stNtcInfo.stateCd == 'PAST'}"/>
+                                <span class="input-group-addon" id="_sch_date_ed-button"><i class="icon-calendar"></i></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label"><strong th:text="${#messages.msg('adminCommon.use.yn')}"></strong>
+                        <td >
+                            <select id="useYn" name="useYn" th:disabled="${stNtcInfo.stateCd == 'PAST'}">
+                                <option value="Y" th:text="${#messages.msg('adminCommon.use') }" th:selected="${'Y'==stNtcInfo.useYn}"></option>
+                                <option value="N" th:text="${#messages.msg('adminCommon.disuse')}" th:selected="${'N'==stNtcInfo.useYn}"></option>
+                            </select>
+                        </td>
+                        <td class="label"><strong th:text="${#messages.msg('noticeMessageMgmt.search.label.site')}"></strong>
+                        <td >
+                        <select class="form-control" id="siteNo" name="siteNo" th:disabled="${stNtcInfo.stateCd == 'PAST'}">
+                            <option value="" th:text="${#messages.msg('adminCommon.entirety')}"></option>
+                            <option th:each="list : ${siteNmList}" th:value="${list?.siteNo}" th:utext="${list?.siteNm}" th:selected="${list?.siteNo==stNtcInfo.siteNo}"></option>
+                        </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label"><strong th:text="${#messages.msg('noticeMessageMgmt.label.ntc.msg.title')}"></strong>
+                        <td colspan="3">
+                            <input class="input w100" type="text" maxlength="30" name="title" id="title" th:value="${stNtcInfo.title}" th:disabled="${stNtcInfo.stateCd == 'PAST'}"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label"><strong th:text="${#messages.msg('noticeMessageMgmt.label.ntc.msg.msg')}"></strong>
+                        <td colspan="3">
+                            <textarea name="msg" id="msg" rows="10" maxlength="1000" class="textarea" th:text="${stNtcInfo.msg}" th:disabled="${stNtcInfo.stateCd == 'PAST'}"></textarea>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </div>
+</th:block>
+
+<!--List Button Area-->
+<th:block layout:fragment="popup-List-button-area">
+    <th:block layout:insert="~{fragments/popup/popup-btn :: popup-List-btn}"/>
+</th:block>
+
+
+
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        var _aplySrtDt		    = [[${#messages.msg("noticeMessageMgmt.label.ntc.msg.aply.srt")}]];
+        var _aplyEndDt 		    = [[${#messages.msg("noticeMessageMgmt.label.ntc.msg.aply.end")}]];
+        var _msgGbcd		    = [[${#messages.msg("noticeMessageMgmt.label.ntc.msg.gbcd")}]];
+        var _msgMthd 		    = [[${#messages.msg("noticeMessageMgmt.label.ntc.msg.mthd")}]];
+        var _title 		        = [[${#messages.msg("noticeMessageMgmt.label.ntc.msg.title")}]];
+        var _msg 		        = [[${#messages.msg("noticeMessageMgmt.label.ntc.msg.msg")}]];
+        var _useYn              = [[${#messages.msg("adminCommon.use.yn")}]];
+
+        var _gbcdErr	        = [[${#messages.msg("noticeMessageMgmt.label.ntc.msg.gbcd.err.msg")}]];
+        var _titleErr	        = [[${#messages.msg("noticeMessageMgmt.label.ntc.msg.title.err.msg")}]];
+        var _msgErr             = [[${#messages.msg("noticeMessageMgmt.label.ntc.msg.msg.err.msg")}]];
+        var _aplyDtInvld        = [[${#messages.msg("noticeMessageMgmt.label.ntc.msg.apldt.invalid.input")}]];
+        var _aplyDtFuture	    = [[${#messages.msg("noticeMessageMgmt.label.ntc.msg.aply.start.future")}]];
+
+        var _mthdErr	        = [[${#messages.msg("noticeMessageMgmt.label.ntc.msg.mthd.invalid.input")}]];
+        var _strtErr	        = [[${#messages.msg("noticeMessageMgmt.label.ntc.msg.apl.strt.invalid.input")}]];
+        var _endErr	            = [[${#messages.msg("noticeMessageMgmt.label.ntc.msg.apl.end.invalid.input")}]];
+        var _siteErr	        = [[${#messages.msg("noticeMessageMgmt.label.ntc.msg.site.invalid.input")}]];
+
+        var _strtDtFmtErr	    = [[${#messages.msg("noticeMessageMgmt.label.ntc.msg.apl.strt.invalid.format")}]];
+        var _endDtFmtErr	    = [[${#messages.msg("noticeMessageMgmt.label.ntc.msg.apl.end.invalid.format")}]];
+
+        /*]]>*/
+    </script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'popup/popup.ntnMsgInfo.eventHandler.js'" ></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            ntcMsgPop.settings.initBind();
+
+        });
+    </script>
+</th:block>
+</body>
+</html>

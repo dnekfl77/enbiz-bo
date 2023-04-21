@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enbiz.bo.app.repository.goods.PrGoodsPrcHistMapper">
+    <select id="getGoodsPrcHist" parameterType="java.lang.String" resultType="PrGoodsPrcHist">
+        SELECT GOODS_NO /* prGoodsPrcHist.getGoodsPrcHist */
+             , TO_CHAR(HIST_STR_DTM,'YYYY-MM-DD HH24:MI') AS HIST_STR_DTM
+             , TO_CHAR(HIST_END_DTM,'YYYY-MM-DD HH24:MI') AS HIST_END_DTM
+             , SUP_PCOST
+             , NOR_PRC
+             , SALE_PRC
+             , MRGN_RATE
+             , PRC_CHG_CAUS_CD
+             , SYS_REG_ID
+             , TO_CHAR(SYS_REG_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_REG_DTM
+             , SYS_MOD_ID
+             , TO_CHAR(SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+          FROM PR_GOODS_PRC_HIST
+         WHERE GOODS_NO = #{goodsNo}
+           AND NOW() BETWEEN HIST_STR_DTM AND HIST_END_DTM
+    </select>
+
+    <select id="getGoodsPrcHistListCount" parameterType="GoodsPriceHistoryRequest" resultType="java.lang.Integer">
+        SELECT COUNT(*) /* prGoodsPrcHist.getGoodsPrcHistListCount */
+          FROM PR_GOODS_PRC_HIST
+         WHERE GOODS_NO = #{goodsNo}
+    </select>
+
+    <select id="getGoodsPrcHistList" parameterType="GoodsPriceHistoryRequest" resultType="GoodsPriceHistoryResponse">
+        SELECT GOODS_NO /* prGoodsPrcHist.getGoodsPrcHistList */
+             , TO_CHAR(HIST_STR_DTM,'YYYY-MM-DD HH24:MI') AS HIST_STR_DTM
+             , TO_CHAR(HIST_END_DTM,'YYYY-MM-DD HH24:MI') AS HIST_END_DTM
+             , SUP_PCOST
+             , NOR_PRC
+             , SALE_PRC
+             , MRGN_RATE
+             , PRC_CHG_CAUS_CD
+             , FN_GET_CODENAME('PR033', PRC_CHG_CAUS_CD) AS PRC_CHG_CAUS_CD_NM
+             , SYS_REG_ID
+             , TO_CHAR(SYS_REG_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_REG_DTM
+             , SYS_MOD_ID
+             , TO_CHAR(SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+         FROM PR_GOODS_PRC_HIST
+        WHERE GOODS_NO = #{goodsNo}
+        ORDER BY HIST_STR_DTM DESC
+    </select>
+
+    <select id="checkGoodsReservedPriceHistoryYn" parameterType="java.lang.String" resultType="java.lang.Boolean">
+        <![CDATA[
+        SELECT /* prGoodsPrcHist.checkGoodsReservedPriceHistoryYn */
+          CASE WHEN COUNT(*) > 0 THEN TRUE
+               ELSE FALSE END RESULT
+          FROM PR_GOODS_PRC_HIST PGPH
+         WHERE GOODS_NO = #{goodsNo}
+           AND HIST_STR_DTM > NOW()
+           AND HIST_END_DTM = TO_TIMESTAMP('2999-12-31 23:59:59', 'YYYY-MM-DD HH24:MI:SS')
+        ]]>
+    </select>
+</mapper>

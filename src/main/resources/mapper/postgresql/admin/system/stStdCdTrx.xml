@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.system.StStdCdTrxMapper">
+	<select id="insertStStdCd"  parameterType="RightGroupBaseRequest">
+		INSERT INTO ST_STD_CD ( /* stStdCdTrx.insertStStdCd */
+		       GRP_CD
+		     , CD
+		     , CD_NM
+		     , CD_DESC
+		     , USE_YN
+		     , SORT_SEQ
+		     , REF_1_VAL
+		     , REF_2_VAL
+		     , REF_3_VAL
+		     , REF_4_VAL
+		     , REF_5_VAL
+		     , SYS_REG_ID
+		     , SYS_REG_DTM
+		     , SYS_MOD_ID
+		     , SYS_MOD_DTM
+		) VALUES (
+			   #{grpCd}
+			 , #{cd}
+			 , #{cdNm}
+			 , #{cdDesc}
+			 , #{useYn}
+			 , #{sortSeq}
+			 , #{ref1Val}
+			 , #{ref2Val}
+			 , #{ref3Val}
+			 , #{ref4Val}
+			 , #{ref5Val}
+			 , #{sysRegId}
+			 , now()
+			 , #{sysRegId}
+			 , now()
+		)
+	</select>
+	<update id="updateStStdCd"  parameterType="RightGroupBaseRequest">
+		UPDATE ST_STD_CD  /*  stStdCdTrx.updateStStdCd */
+		   SET CD         = #{cd}
+			 , CD_NM      = #{cdNm}
+			 , CD_DESC 	  = #{cdDesc}
+			 , USE_YN 	  = #{useYn}
+			 , REF_1_VAL  = #{ref1Val}
+			 , REF_2_VAL  = #{ref2Val}
+			 , REF_3_VAL  = #{ref3Val}
+			 , REF_4_VAL  = #{ref4Val}
+			 , REF_5_VAL  = #{ref5Val}
+			 , SORT_SEQ   = #{sortSeq}
+			 , SYS_MOD_ID = #{sysModId}
+			 , SYS_MOD_DTM= now()
+		 WHERE GRP_CD = #{grpCd}
+		   AND CD = #{cd}
+	</update>
+	<delete id="deleteStStdCd"  parameterType="RightGroupBaseRequest">
+		DELETE /* stStdCdTrx.deleteStStdCd */
+		  FROM ST_STD_CD
+	     WHERE GRP_CD = #{grpCd}
+		   AND CD = #{cd}
+	</delete>
+</mapper>

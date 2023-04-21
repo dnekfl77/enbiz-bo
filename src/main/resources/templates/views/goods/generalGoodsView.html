@@ -1,0 +1,157 @@
+<!--
+* 프로그램명 : 상품 상세
+* 작 성 일 : 2021.05.18
+* 작 성 자 : 홍혜리
+* 수 정 자 : 홍혜리
+* 버    전 : 1.0
+* 개    요 : 상품관리 > 상품정보관리 > 상품관리 > 상품상세팝업
+* 이    력 : 2021.10.18 프레임워크 이전
+-->
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/goods/page-goods-layout}">
+<body>
+<th:block layout:fragment="page-title-area">
+    <script th:inline="javascript">
+        var pageType = [[${pageType}]];
+        var goodsInfo = [[${goodsInfo}]];
+    </script>
+    <div class="page-title">
+        <!-- 타이틀 영역 -->
+        <th:block layout:insert="~{fragments/goods/goods-title :: goods-detail-title}"/>
+        <!--// 타이틀 영역 -->
+
+        <!-- 버튼 영역 -->
+        <th:block layout:insert="~{fragments/goods/goods-button :: goods-detail-button}"/>
+        <!--// 버튼 영역 -->
+    </div>
+</th:block>
+<th:block layout:fragment="page-contents">
+    <div class="page-fixed with-title">
+        <div class="search-cont">
+            <!-- 기본정보 영역 -->
+            <th:block layout:fragment="content-basicInfo">
+                <th:block layout:insert="~{fragments/goods/goods-basicInfo :: goods-detail-basicInfo}"/>
+            </th:block>
+            <!--// 기본정보 영역 -->
+
+            <!-- 상품정보 영역 -->
+            <th:block layout:fragment="content-goodsInfo">
+                <th:block layout:insert="~{fragments/goods/goods-goodsInfo :: goods-detail-goodsInfo}"/>
+            </th:block>
+            <!--// 상품정보 영역 -->
+
+            <!-- 상품고시품목정보 영역 -->
+            <th:block layout:fragment="content-announcementInfo">
+                <th:block layout:insert="~{fragments/goods/goods-announcementInfo :: goods-announcementInfo}"/>
+            </th:block>
+            <!--// 상품고시품목정보 영역 -->
+
+            <!-- 가격정보 영역 -->
+            <th:block layout:fragment="content-priceInfo">
+                <th:block layout:insert="~{fragments/goods/goods-priceInfo :: goods-detail-priceInfo}"/>
+            </th:block>
+            <!--// 가격정보 영역 -->
+
+            <!-- 배송정보 영역 -->
+            <th:block layout:fragment="content-deliveryInfo">
+                <th:block layout:insert="~{fragments/goods/goods-deliveryInfo :: goods-deliveryInfo}"/>
+            </th:block>
+            <!--// 배송정보 영역 -->
+
+            <!-- 판매옵션 영역 -->
+            <th:block layout:fragment="content-saleInfo">
+                <th:block layout:insert="~{fragments/goods/goods-saleInfo :: goods-detail-saleInfo}"/>
+            </th:block>
+            <!--// 판매옵션 영역 -->
+
+            <!-- 상품상세설명 영역 -->
+            <th:block layout:fragment="content-detailInfo">
+                <th:block layout:insert="~{fragments/goods/goods-detailInfo :: goods-detailInfo}"/>
+            </th:block>
+            <!--// 상품상세설명 영역 -->
+
+            <!-- 부가정보 영역 -->
+            <th:block layout:fragment="content-additionalInfo">
+                <th:block layout:insert="~{fragments/goods/goods-additionalInfo :: goods-detail-additionalInfo}"/>
+            </th:block>
+            <!--// 부가정보 영역 -->
+
+            <!-- 상품이미지 영역 -->
+            <th:block layout:fragment="content-imageInfo">
+                <th:block layout:insert="~{fragments/goods/goods-imageInfo :: goods-imageInfo}"/>
+            </th:block>
+            <!--// 상품이미지 영역 -->
+        </div>
+    </div>
+</th:block>
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        var _saleStatCd = [[${goodsInfo.prGoodsBase.saleStatCd}]]; // 판매상태
+        /*<![CDATA[*/
+            var _itm_sale_stat_select = {};
+            /*[# th:each="list : ${codeList.PR005}"]*/
+                var key = /*[[${list.cd}]]*/;
+                _itm_sale_stat_select[key] = /*[[${list.cdNm}]]*/;
+            /*[/]*/
+        /*]]>*/
+    </script>
+
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/generalGoods/detailGoodsCommon.eventHandler.js?20211019'"></script>
+
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/generalGoods/detailBasicInfo.eventHandler.js?20211019'"></script>
+
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/generalGoods/detailGoodsInfo.eventHandler.js?20211019'"></script>
+
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/generalGoods/detailAnnouncementInfo.eventHandler.js?20211019'"></script>
+
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/generalGoods/detailPriceHistGrid.eventHandler.js?20211019'"></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/generalGoods/detailPriceHistGrid.provider.js?20211019'"></script>
+
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/generalGoods/detailDeliveryInfo.eventHandler.js?20211019'"></script>
+
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/generalGoods/detailItemListGrid.eventHandler.js?20211019'"></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/generalGoods/detailItemListGrid.provider.js?20211019'"></script>
+
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/generalGoods/detailDispCtgGrid.eventHandler.js?20211019'"></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/generalGoods/detailDispCtgGrid.provider.js?20211019'"></script>
+
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/generalGoods/detailAssocGoodsGrid.eventHandler.js?20211019'"></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/generalGoods/detailAssocGoodsGrid.provider.js?20211019'"></script>
+
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/generalGoods/detailAdveWrdGrid.provider.js?20211019'"></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/generalGoods/detailAdveWrdGrid.eventHandler.js?20211019'"></script>
+
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/generalGoods/detailPrestGrid.eventHandler.js?20211019'"></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/generalGoods/detailPrestGrid.provider.js?20211019'"></script>
+
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/temporaryGeneralGoods/detailInfo.eventHandler.js?20211019'"></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/temporaryGeneralGoods/imageInfo.eventHandler.js?20211019'"></script>
+    <script th:inline="javascript">
+
+        $(function(){
+
+            detailBasicInfo.eventhandler.init();            // 기본정보
+            detailGoodsInfo.eventhandler.init();            // 상품정보
+            detailAnnouncementInfo.eventhandler.init();     // 상품고시품목정보
+            detailPriceHistGrid.eventhandler.init();        // 가격정보
+            detailDeliveryInfo.eventhandler.init();         // 배송정보
+            detailItemListGrid.eventhandler.init();         // 판매옵션
+
+            detailInfo.eventhandler.init();                 // 상품상세설명
+
+            detailDispCtgGrid.eventhandler.init();          // 전시카테고리
+            detailAssocGoodsGrid.eventhandler.init();       // 연관상품
+            detailAdveWrdGrid.eventhandler.init();          // 홍보문구
+            detailPrestGrid.eventhandler.init();            // 증정품
+
+            imageInfo.eventhandler.init();                  // 상품이미지
+
+            detailGoodsCommon.eventhandler.init();          // 상품상세
+        });
+    </script>
+</th:block>
+</body>
+</html>

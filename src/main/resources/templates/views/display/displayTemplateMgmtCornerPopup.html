@@ -1,0 +1,119 @@
+<!--
+* 프로그램명 : 전시 코너 조회 팝업
+* 작 성 일 : 2021.06.01
+* 작 성 자 : 권다솜
+* 수 정 자 : 권다솜
+* 버    전 : 1.0
+* 개    요 : 전시관리 > 전시템플릿/코너관리 > 전시템플릿관리 > 코너추가 > 전시 코너 조회 팝업
+* 이    력 :
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-layout}">
+<body>
+    <!--Title Area-->
+    <th:block layout:fragment="popup-title-area">
+        <th:block layout:insert="~{fragments/popup/popup-title :: popup-title}"
+                  th:with="title=${#messages.msg('displayTemplateMgmt.cornerPopup.title')}"></th:block>
+    </th:block>
+    <!--Title Area-->
+
+    <!--Search Area-->
+    <th:block layout:fragment="popup-search-area">
+            <div class="search">
+                <form name="cornerPopupForm" id="cornerPopupForm">
+                    <table class="search-table">
+                        <colgroup>
+                            <col style="width:15%;" />
+                            <col style="width:35%;" />
+                            <col style="width:15%;" />
+                            <col style="width:35%;" />
+                        </colgroup>
+                        <tbody>
+                        <tr>
+                            <td class="label" th:text="${#messages.msg('displayTemplateMgmt.cornerPopup.search.label.displayCornerNoNm')}"></td>
+                            <td>
+                                <div class="input-group w100">
+                                    <input class="input w30" type="text" name="conrNo" id="conrNo" maxlength="15"/>
+                                    <input class="input w60" type="text" name="conrNm" id="conrNm" maxlength="300"/>
+                                </div>
+                            </td>
+                            <td class="label" th:text="${#messages.msg('displayTemplateMgmt.cornerPopup.search.label.useYn')}"></td>
+                            <td>
+                                <select class="form-control w30" id="useYn" name="useYn">
+                                    <option value="" th:text="${#messages.msg('adminCommon.entirety')}"></option>
+                                    <option value="Y" th:text="${#messages.msg('adminCommon.use')}" selected></option>
+                                    <option value="N" th:text="${#messages.msg('adminCommon.disuse')}"/>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label" th:text="${#messages.msg('displayTemplateMgmt.cornerPopup.search.label.displayManager')}"></td>
+                            <td colspan="3">
+                                <input class="input disabled w30" type="text" id="aempNm" th:readonly="true"/>
+                                <input type="hidden" id="aempId" name="aempId"/>
+                                <a href="#" class="button small" id="btn_aempPopup_call"><i class="icon-sarch"></i></a>
+                                <a href="#" class="button small" id="btn_aempPopup_reset"><i class="icon-clear"></i></a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+    </th:block>
+    <!--Search Area-->
+
+    <!--Search Button Area-->
+    <th:block layout:fragment="popup-search-button-area">
+        <th:block layout:insert="~{fragments/popup/popup-btn :: popup-search-btn}"/>
+    </th:block>
+    <!--Search Button Area-->
+
+    <!--List Area-->
+    <th:block layout:fragment="popup-List-area">
+      <div class="grid">
+          <div class="grid-head" style="overflow: hidden;">
+              <div class="title-area">
+                  <h2 class="title" th:text="${#messages.msg('displayTemplateMgmt.cornerPopup.grid.title')}"></h2>
+              </div>
+              <div class="option-area">
+                  <div class="page-option" grid-id="displayCornerPopupGrid">
+                      <span class="total">총 <span id="displayCornerPopupGrid-totalcount">0</span>건</span>
+                  </div>
+              </div>
+          </div>
+          <div class="grid-body with-head">
+                <div id="displayCornerPopupGrid" class="rg-root rg-grid" realgrid></div>
+          </div>
+        </div>
+    </th:block>
+    <!--List Area-->
+
+<!--List Button Area-->
+<th:block layout:fragment="popup-List-button-area">
+    <th:block layout:insert="~{fragments/popup/popup-btn :: popup-List-btn}"/>
+</th:block>
+
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        var _gridType       = 'N'
+        var msg  = x2coMessage.getMessage( {
+            displayCornerNo    	        : 'displayTemplateMgmt.cornerPopup.grid.field.displayCornerNo',
+            displayCornerNm    		    : 'displayTemplateMgmt.cornerPopup.grid.field.displayCornerNm',
+            displayTarget               : 'displayTemplateMgmt.cornerPopup.grid.field.displayTarget',
+            useYn 		                : 'displayTemplateMgmt.cornerPopup.grid.field.useYn',
+            displayManager              : 'displayTemplateMgmt.cornerPopup.grid.field.displayManager'
+        });
+    </script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/displayCornerPopupGrid.eventHandler.js?20210802'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/displayCornerPopupGrid.provider.js?20210802'" ></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            displayCornerPopupGrid.eventhandler.init();
+        });
+    </script>
+</th:block>
+
+</body>
+</html>

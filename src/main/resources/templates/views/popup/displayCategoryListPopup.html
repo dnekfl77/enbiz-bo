@@ -1,0 +1,147 @@
+<!--
+* 프로그램명 : 전시 카테고리 조회 팝업
+* 작 성 일 : 2021.02.22
+* 작 성 자 : 권다솜
+* 수 정 자 : 홍혜리
+* 버    전 : 1.0
+* 개    요 : 전시 카테고리 조회 팝업 UI
+* 이    력 : 2021.07.30 단일선택시 적용방식 수정
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-layout}">
+<body>
+    <!--Title Area-->
+    <th:block layout:fragment="popup-title-area">
+        <th:block layout:insert="~{fragments/popup/popup-title :: popup-title}"
+                  th:with="title=${#messages.msg('baseInfoMgmt.label.popup.displayCategoryListPopup.title')}"></th:block>
+    </th:block>
+    <!--Title Area-->
+
+    <!--Search Area-->
+    <th:block layout:fragment="popup-search-area">
+        <div class="search">
+            <form name="dcGridForm" id="dcGridForm">
+                <table class="search-table">
+                    <colgroup>
+                        <col style="width:15%;"/>
+                        <col style="width:20%;"/>
+                        <col style="width:15%;"/>
+                        <col style="width:50%;"/>
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <td class="label" th:text="${#messages.msg('baseInfoMgmt.label.popup.displayCategoryListPopup.search.label.disp_yn')}"></td>
+                        <td>
+                            <select class="form-control w90" id="dispYn" name="dispYn">
+                                <th:block th:if="${requestData.argDispYn} == '' ">
+                                    <option value="" th:text="${#messages.msg('baseInfoMgmt.label.full')}"></option>
+                                    <option value="Y" th:text="${#messages.msg('baseInfoMgmt.label.display')}"></option>
+                                    <option value="N" th:text="${#messages.msg('baseInfoMgmt.label.disdisplay')}"/>
+                                    </option>
+                                </th:block>
+                                <th:block th:unless="${requestData.argDispYn} == '' ">
+                                    <option th:value="Y"
+                                            th:text="${#messages.msg('baseInfoMgmt.label.display')}"
+                                            th:if="'Y'==${requestData.argDispYn}"></option>
+                                    <option th:value="N"
+                                            th:text="${#messages.msg('baseInfoMgmt.label.disdisplay')}"
+                                            th:if="'N'==${requestData.argDispYn}"/>
+                                    </option>
+                                </th:block>
+                            </select>
+                        </td>
+                        <td class="label" th:text="${#messages.msg('baseInfoMgmt.label.popup.displayCategoryListPopup.search.label.site')}"></td>
+                        <td>
+                            <div class="input-group w100">
+                                <select class="form-control w40" id="siteNo" name="siteNo">
+                                    <th:block th:if="${requestData.argSiteNo} == '' ">
+                                        <option value="" th:text="${#messages.msg('baseInfoMgmt.label.full')}"></option>
+                                        <option th:each="list : ${siteList}"
+                                                th:value="${list.cd}"
+                                                th:text="${list.cdNm}"></option>
+                                    </th:block>
+                                    <th:block th:unless="${requestData.argSiteNo} == '' ">
+                                        <option th:each="list : ${siteList}"
+                                                th:value="${list.cd}"
+                                                th:text="${list.cdNm}"
+                                                th:if="${list.cd}==${requestData.argSiteNo}"></option>
+                                    </th:block>
+                                </select>
+                                <select class="form-control w40" id="shopTypCd" name="shopTypCd">
+                                    <th:block th:if="${requestData.argShopType} == '' ">
+                                        <option value="" th:text="${#messages.msg('baseInfoMgmt.label.full')}"></option>
+                                        <option th:each="list : ${codeList.DP003}"
+                                                th:value="${list.cd}"
+                                                th:text="${list.cdNm}"></option>
+                                    </th:block>
+                                    <th:block th:unless="${requestData.argShopType} == '' ">
+                                        <option th:each="list : ${codeList.DP003}"
+                                                th:value="${list.cd}"
+                                                th:text="${list.cdNm}"
+                                                th:if="${list.cd}==${requestData.argShopType}"></option>
+                                    </th:block>
+                                </select>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label" th:text="${#messages.msg('baseInfoMgmt.label.popup.displayCategoryListPopup.search.label.dispCtgNm')}"></td>
+                        <td colspan="3">
+                            <input class="input w20" type="text" name="dispCtgNm" id="dispCtgNm" maxlength="300"/>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </th:block>
+    <!--Search Area-->
+
+    <!--Search Button Area-->
+    <th:block layout:fragment="popup-search-button-area">
+        <th:block layout:insert="~{fragments/popup/popup-btn :: popup-search-btn}"/>
+    </th:block>
+    <!--Search Button Area-->
+
+    <!--List Area-->
+    <th:block layout:fragment="popup-List-area">
+       <div class="grid">
+           <div class="grid-head" style="overflow: hidden;">
+               <div class="title-area">
+                   <h2 class="title" th:text="${#messages.msg('baseInfoMgmt.label.popup.displayCategoryListPopup.grid.title')}"></h2>
+               </div>
+               <div class="option-area">
+                   <div class="page-option" grid-id="dcGrid"></div>
+               </div>
+           </div>
+           <div class="grid-body with-head">
+               <div id="dcGrid" class="rg-root rg-grid" realgrid></div>
+           </div>
+        </div>
+    </th:block>
+    <!--List Area-->
+
+<!--List Button Area-->
+<th:block layout:fragment="popup-List-button-area">
+    <th:block layout:insert="~{fragments/popup/popup-btn :: popup-List-btn}"/>
+</th:block>
+
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        var _defaultPage    = 0;
+        var _gridType       = [[${requestData.argSelectType}]]; // 선택구분값이 있을경우 필수값
+    </script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'popup/popup.DisplayCategoryPopup.dcGrid.eventHandler.js?20210730'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'popup/popup.DisplayCategoryPopup.dcGrid.provider.js'" ></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            dcGrid.eventhandler.init();
+        });
+    </script>
+</th:block>
+
+</body>
+</html>

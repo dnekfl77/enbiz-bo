@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.vendor.EtDeliPolcBaseTrxMapper">
+
+     <insert id="insertEtDeliPolcBaseTrx" parameterType="etDeliPolcBase">
+          <selectKey keyProperty="deliPolcNo" resultType="String" order="BEFORE">
+               SELECT NEXTVAL('et_deli_polc_base_sq01') AS deliPolcNo
+          </selectKey>
+          INSERT INTO ET_DELI_POLC_BASE ( /* etDeliPolcBaseTrx.insertEtDeliPolcBaseTrx */
+                 DELI_POLC_NO
+               , ENTR_NO
+               , DLEX_TYP_CD
+               , STD_AMT
+               , DLEX_AMT
+               , FERRY_RGN_DLEX_AMT
+               , JEJU_DLEX
+               , JEJU_FERRY_RGN_DLEX_AMT
+               , RTN_AMT
+               , USE_YN
+               , SYS_REG_ID
+               , SYS_REG_DTM
+               , SYS_MOD_ID
+               , SYS_MOD_DTM
+          ) VALUES (
+                 #{deliPolcNo}
+               , #{entrNo}
+               , #{dlexTypCd}
+               , #{stdAmt}
+               , #{dlexAmt}
+               , #{ferryRgnDlexAmt}
+               , #{jejuDlex}
+               , #{jejuFerryRgnDlexAmt}
+               , #{rtnAmt}
+               , #{useYn}
+               , #{sysRegId}
+               , now()
+               , #{sysModId}
+               , now()
+          )
+     </insert>
+     <update id="updateEtDeliPolcBaseTrx" parameterType="etDeliPolcBase">
+          UPDATE ET_DELI_POLC_BASE /* etDeliPolcBaseTrx.updateEtDeliPolcBaseTrx */
+             SET ENTR_NO = #{entrNo}
+               , DLEX_TYP_CD = #{dlexTypCd}
+               , STD_AMT = #{stdAmt}
+               , DLEX_AMT = #{dlexAmt}
+               , FERRY_RGN_DLEX_AMT = #{ferryRgnDlexAmt}
+               , JEJU_DLEX = #{jejuDlex}
+               , JEJU_FERRY_RGN_DLEX_AMT = #{jejuFerryRgnDlexAmt}
+               , RTN_AMT = #{rtnAmt}
+               , USE_YN = #{useYn}
+               , SYS_MOD_DTM = now()
+               , SYS_MOD_ID = #{sysModId}
+           WHERE DELI_POLC_NO = #{deliPolcNo}
+     </update>
+     <delete id="deleteEtDeliPolcBaseTrx" parameterType="etDeliPolcBase">
+          DELETE /* etDeliPolcBaseTrx.deleteEtDeliPolcBaseTrx */
+            FROM ET_DELI_POLC_BASE
+           WHERE DELI_POLC_NO = #{deliPolcNo}
+     </delete>
+</mapper>

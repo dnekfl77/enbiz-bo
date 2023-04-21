@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.payment.OpPgByPayMeanTrxMapper">
+
+	<update id="updateStStdCd" parameterType="stStdCd">
+		UPDATE 		ST_STD_CD    				/* opPgByPayMeanTrx.updateStStdCd */
+		SET 	  	USE_YN = #{useYn}
+		WHERE 	  	GRP_CD = 'OM030'
+		AND 	  	CD = #{cd}
+	</update>
+
+	<insert id="insertMethodsOfPaymentList" parameterType="opPgByPayMean">
+		INSERT INTO OP_PG_BY_PAY_MEAN ( 	/* opPgByPayMeanTrx.insertMethodsOfPaymentList */
+				  PG_GB_CD
+				, PAY_WAY_CD
+				, LINK_YN
+				, SYS_REG_ID
+				, SYS_REG_DTM
+				, SYS_MOD_ID
+				, SYS_MOD_DTM
+		) VALUES (
+				  #{pgGbCd}
+				, #{payWayCd}
+				, #{linkYn}
+				, #{sysRegId}
+				, NOW()
+				, #{sysModId}
+				, NOW()
+		)
+	</insert>
+
+	<update id="updateMethodsOfPaymentList" parameterType="opPgByPayMean">
+		UPDATE 	  OP_PG_BY_PAY_MEAN    				/* opPgByPayMeanTrx.updateMethodsOfPaymentList */
+		SET 	  LINK_YN          = #{linkYn}
+				, SYS_MOD_ID     = #{sysModId}
+				, SYS_MOD_DTM     = NOW()
+		WHERE 	  PG_GB_CD = #{pgGbCd}
+		AND 	  PAY_WAY_CD = #{payWayCd}
+	</update>
+
+</mapper>
+
+

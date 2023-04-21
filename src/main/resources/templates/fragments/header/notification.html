@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ko-KR"
+      xmlns:th="http://www.thymeleaf.org">
+
+<th:block th:fragment="notification-bar-cont">
+    <div class="util">
+        <div class="snb-toggle">
+            <button class="toggle-button" type="button">SNB펼치기/접기</button>
+<!--             <button type="button" id="alarm-get">알림가져오기</button> -->
+<!--             <button type="button" id="excel-download">엑셀다운로드</button> -->
+        </div>
+        <ul class="util-menu">
+            <!--업무알림추가-->
+            <li class="w-alam"><a href="javascript:;" onclick="javascript:openJobCnctListpop();"><img src="../../static/img/icon_mail.png" alt=""><p id="alarm-cnt">0</p></a></li>
+            <li><a href="#" class="noti-button user"><!-- <i class="icon icon-user"></i> -->
+                <th:block th:text="${userResponseDto.userNm}"/></a></li>
+            <li>
+                <a href="#" class="noti-button time"> 마지막 접속 :
+                    <th:block th:text="${#dates.format(new java.util.Date(userResponseDto.lastAccessTime), 'yy.MM.dd(E) HH:mm:ss')}"/>
+                </a>
+            </li>
+            <li><a href="/logout.do" class="noti-button logout"><i class="icon icon-logout"></i>로그아웃</a></li>
+        </ul>
+    </div>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+            var _id 		        = [[${userResponseDto.loginId}]];
+            // websocket & stomp initialize
+            sock = new SockJS("/ws-stomp");
+            ws = Stomp.over(sock);
+        /*]]>*/
+
+        $(document.body).ready(function(){
+        	setAlarmCnt();
+
+            // pub/sub event
+            ws.connect({}, function(frame) {
+                ws.subscribe("/sub/alarm/gate/" + _id, function(message) {
+                    var recv = JSON.parse(message.body);
+                    openToast(recv.messageTxt);
+                    //받은 업무연락 수 동기화
+                    setAlarmCnt();
+                });
+//                 //ws.send("/pub/alarm/message", {}, JSON.stringify({type:'ALARM', id:_id, count:10}));
+
+//                 // 로딩시 데이터를 조회하여 websocket 을 이용하는 소켓에 알람을 발송한다.
+//                 var params = {};
+//                 var callback = function(res) {
+//                     // res.success = true
+//                     // res.message = ""
+//                     // res.data = {type:'ALARM', id:_id, count:15}
+//                     ws.send("/pub/alarm/message", {}, JSON.stringify(res.data));
+//                 };
+
+//                 common.Ajax.sendRequest(
+//                     "get"
+//                     , _baseUrl + "alarm/send"
+//                     , params
+//                     , callback
+//                 );
+            }, function(error) {
+                console.error("error "+error);
+            });
+
+            $('#alarm-get').on('click', function(){
+                ws.send("/pub/alarm/message", {}, JSON.stringify({type:'ALARM', id:_id, count:15, messageTxt:"알림 가져오기"}));
+            });
+
+            $('#excel-download').on('click', function(){
+                window.location.href= _baseUrl + "dlvOrdExcelDownload.do";
+            });
+        });
+
+        //업무연락 관리 화면으로 이동
+        function openJobCnctListpop() {
+            //받은 업무연락 수 동기화
+            setAlarmCnt();
+        	window.open('/popup/JobContact.JobContactManagementListPopup.do','popup',' resizable=no scrollbars=yes width=910 height=650')
+        }
+
+      	//수신상태인 받은 업무연락 수 세팅
+        function setAlarmCnt() {
+           	common.Ajax.sendJSONRequest(
+       			"POST",
+       			_baseUrl + "popup/JobContact.getJobContactReceiveListCount.do",
+       			{},
+       			function(obj) {
+       			    if (obj.succeeded == true) {
+       			    	$('#alarm-cnt').html(obj.data);
+       			    }else{
+       			        // alert(_addFailMsg);
+       			    }
+       		});
+        }
+
+    </script>
+</th:block>
+
+</html>

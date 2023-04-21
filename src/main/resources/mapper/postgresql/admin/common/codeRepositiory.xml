@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.common.CodeRepositoryMapper">
+
+    <select id="getButtonByPageRoleList" parameterType="com.enbiz.bo.app.dto.request.login.LoginRequest" resultType="AuthorityAccessResponse">
+        SELECT /* CodeRepositoryMapper.getButtonByPageRoleList */
+               B.RT_TGT_SEQ
+             , B.SYS_GB_CD
+             , B.RT_TGT_TYP_CD
+             , B.RT_TGT_NM
+             , B.SORT_SEQ
+             , B.CALL_URL
+             , B.USE_YN
+             , B.CUST_INFO_INCL_YN
+             , B.RMK_CONT
+             , B.POPUP_YN
+             , B.BTN_ID
+             , B.UPR_RT_TGT_SEQ
+             , B.LEAF_MENU_YN
+             , COALESCE(A.USE_YN,'N') AS AUTHORITY_ACCESS_YN
+          FROM ST_RT_TGT_BASE B
+          LEFT OUTER JOIN (
+               SELECT RT_TGT_SEQ
+                    , USE_YN
+                 FROM ST_RT_INFO SRI
+                WHERE (  (SRI.RT_SUB_GB_CD = '01' AND SRI.RT_GRP_NO = #{rtGrpNo} )    /* ARGUMENT: 권한그룹번호 */
+                        OR (SRI.RT_SUB_GB_CD = '02' AND SRI.RT_GRP_NO = #{loginId}   ))   /* ARGUMENT: 사용자아이디 */
+               ) A
+            ON B.RT_TGT_SEQ = A.RT_TGT_SEQ
+         WHERE B.RT_TGT_TYP_CD IN ('20','30','40')                        /* 버튼  */
+           AND B.USE_YN         = 'Y'
+           AND B.SYS_GB_CD      = #{sysGbCd}                    /* argument: 시스템구분 */
+           AND B.UPR_RT_TGT_SEQ IN (
+               SELECT RT_TGT_SEQ
+                 FROM ST_RT_TGT_BASE
+                WHERE USE_YN='Y'
+                  AND LTRIM(CALL_URL,'/') = LTRIM(#{caloUrl},'/')
+               )
+           AND COALESCE(A.USE_YN,'N') = 'N'
+    </select>
+
+</mapper>
+
+

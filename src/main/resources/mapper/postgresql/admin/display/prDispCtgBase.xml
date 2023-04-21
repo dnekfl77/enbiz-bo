@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.display.PrDispCtgBaseMapper">
+
+	<sql id="paginatedBase">
+		LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+	</sql>
+
+	<sql id="displayCategoryList">
+		SELECT  /* prDispCtgBase.displayCategoryList */
+				  (CASE WHEN PD.DISP_YN='Y' THEN '전시' ELSE '전시안함' END) AS DISP_YN
+				, PD.DISP_STR_DT
+				, PD.DISP_END_DT
+				, CSB.SITE_NM
+				, PD.DISP_CTG_NO
+				, PD.DISP_CTG_NM
+				, FN_GET_CODENAME( 'DP003', PD.SHOP_TYP_CD ) AS SHOP_TYP_CD
+				, PD.LRG_CTG_NO
+				, PD1.DISP_CTG_NM AS LRG_CTG_NM
+				, PD.MID_CTG_NO
+				, PD2.DISP_CTG_NM AS MID_CTG_NM
+				, PD.SML_CTG_NO
+				, PD3.DISP_CTG_NM AS SML_CTG_NM
+				, PD.THN_CTG_NO
+				, PD4.DISP_CTG_NM AS THN_CTG_NM
+		FROM
+				PR_DISP_CTG_BASE PD
+				JOIN CC_SITE_BASE CSB  					ON (PD.SITE_NO = CSB.SITE_NO)
+				LEFT OUTER JOIN PR_DISP_CTG_BASE PD1	ON (PD.LRG_CTG_NO = PD1.DISP_CTG_NO)
+				LEFT OUTER JOIN PR_DISP_CTG_BASE PD2	ON (PD.MID_CTG_NO = PD2.DISP_CTG_NO)
+				LEFT OUTER JOIN PR_DISP_CTG_BASE PD3	ON (PD.SML_CTG_NO = PD3.DISP_CTG_NO)
+				LEFT OUTER JOIN PR_DISP_CTG_BASE PD4	ON (PD.THN_CTG_NO = PD4.DISP_CTG_NO)
+		WHERE 	TO_CHAR(NOW(), 'YYYYMMDD') BETWEEN PD.DISP_STR_DT AND PD.DISP_END_DT
+		AND 	PD.LEAF_YN = 'Y'
+		AND 	PD.DISP_YN LIKE #{dispYn} || '%'
+		AND 	PD.SITE_NO LIKE #{siteNo} || '%'
+		AND 	PD.SHOP_TYP_CD LIKE #{shopTypCd} || '%'
+		AND 	PD.DISP_CTG_NM LIKE #{dispCtgNm} || '%'
+		ORDER BY PD.UPR_DISP_CTG_NO, PD.DISP_SEQ
+	</sql>
+
+	<select id="getCcSiteBase" resultType="PrDispCtgBaseResponse">
+		SELECT  /* prDispCtgBase.getCcSiteBase */
+			  SITE_NO AS CD
+			, SITE_NM AS CD_NM
+		FROM
+			  CC_SITE_BASE
+		ORDER BY SITE_NO
+	</select>
+
+	<select id="getDisplayCategoryList" parameterType="PrDispCtgBaseRequest" resultType="PrDispCtgBaseResponse">
+		<include refid="displayCategoryList" />
+		<include refid="paginatedBase" />
+	</select>
+
+	<select id="getDisplayCategoryListCount" parameterType="PrDispCtgBaseRequest" resultType="java.lang.Integer">
+		SELECT  /* prDispCtgBase.getDisplayCategoryListCount */
+				COUNT(*)
+		FROM (
+				<include refid="displayCategoryList" />
+		) T1
+	</select>
+
+	<select id="getDisplayCategoryTreeList" parameterType="PrDispCtgBaseRequest" resultType="PrDispCtgBaseResponse">
+		WITH RECURSIVE CTE AS   /* prDispCtgBase.getDisplayCategoryTreeList */
+		(
+			SELECT DCB.DISP_CTG_NO
+				 , DCB.DISP_CTG_NM
+				 , DCB.UPR_DISP_CTG_NO
+				 , 1 AS LEVEL
+				 , CONCAT_WS('>', TRIM(TO_CHAR(DCB.DISP_SEQ,'000')) ||DCB.DISP_CTG_NO) AS HIERARCHY
+				 , ' ' AS HIERARCHY_NM
+			     , DCB.SITE_NO
+				 , (SELECT SITE_NM FROM CC_SITE_BASE WHERE SITE_NO = DCB.SITE_NO) AS SITE_NM
+			  FROM PR_DISP_CTG_BASE DCB
+			 WHERE DCB.USE_YN = 'Y'
+			   AND DCB.DISP_YN = 'Y'
+			   AND DCB.SHOP_TYP_CD = '10'
+			   AND DCB.SITE_NO LIKE #{siteNo} || '%'
+			   AND DCB.UPR_DISP_CTG_NO = #{rootNode}
+			 UNION ALL
+			SELECT PDCB.DISP_CTG_NO
+				 , PDCB.DISP_CTG_NM
+				 , PDCB.UPR_DISP_CTG_NO
+				 , LEVEL + 1
+				 , CONCAT_WS('>', TMP1.HIERARCHY, TRIM(TO_CHAR(PDCB.DISP_SEQ,'000')) ||PDCB.DISP_CTG_NO) AS TEXT
+				 , REGEXP_REPLACE( CONCAT_WS('>', TMP1.HIERARCHY_NM, PDCB.DISP_CTG_NM) , ' >', '') AS HIERARCHY_TEXT
+				 , PDCB.SITE_NO
+				 , (SELECT SITE_NM FROM CC_SITE_BASE WHERE SITE_NO = PDCB.SITE_NO)
+			  FROM PR_DISP_CTG_BASE PDCB
+				 , CTE AS TMP1
+		 	 WHERE TMP1.DISP_CTG_NO = PDCB.UPR_DISP_CTG_NO
+		)
+		SELECT *
+		  FROM CTE
+		 ORDER BY HIERARCHY
+	</select>
+
+	<select id="getCategoryTreeList" parameterType="PrDispCtgBaseRequest" resultType="PrDispCtgBaseResponse">
+		WITH RECURSIVE CTE AS   /* prDispCtgBase.getCategoryTreeList */
+		(
+			SELECT
+					  DISP_CTG_NO
+					, DISP_CTG_NM
+					, UPR_DISP_CTG_NO
+					, TMPL_NO
+					, LRG_CTG_NO
+					, MID_CTG_NO
+					, SML_CTG_NO
+					, THN_CTG_NO
+					, SITE_NO
+					, DPML_NO
+					, SHOP_TYP_CD
+					, LEAF_YN
+					, 1 AS LEVEL
+					, CONCAT_WS('>', TRIM(TO_CHAR(DISP_SEQ,'000')) ||DISP_CTG_NO) AS HIERARCHY
+					, ' '  AS HIERARCHY_NM
+			FROM
+					PR_DISP_CTG_BASE
+			WHERE 	USE_YN LIKE #{useYn} || '%'
+			AND  	DISP_YN LIKE #{dispYn} || '%'
+			AND 	SHOP_TYP_CD = #{shopTypCd}
+			AND 	SITE_NO = #{siteNo}
+			AND 	UPR_DISP_CTG_NO = (
+											SELECT 	DISP_CTG_NO
+											FROM 	PR_DISP_CTG_BASE
+											WHERE 	SITE_NO = #{siteNo}
+											AND 	UPR_DISP_CTG_NO = '1'
+										)
+			UNION ALL
+			SELECT
+					  PDCB.DISP_CTG_NO
+					, PDCB.DISP_CTG_NM
+					, PDCB.UPR_DISP_CTG_NO
+					, PDCB.TMPL_NO
+					, PDCB.LRG_CTG_NO
+					, PDCB.MID_CTG_NO
+					, PDCB.SML_CTG_NO
+					, PDCB.THN_CTG_NO
+					, PDCB.SITE_NO
+					, PDCB.DPML_NO
+					, PDCB.SHOP_TYP_CD
+					, PDCB.LEAF_YN
+					, LEVEL + 1
+					, CONCAT_WS('>', TMP1.HIERARCHY, TRIM(TO_CHAR(PDCB.DISP_SEQ,'000')) ||PDCB.DISP_CTG_NO) AS TEXT
+					, REGEXP_REPLACE( CONCAT_WS('>', TMP1.HIERARCHY_NM, PDCB.DISP_CTG_NM) , ' >', '') AS HIERARCHY_TEXT
+			FROM
+					  PR_DISP_CTG_BASE PDCB
+					, CTE AS TMP1
+			WHERE   TMP1.DISP_CTG_NO = PDCB.UPR_DISP_CTG_NO
+			AND 	PDCB.USE_YN LIKE #{useYn} || '%'
+			AND  	PDCB.DISP_YN LIKE #{dispYn} || '%'
+			AND 	PDCB.SHOP_TYP_CD = #{shopTypCd}
+			AND 	PDCB.SITE_NO = #{siteNo}
+		)
+		SELECT
+		*
+		FROM   CTE
+		ORDER BY HIERARCHY
+	</select>
+
+	<select id="getSiteName" parameterType="PrDispCtgBaseRequest" resultType="string">
+		SELECT  /* prDispCtgBase.getSiteName */
+				  SITE_NM
+		FROM
+				  CC_SITE_BASE
+		WHERE 	  SITE_NO = #{siteNo}
+	</select>
+
+	<select id="getMallDetail" parameterType="PrDispCtgBaseRequest" resultType="PrDispCtgBaseResponse">
+		SELECT      /* prDispCtgBase.getMallDetail */
+				  PDCB.DISP_CTG_NO
+				, PDCB.SITE_NO
+				, CSB.SITE_NM
+				, FN_GET_CODENAME( 'DP003', PDCB.SHOP_TYP_CD ) AS SHOP_TYP_CD
+				, PDCB.DPML_NO
+				, PDCB.DISP_CTG_NM
+				, PDCB.DISP_SEQ
+				, PDCB.DISP_YN
+				, PDCB.USE_YN
+				, PDB.HDR_TYP_CD
+				, PDCB.PRT_TYP_CD
+				, PDCB.LINK_URL_ADDR
+				, PDCB.TMPL_NO
+				, (
+						SELECT  PTB.TMPL_PATH_NM || PTB.TMPL_FILE_NM
+						FROM  	PR_TMPL_BASE PTB
+						WHERE 	PTB.TMPL_NO = PDCB.TMPL_NO
+				) AS TMPL_FILE_PATH
+				, PDCB.LINK_DISP_NO
+				,  (
+						SELECT PDCB2.DISP_CTG_NM
+						FROM PR_DISP_CTG_BASE PDCB2
+						WHERE PDCB2.DISP_CTG_NO = PDCB.LINK_DISP_NO
+				) AS LINK_DISP_NM
+				, PDCB.MOV_FRME_CD
+				, PDCB.SYS_MOD_ID
+				, TO_CHAR(PDCB.SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+		FROM 	  PR_DISP_CTG_BASE PDCB
+				, PR_DPML_BASE PDB
+				, CC_SITE_BASE CSB
+		WHERE 	  CSB.SITE_NO = PDCB.SITE_NO
+		AND 	  PDCB.DPML_NO = PDB.DPML_NO
+		AND 	  PDCB.DISP_CTG_NO = #{dispCtgNo}
+	</select>
+
+	<select id="getUprDispCtgNo" parameterType="java.lang.String" resultType="java.lang.String">
+		SELECT 	DISP_CTG_NO   /* prDispCtgBase.getUprDispCtgNo */
+		FROM 	PR_DISP_CTG_BASE
+		WHERE 	SITE_NO = #{siteNo}
+		AND 	UPR_DISP_CTG_NO = '1'
+	</select>
+
+	<select id="getCategoryDetail" parameterType="PrDispCtgBaseRequest" resultType="PrDispCtgBaseResponse">
+		SELECT  /* prDispCtgBase.getCategoryDetail */
+				  DISP_CTG_NO
+				, DISP_CTG_NM
+				, SITE_NO
+				, (
+						SELECT 	CSB.SITE_NM
+						FROM 	CC_SITE_BASE CSB
+						WHERE 	CSB.SITE_NO = PDCB.SITE_NO
+				) AS SITE_NM
+				, SHOP_TYP_CD
+				, FN_GET_CODENAME( 'DP003', PDCB.SHOP_TYP_CD ) AS SHOP_TYP_NAME
+				, DISP_SEQ
+				, DISP_YN
+				, USE_YN
+				, DISP_STR_DT
+				, DISP_END_DT
+				, SHOP_DESC_CONT
+				, LEAF_YN
+				, PRT_TYP_CD
+				, LINK_URL_ADDR
+				, TMPL_NO
+				, (
+						SELECT  PTB.TMPL_PATH_NM || PTB.TMPL_FILE_NM
+						FROM  	PR_TMPL_BASE PTB
+						WHERE 	PTB.TMPL_NO = PDCB.TMPL_NO
+				) AS TMPL_FILE_PATH
+				, LINK_DISP_NO
+				, (
+						SELECT 	PDCB.DISP_CTG_NM
+						FROM 	PR_DISP_CTG_BASE PDCB2
+						WHERE 	PDCB2.DISP_CTG_NO = PDCB.LINK_DISP_NO
+				) AS LINK_DISP_NM
+				, MOV_FRME_CD
+				, SYS_MOD_ID
+				, TO_CHAR(PDCB.SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+		FROM 	  PR_DISP_CTG_BASE PDCB
+		WHERE 	  DISP_CTG_NO = #{dispCtgNo}
+	</select>
+
+	<sql id="subCategoryList">
+		SELECT  /* prDispCtgBase.subCategoryList */
+				  PD.DISP_CTG_NO
+				, PD.DISP_CTG_NM
+				, PD.DISP_SEQ
+				, PD.DISP_YN
+				, PD.USE_YN
+				, TO_CHAR(TO_TIMESTAMP(PD.DISP_STR_DT, 'YYYYMMDD'), 'YYYY-MM-DD') AS DISP_STR_DT
+				, TO_CHAR(TO_TIMESTAMP(PD.DISP_END_DT, 'YYYYMMDD'), 'YYYY-MM-DD') AS DISP_END_DT
+				, PD.SYS_MOD_ID
+				, TO_CHAR(PD.SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+		FROM	  PR_DISP_CTG_BASE PD
+		WHERE 	  PD.UPR_DISP_CTG_NO = #{dispCtgNo}
+		ORDER BY  PD.DISP_SEQ
+	</sql>
+
+	<select id="getSubCategoryList" parameterType="PrDispCtgBaseRequest" resultType="PrDispCtgBaseResponse">
+		<include refid="subCategoryList" />
+	</select>
+
+	<select id="getSubCategoryListCount" parameterType="PrDispCtgBaseRequest" resultType="java.lang.Integer">
+		SELECT  /* prDispCtgBase.getSubCategoryListCount */
+			COUNT(*)
+		FROM (
+			<include refid="subCategoryList" />
+		) T1
+	</select>
+
+	<select id="getGoodsDetail" parameterType="PrDispGoodsInfoRequest" resultType="PrDispGoodsInfoResponse">
+		SELECT  /* prDispCtgBase.getGoodsDetail */
+				  PGB.GOODS_NO
+				, PGB.GOODS_NM
+				, FN_GET_CODENAME( 'PR002', PGB.GOODS_TYP_CD ) AS GOODS_TYP_CD
+				, PGPH.NOR_PRC
+				, PGPH.SALE_PRC
+				, FN_GET_CODENAME( 'PR005', PGB.SALE_STAT_CD ) AS SALE_STAT_CD
+				, EEB.ENTR_NM
+				, TO_CHAR(PGB.SYS_REG_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_REG_DTM
+		FROM 	  PR_GOODS_BASE PGB
+				, PR_GOODS_PRC_HIST PGPH
+				, ET_ENTR_BASE EEB
+		WHERE 	  PGB.GOODS_NO = #{goodsNo}
+		AND 	  PGB.ENTR_NO = EEB.ENTR_NO
+		AND 	  PGB.GOODS_NO = PGPH.GOODS_NO
+		AND 	  PGPH.HIST_END_DTM = TO_TIMESTAMP('2999-12-31 23:59:59', 'YYYY-MM-DD HH24:MI:SS')
+	</select>
+
+	<sql id="displayGoodsList">
+		SELECT  /* prDispCtgBase.displayGoodsList */
+				  PDGI.DISP_CTG_NO
+				, PDGI.GOODS_NO
+				, PDGI.DISP_SEQ
+				, PDGI.DISP_YN
+				, PDGI.SYS_MOD_ID
+				, TO_CHAR(PDGI.SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+				, PGB.GOODS_NM
+				, FN_GET_CODENAME( 'PR002', PGB.GOODS_TYP_CD ) AS GOODS_TYP_CD
+				, PGPH.NOR_PRC
+				, PGPH.SALE_PRC
+				, FN_GET_CODENAME( 'PR005', PGB.SALE_STAT_CD ) AS SALE_STAT_CD
+				, EEB.ENTR_NM
+				, TO_CHAR(PGB.SYS_REG_DTM,'YYYY-MM-DD') AS SYS_REG_DTM
+		FROM 	  PR_DISP_GOODS_INFO PDGI
+				, PR_GOODS_BASE PGB
+				, PR_GOODS_PRC_HIST PGPH
+				, ET_ENTR_BASE EEB
+		WHERE 	  PDGI.DISP_CTG_NO = #{dispCtgNo}
+		AND 	  PDGI.GOODS_NO = PGB.GOODS_NO
+		AND 	  PGB.ENTR_NO = EEB.ENTR_NO
+		AND 	  PGB.GOODS_NO = PGPH.GOODS_NO
+		AND 	  PGPH.HIST_END_DTM = TO_TIMESTAMP('2999-12-31 23:59:59', 'YYYY-MM-DD HH24:MI:SS')
+		ORDER BY  PDGI.DISP_SEQ
+	</sql>
+
+	<select id="getDisplayGoodsList" parameterType="PrDispGoodsInfoRequest" resultType="PrDispGoodsInfoResponse">
+		<include refid="displayGoodsList" />
+	</select>
+
+	<select id="getDisplayGoodsListCount" parameterType="PrDispGoodsInfoRequest" resultType="java.lang.Integer">
+		SELECT  /* prDispCtgBase.getDisplayGoodsListCount */
+			COUNT(*)
+		FROM (
+			<include refid="displayGoodsList" />
+		) T1
+	</select>
+
+</mapper>
+
+

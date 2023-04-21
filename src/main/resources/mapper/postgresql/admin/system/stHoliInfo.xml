@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.system.StHoliInfoMapper">
+
+	<sql id="paginatedBase">
+		LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+	</sql>
+
+	<sql id="holidayListBase">
+		SELECT /* stHoliInfo.holidayListBase */
+		       SUBSTRING(HOLI_DT,1,4)||'-'||SUBSTRING(HOLI_DT,5,2)||'-'||SUBSTRING(HOLI_DT,7,2) AS HOLI_DT
+			 , HOLI_JOB_GB_CD
+			 , HOLI_GB_CD
+			 , HOLI_MEMO
+			 , USE_YN
+			 , SYS_REG_ID
+			 , TO_CHAR(SYS_REG_DTM,'yyyy-mm-dd hh24:mi:ss') AS SYS_REG_DTM
+			 , SYS_MOD_ID
+			 , TO_CHAR(SYS_MOD_DTM,'yyyy-mm-dd hh24:mi:ss') AS SYS_MOD_DTM
+		FROM ST_HOLI_INFO
+		<include refid="getHolidayListWhere" />
+		ORDER BY HOLI_DT DESC, HOLI_JOB_GB_CD ASC
+	</sql>
+
+	<sql id="getHolidayListWhere">
+		WHERE 1 = 1
+		<if test="holiDt != null and holiDt!= ''">
+			AND HOLI_DT like #{holiDt} || '%'
+		</if>
+		<if test="holiGbCd != null and holiGbCd!= ''">
+			AND HOLI_GB_CD = #{holiGbCd}
+		</if>
+		<if test="holiJobGbCd != null and holiJobGbCd!= ''">
+			AND HOLI_JOB_GB_CD = #{holiJobGbCd}
+		</if>
+	</sql>
+
+
+	<!--
+	제 목 :휴일 목록 그리드 조회
+	작성자 : 박슬기
+	작성일 : 2021.02.10
+	params : HolidayMgmtRequest
+	설 명 : 휴일 목록 그리드 조회
+	-->
+	<select id="getHolidayList" parameterType="HolidayMgmtRequest" resultType="HolidayMgmtResponse">
+		/* stHoliInfo.getHolidayList */
+		<include refid="holidayListBase" />
+		<include refid="paginatedBase" />
+	</select>
+
+	<!--
+	제 목 :휴일 목록 Count
+	작성자 : 박슬기
+	작성일 : 2021.02.10
+	params : HolidayMgmtRequest
+	설 명 : 휴일 목록 Count
+	-->
+	<select id="getHolidayListCount" parameterType="HolidayMgmtRequest" resultType="java.lang.Integer">
+		SELECT /* StHoliInfo.getHolidayListCount */
+		    COUNT(*)
+		FROM 
+			ST_HOLI_INFO
+		<include refid="getHolidayListWhere" />
+	</select>
+
+	<select id="checkDuplicatedHoliday" parameterType="StHoliInfo" resultType="java.lang.Boolean">
+		SELECT /* StHoliInfo.checkDuplicatedHoliday */
+			CASE WHEN COUNT(*) > 0 THEN TRUE
+			ELSE FALSE END RESULT
+		FROM 
+			ST_HOLI_INFO
+		WHERE 
+			HOLI_DT = #{holiDt}
+			AND HOLI_JOB_GB_CD = #{holiJobGbCd}
+	</select>
+</mapper>
+
+

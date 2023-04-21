@@ -1,0 +1,12 @@
+<html lang="ko-kr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/main-layout}">
+
+<th:block layout:fragment="notification-bar">
+    <th:block th:replace="fragments/header/notification :: notification-bar-cont" />
+</th:block>
+<th:block layout:fragment="menu-bar">
+    <th:block th:replace="fragments/header/top-menu :: menu-bar-cont" />
+</th:block>
+
+</html>

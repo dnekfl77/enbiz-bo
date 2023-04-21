@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enbiz.bo.app.repository.goods.PrGoodsSafeCertiHistTrxMapper">
+
+    <delete id="deleteAllGoodsSafeCertiHist" parameterType="java.lang.String">
+        DELETE /* prGoodsSafeCertiHisTrx.deleteAllGoodsSafeCertiHist */
+          FROM PR_GOODS_SAFE_CERTI_HIST
+         WHERE GOODS_NO = #{goodsNo}
+    </delete>
+
+    <insert id="insertGoodsSafeCertiHist" parameterType="PrGoodsSafeCertiHist">
+        INSERT INTO PR_GOODS_SAFE_CERTI_HIST ( /* prGoodsSafeCertiHisTrx.insertGoodsSafeCertiHist */
+               GOODS_NO
+             , SAFE_CERTI_GB_CD
+             , SAFE_CERTI_NO
+             , APLY_STR_DT
+             , APLY_END_DT
+             , SAFE_CERTI_ORN_NM
+             , SYS_REG_ID
+             , SYS_REG_DTM
+             , SYS_MOD_ID
+             , SYS_MOD_DTM
+        ) VALUES (
+               #{goodsNo}
+             , #{safeCertiGbCd}
+             , #{safeCertiNo}
+             , #{aplyStrDt}
+             , #{aplyEndDt}
+             , #{safeCertiOrnNm}
+             , #{sysRegId}
+             , now()
+             , #{sysRegId}
+             , now()
+        )
+    </insert>
+</mapper>

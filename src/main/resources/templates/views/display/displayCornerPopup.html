@@ -1,0 +1,250 @@
+<!--
+* 프로그램명 : 전시 코너 등록/수정 팝업
+* 작 성 일 : 2021.03.15
+* 작 성 자 : 권다솜
+* 수 정 자 : 권다솜
+* 버    전 : 1.0
+* 개    요 : 전시관리 > 전시템플릿/코너관리 > 전시코너관리 > 전시코너등록 > 전시 코너 등록/수정 팝업
+* 이    력 :
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-update-layout}">
+<body>
+
+<th:block layout:fragment="header-area">
+    <div class="header">
+        <h1 class="title" th:if="${requestData} == null"        th:text="${#messages.msg('displayCornerMgmt.into.title.insert')}"></h1>
+        <h1 class="title" th:unless="${requestData} == null"    th:text="${#messages.msg('displayCornerMgmt.into.title.update')}"></h1>
+    </div>
+</th:block>
+
+<th:block layout:fragment="data-area">
+    <form name="displayCornerForm" id="displayCornerForm">
+        <input type="hidden" id="conrTgtList" name="conrTgtList" >
+        <input type="hidden" id="targetRemoveList" name="targetRemoveList">
+        <!--data-cont-->
+        <div class="data-cont">
+            <div class="data">
+                <div class="data-head">
+                    <div class="left">
+                        <span class="title" th:text="${#messages.msg('displayCornerMgmt.info.label.displayCornerInfo')}"></span>
+                    </div>
+                </div>
+                <div class="data-body toggle-cont">
+                    <table class="data-table">
+                        <colgroup>
+                            <col width="100">
+                            <col>
+                            <col width="100">
+                            <col>
+                            <col width="100">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                            <tr>
+                                <td class="label" th:text="${#messages.msg('displayCornerMgmt.info.label.displayCornerNo')}"></td>
+                                <td>
+                                    <span id="conrNoText" th:if="${requestData} != null"></span>
+                                    <input type="hidden" name="conrNo" id="conrNo"/>
+                                </td>
+                                <td class="label"><strong th:text="${#messages.msg('displayCornerMgmt.info.label.displayCornerNm')}"></strong></td>
+                                <td>
+                                    <input class="input" type="text" name="conrNm" id="conrNm" maxlength="300"/>
+                                </td>
+                                <td class="label"><strong th:text="${#messages.msg('displayCornerMgmt.info.label.useYn')}"></strong></td>
+                                <td>
+                                    <div class="input-group">
+                                        <label class="radio-inline" th:for="useYn_Y">
+                                            <input type="radio" name="useYn" th:value="Y" th:id="useYn_Y">
+                                            <span th:text="${#messages.msg('adminCommon.use')}"></span>
+                                        </label>
+                                        <label class="radio-inline" th:for="useYn_N">
+                                            <input type="radio" name="useYn" th:value="N" th:id="useYn_N">
+                                            <span th:text="${#messages.msg('adminCommon.disuse')}"></span>
+                                        </label>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label"><strong th:text="${#messages.msg('displayCornerMgmt.info.label.displayManager')}"></strong></td>
+                                <td>
+                                    <div class="input-group">
+                                        <input class="input disabled w60" type="text" id="aempNm" th:readonly="true"/>
+                                        <input type="hidden" id="aempId" name="aempId"/>
+                                        <a href="#" class="button small" id="btn_aempPopup_call"><i class="icon-sarch"></i></a>
+                                        <a href="#" class="button small" id="btn_aempPopup_reset"><i class="icon-clear"></i></a>
+                                    </div>
+                                </td>
+                                <td class="label" th:text="${#messages.msg('displayCornerMgmt.info.label.displayCornerDesc')}"></td>
+                                <td colspan="3">
+                                    <input class="input w100" type="text" name="conrDesc" id="conrDesc" maxlength="4000"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label" th:text="${#messages.msg('displayCornerMgmt.info.label.displayCornerImg')}"></td>
+                                <td colspan="2">
+                                    <div class="input-group file-upload">
+                                   	    <a href="#" class="button small gray" id="btn_fileUpload"><span class="text" th:text="${#messages.msg('adminCommon.button.select.file')}"></span></a>
+                                        <input type="text" class="input disabled" disabled="disabled">
+                                        <input type="hidden" name="conrImgPathNm" id="conrImgPathNm">
+                                        <input type="hidden" name="conrImgFileNm" id="conrImgFileNm">
+                                        <div class="tip-wrap">
+                                            <p class="tip"th:text="${#messages.msg('displayCornerMgmt.info.label.displayCornerImgSize')}"></p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td colspan="3" class="center">
+                                    <div id="imgFile"></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!--//data-cont-->
+
+        <!--data-cont-->
+        <div class="data-cont">
+            <div class="data">
+                <div class="data-head">
+                    <div class="left">
+                        <span class="title" th:text="${#messages.msg('displayCornerMgmt.info.label.displayCornerTgtInfo')}"></span>
+                    </div>
+                </div>
+                <div class="data-body toggle-cont">
+                    <table class="data-table">
+                        <colgroup>
+                            <col width="120">
+                            <col>
+                            <col width="120">
+                            <col>
+                        </colgroup>
+                        <tbody id="conrTargetTable">
+                            <tr>
+                                <td class="label"><strong th:text="${#messages.msg('displayCornerMgmt.info.label.setUseYn')}"></strong></td>
+                                <td>
+                                    <div class="input-group">
+                                        <label class="radio-inline" th:for="setUseYn_Y">
+                                            <input type="radio" name="setUseYn" th:value="Y" th:id="setUseYn_Y">
+                                            <span th:text="${#messages.msg('adminCommon.use')}"></span>
+                                        </label>
+                                        <label class="radio-inline" th:for="setUseYn_N">
+                                            <input type="radio" name="setUseYn" th:value="N" th:id="setUseYn_N">
+                                            <span th:text="${#messages.msg('adminCommon.disuse')}"></span>
+                                        </label>
+                                    </div>
+                                </td>
+                                <td class="label" th:text="${#messages.msg('displayCornerMgmt.info.label.setCnt')}"></td>
+                                <td>
+                                    <select class="form-control w50" id="setCnt" name="setCnt">
+                                        <option value="1" th:text="${#messages.msg('adminCommon.select')}"></option>
+                                        <option th:each="num : ${#numbers.sequence(2,5)}" th:value="${num}" th:text="${num}"></option>
+                                    </select>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!--//data-cont-->
+
+        <!-- grid-cont -->
+        <div class="grid-cont">
+            <div class="grid">
+                <div class="grid-head">
+                    <div class="title-area">
+                        <h2 class="title" th:text="${#messages.msg('displayCornerMgmt.displayCornerTemplateGrid.title')}"></h2>
+                    </div>
+                    <div class="option-area">
+                        <div class="edit-option">
+                            <div class="button-group">
+                                <a href="#" class="button inside" id="btn_grid_insert">
+                                    <span class="text" th:text="${#messages.msg('displayCornerMgmt.displayCornerTemplateGrid.btn.addTemplateData')}"></span>
+                                </a>
+                                <a href="#" class="button inside" id="btn_grid_remove">
+                                    <span class="text" th:text="${#messages.msg('adminCommon.grid.button.delete.row')}"></span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="page-option" grid-id="displayCornerTemplateGrid">
+                            <span class="total">총 <span id="displayCornerTemplateGrid-totalcount">0</span>건</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- //grid-head -->
+
+                <div class="grid-body with-head">
+                    <div id="displayCornerTemplateGrid" realgrid></div>
+                </div>
+            </div>
+        </div>
+        <!-- //grid-cont -->
+
+    </form>
+    <div class="button-group search-btn">
+        <a href="#" class="button" id="btn_popup_cancel">
+            <span class="text" th:text="${#messages.msg('adminCommon.button.cancel')}">취소</span>
+        </a>
+        <a href="#" class="button large" id="btn_popup_save">
+            <span class="text" th:text="${#messages.msg('adminCommon.button.save')}">저장</span>
+        </a>
+    </div>
+</th:block>
+
+
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        var req          = [[${requestData}]];
+        var reSearchPage = [[${reSearchPage}]];
+        var reqTarget    = [[${requestTargetList}]];
+        var codeList     = [[${codeList.DP005}]];
+        const maxUploadSizePerFile = [[${maxUploadSizePerFile}]];
+        const noneImg = "/static/img/noimg.png";
+
+        var removeList = Array();
+        var removeListIdx = 0;
+
+        var msg = x2coMessage.getMessage( {
+              displayCornerNm  : 'displayCornerMgmt.info.label.displayCornerNm'
+            , displayManager   : 'displayCornerMgmt.info.label.displayManager'
+            , setGroupNm       : 'displayCornerMgmt.info.label.setGroupNm'
+            , dispSeq          : 'displayCornerMgmt.info.label.dispSeq'
+            , cornTarget       : 'displayCornerMgmt.info.label.cornTarget'
+            , cornTargetCnt    : 'displayCornerMgmt.info.label.cornTargetCnt'
+
+            , tmplNo           : 'displayCornerMgmt.displayCornerTemplateGrid.field.tmplNo'
+            , tmplNm           : 'displayCornerMgmt.displayCornerTemplateGrid.field.tmplNm'
+            , tmplFilePath     : 'displayCornerMgmt.displayCornerTemplateGrid.field.tmplFilePath'
+            , tmplTypCd        : 'displayCornerMgmt.displayCornerTemplateGrid.field.tmplTypCd'
+            , useYn            : 'displayCornerMgmt.displayCornerTemplateGrid.field.useYn'
+            , selectLabel      : 'adminCommon.select'
+            , fileLength       : 'displayCornerMgmt.error.msg.fileLengthMsg'
+            , fileLimitSize    : 'displayCornerMgmt.error.msg.fileLimitSizeMsg'
+         	, fileTypeError    : 'displayCornerMgmt.error.msg.fileTypeMsg'
+            , cancelMessage    : 'adminCommon.alert.cancel'
+         	, checkConrTgtCd   : 'displayCornerMgmt.error.msg.checkConrTgtCdMsg'
+            , targetLengthCheck : 'displayCornerMgmt.error.msg.targetLengthCheckMsg'
+            , checkPrConrSetInfo : 'displayCornerMgmt.error.msg.checkPrConrSetInfoMsg'
+            , TrcheckPrConrSetInfo : 'displayCornerMgmt.error.msg.TrcheckPrConrSetInfoMsg'
+            , necessaryCheckMessage : 'adminCommon.alert.required.parameter'
+            , numberRange1CheckMessage : 'displayCornerMgmt.error.msg.numberRange1CheckMsg'
+         	, deleteRowCheck : 'adminCommon.alert.no.selected.item.for.delete'
+            , checkPrDispConrInfo : 'displayCornerMgmt.error.msg.checkPrDispConrInfoMsg'
+            , saveQuestionMessage : 'adminCommon.alert.save'
+        });
+    </script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/displayCornerTemplateGrid.eventHandler.js?202103210001'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/displayCornerTemplateGrid.provider.js?202103210001'" ></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            displayCornerTemplateGrid.eventhandler.init();
+        });
+    </script>
+</th:block>
+
+</body>
+</html>

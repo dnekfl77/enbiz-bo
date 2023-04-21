@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.goods.PrItmBaseMapper">
+
+    <sql id="paginatedBase">
+        LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+    </sql>
+
+    <sql id="goodsItemListBase">
+        SELECT /* prItmBase.getGoodsItemList */
+               PGB.GOODS_NO
+             , PGB.GOODS_NM
+             , PGB.SALE_STAT_CD
+             , FN_GET_CODENAME('PR005',PGB.SALE_STAT_CD) AS SALE_STAT_NM
+             , PGB.MODL_NM
+             , EEB.ENTR_NM
+             , 	       COALESCE(     (SELECT STD_CTG_NM
+                                        FROM PR_STD_CTG T
+                                       WHERE T.STD_CTG_NO = PSC.STD_LRG_CTG_NO),'')
+                    || COALESCE('>'||(SELECT STD_CTG_NM
+                                        FROM PR_STD_CTG T
+                                       WHERE T.STD_CTG_NO = PSC.STD_MID_CTG_NO),'')
+                    || COALESCE('>'||(SELECT STD_CTG_NM
+                                        FROM PR_STD_CTG T
+                                       WHERE T.STD_CTG_NO = PSC.STD_SML_CTG_NO),'')
+                    || COALESCE('>'||(SELECT STD_CTG_NM
+                                        FROM PR_STD_CTG T
+                                        WHERE T.STD_CTG_NO = PSC.STD_THN_CTG_NO),'') AS STR_CTG
+            , PIB.ITM_NO
+            , LTRIM(((CASE WHEN PIB.OPTN_NM_1 IS NULL OR PIB.OPTN_NM_1 = '' THEN '' ELSE '/' || OPTN_NM_1 END)
+                 || (CASE WHEN PIB.OPTN_NM_2 IS NULL OR PIB.OPTN_NM_2 = '' THEN '' ELSE '/' || OPTN_NM_2 END)
+                 || (CASE WHEN PIB.OPTN_NM_3 IS NULL OR PIB.OPTN_NM_3 = '' THEN '' ELSE '/' || OPTN_NM_3 END)
+                 || (CASE WHEN PIB.OPTN_NM_4 IS NULL OR PIB.OPTN_NM_4 = '' THEN '' ELSE '/' || OPTN_NM_4 END)
+                 || (CASE WHEN PIB.OPTN_NM_5 IS NULL OR PIB.OPTN_NM_5 = '' THEN '' ELSE '/' || OPTN_NM_5 END)),'/') AS ITM_NM
+            , PGB.STK_MGR_YN
+            , PIB.STK_QTY
+            , PIB.DISP_SEQ
+            , PIB.ITM_SALE_STAT_CD
+            , FN_GET_CODENAME('PR005',PIB.ITM_SALE_STAT_CD) AS ITM_SALE_STAT_NM
+            , PIB.SOUT_NOTI_YN
+            , PIB.SOUT_NOTI_STD_QTY
+            , PIB.LGC_ITM_NO
+            , CASE WHEN PISS.SOUT_CAUS_CD IS NOT NULL THEN FN_GET_CODENAME('PR032',PISS.SOUT_CAUS_CD)
+                                                      ELSE '' END SOUT_CAUS_CD
+            , PGPH.SALE_PRC
+            , CASE WHEN PISS.HIST_STR_DTM IS NOT NULL THEN TO_CHAR(PISS.HIST_STR_DTM,'yyyy-mm-dd')
+                                                      ELSE '' END HIST_STR_DTM
+            , PGB.DELI_PROC_TYP_CD
+            , FN_GET_CODENAME('PR008',PGB.DELI_PROC_TYP_CD) AS DELI_PROC_TYP_NM
+            , CASE WHEN PISS.ITM_SALE_STAT_CD = '20' THEN PISS.SYS_REG_ID
+                                                 ELSE '' END SOLD_USER_NM
+            , SUB.USER_NM
+            , PIB.SYS_MOD_ID
+            , TO_CHAR(PIB.SYS_MOD_DTM,'yyyy-mm-dd hh24:mi:ss') AS SYS_MOD_DTM
+            , PIB.ITM_SALE_STAT_CD AS HIDDEN_ITM_SALE_STAT_CD
+         FROM PR_GOODS_BASE PGB
+            , PR_GOODS_PRC_HIST PGPH
+            , PR_ITM_BASE PIB
+            , PR_ITM_SALE_STAT_HIST PISS
+            , PR_STD_CTG   PSC
+            , ST_USER_BASE SUB
+            , ET_ENTR_BASE EEB
+        WHERE PGB.GOODS_NO      = PGPH.GOODS_NO
+          AND PGPH.HIST_END_DTM = TO_TIMESTAMP(#{historyDtm}, 'YYYYMMDDHH24MISS')
+          AND PGB.GOODS_NO      = PIB.GOODS_NO
+          AND PISS.GOODS_ITM_GB_CD = '20'
+          AND PIB.GOODS_NO         = PISS.GOODS_NO
+          AND PIB.ITM_NO           = PISS.ITM_NO
+          AND PISS.HIST_END_DTM    = TO_TIMESTAMP(#{historyDtm}, 'YYYYMMDDHH24MISS')
+          AND PGB.STD_CTG_NO       = PSC.STD_CTG_NO
+          AND PSC.MD_ID            = SUB.USER_ID
+          AND PGB.ENTR_NO          = EEB.ENTR_NO
+    <choose>
+      <when test="goodsNo != null and goodsNo != '' or goodsNm != null and goodsNm != ''  ">
+          AND PGB.GOODS_NO LIKE #{goodsNo} || '%' -- 주문번호
+          AND PGB.GOODS_NM LIKE #{goodsNm} || '%' -- 주문번호
+      </when>
+     <otherwise>
+          AND PGB.GOODS_REG_DTM <![CDATA[>=]]> TO_TIMESTAMP(#{startDate}||'000000', 'YYYYMMDDHH24MISS') -- 상품등록일
+          AND PGB.GOODS_REG_DTM <![CDATA[<=]]> TO_TIMESTAMP(#{endDate}||'235959', 'YYYYMMDDHH24MISS') -- 상품등록일
+      <if test="userId != null and userId != ''">
+          AND PSC.MD_ID LIKE #{userId} || '%'       -- 담당MD , 필수아님
+      </if>
+          AND PGB.STD_CTG_NO LIKE #{stdCtgNo} || '%'  -- 표준분류
+          AND PGB.SALE_STAT_CD LIKE #{saleStatCd} || '%'  -- 판매상태
+          AND PIB.ITM_SALE_STAT_CD LIKE #{itmSaleStatCd} || '%'  -- 딘픔핀메싱테
+          AND PGB.DELI_PROC_TYP_CD LIKE #{deliProcTypCd} || '%'  -- 배송처리유형
+          AND EEB.ENTR_NO LIKE #{entrNo} || '%'  -- 협력사
+          AND PIB.SOUT_NOTI_YN LIKE #{soutNotiYn} || '%'  -- 품절알림여부
+      <if test='stockCheck != null and stockCheck.equals("Y")'>
+          AND PIB.STK_QTY <![CDATA[<=]]> #{stkQty}
+      </if>
+      <if test='soutNotiStdQtyCheck != null and soutNotiStdQtyCheck.equals("Y")'>
+          AND PIB.STK_QTY <![CDATA[<]]> PIB.SOUT_NOTI_STD_QTY
+      </if>
+     </otherwise>
+    </choose>
+    </sql>
+
+    <select id="getGoodsItemListCount" parameterType="GoodsItemMgmtRequest" resultType="java.lang.Integer">
+        SELECT /* prItmBase.getGoodsItemListCount */
+               COUNT(*)
+          FROM (
+            <include refid="goodsItemListBase"/>
+          ) T1
+    </select>
+
+
+    <select id="getGoodsItemList" parameterType="GoodsItemMgmtRequest" resultType="GoodsItemMgmtResponse">
+        <include refid="goodsItemListBase"/>
+        <include refid="paginatedBase" />
+    </select>
+
+    <select id="getGoodsItemSaleStatus" parameterType="java.lang.String" resultType="GoodsItemSaleStatusResponse">
+        SELECT 'TOTAL' AS CD, /* prItmBase.getGoodsItemSaleStatus */
+               COUNT(*)
+          FROM PR_ITM_BASE
+         WHERE GOODS_NO = #{goodsNo}
+         UNION
+        SELECT CD , CASE WHEN GOODS_NO IS NULL THEN 0 ELSE COUNT(*) END AS COUNT
+          FROM ST_STD_CD SSC
+          LEFT OUTER JOIN PR_ITM_BASE PIB
+                       ON (PIB.ITM_SALE_STAT_CD = SSC.CD AND PIB.GOODS_NO = #{goodsNo})
+         WHERE GRP_CD = 'PR005'
+         GROUP BY CD , GOODS_NO
+    </select>
+
+    <select id="getGoodsItemBaseList" parameterType="java.lang.String" resultType="PrItmBase">
+        SELECT GOODS_NO/* prItmBase.getGoodsItemBaseList */
+             , ITM_NO
+             , STK_QTY
+             , LGC_ITM_NO
+             , ITM_SALE_STAT_CD
+             , SOUT_CAUS_CD
+             , SOUT_NOTI_YN
+             , SOUT_NOTI_STD_QTY
+             , OPTN_CAT_NM_1
+             , OPTN_CAT_NO_1
+             , OPTN_NM_1
+             , OPTN_NO_1
+             , OPTN_CAT_NM_2
+             , OPTN_CAT_NO_2
+             , OPTN_NM_2
+             , OPTN_NO_2
+             , OPTN_CAT_NM_3
+             , OPTN_CAT_NO_3
+             , OPTN_NM_3
+             , OPTN_NO_3
+             , OPTN_CAT_NM_4
+             , OPTN_CAT_NO_4
+             , OPTN_NM_4
+             , OPTN_NO_4
+             , OPTN_CAT_NM_5
+             , OPTN_CAT_NO_5
+             , OPTN_NM_5
+             , OPTN_NO_5
+             , SYS_REG_ID
+             , TO_CHAR(SYS_REG_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_REG_DTM
+             , SYS_MOD_ID
+             , TO_CHAR(SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+          FROM PR_ITM_BASE
+         WHERE GOODS_NO = #{goodsNo}
+         ORDER BY ITM_NO
+    </select>
+
+    <select id="getPrItmBaseInfo" parameterType="PrItmBase" resultType="PrItmBase">
+        SELECT GOODS_NO/* prItmBase.getPrItmBaseInfo */
+             , ITM_NO
+             , STK_QTY
+             , LGC_ITM_NO
+             , ITM_SALE_STAT_CD
+             , SOUT_CAUS_CD
+             , SOUT_NOTI_YN
+             , SOUT_NOTI_STD_QTY
+             , OPTN_CAT_NM_1
+             , OPTN_CAT_NO_1
+             , OPTN_NM_1
+             , OPTN_NO_1
+             , OPTN_CAT_NM_2
+             , OPTN_CAT_NO_2
+             , OPTN_NM_2
+             , OPTN_NO_2
+             , OPTN_CAT_NM_3
+             , OPTN_CAT_NO_3
+             , OPTN_NM_3
+             , OPTN_NO_3
+             , OPTN_CAT_NM_4
+             , OPTN_CAT_NO_4
+             , OPTN_NM_4
+             , OPTN_NO_4
+             , OPTN_CAT_NM_5
+             , OPTN_CAT_NO_5
+             , OPTN_NM_5
+             , OPTN_NO_5
+             , SYS_REG_ID
+             , TO_CHAR(SYS_REG_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_REG_DTM
+             , SYS_MOD_ID
+             , TO_CHAR(SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+         FROM PR_ITM_BASE
+        WHERE GOODS_NO = #{goodsNo}
+          AND ITM_NO = #{itmNo}
+    </select>
+</mapper>

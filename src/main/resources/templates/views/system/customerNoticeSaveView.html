@@ -1,0 +1,202 @@
+<!--
+* 프로그램명 : 고객공지사항 등록/수정 팝업
+* 작 성 일 : 2021.07.27
+* 작 성 자 : 홍혜리
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 시스템관리 > 공지사항관리 > 고객공지사항관리 >고객공지사항 등록/수정 팝업
+* 이    력 :
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-layout}">
+<body>
+
+<th:block layout:fragment="popup-title-area">
+    <th:block layout:insert="~{fragments/popup/popup-title :: popup-title}"
+              th:with="title=${#messages.msg('customerNoticeMgmt.cus.ntc.info.popup.title')}"></th:block>
+</th:block>
+<th:block layout:fragment="popup-search-area">
+
+    <!--Basic Info Area-->
+    <div class="data-cont">
+        <div class="data">
+            <div class="data-head">
+                <div class="left">
+                    <span class="title" th:text="${#messages.msg('customerNoticeMgmt.cus.ntc.info.popup.basic.info.title')}"></span>
+                </div>
+            </div>
+            <div class="data-body">
+                <form id="cusNtcInfoForm">
+                    <table class="data-table fixed">
+                        <colgroup>
+                            <col width="120">
+                            <col>
+                            <col width="120">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                        <tr>
+                            <!-- 공지번호 -->
+                            <td class="label" th:text="${#messages.msg('customerNoticeMgmt.label.cus.ntc.mgmt.ntcNo')}"></td>
+                            <td>
+                                <input type="text" class="input disabled" name="ntcNo" th:value="${cusNtcInfo?.ntcNo}" th:readonly="true">
+                            </td>
+                            <!-- 전시(대상)구분 -->
+                            <td class="label"><strong th:text="${#messages.msg('customerNoticeMgmt.label.cus.ntc.mgmt.dispMediaCd')}"></strong></td>
+                            <td>
+                                <select class="form-control w40" th:disabled="${cusNtcInfo == null}? false : true" name="dispMediaCd" id="dispMediaCd">
+                                    <option value="" th:text="${#messages.msg('adminCommon.entirety')}" />
+                                    <option th:each="list : ${codeList.DP018}" th:value="${list?.cd}" th:utext="${list?.cdNm}"
+                                    th:selected="${cusNtcInfo?.dispMediaCd} == ${list?.cd}"/>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <!-- 제목 -->
+                            <td class="label"><strong th:text="${#messages.msg('customerNoticeMgmt.label.cus.ntc.mgmt.ntcTitleNm')}"></strong></td>
+                            <td colspan="3">
+                                <input type="text" class="input w40" name="ntcTitleNm" id="ntcTitleNm" th:value="${cusNtcInfo?.ntcTitleNm}" maxlength="200">
+                            </td>
+                        </tr>
+                        <tr>
+                            <!-- 게시기간 -->
+                            <td class="label"><strong th:text="${#messages.msg('customerNoticeMgmt.label.cus.ntc.mgmt.bbDtm')}"></strong></td>
+                            <td>
+                                <div class="picker-group">
+                                    <input type="text" class="form-control" id="bbStrDtm" name="bbStrDtm" readonly th:value="${cusNtcInfo?.bbStrDtm}">
+                                    <span class="input-group-addon">~</span>
+                                    <input type="text" class="form-control" id="bbEndDtm" name="bbEndDtm" readonly th:value="${cusNtcInfo?.bbEndDtm}">
+                                    <span class="input-group-addon" id="btn_call_calender"><i class="icon-calendar"></i></span>
+                                </div>
+                            </td>
+                            <!-- 게시여부 -->
+                            <td class="label"><strong th:text="${#messages.msg('adminCommon.bul.yn')}"></strong></td>
+                            <td>
+                                <label class="radio-inline"><input type="radio" name="bbYn" value="Y" th:checked="${cusNtcInfo == null} or ${cusNtcInfo?.bbYn} == 'Y'">게시</label>
+                                <label class="radio-inline"><input type="radio" name="bbYn" value="N" th:checked="${cusNtcInfo?.bbYn} == 'N'">게시안함</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <!-- 상단고정여부 -->
+                            <td class="label"><strong th:text="${#messages.msg('customerNoticeMgmt.label.cus.ntc.mgmt.uprFixYn')}"></strong></td>
+                            <td colspan="3">
+                                <label>
+                                    <input class="checkbox-inline" type="checkbox" id="uprFixYn" th:checked="${cusNtcInfo?.uprFixYn} == 'Y'"> 상단고정 (최근 5개까지만 상단 고정)
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <!-- 수정자 -->
+                            <td class="label" th:text="${#messages.msg('adminCommon.label.sys.mod.id')}"></td>
+                            <td>
+                                <span th:text="${cusNtcInfo?.sysModId}"></span>
+                            </td>
+                            <!-- 수정일시 -->
+                            <td class="label" th:text="${#messages.msg('adminCommon.label.sys.mod.date')}"></td>
+                            <td>
+                                <span th:text="${cusNtcInfo?.sysModDtm}"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <!-- 등록자 -->
+                            <td class="label" th:text="${#messages.msg('adminCommon.label.sys.reg.id')}"></td>
+                            <td>
+                                <span th:text="${cusNtcInfo?.sysRegId}"></span>
+                            </td>
+                            <!-- 등록일시 -->
+                            <td class="label" th:text="${#messages.msg('adminCommon.label.sys.reg.date')}"></td>
+                            <td>
+                                <span th:text="${cusNtcInfo?.sysRegDtm}"></span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!--Basic Info Area-->
+
+    <!--Notice Info Area-->
+    <div class="data-cont">
+        <div class="data">
+            <div class="data-head">
+                <div class="left">
+                    <span class="title" th:text="${#messages.msg('customerNoticeMgmt.cus.ntc.info.popup.notice.info.title')}"></span>
+                </div>
+            </div>
+            <div class="data-body">
+                <table class="data-table fixed">
+                    <colgroup>
+                        <col width="120">
+                        <col>
+                        <col width="120">
+                        <col>
+                    </colgroup>
+                    <tbody>
+                        <tr>
+                            <!-- 내용(PC) -->
+                            <td class="label"><strong th:text="${#messages.msg('customerNoticeMgmt.label.cus.ntc.mgmt.pcNtcCont')}"></strong></td>
+                            <td colspan="3">
+                                <textarea class="textarea" name="pcNtcContEditor" id="pcNtcContEditor" style="width:100%;"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <!-- 내용(MO) -->
+                            <td class="label"><strong th:text="${#messages.msg('customerNoticeMgmt.label.cus.ntc.mgmt.moNtcCont')}"></strong></td>
+                            <td colspan="3">
+                                <textarea class="textarea" name="moNtcContEditor" id="moNtcContEditor" style="width:100%;"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <!-- 첨부파일 -->
+                            <td class="label"><strong th:text="${#messages.msg('customerNoticeMgmt.label.cus.ntc.mgmt.atchFil')}"></strong></td>
+                            <td colspan="3">
+                                <div class="input-group file-upload">
+                                    <a href="#" class="button small gray" id="btn_upload_file"><span class="text" th:text="${#messages.msg('adminCommon.button.select.file')}"></span></a>
+                                    <input type="text" class="input disabled w70" disabled="disabled">
+                                    <ul class="file-list"></ul>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--Notice Info Area-->
+
+</th:block>
+<th:block layout:fragment="popup-search-button-area">
+    <div class="button-group search-btn" style="padding-bottom: 20px;">
+        <a href="#" class="button white" id="btn_popup_close">
+            <span class="text" th:text="${#messages.msg('adminCommon.button.cancel')}"></span>
+        </a>
+        <a href="#" class="button large" id="btn_popup_apply">
+            <span class="text" th:text="${#messages.msg('adminCommon.button.save')}"></span>
+        </a>
+    </div>
+</th:block>
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        var _gridType = '';
+        var oEditorsPc = [];
+        var oEditorsMo = [];
+
+        /*<![CDATA[*/
+        var _cusNtcInfo = [[${cusNtcInfo}]];
+        var _ntcAtchFileList = [[${ntcAtchFileList}]];
+        var _allowExtension = [[${allowExtension}]];
+        /*]]>*/
+    </script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'system/cusNtcInfo.eventHandler.js?20210824001'" ></script>
+    <script type="text/javascript">
+        $(function() {
+            cusNtcInfoPopup.eventhandler.init();
+        });
+    </script>
+</th:block>
+</body>
+</html>

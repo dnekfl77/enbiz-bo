@@ -1,0 +1,158 @@
+<!--
+* 프로그램명 : 자동배분설정
+* 작 성 일 : 2021.06.07
+* 작 성 자 : 윤성원
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 고객서비스 > 센터관리 > 자동배분설정 팝업
+* 이    력 :
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-update-layout}">
+<body>
+<!--Title Area-->
+<th:block layout:fragment="header-area">
+    <div class="tip-wrap fl-right">
+        <p class="tip">배분 주기는 <em>10분</em>이며( 9시 ~ 18시, 토/일/공휴일 포함) 방식은 <em>접수순 균등분</em> 입니다</p>
+        </div>
+    <div class="header">
+        <h1 class="title" th:text="${#messages.msg('csAllocationMgmt.autoDtSettingPop.title')}"></h1>
+    </div>
+</th:block>
+<!--Title Area-->
+
+<th:block layout:fragment="data-area">
+    <div class="tree-step">
+        <div class="col30">
+            <div class="data tree">
+                <div class="data-head">
+                    <div class="left"><span class="title" th:text="${#messages.msg('counselingTypeMgmt.tree.title')}"></span></div>
+                </div>
+                <div class="data-body">
+                    <!-- Ztree -->
+                    <ul id="deptCdList" class="ztree"></ul>
+                    <!-- Ztree -->
+                </div>
+            </div>
+            <div class="grid tree-grid full-height">
+                <form name="autoDistributionUserForm" id="autoDistributionUserForm"/>
+                 <div class="grid-head">
+                     <div class="option-area">
+                         <div class="page-option" grid-id="autoDistributionUserGrid"></div>
+                     </div>
+                 </div>
+                 <div class="grid-body">
+                     <div id="autoDistributionUserGrid" class="rg-root rg-grid" realgrid></div>
+                 </div>
+            </div>
+        </div>
+        <div class="data-cont full-height tree-sec">
+            <div class="grid full-height">
+                <form name="autoDistributionSettingPopForm" id="autoDistributionSettingPopForm"/>
+                <div class="grid-head">
+                    <div class="option-area">
+                        <div class="edit-option">
+                            <div class="button-group">
+                                <a href="#" class="button inside" id="btn_grid_delete">
+                                    <span class="text" th:text="${#messages.msg('csAllocationMgmt.autoDtSettingPop.grid.btn.delete')}" />
+                                </a>
+                                <a href="#" class="button inside" id="btn_grid_cancel">
+                                    <span class="text" th:text="${#messages.msg('csAllocationMgmt.autoDtSettingPop.grid.btn.cancel')}" />
+                                </a>
+                                <a href="#" class="button inside" id="btn_grid_stop">
+                                    <span class="text"th:text="${#messages.msg('csAllocationMgmt.autoDtSettingPop.grid.btn.stop')}" />
+                                </a>
+                                <a href="#" class="button inside" id="btn_grid_progress">
+                                    <span class="text"th:text="${#messages.msg('csAllocationMgmt.autoDtSettingPop.grid.btn.progress')}" />
+                                </a>
+                                <a href="#" class="button inside" id="btn_grid_save">
+                                    <span class="text"th:text="${#messages.msg('csAllocationMgmt.autoDtSettingPop.grid.btn.save')}" />
+                                </a>
+                            </div>
+                        </div>
+                        <div class="page-option" grid-id="autoDistributionSettingPopGrid"></div>
+                    </div>
+                </div>
+                <div class="grid-body with-head vh1">
+                    <div id="autoDistributionSettingPopGrid" class="rg-root rg-grid vh1" realgrid></div>
+                </div>
+            </div>
+            <!-- 하위표준분류목록 그리드 -->
+        </div>
+    </div>
+
+    <div class="button-group search-btn">
+        <a href="#" class="button dark" id="btn_popup_close">
+            <span class="text" th:text="${#messages.msg('adminCommon.button.close')}">닫기</span>
+        </a>
+    </div>
+
+</th:block>
+
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        var _jobGrpCd = [[${T(com.enbiz.bo.app.enums.UR002).CUST_CNTR.getCd()}]];
+
+        var CS023 = [[${codeList.CS023}]];
+        var _autoDivGbValues = [];
+        var _autoDivGblabels = [];
+
+        // 업무유형(대)
+        for(var data of CS023){
+            _autoDivGbValues.push(data.cd);
+            _autoDivGblabels.push(data.cdNm);
+        }
+
+        _autoDivGbValues.unshift(null);
+        _autoDivGblabels.unshift('선택');
+
+        //업무유형중
+        var inqTypeList = [[${inqTypeList}]];
+        var obTypeCodeList = [[${obTypeCodeList}]];
+        var autoDivDtlCodes = {
+             id : 'autoDivDtlNo'
+           , levels : 2
+           , tags : []
+           , keys: []
+           , values : []
+        }
+
+        autoDivDtlCodes.tags.push(null,null,null,null);
+        autoDivDtlCodes.keys.push([null,null],['50',null],['20',null],['30',null]);
+        autoDivDtlCodes.values.push('선택','선택','선택','선택');
+
+        obTypeCodeList.forEach(function(data){
+            autoDivDtlCodes.tags.push(data.obTypNo);
+            autoDivDtlCodes.keys.push(['50',data.obTypNo]);
+            autoDivDtlCodes.values.push(data.obTypNm);
+        })
+
+        inqTypeList.forEach(function(data){
+            autoDivDtlCodes.tags.push(data.custInqTypCd);
+            autoDivDtlCodes.keys.push(['20',data.custInqTypCd]);
+            autoDivDtlCodes.values.push(data.custInqTypNm);
+        })
+
+        /*]]>*/
+    </script>
+
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'customerservice/autoDistributionSettingPopGrid.eventHandler.js?20210614000010'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'customerservice/autoDistributionSettingPopGrid.provider.js?20210614000006'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'customerservice/autoDistributionUserGrid.eventHandler.js?20210614000001'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'customerservice/autoDistributionUserGrid.provider.js?20210614000001'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'customerservice/autoDistributionSettingPop.tree.js?20210614000001'" ></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            autoDistributionUserGrid.eventhandler.init();
+            autoDistributionSettingPopGrid.eventhandler.init();
+            listTree.init();
+        });
+    </script>
+</th:block>
+
+</body>
+</html>

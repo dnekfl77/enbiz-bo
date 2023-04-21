@@ -1,0 +1,170 @@
+<html lang="ko-KR">
+    <head>
+        <title>x2</title>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+        <link type="text/css" rel="stylesheet" href="../css/reset.css">
+        <link type="text/css" rel="stylesheet" href="../css/layout.css">
+        <link type="text/css" rel="stylesheet" href="../css/common.css">
+        <link type="text/css" rel="stylesheet" href="../css/main.css">
+        <link rel="stylesheet" type="text/css" href="../css/realgrid-style.css">
+        <script src="../js/libs/jquery/jquery-3.4.1.min.js"></script>
+        <script src="../js/contents.js"></script>
+    </head>
+    <body>
+        <div class="page-root mbg">
+            <div class="page-fixed with-title pd40">
+            <!-- 상품 -->
+            <div class="service-link">
+                <p class="cont-tt">상품현황</p>
+                <ul class="service-list">
+                    <li>
+                        <a href="javascript:void(0);">
+    <span class="daybox">TODAY</span>
+                            <h3>신규상품</h3>
+                            <p>345<em>개</em></p>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0);">
+                            <span class="daybox">당일</span>
+                            <h3>품절상품</h3>
+                            <p>345<em>개</em></p>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0);">
+                            <span class="daybox2">2week</span>
+                            <h3>판매진행</h3>
+                            <p>345<em>개</em></p>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0);" class="">
+                            <span class="daybox2">최근2주</span>
+                            <h3>품절상품</h3>
+                            <p>345<em>개</em></p>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <!-- 상품end-->
+            <!--공지사항 및 현황 -->
+            <div class="grid-cont col-50 mr40">
+                <!--공지사항그리드-->
+                <div>
+                    <div class="grid-head">
+                        <div class="title-area">
+                            <h2 class="title">공지사항</h2>
+                            <a class="btn-more">더보기 +</a></div>
+                    </div>
+                    <div class="grid-body with-head" id="realgrid" realgrid>realgrid area</div>
+                </div>
+            <!--공지사항 그리드 end-->
+            <!--업무알림그리드-->
+            <div>
+                <div class="grid-head">
+                    <div class="title-area">
+                        <h2 class="title">업무알림</h2>
+                        <a class="btn-more">더보기 +</a></div>
+                </div>
+                <div class="grid-body with-head" id="realgrid" realgrid>realgrid area</div>
+            </div>
+        <!--업무알림 그리드 end-->
+            <!--오른쪽-->
+            <div class="grid-cont">
+                <!--상품q&a 미처리현황 -->
+                    <div class="data-cont">
+                        <span class="m-tip">승인요청 최근 30일</span>
+        <div class="data">
+                            <div class="data-head">
+                                <div class="left">
+                                    <span class="title">상품 Q&amp;A 미처리 현황</span>
+                                </div>
+                                <div class="right"><a class="f11">더보기 +</a></div>
+                            </div>
+                            <div class="data-body">
+                                <table class="m-table">
+                                    <colgroup>
+                                        <col width="120px">
+                                        <col>
+                                        <col>
+                                        <col>
+                                    </colgroup>
+                                    <tbody>
+                                        <tr>
+                                            <td class="label">계약유형 </td>
+                                            <td class="label">24시간 이내</td>
+                                            <td class="label">24~72시간</td>
+                                            <td class="label">72시간~1개월</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="label fc">직매입</td>
+                                            <td><a>234개</a></td>
+                                            <td>234개</td>
+                                            <td>234개</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="label fc">위탁</td>
+                                            <td>234개</td>
+                                            <td>234개</td>
+                                            <td>234개</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                <!--상품q&a 미처리현황 end -->
+                <!--위탁업체상품승인현황 -->
+                    <div class="data-cont">
+                        <div class="data">
+                            <div class="data-head">
+                                <div class="left">
+                                    <span class="title">위탁업체 상품승인현황</span>
+                                </div>
+                                <div class="right"><a class="f11">더보기 +</a></div>
+                            </div>
+                            <!-- //data-head -->
+                            <div class="data-body">
+                                <table class="m-table">
+                                    <colgroup>
+                                        <col width="120px">
+                                        <col>
+                                    </colgroup>
+                                    <tbody>
+                                        <tr>
+                                            <td class="label-b">승인대기 상품 수</td>
+                                            <td class="right">234개</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="label-b">승인완료 상품 수</td>
+                                            <td class="right">234개</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                <!--위탁업체상품승인현황 end -->
+                    </div>
+            <!--오른쪽 end-->
+          </div>  
+          <!--업무알림 팝업-->
+          <div class="workarea">
+            <div class="send">
+              <h1>"<a>ADMIN</a>" 님이 보내신 메시지가 도착했습니다!</h1>
+                <button class="btn-close">×</button></div>
+            <a>
+            <div class="tit">소매업자 결정 협의에 관한 건</div>
+                    <div class="memo">전자상거래 소매업자 현금 영수증 발행필수에 대한 안건으로 금일 12시에 소강당에서 회의가 있으니 참석 바랍니다 메시지 수신 후 불가피하게 참석을 못하시는 분들께서는 </div></a></div>
+          <!--업무알림 팝업 end-->
+               <!--공지사항 및 현황 end -->  
+</div>
+</div>
+
+        </body>
+    </html>

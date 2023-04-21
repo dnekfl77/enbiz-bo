@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.display.PrDispGrpBaseTrxMapper">
+
+	<!-- 기획전그룹 목록 등록(param: PrDispGrpBaseRequest) -->
+	<insert id="insertPrDispGrpBaseList" parameterType="java.util.List">
+		INSERT INTO PR_DISP_GRP_BASE (
+			DISP_GRP_TYP_CD
+			, DISP_GRP_NO
+			, DISP_GRP_NM
+			, SITE_NO
+			, DPML_NO
+			, DISP_SEQ
+			, USE_YN
+			, APLY_STR_DTM
+			, APLY_END_DTM
+			, DISP_GRP_DESC
+			, SYS_REG_ID
+			, SYS_REG_DTM
+			, SYS_MOD_ID
+			, SYS_MOD_DTM
+		) VALUES
+		<foreach collection="list" item="item" separator=",">
+			(
+				#{item.dispGrpTypCd}						-- 전시그룹유형코드(DP011)
+				, (SELECT NEXTVAL('PR_DISP_GRP_BASE_SQ01'))	-- 전시그룹번호
+				, #{item.dispGrpNm}							-- 전시그룹명
+				, #{item.siteNo}							-- 사이트번호
+				, #{item.dpmlNo}							-- 전시몰번호
+				, CAST(#{item.dispSeq} AS INTEGER)			-- 전시순서
+				, #{item.useYn}								-- 사용여부
+				, #{item.aplyStrDtm}::timestamp				-- 적용시작일시
+				, #{item.aplyEndDtm}::timestamp				-- 적용종료일시
+				, #{item.dispGrpDesc}						-- 전시그룹설명
+				, #{item.sysRegId}							-- 시스템등록자ID
+				, now()										-- 시스템등록일시
+				, #{item.sysModId}							-- 시스템수정자ID
+				, now()										-- 시스템수정일시
+			)
+		</foreach>
+	</insert>
+
+	<!-- 기획전 그룹 목록 수정(param:PrDispGrpBaseRequest) -->
+	<update id="updatePrDispGrpBaseList" parameterType="java.util.List">
+		<foreach collection="list" item="item" separator=";">
+			UPDATE
+				PR_DISP_GRP_BASE
+			SET
+				DISP_GRP_NM = #{item.dispGrpNm}					-- 전시그룹명
+				, SITE_NO = #{item.siteNo}						-- 사이트번호
+				, DPML_NO = #{item.dpmlNo}						-- 전시몰번호
+				, DISP_SEQ = CAST(#{item.dispSeq} AS INTEGER)	-- 전시순서
+				, USE_YN = #{item.useYn}						-- 사용여부
+				, APLY_STR_DTM = #{item.aplyStrDtm}::timestamp	-- 적용시작일시
+				, APLY_END_DTM = #{item.aplyEndDtm}::timestamp	-- 적용종료일시
+				, DISP_GRP_DESC = #{item.dispGrpDesc}			-- 전시그룹설명
+				, SYS_MOD_ID = #{item.sysModId}					-- 시스템수정자ID
+				, SYS_MOD_DTM = NOW()							-- 시스템수정일시
+			WHERE DISP_GRP_TYP_CD = #{item.dispGrpTypCd}		-- 전시그룹유형코드(DP011)
+			  AND DISP_GRP_NO = #{item.dispGrpNo}				-- 전시그룹번호
+		</foreach>
+	</update>
+
+	<!-- 기획전 그룹 목록 삭제(PrDispGrpBaseRequest)  -->
+	<delete id="deletePrDispGrpBaseList" parameterType="java.util.List">
+		DELETE
+		FROM
+			PR_DISP_GRP_BASE
+		<where>
+			<foreach collection="list" item="item" open="" close="" separator="OR">
+				(
+					DISP_GRP_TYP_CD = #{item.dispGrpTypCd}		-- 기획전번호
+					AND DISP_GRP_NO = #{item.dispGrpNo}			-- 전시그룹번호
+				)
+			</foreach>
+		</where>
+	</delete>
+
+	<!-- 기획전 목록 등록(param:PrDispGrpMappInfoRequest) -->
+	<insert id="insertPrDispGrpMappInfoList" parameterType="java.util.List">
+		INSERT INTO PR_DISP_GRP_MAPP_INFO (
+			disp_grp_typ_cd
+			, disp_grp_no
+			, disp_shop_gb_cd
+			, shop_ctg_no
+			, disp_seq
+			, use_yn
+			, sys_reg_id
+			, sys_reg_dtm
+			, sys_mod_id
+			, sys_mod_dtm
+		) VALUES
+		<foreach collection="list" item="item" separator=",">
+			(
+				#{item.dispGrpTypCd}				-- 전시그룹유형코드(DP011)(01:대표기획전)	varchar(10) Not Null
+				, #{item.dispGrpNo}					-- 전시그룹번호 varchar(15) NOT NULL
+				, #{item.dispShopGbCd}				-- 전시매장구분코드(DP012)(02:기획전) 	varchar(10) NOT NULL
+				, #{item.shopCtgNo}					-- 매장카테고리번호 varchar(15) NOT NULL
+				, CAST(#{item.dispSeq} AS INTEGER)	-- 전시순서 numeric(5) NOT NULL DEFAULT 0
+				, #{item.useYn}						-- 사용여부varchar(1) NOT NULL
+				, #{item.sysRegId}					-- 시스템등록자IDvarchar(30) NOT NULL
+				, now()								-- 시스템등록일시timestamp NOT NULL
+				, #{item.sysModId}					-- 시스템수정자IDvarchar(30) NOT NULL
+				, now()								-- 시스템수정일시timestamp NOT NULL
+			)
+		</foreach>
+	</insert>
+
+	<!-- 기획전 목록 수정(param:PrDispGrpMappInfoRequest) -->
+	<update id="updatePrDispGrpMappInfoList" parameterType="java.util.List">
+		<foreach collection="list" item="item" separator=";">
+			UPDATE
+				PR_DISP_GRP_MAPP_INFO
+			SET
+				DISP_SEQ = CAST(#{item.dispSeq} AS INTEGER)		-- 전시순서				numeric(5) NOT NULL DEFAULT 0
+				, USE_YN = #{item.useYn}						-- 사용여부				varchar(1) NOT NULL
+				, SYS_MOD_ID = #{item.sysModId}					-- 시스템수정자ID			varchar(30) NOT NULL
+				, SYS_MOD_DTM = now()							-- 시스템수정일시			timestamp NOT NULL
+			WHERE DISP_GRP_TYP_CD = #{item.dispGrpTypCd}		-- 전시그룹유형코드(DP011)(01:대표기획전)	varchar(10) Not Null
+			  and DISP_GRP_NO = #{item.dispGrpNo}				-- 전시그룹번호			varchar(15) NOT NULL
+			  and DISP_SHOP_GB_CD = #{item.dispShopGbCd}		-- 전시매장구분코드(DP012)(02:기획전) 	varchar(10) NOT NULL
+			  and SHOP_CTG_NO = #{item.shopCtgNo}				-- 매장카테고리번호			varchar(15) NOT NULL
+		</foreach>
+	</update>
+
+	<!-- 기획전 목록 삭제(param:PrDispGrpMappInfoRequest) -->
+	<delete id="deletePrDispGrpMappInfoList" parameterType="java.util.List">
+		DELETE
+		FROM
+			PR_DISP_GRP_MAPP_INFO
+		<where>
+			<foreach collection="list" item="item" open="" close="" separator="OR">
+				(
+					DISP_GRP_TYP_CD = #{item.dispGrpTypCd}			-- 전시그룹유형코드(DP011)(01:대표기획전)	varchar(10) Not Null
+			 		and DISP_GRP_NO = #{item.dispGrpNo}				-- 전시그룹번호						varchar(15) NOT NULL
+			  		and DISP_SHOP_GB_CD = #{item.dispShopGbCd}		-- 전시매장구분코드(DP012)(02:기획전) 	varchar(10) NOT NULL
+			  		and SHOP_CTG_NO = #{item.shopCtgNo}				-- 매장카테고리번호						varchar(15) NOT NULL
+				)
+			</foreach>
+		</where>
+	</delete>
+
+</mapper>

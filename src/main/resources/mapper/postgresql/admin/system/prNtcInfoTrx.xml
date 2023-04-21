@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.system.PrNtcInfoTrxMapper">
+    <insert id="insertCustomerNoticeInfo" parameterType="PrNtcInfo">
+        <selectKey keyProperty="ntcNo" resultType="String" order="BEFORE">
+            SELECT NEXTVAL('PR_NTC_INFO_SQ01') AS ntcNo
+        </selectKey>
+        INSERT INTO PR_NTC_INFO( /* prNtcInfo.insertCustomerNoticeInfo */
+               NTC_NO
+             , DISP_MEDIA_CD
+             , NTC_CLSS_CD
+             , BB_STR_DTM
+             , BB_END_DTM
+             , BB_YN
+             , QRY_CNT
+             , UPR_FIX_YN
+             , NTC_TITLE_NM
+             , PC_NTC_CONT
+             , MO_NTC_CONT
+             , SYS_REG_ID
+             , SYS_REG_DTM
+             , SYS_MOD_ID
+             , SYS_MOD_DTM
+        ) VALUES (
+               #{ntcNo}
+             , #{dispMediaCd}
+             , #{ntcClssCd}
+             , TO_TIMESTAMP(#{bbStrDtm} || ' 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
+             , TO_TIMESTAMP(#{bbEndDtm} || ' 23:59:59', 'YYYY-MM-DD HH24:MI:SS')
+             , #{bbYn}
+             , 0
+             , #{uprFixYn}
+             , #{ntcTitleNm}
+             , #{pcNtcCont}
+             , #{moNtcCont}
+             , #{sysRegId}
+             , now()
+             , #{sysRegId}
+             , now()
+        )
+    </insert>
+
+    <update id="updateCustomerNoticeInfo" parameterType="PrNtcInfo">
+        UPDATE PR_NTC_INFO /* prNtcInfo.updateCustomerNoticeInfo */
+           SET BB_STR_DTM = TO_TIMESTAMP(#{bbStrDtm} || ' 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
+             , BB_END_DTM = TO_TIMESTAMP(#{bbEndDtm} || ' 23:59:59', 'YYYY-MM-DD HH24:MI:SS')
+             , BB_YN = #{bbYn}
+             , UPR_FIX_YN = #{uprFixYn}
+             , NTC_TITLE_NM = #{ntcTitleNm}
+             , PC_NTC_CONT = #{pcNtcCont}
+             , MO_NTC_CONT = #{moNtcCont}
+             , SYS_MOD_ID = #{sysModId}
+             , SYS_MOD_DTM = now()
+         WHERE NTC_NO = #{ntcNo}
+    </update>
+</mapper>

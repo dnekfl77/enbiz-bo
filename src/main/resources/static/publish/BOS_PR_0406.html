@@ -1,0 +1,90 @@
+<html lang="ko-KR">
+<head>
+    <title>x2</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+    <link type="text/css" rel="stylesheet" href="../css/reset.css">
+    <link type="text/css" rel="stylesheet" href="../css/layout.css">
+    <link type="text/css" rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" type="text/css" href="../css/realgrid-style.css">   
+    <script src="../js/libs/jquery/jquery-3.4.1.min.js"></script>
+    <script src="../js/contents.js"></script>
+</head>
+<body> 
+ <div class="win-popup page-root">
+    <div class="page-fixed"> <!-- page-title 가 있을경우 with-title 클래스 추가 -->
+      <div class="search-cont"><!-- 높이갚 최대일때 full-height 클래스 추가 -->
+        <div class="header">
+          <h1 class="title" id="">가격 변경 예약</h1>
+        </div>
+
+        <div class="data">
+          <div class="data-body toggle-cont">
+            <table class="data-table">
+              <colgroup>
+                  <col width="120">
+                  <col>
+              </colgroup>
+              <tbody>
+                  <tr>
+                    <td class="label">기존판매가</td>
+                    <td>
+                      <div class="input-group">
+                        <input type="text" name="" value="" class="input">
+                        <em>원</em>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="label"><strong>변경판매가</strong></td>
+                    <td>
+                      <div class="input-group">
+                        <input type="text" name="" value="" class="input">
+                        <em>원</em>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="label">판매가 변동율</td>
+                    <td><span></span><em>%</em></td>
+                  </tr>
+                  <tr>
+                    <td class="label"><strong>가격변경적용기간</strong></td>
+                    <td>
+                      <div class="picker-group">
+                        <input type="text" class="form-control">
+                        <span class="input-group-addon">~</span>
+                        <input type="text" class="form-control">
+                        <span class="input-group-addon"><i class="icon-calendar"></i></span>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="label"><strong>가격변경사유</strong></td>
+                    <td>
+                      <select class="form-control">
+                        <option value="">행사 시작</option>
+                        <option value="">행사 종료</option>
+                        <option value="">가격 오류</option>
+                        <option value="">판매가 인하</option>
+                      </select>
+                    </td>
+                  </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <!-- //data -->
+      </div>
+
+      <div class="button-group">
+        <a href="#" class="button"><span class="text white">변경예약</span></a>
+        <a href="#" class="button"><span class="text">취소</span></a>
+      </div>
+      
+    </div>
+  </div>
+</body>
+
+</html>

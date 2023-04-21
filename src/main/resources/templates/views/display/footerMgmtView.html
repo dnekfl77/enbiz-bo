@@ -1,0 +1,220 @@
+<!--
+* 프로그램명 : 사이트 푸터 관리
+* 프로그램명 : footerMgmtView.html
+* 작 성 일 : 2021.03.29
+* 작 성 자 : N.J.Kim
+* 수 정 자 : 권다솜
+* 버	전 : 1.0
+* 개	요 : 전시관리 > 사이트관리 > 푸터관리
+* 이	력 :
+-->
+<html lang="ko-KR"
+	  xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{layouts/page-realgrid-layout}">
+
+<head>
+	<title>sub title</title>
+</head>
+<body>
+<th:block layout:fragment="page-title-area">
+	<div class="page-title">
+		<div class="left">
+			<h1><th:block th:text="${#messages.msg('footerMgmt.title')}"/></h1>
+		</div>
+	</div>
+</th:block>
+<th:block layout:fragment="page-contents">
+	<div class="page-fixed with-title">
+		<div class="search-cont full-height">
+			<!-- 조회테이블 -->
+			<div class="search">
+				<form name="footerListForm" id="footerListForm">
+				<input type="hidden" name="uprFotrNo" id="uprFotrNo">
+				<table class="search-table">
+					<colgroup>
+						<col style="width:120px;" />
+						<col />
+					</colgroup>
+					<tbody>
+						<tr>
+							<td class="label" th:text="${#messages.msg('footerMgmt.search.label.site')}" />
+							<td>
+								<select class="form-control w10" id="siteNo" name="siteNo">
+									<option th:each="list : ${siteList}" th:value="${list.siteNo}" th:text="${list.siteNm}"></option>
+								</select>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				</form>
+			</div>
+			<!-- //조회테이블 -->
+			<!-- 검색버튼 -->
+			<div class="button-group search-btn">
+				<a href="#" class="btn_gblue button white" id="btn_init">
+					<span class="text" th:text="${#messages.msg('adminCommon.button.init')}" />
+				</a>
+				<a href="#" class="btn_blue button dark" id="btn_search">
+					<span class="text" th:text="${#messages.msg('adminCommon.button.search')}" />
+				</a>
+			</div>
+			<!-- //검색버튼 -->
+			<div class="grid-cont col-40">
+				<!-- 왼쪽 -->
+				<div class="grid">
+					<div class="grid-head">
+						<div class="title-area">
+							<h2 class="title" th:text="${#messages.msg('footerMgmt.footerGroupListGrid.title')}" />
+						</div>
+						<div class="option-area">
+							<div class="edit-option">
+								<div class="button-group">
+									<a href="#" class="button inside" id="btn_grid_insert">
+										<span class="text" th:text="${#messages.msg('adminCommon.grid.button.add.row')}" />
+									</a>
+									<a href="#" class="button inside" id="btn_grid_delete">
+										<span class="text" th:text="${#messages.msg('adminCommon.grid.button.delete.row')}" />
+									</a>
+									<a href="#" class="button inside" id="btn_grid_reset">
+										<span class="text" th:text="${#messages.msg('adminCommon.grid.button.cancel')}" />
+									</a>
+									<a href="#" class="button inside" id="btn_grid_save">
+										<span class="text" th:text="${#messages.msg('adminCommon.grid.button.save')}" />
+									</a>
+								</div>
+							</div>
+							<div class="page-option" grid-id="footerGroupListGrid">
+								<span class="total">총 <span id="footerGroupListGrid-totalcount">0</span>건</span>
+							</div>
+						</div>
+					</div>
+					<div class="grid-body with-head vh4">
+						<div class="rg-root rg-grid" id="footerGroupListGrid" realgrid></div>
+					</div>
+				</div>
+				<!-- 왼쪽 end -->
+
+				<!-- 오른쪽 (푸터 메뉴) -->
+				<div class="grid" style="overflow: hidden;display:block;" id="menuDiv">
+					<div class="grid-head">
+						<div class="title-area">
+							<h2 class="title" th:text="${#messages.msg('footerMgmt.footerMenuListGrid.title')}" />
+						</div>
+						<div class="option-area">
+							<div class="edit-option">
+								<div class="button-group">
+									<a href="#" class="button inside" id="btn_menuGrid_insert">
+										<span class="text" th:text="${#messages.msg('adminCommon.grid.button.add.row')}" />
+									</a>
+									<a href="#" class="button inside" id="btn_menuGrid_delete">
+										<span class="text" th:text="${#messages.msg('adminCommon.grid.button.delete.row')}" />
+									</a>
+									<a href="#" class="button inside" id="btn_menuGrid_reset">
+										<span class="text" th:text="${#messages.msg('adminCommon.grid.button.cancel')}" />
+									</a>
+									<a href="#" class="button inside" id="btn_menuGrid_save">
+										<span class="text" th:text="${#messages.msg('adminCommon.grid.button.save')}" />
+									</a>
+								</div>
+							</div>
+							<div class="page-option" grid-id="footerMenuListGrid">
+								<span class="total">총 <span id="footerMenuListGrid-totalcount">0</span>건</span>
+							</div>
+						</div>
+					</div>
+					<div class="grid-body with-head vh4" id="footerMenuListGrid" realgrid></div>
+				</div>
+				<!-- 오른쪽 (푸터 메뉴) end -->
+
+				<!-- 오른쪽 (웹 에디터) -->
+				<div class="grid" style="overflow: hidden;display:none;" id="editorDiv">
+					<div class="grid-head">
+						<div class="title-area">
+							<h2 class="title" th:text="${#messages.msg('footerMgmt.ContGrid.title')}" />
+						</div>
+						<div class="option-area">
+							<div class="edit-option">
+								<div class="button-group">
+									<a href="#" class="button inside" id="btn_editor_save">
+										<span class="text" th:text="${#messages.msg('adminCommon.grid.button.save')}" />
+									</a>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="grid-body with-head vh4" id="divEditor">
+						<textarea name="fotrCont" id="fotrCont" class="txvh" style="width:610px; height:412px; min-width:610px; display:none;"></textarea>
+					</div>
+				</div>
+				<!-- 오른쪽 (웹 에디터) end -->
+			</div>
+		</div>
+	</div>
+</th:block>
+<th:block layout:fragment="add-script">
+	<script th:inline="javascript">
+		var oEditors = [];
+
+		// 그리드 내 selectBox 옵션 셋팅 (시스템구분코드)
+		var sysGbCdList = [[${codeList.CH003}]];
+		var sysGbCode = [];
+		var sysGbValues = [];
+		for(const list of sysGbCdList){
+			sysGbCode.push(list.cd);
+			sysGbValues.push(list.cdNm);
+		}
+
+		// 그리드 내 selectBox 옵션 셋팅 (푸터컨텐츠구분코드)
+		var fotrContGbCdList = [[${codeList.CH004}]];
+		var fotrContGbCode = [];
+		var fotrContGbValues = [];
+		for(const list of fotrContGbCdList){
+			fotrContGbCode.push(list.cd);
+			fotrContGbValues.push(list.cdNm);
+		}
+
+		// 그리드 내 selectBox 옵션 셋팅 (이동프레임코드)
+		var movFrmeCdList = [[${codeList.DP007}]];
+		var movFrmeCode = [];
+		var movFrmeValues = [];
+		for(const list of movFrmeCdList){
+			movFrmeCode.push(list.cd);
+			movFrmeValues.push(list.cdNm);
+		}
+
+        var msg = x2coMessage.getMessage( {
+			  gridNoSelected 	: 'adminCommon.grid.alert.no.selected.row'
+			, gridInit 			: 'adminCommon.grid.alert.init'
+			, searchCheckMsg 	: 'footerMgmt.error.msg.searchCheckMsg'
+            , requiredCheckMessage : 'adminCommon.alert.required.parameter'
+			, sysGbCd	  	 	: 'footerMgmt.footerGroupListGrid.field.sysGbCd'
+			, fotrContGbCd  	: 'footerMgmt.footerGroupListGrid.field.fotrContGbCd'
+			, dispSeq		 	: 'footerMgmt.footerGroupListGrid.field.dispSeq'
+			, useYn		 		: 'footerMgmt.footerGroupListGrid.field.useYn'
+			, menuNm		 	: 'footerMgmt.footerMenuListGrid.field.menuNm'
+			, linkUrl		 	: 'footerMgmt.footerMenuListGrid.field.linkUrl'
+			, movFrmeCd		 	: 'footerMgmt.footerMenuListGrid.field.movFrmeCd'
+			, deleteCheckMsg 	: 'footerMgmt.error.msg.deleteCheckMsg'
+			, editorSaveCheckMsg : 'footerMgmt.error.msg.editorSaveCheckMsg'
+		});
+	</script>
+
+	<!-- 푸터 메뉴 그룹 -->
+	<script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/footerGroupListGrid.provider.js?2021100101'" ></script>
+	<script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/footerGroupListGrid.eventHandler.js?2021100101'" ></script>
+
+	<!-- 푸터 메뉴 -->
+	<script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/footerMenuListGrid.provider.js?2021100101'" ></script>
+	<script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/footerMenuListGrid.eventHandler.js?2021100101'" ></script>
+
+	<script type="text/javascript">
+		$(document).ready(function() {
+			footerGroupListGrid.eventhandler.init();
+			footerMenuListGrid.eventhandler.init();
+		});
+	</script>
+</th:block>
+
+</body>
+</html>

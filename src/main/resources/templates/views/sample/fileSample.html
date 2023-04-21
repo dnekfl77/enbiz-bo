@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="kr"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script th:src="${@domainConfig.getProperty('jsUrl')} + 'libs/jquery/jquery-3.4.1.min.js?202102260000'"></script>
+</head>
+<body>
+    <input type="file" id="file" name="file" />
+    <button id="fileUpload">업로드</button>
+    <button id="removeFile">첨부삭제</button>
+    <button id="moveFile">파일 이동</button>
+    <button id="S3fileUpload">S3업로드</button>
+    <button id="S3thumbnailUpload">S3썸네일</button>
+    <script th:inline="javascript">
+
+        let mainPath = "test1",
+            subPath = "test2",
+            fileRename;
+
+        /*<![CDATA[*/
+        $("#fileUpload").click(function() {
+            const uploadFile = new FormData();
+            uploadFile.append("file", $("#file")[0].files[0]);
+            uploadFile.append("mainPath", mainPath);
+            uploadFile.append("subPath", subPath);
+
+            $.ajax({
+                processData: false,
+                contentType: false,
+                url: "/file/tmp/upload",
+                method: "post",
+                data: uploadFile,
+                success: function(data) {
+                    console.log(data);
+                    fileRename = data.reAtchFileNm;
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+        });
+
+        $("#removeFile").click(function() {
+            const uploadFile = new FormData();
+            uploadFile.append("mainPath", mainPath);
+            uploadFile.append("subPath", subPath);
+            uploadFile.append("fileRename", fileRename);
+
+            $.ajax({
+                processData: false,
+                contentType: false,
+                url: "/file/delete",
+                method: "post",
+                data: uploadFile,
+                success: function(data) {
+                    console.log(data);
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+        });
+
+        $("#moveFile").click(function() {
+            const uploadFile = new FormData();
+            uploadFile.append("file", $("#file")[0].files[0]);
+            uploadFile.append("mainPath", mainPath);
+            uploadFile.append("subPath", subPath);
+            uploadFile.append("fileRename", fileRename);
+
+            $.ajax({
+                processData: false,
+                contentType: false,
+                url: "/file/move",
+                method: "post",
+                data: uploadFile,
+                success: function(data) {
+                    console.log(data);
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+        });
+
+        $('#S3fileUpload').click(function() {
+            const uploadFile = new FormData();
+            uploadFile.append("file", $("#file")[0].files[0]);
+            uploadFile.append("fileKind", "BBS");
+            uploadFile.append("tempYn", false);
+
+            $.ajax({
+                processData: false,
+                contentType: false,
+                url: "/file/s3/upload",
+                method: "post",
+                data: uploadFile,
+                success: function(data) {
+                    console.log(data);
+                    fileRename = data.reAtchFileNm;
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+        });
+
+        $('#S3thumbnailUpload').click(function() {
+            const uploadFile = new FormData();
+            uploadFile.append("file", $("#file")[0].files[0]);
+            uploadFile.append("fileKind", "GOODS");
+            uploadFile.append("tempYn", true);
+
+            $.ajax({
+                processData: false,
+                contentType: false,
+                url: "/file/s3/thumbnailUpload",
+                method: "post",
+                data: uploadFile,
+                success: function(data) {
+                    console.log(data);
+                    fileRename = data.reAtchFileNm;
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+        });
+
+        /*]]>*/
+    </script>
+</body>
+</html>

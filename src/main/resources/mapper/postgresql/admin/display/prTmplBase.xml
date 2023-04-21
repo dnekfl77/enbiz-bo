@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.display.PrTmplBaseMapper">
+
+	<sql id="TemplateList">
+		SELECT   /* prTmplBase.TemplateList */
+				  PTB.TMPL_NO
+				, PTB.TMPL_NM
+				, PTB.TMPL_PATH_NM || PTB.TMPL_FILE_NM AS TMPL_FILE_PATH
+				, (CASE WHEN PTB.USE_YN='Y' THEN '사용' ELSE '사용안함' END) AS USE_YN
+				, FN_GET_CODENAME( 'DP004', PTB.TMPL_TYP_CD ) AS TMPL_TYP_CD
+		FROM
+				PR_TMPL_BASE PTB
+		WHERE 	PTB.TMPL_NO LIKE #{tmplNo} || '%'
+		AND 	PTB.TMPL_NM LIKE #{tmplNm} || '%'
+		AND 	PTB.USE_YN LIKE #{useYn} || '%'
+		AND 	PTB.TMPL_TYP_CD LIKE #{tmplTypCd} || '%'
+		ORDER BY PTB.TMPL_NO
+	</sql>
+
+	<sql id="DisplayTemplateList">
+		WITH TMPL AS (   /* prTmplBase.DisplayTemplateList */
+			SELECT
+						  COUNT(PTCMI.CONR_NO) AS CONR_CNT
+						, TMPL_NO
+			FROM 		PR_TMPL_CONR_MAPP_INFO PTCMI
+			GROUP BY 	PTCMI.TMPL_NO
+		)
+		SELECT
+				  PTB.TMPL_NO
+				, PTB.TMPL_NM
+				, PTB.TMPL_PATH_NM || PTB.TMPL_FILE_NM AS TMPL_FILE_PATH
+				, PTB.USE_YN
+				, PTB.TMPL_TYP_CD
+				, COALESCE(TMPL.CONR_CNT,0) || '개' AS CONR_CNT
+				, '' AS CONR_INSERT
+				, PTB.SYS_MOD_ID
+				, TO_CHAR(PTB.SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS  SYS_MOD_DTM
+		FROM				PR_TMPL_BASE PTB
+		LEFT OUTER JOIN  	TMPL 				ON ( PTB.TMPL_NO = TMPL.TMPL_NO )
+		WHERE   PTB.TMPL_NO LIKE #{tmplNo} || '%'
+		AND 	PTB.TMPL_NM LIKE #{tmplNm} || '%'
+		AND 	PTB.TMPL_TYP_CD LIKE #{tmplTypCd} || '%'
+		ORDER BY PTB.TMPL_NO
+	</sql>
+
+	<select id="getTemplateList" parameterType="PrTmplBaseRequest" resultType="PrTmplBaseResponse">
+		<include refid="TemplateList" />
+	</select>
+
+	<select id="getTemplateListCount" parameterType="PrTmplBaseRequest" resultType="java.lang.Integer">
+		SELECT   /* prTmplBase.getTemplateListCount */
+				COUNT(*)
+		FROM (
+				<include refid="TemplateList" />
+		) T1
+	</select>
+
+	<select id="getDisplayTemplateList" parameterType="PrTmplBaseRequest" resultType="PrTmplBaseResponse">
+		<include refid="DisplayTemplateList" />
+	</select>
+
+	<select id="getDisplayTemplateListCount" parameterType="PrTmplBaseRequest" resultType="java.lang.Integer">
+		SELECT   /* prTmplBase.getDisplayTemplateListCount */
+			COUNT(*)
+		FROM (
+			<include refid="DisplayTemplateList" />
+		) T1
+	</select>
+
+	<select id="checkPrTmplConrMappInfo" parameterType="PrTmplBaseRequest" resultType="java.lang.Integer">
+		SELECT  /* prTmplBase.checkPrTmplConrMappInfo */
+				COUNT(*)
+		FROM 	PR_TMPL_CONR_MAPP_INFO
+		WHERE 	TMPL_NO = #{tmplNo}
+	</select>
+
+	<select id="checkPrDispConrInfo" parameterType="PrTmplConrMappInfoRequest" resultType="java.lang.Integer">
+		SELECT  /* prTmplBase.checkPrDispConrInfo */
+				COUNT(*)
+		FROM 	PR_DISP_CONR_INFO
+		WHERE 	CONR_NO = #{conrNo}
+	</select>
+
+</mapper>
+
+

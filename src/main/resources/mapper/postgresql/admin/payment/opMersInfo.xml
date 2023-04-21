@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.payment.OpMersInfoMapper">
+
+	<sql id="paginatedBase">
+		LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+	</sql>
+
+	<sql id="franchiseeList">
+		SELECT  				/* opMersInfo.methodsOfPaymentControlList */
+				  OMI.MERS_NO
+				, FN_GET_CODENAME('OM030', OMI.PG_GB_CD) AS PG_GB_CD
+				, FN_GET_CODENAME('OM028', OMI.ACQR_CD) AS ACQR_CD
+				, (CASE WHEN OMI.ONOFF_LINE_GB_CD = 'ON' THEN '온라인' ELSE '오프라인' END) AS ONOFF_LINE_GB_CD
+				, CSB.SITE_NM
+				, OMI.NINT_USE_YN
+				, OMI.POINT_USE_YN
+				, OMI.TERML_ID
+				, OMI.USE_YN
+				, OMI.SYS_MOD_ID
+				, TO_CHAR(OMI.SYS_MOD_DTM,'YYYY-MM-DD HH24:MI') AS SYS_MOD_DTM
+		FROM 	  OP_MERS_INFO OMI
+				, OP_APLY_SITE_MERS_INFO OASMI
+				, CC_SITE_BASE CSB
+		WHERE 	  OMI.MERS_NO = OASMI.MERS_NO
+		AND 	  OASMI.SITE_NO = CSB.SITE_NO
+		AND 	  OMI.MERS_NO 				LIKE 	#{mersNo} 	|| '%'
+		AND 	  OMI.ACQR_CD 				LIKE 	#{acqrCd} 	|| '%'
+		AND 	  OMI.APLY_SITE_GB_CD 		LIKE 	#{aplySiteGbCd} 	|| '%'
+		AND 	  OMI.POINT_USE_YN 			LIKE 	#{pointUseYn} 		|| '%'
+		AND 	  OMI.NINT_USE_YN 			LIKE 	#{nintUseYn} 		|| '%'
+		AND 	  OMI.USE_YN 				LIKE 	#{useYn} 	|| '%'
+		ORDER BY OMI.MERS_NO
+	</sql>
+
+	<select id="getFranchiseeList" parameterType="OpMersInfoRequest" resultType="OpMersInfoResponse">
+		<include refid="franchiseeList" />
+		<include refid="paginatedBase" />
+	</select>
+
+	<select id="getFranchiseeListCount" parameterType="OpMersInfoRequest" resultType="java.lang.Integer">
+		SELECT   /* opMersInfo.getFranchiseeListCount */
+				COUNT(*)
+		FROM (
+				<include refid="franchiseeList" />
+		) T1
+	</select>
+
+	<select id="franchiseeDetailInfo" parameterType="OpMersInfoRequest" resultType="OpMersInfoResponse">
+		SELECT  				/* opMersInfo.franchiseeDetailInfo */
+				  MERS_NO
+				, PG_GB_CD
+				, ACQR_CD
+				, ONOFF_LINE_GB_CD
+				, NINT_USE_YN
+				, POINT_USE_YN
+				, TERML_ID
+				, USE_YN
+				, APLY_SITE_GB_CD
+				, SYS_MOD_ID
+				, TO_CHAR(SYS_MOD_DTM,'YYYY-MM-DD HH24:MI') AS SYS_MOD_DTM
+		FROM 	  OP_MERS_INFO
+		WHERE 	  MERS_NO = #{mersNo}
+	</select>
+
+	<select id="franchiseeSiteList" parameterType="OpMersInfoRequest" resultType="OpMersInfoResponse">
+		SELECT  				/* opMersInfo.franchiseeSiteList */
+				  CSB.SITE_NO AS KEY
+				, CSB.SITE_NM AS DATA
+		FROM 	  OP_APLY_SITE_MERS_INFO OASMI
+				, CC_SITE_BASE CSB
+		WHERE 	  OASMI.SITE_NO = CSB.SITE_NO
+		AND 	  OASMI.MERS_NO = #{mersNo}
+	</select>
+
+</mapper>

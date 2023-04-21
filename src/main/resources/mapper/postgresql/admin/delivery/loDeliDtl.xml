@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.delivery.LoDeliDtlTrxMapper">
+
+	<insert id="insertLoDeliDtl" parameterType="loDeliDtl">
+		<selectKey keyProperty="deliSeq" resultType="java.lang.Integer" order="BEFORE">
+			SELECT COALESCE(MAX(DELI_SEQ), 0) + 1 AS deliSeq
+			FROM LO_DELI_DTL
+		</selectKey>
+		INSERT INTO LO_DELI_DTL ( /* LoDeliDtl.insertLoDeliDtl */
+				  DELI_NO
+				, DELI_SEQ
+				, ORD_NO
+				, ORD_SEQ
+				, ORD_SALE_TYP_CD
+				, ENTR_NO
+				, GOODS_NO
+				, ITM_NO
+				, GOODS_NM
+				, ITM_NM
+				, PREST_NM
+				, GOODS_COMP_CD
+				, GOODS_TYP_CD
+				, SALE_METH_CD
+				, INDI_QTY
+				, CNCL_QTY
+				, PROC_QTY
+				, SUP_PCOST
+				, NOR_PRC
+				, SALE_PRC
+				, MRGN_RATE
+				, TAX_GB_CD
+				, BUY_TYP_CD
+				, DELI_GOODS_GB_CD
+				, SND_WAIT_CAUS_CD
+				, SYS_REG_ID
+				, SYS_REG_DTM
+				, SYS_MOD_ID
+				, SYS_MOD_DTM
+		) VALUES (
+				  #{deliNo}
+				, #{deliSeq}
+				, #{ordNo}
+				, #{ordSeq}
+				, #{ordSaleTypCd}
+				, #{entrNo}
+				, #{goodsNo}
+				, #{itmNo}
+				, #{goodsNm}
+				, #{itmNm}
+				, #{prestNm}
+				, #{goodsCompCd}
+				, #{goodsTypCd}
+				, #{saleMethCd}
+				, #{indiQty}
+				, #{cnclQty}
+				, #{procQty}
+				, #{supPcost}
+				, #{norPrc}
+				, #{salePrc}
+				, #{mrgnRate}
+				, #{taxGbCd}
+				, #{buyTypCd}
+				, #{deliGoodsGbCd}
+				, null
+				, #{sysRegId}
+				, now()
+				, #{sysModId}
+				, now()
+		)
+	</insert>
+
+</mapper>
+
+

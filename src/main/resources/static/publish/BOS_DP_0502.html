@@ -1,0 +1,171 @@
+<html lang="ko-KR">
+<head>
+  <title>x2</title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+  <link type="text/css" rel="stylesheet" href="../css/reset.css">
+  <link type="text/css" rel="stylesheet" href="../css/layout.css">
+  <link type="text/css" rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" type="text/css" href="../css/realgrid-style.css">
+  <script src="../js/libs/jquery/jquery-3.4.1.min.js"></script>
+  <script src="../js/contents.js"></script>
+</head>
+
+<body>
+  <div class="win-popup page-root">
+    <div class="page-fixed">
+      <!-- page-title 가 있을경우 with-title 클래스 추가 -->
+      <div class="search-cont">
+        <!-- 높이갚 최대일때 full-height 클래스 추가 -->
+        <div class="header">
+          <h1 class="title" id="">전시 연결 관리</h1>
+        </div>
+
+        <!--데이터테이블-->
+        <div class="data">
+          <div class="data-head">
+            <div class="left"><span class="title">전시 코너 정보</span>
+            </div>
+            <div class="right">
+              <span class="data-toggle toggle">
+                <button type="button" class="btn btn-sm btn-link bold toggle-button"
+                  depth-name="goodsDisplay"><span>닫힘</span></button>
+              </span>
+            </div>
+          </div>
+          <div class="data-body toggle-cont">
+            <table class="data-table">
+              <colgroup>
+                <col width="120">
+                <col>
+                <col width="120">
+                <col>
+                <col>
+              </colgroup>
+              <tbody>
+                <tr>
+                  <td class="label">전시 코너번호</td>
+                  <td>11311874</td>
+                  <td class="label">전시 코너명</td>
+                  <td>Best Of Plateer</td>
+                  <td rowspan="3" class="center">
+                    <img src="img/noimg.png" alt="uploadImage" flag="none" langcd="" class="image" style="width: 90px;height:auto;">
+                  </td>
+                </tr>
+                <tr>
+                  <td class="label">전시 매장위치</td>
+                  <td>몰 메인 > 뷰티 > 기초 > 스킨케어</td>
+                  <td class="label">전시 담당자</td>
+                  <td>권다솜</td>
+                </tr>
+                <tr>
+                  <td class="label">전시코너 설명</td>
+                  <td colspan="3">대 카테고리의 우측 상단 영역</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <!--데이터테이블 끝-->
+
+        <div class="grid-cont">
+          <div class="grid">
+            <div class="grid-head">
+              <div class="title-area">
+                <h2 class="title">전시 대상 세트</h2>
+              </div>
+              <!-- //title-area -->
+
+              <div class="option-area">
+                <div class="edit-option">
+                  <div class="button-group">
+                    <a href="#" class="button inside"><span class="text">저장</span></a>
+                  </div>
+                </div>
+
+                <div class="page-option">
+                  <span class="total">총 <em>24</em>건</span>
+                </div>
+              </div>
+              <!-- //option-area -->
+            </div>
+            <!-- //grid-head -->
+
+            <div class="grid-body with-head" id="realgrid" realgrid>realgrid area</div>
+            <!-- //grid-body -->
+          </div>
+        </div>
+        <!-- //전시 대상 세트 -->
+
+        <div class="grid-cont">
+          <div class="grid">
+            <div class="grid-head">
+              <div class="title-area">
+                <h2 class="title">세트명 : 패션의류</h2>
+              </div>
+            </div>
+            <div class="grid-body bo-none">
+              <div class="tabs-area">
+                <ul class="tabs">
+                  <li class="active"><a href="javascript:;">상품 (0개)</a></li>
+                  <li><a href="javascript:;">브랜드 (0개)</a></li>
+                  <li><a href="javascript:;">상품평 (0개)</a></li>
+                  <li><a href="javascript:;">기획전 (0개)</a></li>
+                  <li><a href="javascript:;">HTML (0개)</a></li>
+                  <li><a href="javascript:;">이미지 배너 (0개)</a></li>
+                  <li><a href="javascript:;">텍스트 배너 (0개)</a></li>
+                </ul>
+                <div class="tabs-body">
+                  <div class="grid tab-cont">
+                    <div class="grid-head">
+                      <div class="option-area">
+                        <div class="edit-option">
+                          <div class="button-group">
+                            <a href="#" class="button inside"><span class="text">추가</span></a>
+                            <a href="#" class="button inside"><span class="text">삭제</span></a>
+                            <a href="#" class="button inside"><span class="text">저장</span></a>
+                            <a href="#" class="button inside"><span class="text">전시기간 일괄변경</span></a>
+                          </div>
+                        </div>
+          
+                        <div class="page-option">
+                          <span class="total">총 <em>24</em>건</span>
+                        </div>
+                      </div>
+                      <!-- //option-area -->
+                    </div>
+                    <!-- //grid-head -->
+                    <div class="grid-body with-head" id="realgrid" realgrid>realgrid area</div>
+                    <!-- //grid-body -->
+                  </div>
+
+                  <div class="grid tab-cont">브랜드</div>
+                  <div class="grid tab-cont">상품평</div>
+                  <div class="grid tab-cont">기획전</div>
+                  <div class="grid tab-cont">html</div>
+                  <div class="grid tab-cont">이미지 배너</div>
+                  <div class="grid tab-cont">텍스트 배너</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <p><a href="javascript:;" onclick="window.open('BOS_DP_0502_1.html','name',' resizable=no scrollbars=yes width=430 height=250')">전시기관 일괄변경 popup</a></p>
+        <p><a href="javascript:;" onclick="window.open('BOS_DP_0503.html','name',' resizable=no scrollbars=yes width=800 height=580')">HTML 전시 등록/상세 popup</a></p>
+        <p><a href="javascript:;" onclick="window.open('BOS_DP_0504.html','name',' resizable=no scrollbars=yes width=800 height=430')">이미지 등록/상세 popup</a></p>
+
+      </div>
+      <!-- //search-cont -->
+
+      <div class="button-group">
+        <a href="#" class="button"><span class="text">취소</span></a>
+      </div>
+    </div>
+  </div>
+  <script>
+    tabsBody();
+  </script>
+</body>
+</html>

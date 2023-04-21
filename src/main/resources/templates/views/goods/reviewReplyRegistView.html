@@ -1,0 +1,68 @@
+<!--
+* 프로그램명 : 리뷰등록팝업
+* 작 성 일 : 2021.07.01
+* 작 성 자 : 홍혜리
+* 수 정 자 : 홍혜리
+* 버    전 : 1.0
+* 개    요 : 상품관리  > 상품리뷰관리 > 리뷰상세 > 리뷰답글등록팝업
+* 이    력 : 2021.09.23 프레임워크 이전
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-update-layout}">
+<body>
+<th:block layout:fragment="header-area">
+    <th:block th:if="${pageType} == 'R'">
+        <div style="margin-bottom: 20px;">
+            <h1><th:block th:text="${#messages.msg('reviewMgmt.reviewReplyRegist.title')}"/></h1>
+        </div>
+    </th:block>
+    <th:block th:if="${pageType} == 'D'">
+        <div style="margin-bottom: 20px;">
+            <h1><th:block th:text="${#messages.msg('reviewMgmt.reviewReplyDetail.title')}"/></h1>
+        </div>
+    </th:block>
+</th:block>
+<th:block layout:fragment="data-area">
+    <div class="search">
+        <table class="search-table">
+            <colgroup>
+                <col width="100">
+                <col>
+            </colgroup>
+            <tbody>
+            <tr>
+                <td class="label">
+                    <strong th:text="${#messages.msg('reviewMgmt.reviewReplyRegist.info.lable.reply')}"></strong>
+                </td>
+                <td>
+                    <textarea class="w100" id="replyCont" cols="30" rows="20" maxlength="4000" th:readonly="${pageType} == 'D'" th:text="${replyCont}"></textarea>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</th:block>
+<th:block layout:fragment="button-area">
+    <th:block th:if="${pageType} == 'R'">
+        <th:block layout:insert="~{fragments/popup/popup-btn :: popup-dtl-btn}"/>
+    </th:block>
+    <th:block th:if="${pageType} == 'D'">
+        <th:block layout:insert="~{fragments/popup/popup-btn :: popup-bottom-btn}"/>
+    </th:block>
+</th:block>
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        var _revNo = [[${revNo}]];
+        /*]]>*/
+    </script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/reviewReplyRegist.eventHandler.js?20210923'" ></script>
+    <script th:inline="javascript">
+        $(function(){
+            reviewReplyRegist.eventhandler.init();
+        });
+    </script>
+</th:block>
+</body>

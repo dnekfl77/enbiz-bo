@@ -1,0 +1,423 @@
+<html lang="ko-KR">
+<head>
+    <title>x2</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+    <link type="text/css" rel="stylesheet" href="../css/reset.css">
+    <link type="text/css" rel="stylesheet" href="../css/layout.css">
+    <link type="text/css" rel="stylesheet" href="../css/zTree.css">
+    <link type="text/css" rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" type="text/css" href="../css/realgrid-style.css">
+
+    <script src="../js/libs/jquery/jquery-3.4.1.min.js"></script>
+    <script src="../js/contents.js"></script>
+    <script type="text/javascript" src="../js/libs/jquery/jquery.ztree.all.js?202102260000"></script>
+</head>
+<body>
+  <div class="page-root">
+    <div class="page-title">
+      <div class="left">
+          <h1>통합 상담 관리</h1>
+      </div>
+    </div>
+    <div class="page-fixed with-title"> <!-- page-title 가 있을경우 with-title 클래스 추가 -->
+      <div class="search-cont">
+          <div class="data-cont">
+            <!--문의내역-->
+            <div class="data">
+              <div class="data-head">
+                <div class="left">
+                  <span class="title">문의내역</span>
+                </div>
+              </div>
+              <div class="data-body">
+                <table class="data-table">
+                  <colgroup>
+                    <col width="120">
+                    <col>
+                    <col width="120">
+                    <col>
+                    <col width="120">
+                    <col>
+                  </colgroup>
+                  <tbody>
+                    <tr>
+                      <td class="label">상담번호</td>
+                      <td>R5464564545</td>
+                      <td class="label">접수자/접수일자</td>
+                      <td> admin/2012-12-24</td>
+                      <td class="label">회원정보</td>
+                      <td class="ls0"> 홍길동 / sgsgdg4ee@palteer.com
+                        <a class="mr5 vm"><img src="../../static/img/ic_phone.gif"></a><a class="vm"><img src="../../static/img/ic_sms.gif"></a>
+                      </td>
+                    </tr>
+                    <tr>
+                        <td class="label">상담구분/접수매체</td>
+                        <td>IB(CALL)</td>
+                        <td class="label"><strong>접수유형</strong></td>
+                        <td> 일반콜</td>
+                        <td class="label"><strong>전화번호</strong></td>
+                        <td> 010-2343-3445</td>
+                    </tr>
+                    <tr>
+                        <td class="label">처리상태</td>
+                        <td>처리중</td>
+                        <td class="label"><strong>상담유형</strong></td>
+                        <td> 상담유형(대) > 상담유형(중) > 상담유형(소)</td>
+                        <td class="label"><strong>업무유형</strong></td>
+                        <td>OB업무유형</td>
+                    </tr>
+                    <tr>
+                      <td class="label">문의내용</td>
+                      <td colspan="5"> 내용내용내용내용내용내용내용
+                      </td>
+                    </tr>
+                    <tr>
+                        <td class="label">고객센터 이관사유</td>
+                        <td colspan="5"> 내용내용내용내용내용내용내용
+                        </td>
+                      </tr>
+                    <tr>
+                      <td class="label">상담상품정보</td>
+                      <td colspan="5">
+                        <table class="data-table inbox fixed">
+                          <colgroup>
+                            <col width="120">
+                            <col width="120">
+                            <col>
+                            <col width="120">
+                            <col width="120">
+                            <col width="120">
+                            <col width="120">
+                          </colgroup>
+                          <tbody>
+                            <tr>
+                            <th class="label center">주문번호</th>
+                            <th class="label center">상품번호</th>
+                            <th class="label center">상품명</th>
+                            <th class="label center">단품명</th>
+                            <th class="label center">주문수량</th>
+                            <th class="label center">판매가</th>
+                            <th class="label center">협력사명</th>
+                            </tr>
+                            <tr>
+                                <td><a>2012-04-34-123464</a></td>
+                                <td><a>345675657</a></td>
+                                <td><a>미샤클리오-화장수-오버나이트크림</a></td>
+                                <td>화이트/590ml</td>
+                                <td>555</td>
+                                <td class="price">247,000</td>
+                                <td>미샤</td>
+                              </tr>
+                                <tr>
+                                    <td rowspan="2"><a>2012-04-34-123464</a></td>
+                                    <td><a>345675657</a></td>
+                                    <td><a>미샤클리오-화장수-오버나이트크림</a></td>
+                                    <td>화이트/590ml</td>
+                                    <td>555</td>
+                                    <td class="price">247,000</td>
+                                    <td>미샤</td>
+                                  </tr>
+                                  <tr>
+                                    <td><a>345675657</a></td>
+                                    <td><a>미샤클리오-화장수-오버나이트크림</a></td>
+                                    <td>화이트/590ml</td>
+                                    <td>555</td>
+                                    <td class="price">247,000</td>
+                                    <td>미샤</td>
+                                  </tr>
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!-- //문의내역 -->
+            </div>          
+            <!-- 1:1문의 답변처리 -->
+            <div class="data">
+              <div class="data-head">
+                <div class="left"><span class="title">1:1문의 답변처리</span>
+                    <div class="button-group">
+                        <a href="#" class="button inside"><span class="text">임시저장</span></a>
+                        <a href="#" class="button inside"><span class="text">답변처리</span></a>
+                        <a href="#" class="button inside"><span class="text">기처리</span></a>
+                      </div>
+                </div>
+              </div>
+              <div class="data-body">
+                <table class="data-table">
+                  <colgroup>
+                    <col width="120">
+                    <col>
+                    <col width="120">
+                    <col>
+                    <col width="120">
+                    <col>
+                  </colgroup>
+                  <tbody>
+                    <tr>
+                      <td class="label">템플릿구분</td>
+                      <td>
+                        <label class="radio-inline"><input type="radio" name="" value="" checked="checked">공통</label>
+                        <label class="radio-inline"><input type="radio" name="" value="">개인</label></td>
+                      <td class="label">상담템플릿</td>
+                      <td>
+                        <select class="form-control">
+                        <option value="">사용</option>
+                        <option value="">사용안함</option>
+                      </select></td>
+                      <td class="label">답변알림</td>
+                      <td>SNS/E-MAIL</td>
+                    </tr>
+                    <tr>
+                      <td class="label">답변내용작성</td>
+                      <td colspan="5">
+                        <textarea name="memo" rows="5" class="textarea"></textarea>
+                    </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>          
+            <!-- //1:1문의 답변처리 -->
+            <!-- 처리내역 -->
+            <div class="data">
+                <div class="data-head">
+                  <div class="left"><span class="title">처리내역</span>
+                  </div>
+                </div>
+                <div class="scroll">
+                  <table class="data-table">
+                    <colgroup>
+                      <col width="120">
+                      <col>
+                      <col width="120">
+                      <col>
+                    </colgroup>
+                    <tbody class="bo-top">
+                      <tr>
+                        <td class="label">처리일시</td>
+                        <td class="date">2012-12-31 03:24:34 dff</td>
+                        <td class="label">처리자</td>
+                        <td>admin</td>
+                    </tr>
+                    <tr>
+                    <td class="label">내용</td>
+                    <td colspan="2">처리후에 연락드리기로함 처리후에 연락드리기로함 처리후에 연락드리기로함 처리후에 연락드리기로함 처리후에 연락드리기로함 처리후에 연락드리기로함 </td>
+                    </tr>
+                    <tr>
+                        <td class="label">후속업무 </td>
+                        <td colspan="3">
+                            <div class="data bo-none">
+                                <div class="data-head">
+                                    <div class="checkbox">
+                                        <label class="checkbox-inline">
+                                            <input type="checkbox" name="goodsDeliveryFixFl[]" value="all"
+                                                class="js-not-checkall" data-target-name="goodsDeliveryFixFl[]"
+                                                checked="checked"> 전화약속
+                                        </label>
+                                        <label>
+                                            <input class="checkbox-inline" type="checkbox" name="" value="free">
+                                            업무이관 </label>
+                                    </div>
+                                  <div class="right">
+                                    <span class="data-toggle hide">
+                                      <button type="button" class="btn btn-sm btn-link bold toggle-button"
+                                        depth-name="goodsDisplay"><span>열림</span></button>
+                                    </span>
+                                  </div>
+                                </div>
+                                <!-- //data-head -->
+                    
+                                <div class="data-body bo-none">
+                                    <!--전화약속-->
+                                    <table class="data-table inbox fixed">
+                                        <colgroup>
+                                          <col width="120">
+                                          <col width="120">
+                                          <col width="120">
+                                          <col>
+                                          <col width="120">
+                                        </colgroup>
+                                        <tbody>
+                                          <tr>
+                                          <th class="label center">전약상태</th>
+                                          <th class="label center">예약일시</th>
+                                          <th class="label center">약속방식</th>
+                                          <th class="label center">상담메모</th>
+                                          <th class="label center">처리자</th>
+                                          </tr>
+                                          <tr>
+                                              <td class="center"><a>임박</a></td>
+                                              <td class="center">2020-12-23 12:04</td>
+                                              <td class="center"><a>SMS/LMS</a></td>
+                                              <td>사업자등록번호 확인 예정</td>
+                                              <td class="center"><a>홍길동</a></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="center"><a>임박</a></td>
+                                                <td class="center">2020-12-23 12:04</td>
+                                                <td class="center"><a>SMS/LMS</a></td>
+                                                <td>사업자등록번호 확인 예정</td>
+                                                <td class="center"><a>홍길동</a></td>
+                                              </tr>
+                                              <tr>
+                                                <td class="center"><a>임박</a></td>
+                                                <td class="center">2020-12-23 12:04</td>
+                                                <td class="center"><a>SMS/LMS</a></td>
+                                                <td>사업자등록번호 확인 예정</td>
+                                                <td class="center"><a>홍길동</a></td>
+                                              </tr>
+
+                                        </tbody>
+                                      </table>
+                                      <!--업무이관-->
+                                      <table class="data-table inbox fixed mt10">
+                                        <colgroup>
+                                          <col>
+                                          <col>
+                                          <col>
+                                        </colgroup>
+                                        <tbody>
+                                          <tr>
+                                          <th class="label center">이관상태</th>
+                                          <th class="label center">이관유형</th>
+                                          <th class="label center">담당자</th>
+                                          </tr>
+                                          <tr>
+                                              <td class="center">처리중</td>
+                                              <td class="center">민원</td>
+                                              <td class="center">홍길동</td>
+                                            </tr>
+                                        </tbody>
+                                      </table>
+                                </div>
+                                <!-- //data-body -->
+                              </div>
+                        </td>
+                    </td>
+                    </tr>
+                    </tbody>
+                    <tbody class="bo-top">
+                        <tr>
+                          <td class="label">처리일시</td>
+                          <td class="date">2012-12-31 03:24:34 dff</td>
+                          <td class="label">처리자</td>
+                          <td>admin</td>
+                      </tr>
+                      <tr>
+                      <td class="label">내용</td>
+                      <td colspan="2">처리후에 연락드리기로함 처리후에 연락드리기로함 처리후에 연락드리기로함 처리후에 연락드리기로함 처리후에 연락드리기로함 처리후에 연락드리기로함 </td>
+                      </tr>
+                      <tr>
+                          <td class="label">후속업무 </td>
+                          <td colspan="3">
+                              <div class="data bo-none">
+                                  <div class="data-head">
+                                      <div class="checkbox">
+                                          <label class="checkbox-inline">
+                                              <input type="checkbox" name="goodsDeliveryFixFl[]" value="all"
+                                                  class="js-not-checkall" data-target-name="goodsDeliveryFixFl[]"
+                                                  checked="checked"> 전화약속
+                                          </label>
+                                          <label>
+                                              <input class="checkbox-inline" type="checkbox" name="" value="free">
+                                              업무이관 </label>
+                                      </div>
+                                    <div class="right">
+                                      <span class="data-toggle hide">
+                                        <button type="button" class="btn btn-sm btn-link bold toggle-button"
+                                          depth-name="goodsDisplay"><span>열림</span></button>
+                                      </span>
+                                    </div>
+                                  </div>
+                                  <!-- //data-head -->
+                      
+                                  <div class="data-body bo-none">
+                                      <!--전화약속-->
+                                      <table class="data-table inbox fixed">
+                                          <colgroup>
+                                            <col width="120">
+                                            <col width="120">
+                                            <col width="120">
+                                            <col>
+                                            <col width="120">
+                                          </colgroup>
+                                          <tbody>
+                                            <tr>
+                                            <th class="label center">전약상태</th>
+                                            <th class="label center">예약일시</th>
+                                            <th class="label center">약속방식</th>
+                                            <th class="label center">상담메모</th>
+                                            <th class="label center">처리자</th>
+                                            </tr>
+                                            <tr>
+                                                <td class="center"><a>임박</a></td>
+                                                <td class="center">2020-12-23 12:04</td>
+                                                <td class="center"><a>SMS/LMS</a></td>
+                                                <td>사업자등록번호 확인 예정</td>
+                                                <td class="center"><a>홍길동</a></td>
+                                              </tr>
+                                              <tr>
+                                                  <td class="center"><a>임박</a></td>
+                                                  <td class="center">2020-12-23 12:04</td>
+                                                  <td class="center"><a>SMS/LMS</a></td>
+                                                  <td>사업자등록번호 확인 예정</td>
+                                                  <td class="center"><a>홍길동</a></td>
+                                                </tr>
+                                                <tr>
+                                                  <td class="center"><a>임박</a></td>
+                                                  <td class="center">2020-12-23 12:04</td>
+                                                  <td class="center"><a>SMS/LMS</a></td>
+                                                  <td>사업자등록번호 확인 예정</td>
+                                                  <td class="center"><a>홍길동</a></td>
+                                                </tr>
+  
+                                          </tbody>
+                                        </table>
+                                        <!--업무이관-->
+                                        <table class="data-table inbox fixed mt10">
+                                          <colgroup>
+                                            <col>
+                                            <col>
+                                            <col>
+                                          </colgroup>
+                                          <tbody>
+                                            <tr>
+                                            <th class="label center">이관상태</th>
+                                            <th class="label center">이관유형</th>
+                                            <th class="label center">담당자</th>
+                                            </tr>
+                                            <tr>
+                                                <td class="center">처리중</td>
+                                                <td class="center">민원</td>
+                                                <td class="center">홍길동</td>
+                                              </tr>
+                                          </tbody>
+                                        </table>
+                                  </div>
+                                  <!-- //data-body -->
+                                </div>
+                          </td>
+                      </td>
+                      </tr>
+                      </tbody>
+                    
+                  </table>
+                  </div>
+                </div>
+                <!-- //처리내역 -->
+              </div>
+          </div>
+      </div>    
+    </div>
+    <!-- //page-fixed -->
+  </div>
+  <script>
+    tabsBody();
+  </script>
+</body>
+</html>

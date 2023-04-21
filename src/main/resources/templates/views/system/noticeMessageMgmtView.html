@@ -1,0 +1,158 @@
+<!--
+* 프로그램명 : 알림 메시지 관리
+* 작 성 일 : 2021.02.23
+* 작 성 자 : 박슬기
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 알림 메시지 관리를 하는 UI
+* 이    력 :
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/page-realgrid-layout}">
+
+<head>
+    <title>sub title</title>
+</head>
+<body>
+<th:block layout:fragment="page-title-area">
+    <div class="page-title">
+        <div class="left">
+            <h1><th:block th:text="${#messages.msg('noticeMessageMgmt.label.title.ntc.msg.management')}"/></h1>
+        </div>
+    </div>
+</th:block>
+
+<th:block layout:fragment="page-contents">
+    <div class="page-fixed with-title">
+        <div class="search-cont">
+            <!-- 조회테이블 -->
+
+            <div class="search">
+                <form name="ntcGridForm" id="ntcGridForm">
+                    <table class="search-table">
+                        <colgroup>
+                            <col style="width:120px;" />
+                            <col style="width:15%" />
+                            <col style="width:120px;"/>
+                            <col style="width:15%"/>
+                            <col style="width:120px;"/>
+                            <col/>
+                        </colgroup>
+                        <tbody>
+                        <tr>
+                            <td class="label" th:text="${#messages.msg('noticeMessageMgmt.label.ntc.msg.gbcd')}" />
+                            <td>
+
+                                <select id="msgGbCd" name="msgGbCd">
+                                    <option value="" th:text="${#messages.msg('adminCommon.entirety')}"></option>
+                                    <option th:each="list : ${codeList.CH008}"
+                                            th:value="${list?.cd}"
+                                            th:utext="${list?.cdNm}">
+                                    </option>
+                                </select>
+
+                            </td>
+                            <td class="label" th:text="${#messages.msg('noticeMessageMgmt.label.ntc.msg.mthd')}" />
+                            <td>
+                                <select class="form-control" id="baseNotiMethodCd" name="baseNotiMethodCd">
+                                    <option value="">
+                                        <th:block th:text="${#messages.msg('adminCommon.entirety')}"/>
+                                    </option>
+                                    <option value="01">
+                                        <th:block th:text="${#messages.msg('noticeMessageMgmt.label.kakao')}"/>
+                                    </option>
+                                    <option value="02">
+                                        <th:block th:text="${#messages.msg('noticeMessageMgmt.label.sms')}"/>
+                                    </option>
+                                </select>
+                            </td>
+                            <td class="label" th:text="${#messages.msg('noticeMessageMgmt.label.ntc.msg.title')}" />
+                            <td>
+                                <input class="input w90" type="text" maxlength="30" name="title" id="title"/>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+            <!-- //조회테이블 -->
+            <!-- 검색버튼 -->
+            <div class="button-group search-btn">
+                <a href="#" class="btn_gblue button white" id="btn_init">
+                    <span class="text" th:text="${#messages.msg('adminCommon.button.init')}" />
+                </a>
+                <a href="#" class="btn_blue button dark" id="btn_search">
+                    <span class="text" th:text="${#messages.msg('adminCommon.button.search')}" />
+                </a>
+            </div>
+            <!-- //검색버튼 -->
+            <!-- 리얼그리드 -->
+            <div class="grid-cont">
+                <div class="grid" style="overflow: hidden;">
+                    <div class="grid-head">
+                        <div class="title-area">
+                            <h2 class="title" th:text="${#messages.msg('noticeMessageMgmt.label.qry.rslt')}" />
+                        </div>
+                        <div class="option-area">
+                            <div class="edit-option">
+                                <div class="button-group">
+                                    <a href="#" class="button inside" id="btn_grid_add_pop">
+                                        <span class="text" th:text="${#messages.msg('adminCommon.grid.button.add')}" />
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="page-option" grid-id="ntcGrid" />
+                        </div>
+                    </div>
+                    <div class="grid-body">
+                        <div id="ntcGrid" realgrid></div>
+                    </div>
+                </div>
+            </div>
+            <!-- //리얼그리드 -->
+        </div>
+    </div>
+</th:block>
+
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+    /*<![CDATA[*/
+        var _ntc_seq   	            = [[${#messages.msg("noticeMessageMgmt.label.ntc.msg.seq")}]];
+        var _ntc_gbcd   	        = [[${#messages.msg("noticeMessageMgmt.label.ntc.msg.gbcd")}]];
+        var _ntc_mthd   	        = [[${#messages.msg("noticeMessageMgmt.label.ntc.msg.mthd")}]];
+        var _ntc_gbcd   	        = [[${#messages.msg("noticeMessageMgmt.label.ntc.msg.gbcd")}]];
+        var _ntc_title   	        = [[${#messages.msg("noticeMessageMgmt.label.ntc.msg.title")}]];
+        var _aplySrtDtm 		    = [[${#messages.msg("noticeMessageMgmt.label.ntc.msg.aply.srt")}]];
+        var _aplyEndDtm             = [[${#messages.msg("noticeMessageMgmt.label.ntc.msg.aply.end")}]];
+        var _use_yn    	            = [[${#messages.msg("adminCommon.use.yn")}]];
+        var _reg_dtm 		        = [[${#messages.msg("noticeMessageMgmt.label.reg.dtm")}]];
+        var _sysRegId 		        = [[${#messages.msg("adminCommon.label.sys.reg.id")}]];
+        var _sysRegDtm              = [[${#messages.msg("adminCommon.label.sys.reg.date")}]];
+        var _sysModId			    = [[${#messages.msg("adminCommon.label.sys.mod.id")}]];
+        var _sysModDtm		        = [[${#messages.msg("adminCommon.label.sys.mod.date")}]];
+        var _noDataMessage          = [[${#messages.msg("adminCommon.grid.alert.no.searched.data")}]];
+        var _emptyExcel             = [[${#messages.msg("adminCommon.grid.alert.no.searched.data")}]];
+        var _rowCheckMsg            = [[${#messages.msg("adminCommon.alert.no.selected.item.for.delete")}]];
+        var _messageNotCheckedData  = [[${#messages.msg("adminCommon.grid.alert.no.selected.row")}]];
+        var _initGridMessage   	    = [[${#messages.msg("adminCommon.grid.alert.init")}]];
+        var _use_yn_select          = {"\Y":[[${#messages.msg("adminCommon.use")}]],"\N":[[${#messages.msg("adminCommon.disuse")}]]};
+        var _gridType               = '0'; // 선택구분값이 있을경우 필수값
+        var _defaultPage            = 0;
+    /*]]>*/
+    </script>
+
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'system/ntcGrid.eventHandler.js'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'system/ntcGrid.provider.js'" ></script>
+    <script th:src="${@domainConfig.getProperty('jsUrl')} + 'common/popup.js?202108121247'"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            ntcGrid.eventhandler.bindButtonEvent();
+        });
+    </script>
+</th:block>
+</body>
+</html>

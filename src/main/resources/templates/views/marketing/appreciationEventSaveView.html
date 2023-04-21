@@ -1,0 +1,493 @@
+<!--
+* 프로그램명 : 사은행사 등록 / 상세
+* 작 성 일 : 2021.03.25
+* 작 성 자 : 윤성원
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 사은행사 등록 / 상세 팝업
+* 이    력 :
+-->
+<html lang="ko-KR" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layouts/page-realgrid-layout}">
+
+<body>
+	<th:block layout:fragment="page-contents">
+		<div class="win-popup page-root">
+			<div class="page-fixed">
+				<form id="appreciation-form">
+					<!--기본정보 Form -->
+					<div class="data-cont">
+						<div class="header">
+							<h1 class="title">
+								<th:block
+									th:text="${appreciation} == null or ${appreciation} == '' ?
+                   ${#messages.msg('appreciationEventMgmt.appreciate.detail.label.registTitle')} : ${#messages.msg('appreciationEventMgmt.appreciate.detail.label.detatilTitle')} " />
+							</h1>
+						</div>
+						<div class="data">
+							<div class="data-head">
+								<div class="left">
+									<span class="title"><th:block
+											th:text="${#messages.msg('appreciationEventMgmt.appreciate.detail.label.basicForm')}" /></span>
+								</div>
+							</div>
+							<!-- //data-head -->
+
+							<div class="data-body">
+								<table class="data-table fixed">
+									<colgroup>
+										<col width="120">
+										<col>
+										<col width="120">
+										<col>
+									</colgroup>
+									<tbody>
+										<tr>
+											<td class="label"><strong><th:block
+														th:text="${#messages.msg('appreciationEventMgmt.appreciate.detail.label.aeNoAndNm')}" /></strong></td>
+											<td colspan="3"><input type="text" name="aeNo"
+												class="input disabled w10" id="aeNo" disabled="disabled"
+												th:value=" ${appreciation} == null ? '' : ${appreciation.aeNo}">
+												<input type="text" name="aeNm" class="input" id="aeNm"
+												th:value=" ${appreciation} == null ? '' : ${appreciation.aeNm}">
+											</td>
+										</tr>
+										<tr>
+											<td class="label"><strong><th:block
+														th:text="${#messages.msg('appreciationEventMgmt.appreciate.detail.label.aeTypCd')}" /></strong></td>
+											<td><select class="form-control" id="select-event-type"
+												name="addEvtTypCd">
+													<option value=""
+														th:text="${#messages.msg('adminCommon.select')}"></option>
+													<option th:if="${appreciation} == null"
+														th:each="list : ${codeList.MK012}" th:value="${list?.cd}"
+														th:utext="${list?.cdNm}"></option>
+													<option th:if="${appreciation} != null"
+														th:each="list : ${codeList.MK012}" th:value="${list?.cd}"
+														th:utext="${list?.cdNm}"
+														th:selected="${appreciation.addEvtTypCd} == ${list?.cd}"></option>
+											</select></td>
+											<td class="label"><strong><th:block
+														th:text="${#messages.msg('appreciationEventMgmt.appreciate.detail.label.aeStatCd')}" /></strong></td>
+											<td><select class="form-control"
+												id="select-event-status" name="aePrgsStatCd">
+													<option th:if="${appreciation} == null"
+														th:each="list : ${codeList.MK003}" th:value="${list?.cd}"
+														th:utext="${list?.cdNm}"></option>
+													<option th:unless="${appreciation} == null"
+														th:each="list : ${codeList.MK003}" th:value="${list?.cd}"
+														th:utext="${list?.cdNm}"
+														th:selected="${appreciation.aePrgsStatCd} == ${list?.cd}"></option>
+											</select></td>
+										</tr>
+										<tr>
+											<td class="label"><strong><th:block
+														th:text="${#messages.msg('appreciationEventMgmt.appreciate.detail.label.aeDesc')}" /></strong></td>
+											<td colspan="3"><input type="text" class="input w100"
+												id="text-event-desc" name="aeDesc"
+												th:value=" ${appreciation} == null ? '' : ${appreciation.aeDesc}">
+											</td>
+										</tr>
+										<tr>
+											<td class="label"><th:block
+													th:text="${#messages.msg('adminCommon.label.sys.mod.id')}" /></td>
+											<td><th:block
+													th:text=" ${appreciation} == null ? '' : ${appreciation.sysModId}"></th:block>
+											</td>
+											<td class="label"><th:block
+													th:text="${#messages.msg('adminCommon.label.sys.mod.date')}" /></td>
+											<td><th:block
+													th:text="${appreciation} == null ? '' : ${appreciation.sysModDtm}"></th:block>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+							<!-- //data-body -->
+						</div>
+					</div>
+					<!--  기본정보 Form End -->
+					<!-- 사은행사 지급설정 Form Start -->
+					<div class="data-cont">
+						<div class="data">
+							<div class="data-head">
+								<div class="left">
+									<span class="title"><th:block
+											th:text="${#messages.msg('appreciationEventMgmt.appreciate.detail.label.paymentSetting')}" /></span>
+								</div>
+							</div>
+							<!-- //data-head -->
+
+							<div class="data-body">
+								<table class="data-table fixed">
+									<colgroup>
+										<col width="120">
+										<col>
+										<col width="120">
+										<col>
+									</colgroup>
+									<tbody>
+										<tr>
+											<td class="label"><strong><th:block
+														th:text="${#messages.msg('appreciationEventMgmt.appreciate.detail.label.aePeriod')}" /></strong></td>
+											<td>
+												<div class="input-group">
+													<div class="picker-group time" data-lopicker="basic"
+														id="input-2-1">
+														<input type="text" class="form-control disabled"
+															id="disp-start-date" placeholder="" disabled="disabled"
+															th:value=" ${appreciation} == null ? '' : ${appreciation.aeStrDtm}">
+														<span class="input-group-addon">~</span> <input
+															type="text" class="form-control disabled"
+															id="disp-end-date" placeholder="" disabled="disabled"
+															th:value=" ${appreciation} == null ? '' : ${appreciation.aeEndDtm}">
+														<span class="input-group-addon" id="display-calendar"><i
+															class="icon-calendar"></i></span>
+													</div>
+												</div>
+											</td>
+											<td class="label"><th:block
+													th:text="${#messages.msg('appreciationEventMgmt.appreciate.detail.label.payPeriod')}" /></td>
+											<td>
+												<div class="input-group">
+													<div class="picker-group" data-lopicker="basic"
+														id="input-2-1">
+														<input type="text" class="form-control disabled"
+															id="pay-start-date" placeholder="" disabled="disabled"
+															th:value=" ${appreciation} == null ? '' : ${appreciation.payStrDt}">
+														<span class="input-group-addon">~</span> <input
+															type="text" class="form-control disabled"
+															id="pay-end-date" placeholder="" disabled="disabled"
+															th:value=" ${appreciation} == null ? '' : ${appreciation.payEndDt}">
+														<span class="input-group-addon" id="use-period-calendar"><i
+															class="icon-calendar"></i></span>
+													</div>
+													<a href="#" data-bs-toggle="tooltip"
+														title="Some tooltip text!"></a>
+													<div class="tooltip">
+														<a href="#" class="trigger"><th:block th:text="${#messages.msg('appreciationEventMgmt.appreciate.form.label.desc')}"></th:block></a>
+														<div class="cont">
+															<p class="text"><th:block th:text="${#messages.msg('appreciationEventMgmt.appreciate.form.message.register.payment.date')}"></th:block></p>
+															</p>
+															<a href="#" class="close"><th:block th:text="${#messages.msg('adminCommon.button.close')}"></th:block></a>
+														</div>
+													</div>
+												</div>
+											</td>
+										</tr>
+										<tr>
+											<td class="label"><strong><th:block
+														th:text="${#messages.msg('appreciationEventMgmt.appreciate.detail.label.aplyMedia')}" /></strong></td>
+											<td>
+												<div class="checkbox">
+													<label class="checkbox-inline"> <input
+														type="checkbox" name="apply-media-all" value="all"
+														class="js-not-checkall" data-target-name="apply-media-all"><th:block th:text="${#messages.msg('adminCommon.label.all')}"></th:block>
+													</label> <label> <input class="checkbox-inline"
+														type="checkbox" name="apply-media" value="01"
+														th:text="${#messages.msg('couponMgmt.info.label.applyMedia.pc')}">
+													</label> <label> <input class="checkbox-inline"
+														type="checkbox" name="apply-media" value="02"
+														th:text="${#messages.msg('couponMgmt.info.label.applyMedia.mobile')}">
+													</label> <label> <input class="checkbox-inline"
+														type="checkbox" name="apply-media" value="03"
+														
+														th:text="${#messages.msg('couponMgmt.info.label.applyMedia.bo')}">
+													</label>
+												</div>
+											</td>
+											<td class="label"><strong><th:block
+														th:text="${#messages.msg('appreciationEventMgmt.appreciate.detail.label.targetMbr')}" /></strong></td>
+											<td>
+												<div class="input-group">
+													<select class="form-control" id="select-mbr-type"
+														name="mbrTypCd">
+														<option th:if="${appreciation} == null"
+															th:each="list : ${codeList.MK016}" th:value="${list?.cd}"
+															th:utext="${list?.cdNm}"></option>
+														<option th:unless="${appreciation} == null"
+															th:each="list : ${codeList.MK016}" th:value="${list?.cd}"
+															th:utext="${list?.cdNm}"
+															th:selected="${appreciation.mbrTypCd} == ${list?.cd}"></option>
+													</select>
+												</div>
+											</td>
+										</tr>
+										<tr>
+											<td class="label"><strong><th:block
+														th:text="${#messages.msg('appreciationEventMgmt.appreciate.detail.label.eventCondition')}" /></strong></td>
+											<td colspan="3">
+												<div class="input-group block">
+													<label class="mr10"><input class="checkbox-inline"
+														type="checkbox" name="" id="specific-time"><th:block th:text="${#messages.msg('appreciationEventMgmt.appreciate.form.label.specific.time')}"></th:block></label>
+													<th:block
+														th:with="time=${T(com.enbiz.bo.base.util.BindingUtil).selectTimeUtil()}">
+														<select class="form-control" name="time-coupon-hm"
+															id="use-start-hours" disabled="disabled">
+															<option th:each="list : ${time[0]}" th:value="${list}"
+																th:utext="${list}"></option>
+														</select>
+														<em>시</em>
+														<select class="form-control" name="time-coupon-hm"
+															id="use-start-minute" disabled="disabled">
+															<option th:each="list : ${time[1]}" th:value="${list}"
+																th:utext="${list}"></option>
+														</select>
+														<em>분 ~ </em>
+														<select class="form-control" name="time-coupon-hm"
+															id="use-end-hours" disabled="disabled">
+															<option th:each="list : ${time[0]}" th:value="${list}"
+																th:utext="${list}" th:selected="${list}=='23'"></option>
+														</select>
+														<em>시</em>
+														<select class="form-control" name="time-coupon-hm"
+															id="use-end-minute" disabled="disabled">
+															<option th:each="list : ${time[1]}" th:value="${list}"
+																th:utext="${list}" th:selected="${list}=='59'"></option>
+														</select>
+														<em>분</em>
+													</th:block>
+												</div>
+												<div class="input-group block contidition-block">
+													<span class="tit"><th:block th:text="${#messages.msg('appreciationEventMgmt.appreciate.form.label.buy.price')}"></th:block></span> <input type="text"
+														id="minAmt" class="price input w20" numberOnly><em><th:block th:text="${#messages.msg('adminCommon.label.price.mark')}"></th:block>
+														<th:block th:text="${#messages.msg('appreciationEventMgmt.appreciate.form.label.more')}"></th:block></em> <span class="tit"><th:block th:text="${#messages.msg('appreciationEventMgmt.appreciate.form.label.payment.gift')}"></th:block></span> <input type="text"
+														id="goodsNm" class="input disabled w20" readonly>
+													<input type="hidden" id="goodsNo" value=""> <a
+														href="javascript:;" class="button small"
+														id="btn-call-goods"><i class="icon-sarch"></i></a> <a
+														href="javascript:;" class="icon-data-plus condition-plus"><th:block th:text="${#messages.msg('adminCommon.button.add')}"></th:block></a>
+												</div>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</form>
+				<!--  사은행사 지급설정 Form End -->
+				<!--  적용대상 Form Start -->
+				<div class="data-cont" id="apply-target-form">
+					<div class="data">
+						<div class="data-head">
+							<div class="left">
+								<span class="title"><th:block
+										th:text="${#messages.msg('couponMgmt.info.label.applyTarget')}" /></span>
+							</div>
+							<div class="right">
+								<a href="#" class="button inside" id="apply-clear-all"><span
+									class="text"><th:block th:text="${#messages.msg('adminCommon.button.all.init')}"></th:block></span></a>
+							</div>
+						</div>
+						<!-- //data-head -->
+
+						<div class="data-body">
+							<table class="data-table">
+								<colgroup>
+									<col width="120">
+									<col>
+									<col width="120">
+									<col>
+									<col width="120">
+									<col>
+								</colgroup>
+								<tbody>
+									<tr>
+										<td class="label"><th:block
+												th:text="${#messages.msg('couponMgmt.info.label.site')}" /></td>
+										<td colspan="5">
+											<div class="quick-search">
+												<ul id="apply-site-ul">
+												</ul>
+												<div class="add">
+													<a href="#" class="button inside target-init"><span
+														class="text"><th:block th:text="${#messages.msg('adminCommon.button.init')}"></th:block></span></a> <a href="#" class="button inside"
+														id="apply-site"><span class="text"><th:block th:text="${#messages.msg('adminCommon.button.add')}"></th:block></span></a>
+												</div>
+											</div>
+										</td>
+									</tr>
+									<tr id="apply-goods-tr">
+										<td class="label"><th:block
+												th:text="${#messages.msg('couponMgmt.info.label.goods')}" /></td>
+										<td colspan="5">
+											<div class="quick-search">
+												<ul id="apply-goods-ul">
+												</ul>
+												<div class="add">
+													<a href="#" class="button inside target-init"><span
+														class="text"><th:block th:text="${#messages.msg('adminCommon.button.init')}"></th:block></span></a> <a href="#" class="button inside"
+														id="apply-goods"><span class="text"><th:block th:text="${#messages.msg('adminCommon.button.add')}"></th:block></span></a>
+												</div>
+											</div>
+										</td>
+									</tr>
+									<tr id="apply-stdgoods-tr">
+										<td class="label"><th:block
+												th:text="${#messages.msg('couponMgmt.info.label.stdGoods')}" /></td>
+										<td colspan="5">
+											<div class="quick-search">
+												<ul id="apply-stdgoods-ul">
+												</ul>
+												<div class="add">
+													<a href="#" class="button inside target-init"><span
+														class="text"><th:block th:text="${#messages.msg('adminCommon.button.init')}"></th:block></span></a> <a href="#" class="button inside"
+														id="apply-stdGoods"><span class="text"><th:block th:text="${#messages.msg('adminCommon.button.add')}"></th:block></span></a>
+												</div>
+											</div>
+										</td>
+									</tr>
+									<tr id="apply-category-tr">
+										<td class="label"><th:block
+												th:text="${#messages.msg('couponMgmt.info.label.category')}" /></td>
+										<td colspan="5">
+											<div class="quick-search">
+												<ul id="apply-category-ul">
+												</ul>
+												<div class="add">
+													<a href="#" class="button inside target-init"><span
+														class="text"><th:block th:text="${#messages.msg('adminCommon.button.init')}"></th:block></span></a> <a href="#" class="button inside"
+														id="apply-category"><span class="text"><th:block th:text="${#messages.msg('adminCommon.button.add')}"></th:block></span></a>
+												</div>
+											</div>
+										</td>
+									</tr>
+									<tr id="apply-brand-tr">
+										<td class="label"><th:block
+												th:text="${#messages.msg('couponMgmt.info.label.brand')}" /></td>
+										<td colspan="5">
+											<div class="quick-search">
+												<ul id="apply-brand-ul">
+												</ul>
+												<div class="add">
+													<a href="#" class="button inside target-init"><span
+														class="text"><th:block th:text="${#messages.msg('adminCommon.button.init')}"></th:block></span></a> <a href="#" class="button inside"
+														id="apply-brand"><span class="text"><th:block th:text="${#messages.msg('adminCommon.button.add')}"></th:block></span></a>
+												</div>
+											</div>
+										</td>
+									</tr>
+									<tr id="apply-entr-tr">
+										<td class="label"><th:block
+												th:text="${#messages.msg('couponMgmt.info.label.entr')}" /></td>
+										<td colspan="5">
+											<div class="quick-search">
+												<ul id="apply-entr-ul">
+												</ul>
+												<div class="add">
+													<a href="#" class="button inside target-init"><span
+														class="text"><th:block th:text="${#messages.msg('adminCommon.button.init')}"></th:block></span></a> <a href="#" class="button inside"
+														id="apply-entr"><span class="text"><th:block th:text="${#messages.msg('adminCommon.button.add')}"></th:block></span></a>
+												</div>
+											</div>
+										</td>
+									</tr>
+									<tr id="apply-channel-tr">
+										<td class="label"><th:block
+												th:text="${#messages.msg('couponMgmt.info.label.channel')}" /></td>
+										<td colspan="5">
+											<div class="quick-search">
+												<ul id="apply-channel-ul">
+												</ul>
+												<div class="add">
+													<a href="#" class="button inside target-init"><span
+														class="text"><th:block th:text="${#messages.msg('adminCommon.button.init')}"></th:block></span></a> <a href="#" class="button inside"
+														id="apply-channel"><span class="text"><th:block th:text="${#messages.msg('adminCommon.button.add')}"></th:block></span></a>
+												</div>
+											</div>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<!-- //data-body -->
+					</div>
+				</div>
+				<!-- 적용대상 Form End -->
+				<!-- 제외대상 Form Start -->
+				<div class="data-cont" id="except-target-form">
+					<div class="data">
+						<div class="data-head">
+							<div class="left">
+								<span class="title"><th:block
+										th:text="${#messages.msg('couponMgmt.info.label.exceptTarget')}" /></span>
+							</div>
+						</div>
+						<!-- //data-head -->
+
+						<div class="data-body">
+							<table class="data-table">
+								<colgroup>
+									<col width="120">
+									<col>
+									<col width="120">
+									<col>
+									<col width="120">
+									<col>
+								</colgroup>
+								<tbody>
+									<tr>
+										<td class="label"><th:block
+												th:text="${#messages.msg('couponMgmt.info.label.goods')}" /></td>
+										<td colspan="5">
+											<div class="quick-search">
+												<ul id="except-goods-ul">
+												</ul>
+												<div class="add">
+													<a href="#" class="button inside target-init"><span
+														class="text"><th:block th:text="${#messages.msg('adminCommon.button.init')}"></th:block></span></a> <a href="#" class="button inside"
+														id="except-goods"><span class="text"><th:block th:text="${#messages.msg('adminCommon.button.add')}"></th:block></span></a>
+												</div>
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td class="label"><th:block
+												th:text="${#messages.msg('couponMgmt.info.label.stdGoods')}" /></td>
+										<td colspan="5">
+											<div class="quick-search">
+												<ul id="except-stdGoods-ul">
+												</ul>
+												<div class="add">
+													<a href="#" class="button inside target-init"><span
+														class="text"><th:block th:text="${#messages.msg('adminCommon.button.init')}"></th:block></span></a> <a href="#" class="button inside"
+														id="except-stdGoods"><span class="text"><th:block th:text="${#messages.msg('adminCommon.button.add')}"></th:block></span></a>
+												</div>
+											</div>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<!-- //data-body -->
+					</div>
+				</div>
+				<!--  제외대상 Form End -->
+				<div class="button-group search-btn">
+					<a th:if="${appreciation} != null" href="#" class="button"
+						id="appreciation-manage-delete"><span class="text"><th:block th:text="${#messages.msg('adminCommon.button.delete')}"></th:block></span></a>
+					<a href="#" class="button" id="appreciation-manage-close"><span class="text"><th:block th:text="${#messages.msg('adminCommon.button.close')}"></th:block></span></a>
+					<a href="#" class="button" id="appreciation-manage-save"><span class="text"><th:block th:text="${#messages.msg('adminCommon.button.save')}"></th:block></span></a>
+				</div>
+				</form>
+			</div>
+		</div>
+	</th:block>
+	<th:block layout:fragment="add-script">
+		<script th:inline="javascript">
+        var appreciation = [[${appreciation}]];
+    </script>
+
+		<script type="text/javascript"
+			th:src="${@domainConfig.getProperty('jsUrl')} + 'marketing/appreciationDetail.js?202103250002'"></script>
+
+		<script type="text/javascript">
+        $(document).ready(function() {
+            appreciationDetail.init();
+        });
+    </script>
+	</th:block>
+</body>
+</html>

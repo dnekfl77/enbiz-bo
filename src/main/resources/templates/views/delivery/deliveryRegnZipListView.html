@@ -1,0 +1,179 @@
+<!--
+* 프로그램명 : 배송지역 관리
+* 작 성 일 : 2021.03.05
+* 작 성 자 : 박슬기
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 배송지역 관리를 하는 UI
+* 이    력 :
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/page-realgrid-layout}">
+
+<head>
+    <title>sub title</title>
+</head>
+<body>
+<div class="page-root">
+<th:block layout:fragment="page-title-area">
+    <div class="page-title">
+        <div class="left">
+<!--            <h1>배송지역 관리</h1>-->
+            <h1><th:block th:text="${#messages.msg('deliveryMgmt.label.regn.title')}"/></h1>
+        </div>
+    </div>
+</th:block>
+<th:block layout:fragment="page-contents">
+    <div class="page-fixed with-title">
+        <div class="search-cont">
+            <!-- 조회테이블 -->
+            <div class="search">
+                <form name="dlvRgnGridForm" id="dlvRgnGridForm">
+                    <table class="search-table">
+                        <colgroup>
+                            <col style="width:120px;">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                        <tr>
+                            <td class="label" th:text="${#messages.msg('deliveryMgmt.label.regn.grp')}" />
+                            <td>
+                                <select id="deliRegnGbCd" name="deliRegnGbCd">
+                                    <option th:each="list : ${codeList.PR023}"
+                                            th:value="${list?.cd}"
+                                            th:text="${list?.cdNm}">
+                                    </option>
+                                </select>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+            <!-- //조회테이블 -->
+
+            <!-- 검색버튼 -->
+            <!-- search-btn -->
+            <div class="button-group search-btn" >
+                <a href="#" class="button white" id="btn_init">
+                    <span class="text" th:text="${#messages.msg('baseInfoMgmt.label.initialization')}" />
+                </a>
+                <a href="#" class="button dark" id="btn_search">
+                    <span class="text" th:text="${#messages.msg('baseInfoMgmt.label.search')}" />
+                </a>
+            </div>
+            <!-- //검색버튼 -->
+
+            <!-- 리얼그리드 -->
+            <div class="grid-cont col-50">
+                <div class="grid">
+                    <div class="grid-head">
+                        <div class="title-area">
+                            <h2 class="title" th:text="${#messages.msg('deliveryMgmt.postNoGrid.add.able.regn')}" />
+                        </div>
+                        <!-- //title-area -->
+
+                        <div class="option-area">
+                            <div class="edit-option">
+                                <form id="postNoGridInnerForm">
+                                <div class="input-group">
+                                    <em>지역선택</em>
+                                    <select class="form-control" id="deliRegnGbNm" name="deliRegnGbNm">
+                                        <option value="">지역선택</option>
+                                        <option th:each="item : ${regnGripList}"
+                                                th:value="${item}"
+                                                th:text="${item}"></option>
+                                    </select>
+                                    <input type="text" class="input" id="searchWord" name="searchWord">
+                                </div>
+                                <div class="button-group">
+                                    <a href="#" class="button inside" id="btn_grid_inner_search"><span class="text">조회</span></a>
+                                </div>
+                                </form>
+                            </div>
+                            <div class="page-option" grid-id="postNoGrid">
+                            </div>
+                        </div>
+                        <!-- //option-area -->
+                    </div>
+                    <!-- //grid-head -->
+                    <div class="grid-body with-head" id="postNoGrid" realgrid></div>
+                    <!-- //grid-body -->
+                </div>
+                <!-- //추가가능 배송지역 -->
+
+                <div class="col-center">
+                    <a href="javascript:;" class="tree-arrow-right" id="btn_add">추가</a>
+                </div><!-- 그리드가 늘어날경우 저절로 중앙정렬됨 -->
+
+                <div class="grid">
+                    <div class="grid-head">
+                        <div class="title-area">
+                            <h2 class="title" th:text="${#messages.msg('deliveryMgmt.deliRegnZip.added.regn')}" />
+                        </div>
+                        <!-- //title-area -->
+
+                        <div class="option-area">
+                            <div class="edit-option">
+                                <div class="button-group">
+                                    <a href="#" class="button inside" id="btn_delete" name="btn_delete"><span class="text" th:text="${#messages.msg('deliveryMgmt.label.remove')}" /></a>
+                                    <a href="#" class="button inside" id="btn_cancel" name="btn_cancel"><span class="text" th:text="${#messages.msg('deliveryMgmt.label.reset')}" /></a>
+                                    <a href="#" class="button inside" id="btn_save" name="btn_save"><span class="text" th:text="${#messages.msg('deliveryMgmt.label.save')}" /></a>
+                                </div>
+                            </div>
+
+                            <div class="page-option" grid-id="deliRegnZipGrid">
+<!--                                <span class="total">총 <em>100</em>건</span>-->
+                            </div>
+                        </div>
+                        <!-- //option-area -->
+                    </div>
+                    <!-- //grid-head -->
+
+                    <div class="grid-body with-head" id="deliRegnZipGrid" realgrid ></div>
+                    <!-- //grid-body -->
+                </div>
+                <!-- //해당 배송지역 -->
+            </div>
+            <!-- //grid -->
+        </div>
+    </div>
+</th:block>
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+    /*<![CDATA[*/
+        var _zipNo                 = [[${#messages.msg("deliveryMgmt.deliRegnZip.grid.zipNo")}]];
+        var _baseAddr               = [[${#messages.msg("deliveryMgmt.deliRegnZip.grid.base.addr")}]];
+
+        var _use_yn_select          = {"\Y":[[${#messages.msg("baseInfoMgmt.label.use")}]],"\N":[[${#messages.msg("baseInfoMgmt.label.disuse")}]]};
+        var _defaultPage            = 0;
+        var _gridType               = '0'; // 선택구분값이 있을경우 필수값
+
+        var _saveQuestionMessage    = [[${#messages.msg("adminCommon.alert.save")}]];
+        var _noRowsMessage          = [[${#messages.msg("adminCommon.grid.alert.no.selected.row")}]];
+        var _deleteConfirmMsg       = [[${#messages.msg("adminCommon.alert.delete")}]];
+        var _messageNotCheckedData  = [[${#messages.msg("adminCommon.grid.alert.no.selected.row")}]];
+        var _noSearchWord           = [[${#messages.msg("deliveryMgmt.postNoGrid.add.regn.no.regn.select")}]];
+        var _targetRow              = 'null';
+        var _targetColumn           = 'null';
+
+    /*]]>*/
+    </script>
+
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'delivery/postNoGrid.eventHandler.js'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'delivery/postNoGrid.provider.js'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'delivery/deliRegnZipGrid.eventHandler.js'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'delivery/deliRegnZipGrid.provider.js'" ></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            postNoGrid.eventhandler.bindButtonEvent();
+            deliRegnZipGrid.eventhandler.bindButtonEvent();
+        });
+    </script>
+</th:block>
+</div>
+</body>
+</html>

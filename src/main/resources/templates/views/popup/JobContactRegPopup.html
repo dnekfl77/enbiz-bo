@@ -1,0 +1,139 @@
+<!--
+* 프로그램명 : 업무연락 작성
+* 작 성 일 : 2021.06.14
+* 작 성 자 : 임성범
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 업무연락 작성 UI
+* 이    력 :
+-->
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-update-layout}">
+<body>
+
+<th:block layout:fragment="header-area">
+    <th:block layout:insert="~{fragments/popup/popup-title :: popup-title}"
+              th:with="title=${#messages.msg('common.title.job.cnct.reg.popup')}"></th:block>
+</th:block>
+
+<th:block layout:fragment="data-area">
+    <form name="jobCnctRegForm" id="jobCnctRegForm">
+    <div class="data">
+        <div class="data-head">
+            <div class="left"><span class="title" th:text="${#messages.msg('common.title.job.cnct.reg.popup.base')}"></span></div>
+        </div>
+        <div class="data-body toggle-cont">
+        	<input type="hidden" id="loginId" th:value="${loginId}">
+        	<input type="hidden" id="recvmnIds" name="recvmnIds">
+            <table class="data-table">
+                <colgroup>
+                    <col width="120">
+                    <col>
+                    <col width="120">
+                    <col>
+                </colgroup>
+                <tbody>
+	                <tr>
+	                    <!-- 수신대상 -->
+	                    <td class="label"><strong th:text="${#messages.msg('common.label.job.cnct.reg.recvType')}"></strong></td>
+	                    <td>
+	                        <label class="radio-inline"><input type="radio" name="recvType" value="G" checked="checked"><span th:text="${#messages.msg('common.label.job.cnct.reg.recvType.recvGrp')}"></span></label>
+	                        <label class="radio-inline"><input type="radio" name="recvType" value="U" ><span th:text="${#messages.msg('common.label.job.cnct.reg.recvType.user')}"></span></label>
+                            <a href="#" class="button inside" id="add-recvmn"><span class="text" th:text="${#messages.msg('common.label.job.cnct.reg.addRecvmn')}"></span></a>
+	                    </td>
+	                    <!-- 긴급여부 -->
+	                    <td class="label"><strong th:text="${#messages.msg('common.label.job.cnct.reg.emergYn')}"></strong></td>
+	                    <td>
+	                        <label class="radio-inline"><input type="radio" name="emergYn" value="N" checked="checked"><span th:text="${#messages.msg('common.label.job.cnct.reg.emergYn.nor')}"></span></label>
+	                        <label class="radio-inline"><input type="radio" name="emergYn" value="Y" ><span th:text="${#messages.msg('common.label.job.cnct.reg.emergYn.emerg')}"></span></label>
+	                    </td>
+	                </tr>
+	                <tr>
+	                    <!-- 대상자 -->
+	                    <td class="label"><strong th:text="${#messages.msg('common.label.job.cnct.reg.recvmnList')}"></strong></td>
+	                    <td colspan="3">
+		                    <div class="quick-search">
+	                             <ul id="add-recvmn-ul"></ul>
+	                             <div class="add">
+	                                 <a href="#" class="button inside target-init"><span class="text" th:text="${#messages.msg('common.label.job.cnct.reg.recvmnList.init')}"></span></a>
+	                             </div>
+	                         </div>
+	                    </td>
+	                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+   <div class="data">
+        <div class="data-head">
+            <div class="left"><span class="title" th:text="${#messages.msg('common.title.job.cnct.reg.popup.detail')}"></span></div>
+        </div>   
+        <div class="data-body toggle-cont">
+            <table class="data-table">
+                <colgroup>
+                    <col style="width:15%;" />
+                    <col style="width:85%;" />
+                </colgroup>
+                <tbody>
+	                <tr>
+	                    <td class="label"><strong th:text="${#messages.msg('common.label.job.cnct.reg.title')}"></strong>
+	                    </td>
+	                    <td>
+	                        <input class="input w100" type="text" maxlength="300" name="title" id="title" />
+	                    </td>
+	                </tr>
+			       <tr>
+			           <td class="label">
+			               <strong th:text="${#messages.msg('common.label.job.cnct.reg.cont')}"></strong>
+			           </td>
+			           <td>
+			               <textarea rows="5" class="textarea dataCont" id="cont" name="cont" data-limitByte="4000" data-markId="accpContByte"></textarea>
+			               <em><span id="accpContByte">0</span>/4000</em>
+			           </td>
+			       </tr>
+			       <tr>
+			           <td class="label" th:text="${#messages.msg('common.label.job.cnct.reg.uploadFile')}"></td>
+			           <td colspan="3">
+			               <div class="input-group file-upload">
+			                   <a href="#" class="button small gray" id="fileUpload"><span class="text" th:text="${#messages.msg('common.label.job.cnct.reg.findFile')}"></span></a>                    
+			                   <input type="text" class="input disabled" disabled="disabled" style="width:244px;">
+			               </div>
+			           </td>
+			       </tr>   
+                </tbody>
+        	</table>
+    	</div>
+    </div>
+    </form>
+
+</th:block>
+<th:block layout:fragment="button-area">
+    <div class="button-group">
+        <a class="button white" id="btn_jobCnctReg_cancel"><span class="text" th:text="${#messages.msg('common.label.job.cnct.reg.btn.cancel')}"></span></a>
+        <a class="button dark" id="btn_jobCnctReg_send"><span class="text" th:text="${#messages.msg('common.label.job.cnct.reg.btn.send')}"></span></a>
+    </div>
+</th:block>
+      
+<body>
+
+
+<th:block layout:fragment="add-script">
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'popup/jobCnctReg.eventHandler.js?202106180002'" ></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+        	jobCnctReg.eventhandler.init();
+        	jobCnctReg.eventhandler.bindButtonEvent();
+        });
+        
+        function openJobCnctRegPopup() {
+        	window.open('/popup/JobContact.jobContactRegPopup.do','popup',' resizable=no scrollbars=yes width=1000 height=600')
+        }
+    </script>
+</th:block>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!--
+* 프로그램명 : 권한 그룹 조회
+* 작 성 일 : 2021.03.12
+* 작 성 자 : 신재호
+* 수 정 자 : 홍혜리
+* 버    전 : 1.0
+* 개    요 : 권한 그룹 조회 팝업
+* 이    력 : 2021-08-03 선택 방식 변경
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-layout}">
+<body>
+    <!--Title Area-->
+    <th:block layout:fragment="popup-title-area">
+        <th:block layout:insert="~{fragments/popup/popup-title :: popup-title}"
+                  th:with="title=${#messages.msg('rightGroupMgmt.label.rtgrp.qry')}"></th:block>
+    </th:block>
+    <!--Title Area End-->
+    <!--Search Area-->
+    <th:block layout:fragment="popup-search-area">
+        <div class="search">
+            <form name="rtGrpGridForm" id="rtGrpGridForm">
+                <table class="search-table">
+                    <colgroup>
+                        <col style="width:15%;" />
+                        <col style="width:35%;" />
+                        <col style="width:15%;" />
+                        <col style="width:35%;" />
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <td class="label" th:text="${#messages.msg('rightGroupMgmt.label.rtgrp.base.sys.gb')}"></td>
+                        <td>
+                            <select class="form-control w50" id="sysGbCd" name="sysGbCd">
+                                <th:block th:if="${requestData.sysGbCd} == '' ">
+                                    <option value="" th:text="${#messages.msg('baseInfoMgmt.label.full')}"></option>
+                                    <option th:each="list : ${codeList.UR005}"
+                                            th:value="${list.cd}"
+                                            th:text="${list.cdNm}"></option>
+                                </th:block>
+                                <th:block th:unless="${requestData.sysGbCd} == '' ">
+                                    <option th:each="list : ${codeList.UR005}"
+                                            th:value="${list.cd}"
+                                            th:text="${list.cdNm}"
+                                            th:if="${list.cd}==${requestData.sysGbCd}"></option>
+                                </th:block>
+                            </select>
+                        </td>
+                        <td class="label" th:text="${#messages.msg('rightGroupMgmt.label.rtgrp.base.nm')}"></td>
+                        <td>
+                            <div class="input-group w100">
+                                <input class="input w100" type="text" name="rtGrpNm" id="rtGrpNm" maxlength="200"/>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </th:block>
+    <!--Search Area End-->
+
+    <!--Search Button Area-->
+    <th:block layout:fragment="popup-search-button-area">
+        <th:block layout:insert="~{fragments/popup/popup-btn :: popup-search-btn}"/>
+    </th:block>
+    <!--Search Button Area End-->
+
+    <!--List Area-->
+    <th:block layout:fragment="popup-List-area">
+        <div class="grid">
+            <div class="grid-head" style="overflow: hidden;">
+                <div class="title-area">
+                    <h2 class="title" th:text="${#messages.msg('rightGroupMgmt.label.rtgrp.rt.grp')}"></h2>
+                </div>
+                <div class="option-area">
+                    <div class="page-option" grid-id="rtGrpGrid">
+                    </div>
+                </div>
+            </div>
+            <div class="grid-body with-head">
+                <div id="rtGrpGrid" class="rg-root rg-grid" realgrid></div>
+            </div>
+        </div>
+    </th:block>
+    <!--List Area End-->
+
+    <!--List Button Area-->
+    <th:block layout:fragment="popup-List-button-area">
+        <th:block layout:insert="~{fragments/popup/popup-btn :: popup-List-btn}"/>
+    </th:block>
+    <!--List Button Area End-->
+
+    <th:block layout:fragment="add-script">
+        <script th:inline="javascript">
+            var _gridType       = [[${requestData.argSelectType}]]; // 선택구분값이 있을경우 필수값
+        </script>
+        <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'popup/popup.RtGrpListPopup.rtGrpGrid.eventHandler.js?20210803'" ></script>
+        <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'popup/popup.RtGrpListPopup.rtGrpGrid.provider.js?20210803'" ></script>
+
+        <script type="text/javascript">
+        $(document).ready(function() {
+            rtGrpGrid.eventhandler.init();
+        });
+    </script>
+    </th:block>
+
+</body>
+</html>

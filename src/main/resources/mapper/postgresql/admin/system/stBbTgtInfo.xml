@@ -1,0 +1,44 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.system.StBbTgtInfoMapper">
+
+    <!--
+        제 목 :시스템 공지 대상 리스트 가져오기
+        작성자 : 이광진
+        작성일 : 2021.03.10
+        params : String
+        설 명 :
+	-->
+    <select id="getStBbTgtInfoList" parameterType="java.lang.String" resultType="StBbTgtInfo">
+        SELECT  /* StBbTgtInfoMapper.getStBbTgtInfoList */
+                BBC_NO,
+                ENTR_NO,
+                SYS_REG_ID,
+                SYS_REG_DTM,
+                SYS_MOD_ID,
+                SYS_MOD_DTM
+        FROM ST_BB_TGT_INFO
+        WHERE BBC_NO = #{bbcNo}
+    </select>
+
+    <!--
+        제 목 :시스템 공지 대상 리스트 사용자 정보 가져오기
+        작성자 : 이광진
+        작성일 : 2021.03.10
+        params : String
+        설 명 :
+	-->
+    <select id="getStBbTgtInfoListAddStUserBase" parameterType="java.lang.String" resultType="SystemNoticeTargetInfoResponse">
+        SELECT  /* StBbTgtInfoMapper.getStBbTgtInfoListAddStUserBase */
+                A.ENTR_NO AS USER_ID,
+                B.USER_NM,
+                B.JOB_GRP_CD,
+                FN_GET_CODENAME('UR002', B.JOB_GRP_CD) AS ORG_TYP_NM,
+                B.WORK_STAT_CD,
+                FN_GET_CODENAME('UR004', B.WORK_STAT_CD) AS WORK_STAT_NM
+        FROM ST_BB_TGT_INFO AS A
+           , ST_USER_BASE AS B
+        WHERE A.BBC_NO = #{bbcNo}
+          AND A.ENTR_NO = B.USER_ID
+    </select>
+</mapper>

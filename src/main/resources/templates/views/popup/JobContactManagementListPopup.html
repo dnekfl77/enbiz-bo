@@ -1,0 +1,322 @@
+<!--
+* 프로그램명 : 업무연락 관리
+* 작 성 일 : 2021.06.11
+* 작 성 자 : 임성범
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 업무연락 관리 UI
+* 이    력 :
+-->
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/page-realgrid-layout}">
+
+<head>
+    <title>업무연락 관리</title>
+</head>
+<body>
+<th:block layout:fragment="page-title-area">
+    <div class="page-title">
+        <div class="left">
+            <h1><th:block th:text="${#messages.msg('common.title.job.cnct.mgmt')}"/></h1>
+        </div>
+    </div>
+</th:block>
+<th:block layout:fragment="page-contents">
+    <div class="page-fixed with-title">
+        <div class="search-cont full-height">
+        	<!-- 문의함 종류 선택 탭 -->
+			<div class="tabs-area">
+				<ul class="tabs">
+					<li class="active"><a><th:block th:text="${#messages.msg('common.label.job.cnct.mgmt.recvTab')}"/><span id="recvListCnt"></span></a></li>
+                    <li><a><th:block th:text="${#messages.msg('common.label.job.cnct.mgmt.sendTab')}"/><span id="sendListCnt"></span></a></li>
+                    <a href="javascript:;" onclick="javascript:openJobCnctRegPopup();" class="button inside fl-right">
+                    	<span class="text"><th:block th:text="${#messages.msg('common.label.job.cnct.mgmt.regBtn')}"/></span>
+                    </a>
+				</ul>     
+				
+                <!-- tabs-body -->
+                <div class="tabs-body">
+					<!-- 받은 문의함 -->
+                    <!-- tab-cont -->
+                    <div class="tab-cont">
+                        <!-- 조회테이블 -->
+                        <div class="search">
+                        	<form name="jobCnctRecvForm" id="jobCnctRecvForm">
+                                <!-- 텝 타입 -->
+                                <input type="hidden" name="jobCnctTypeCd" value="01">
+                                <table class="search-table">
+                                    <colgroup>
+										<col style="width:13%;" />
+										<col style="width:34%;" />
+										<col style="width:13%;" />
+										<col style="width:40%;" />
+                                    </colgroup>
+                                    <tbody>
+				                        <tr>
+				                            <td class="label">
+				                                <strong><th:block th:text="${#messages.msg('common.label.job.cnct.mgmt.term')}"/></strong>
+				                            </td>
+				                            <td colspan="3">
+				                                <div id="calendar"></div>
+				                                <div class="input-group">
+				
+				                                    <div id="calenderLayer"></div>
+				
+				                                    <select class="form-control" id="recvTermGbCd" name="termGbCd">
+				                                        <option value="01">수신일자</option>
+				                                        <option value="02">답신일자</option>
+				                                    </select>
+				
+				                                    <div class="picker-group" data-lopicker="basic" id="dtm">
+				                                        <input type="text" class="input disabled" id="recvSearchStartDtm" name="searchStartDtm" disabled="disabled">
+				                                        <span class="input-group-addon">~</span>
+				                                        <input type="text" class="input disabled" id="recvSearchEndDtm" name="searchEndDtm" disabled="disabled">
+				                                        <span class="input-group-addon"><i class="icon-calendar" id="recvShowCalender"></i></span>
+				                                    </div>
+				                                </div>
+				                            </td>
+				                        </tr>
+				                        <tr>
+				                            <td class="label">
+				                                <th:block th:text="${#messages.msg('common.label.job.cnct.mgmt.user')}"></th:block>
+				                            </td>
+				                            <td>
+				                                <div class="input-group">
+				                                    <input type="text" maxlength="10" class="input" id="recvSearchUserNm" name="searchUserNm" disabled="disabled">
+				                                    <input type="hidden" id="recvSearchUserId" name="searchUserId" value="">
+				                                    <a href="#" class="button small" id="recv_btn_open_user_pop"><i class="icon-sarch"></i></a>
+				                                    <a href="#" class="button small" id="recv_btn_reset_user_pop"><i class="icon-clear"></i></a>
+				                                </div>
+				                            </td>
+				                            <td class="label">
+				                                <th:block th:text="${#messages.msg('common.label.job.cnct.mgmt.emrgYn')}"></th:block>
+				                            </td>
+				                            <td>
+			                                    <select class="form-control w30" id="recvEmergYn" name="emergYn">
+			                                        <option value="">
+			                                            <th:block th:text="${#messages.msg('common.label.job.cnct.mgmt.full')}"/>
+			                                        </option>
+			                                        <option value="Y">긴급</option>
+			                                        <option value="N">일반</option>
+			                                    </select>
+				                            </td>
+				                        </tr>
+				                        <tr>
+				                            <td class="label">
+				                                <th:block th:text="${#messages.msg('common.label.job.cnct.mgmt.title')}"></th:block>
+				                            </td>
+				                            <td>
+				                                <input class="input w90" type="text" id="recvTitle" name="title" maxlength="100"/>
+				                            </td>
+				                            <td class="label">
+				                                <th:block th:text="${#messages.msg('common.label.job.cnct.mgmt.prgsStat')}"></th:block>
+				                            </td>
+				                            <td>
+			                                    <select class="form-control w30" id="recvCnctPrgsStatCd" name="cnctPrgsStatCd">
+			                                        <option value="">
+			                                            <th:block th:text="${#messages.msg('common.label.job.cnct.mgmt.full')}"/>
+			                                        </option>
+			                                        <option value="10">수신</option>
+			                                        <option value="20">읽음</option>
+			                                        <option value="30">답변</option>
+				                                </select>
+				                            </td>
+				                        </tr>                                    
+                                    </tbody>
+                                </table>
+                            </form>
+                        </div>
+			            <!-- //조회테이블 -->
+			            
+			            <!-- 검색버튼 -->
+			            <div class="button-group search-btn">
+			                <a href="#" class="button white" id="recv_btn_init">
+			                    <span class="text" th:text="${#messages.msg('adminCommon.button.init')}" />
+			                </a>
+			                <a href="#" class="button dark" id="recv_btn_search">
+			                    <span class="text" th:text="${#messages.msg('adminCommon.button.search')}" />
+			                </a>
+			            </div>
+			            <!-- //검색버튼 -->
+			            <!-- 리얼그리드 -->
+			            <div class="grid-cont">
+			                <div class="grid full-height">
+			                    <div class="grid-head">
+			                        <div class="title-area">
+			                            <h2 class="title" th:text="${#messages.msg('common.title.job.cnct.mgmt.recv.cnct.list')}" />
+			                        </div>
+			                        <div class="option-area">
+			                            <div class="edit-option">
+			                                <div class="button-group">
+			                                </div>
+			                            </div>
+			                            <div class="page-option" grid-id="jobCnctRecvGrid"></div>
+			                        </div>
+			                    </div>
+			                    <div class="grid-body with-head">
+			                        <div class="rg-root rg-grid" id="jobCnctRecvGrid" realgrid ></div>
+			                    </div>
+			                </div>
+			            </div>
+			            <!-- //리얼그리드 -->
+                    </div>
+                    <!-- tab-cont -->
+                    <!-- 받은문의함 -->
+
+					<!-- 보낸문의함 -->
+                    <!-- tab-cont -->
+                    <div class="tab-cont">
+                        <!-- 조회테이블 -->
+                        <div class="search">
+                        	<form name="jobCnctSendForm" id="jobCnctSendForm">
+                                <!-- 텝 타입 -->
+                                <input type="hidden" name="jobCnctTypeCd" value="02">
+                                <table class="search-table">
+                                    <colgroup>
+										<col style="width:13%;" />
+										<col style="width:34%;" />
+										<col style="width:13%;" />
+										<col style="width:40%;" />
+                                    </colgroup>
+                                    <tbody>
+				                        <tr>
+				                            <td class="label">
+				                                <strong><th:block th:text="${#messages.msg('common.label.job.cnct.mgmt.term')}"></th:block></strong>
+				                            </td>
+				                            <td colspan="3">
+				                                <div id="calendar"></div>
+				                                <div class="input-group">
+				
+				                                    <div id="calenderLayer"></div>
+				
+				                                    <select class="form-control" id="sendTermGbCd" name="termGbCd">
+				                                        <option value="01">발신일자</option>
+				                                        <option value="02">답신일자</option>
+				                                    </select>
+				
+				                                    <div class="picker-group" data-lopicker="basic" id="dtm">
+				                                        <input type="text" class="input disabled" id="sendSearchStartDtm" name="searchStartDtm" disabled="disabled">
+				                                        <span class="input-group-addon">~</span>
+				                                        <input type="text" class="input disabled" id="sendSearchEndDtm" name="searchEndDtm" disabled="disabled">
+				                                        <span class="input-group-addon"><i class="icon-calendar" id="sendShowCalender"></i></span>
+				                                    </div>
+				                                </div>
+				                            </td>
+				                        </tr>
+				                        <tr>
+				                            <td class="label">
+				                                <th:block th:text="${#messages.msg('common.label.job.cnct.mgmt.recvmn')}"></th:block>
+				                            </td>
+				                            <td>
+				                                <div class="input-group">
+				                                    <input type="text" maxlength="10" class="input" id="sendSearchUserNm" name="searchUserNm" disabled="disabled">
+				                                    <input type="hidden" id="sendSearchUserId" name="searchUserId" value="">
+				                                    <a href="#" class="button small" id="send_btn_open_user_pop"><i class="icon-sarch"></i></a>
+				                                    <a href="#" class="button small" id="send_btn_reset_user_pop"><i class="icon-clear"></i></a>
+				                                </div>
+				                            </td>
+				                            <td class="label">
+				                                <th:block th:text="${#messages.msg('common.label.job.cnct.mgmt.emrgYn')}"></th:block>
+				                            </td>
+				                            <td>
+			                                    <select class="form-control w30" id="sendEmergYn" name="emergYn">
+			                                        <option value="">
+			                                            <th:block th:text="${#messages.msg('common.label.job.cnct.mgmt.full')}"/>
+			                                        </option>
+			                                        <option value="Y">긴급</option>
+			                                        <option value="N">일반</option>
+			                                    </select>
+				                            </td>
+				                        </tr>
+				                        <tr>
+				                            <td class="label">
+				                                <th:block th:text="${#messages.msg('common.label.job.cnct.mgmt.title')}"></th:block>
+				                            </td>
+				                            <td>
+				                                <input class="input w90" type="text" id="sendTitle" name="title" maxlength="100"/>
+				                            </td>
+				                            <td class="label">
+				                                <th:block th:text="${#messages.msg('common.label.job.cnct.mgmt.prgsStat')}"></th:block>
+				                            </td>
+				                            <td>
+			                                    <select class="form-control w30" id="sendCnctPrgsStatCd" name="cnctPrgsStatCd">
+			                                        <option value="">
+			                                            <th:block th:text="${#messages.msg('common.label.job.cnct.mgmt.full')}"/>
+			                                        </option>
+			                                        <option value="10">수신</option>
+			                                        <option value="20">읽음</option>
+			                                        <option value="30">답변</option>
+			                                    </select>
+				                            </td>
+				                        </tr>                                    
+                                    </tbody>
+                                </table>
+                            </form>
+                        </div>
+			            <!-- //조회테이블 -->
+			            <!-- 검색버튼 -->
+			            <div class="button-group search-btn">
+			                <a href="#" class="button white" id="send_btn_init">
+			                    <span class="text" th:text="${#messages.msg('adminCommon.button.init')}" />
+			                </a>
+			                <a href="#" class="button dark" id="send_btn_search">
+			                    <span class="text" th:text="${#messages.msg('adminCommon.button.search')}" />
+			                </a>
+			            </div>
+			            <!-- //검색버튼 -->
+			            <!-- 리얼그리드 -->
+			            <div class="grid-cont">
+			                <div class="grid full-height">
+			                    <div class="grid-head">
+			                        <div class="title-area">
+			                            <h2 class="title" th:text="${#messages.msg('common.title.job.cnct.mgmt.send.cnct.list')}" />
+			                        </div>
+			                        <div class="option-area">
+			                            <div class="edit-option">
+			                                <div class="button-group">
+			                                </div>
+			                            </div>
+			                            <div class="page-option" grid-id="jobCnctSendGrid"></div>
+			                        </div>
+			                    </div>
+			                    <div class="grid-body with-head">
+			                        <div class="rg-root rg-grid" id="jobCnctSendGrid" realgrid ></div>
+			                    </div>
+			                </div>
+			            </div>
+			            <!-- //리얼그리드 -->
+                    </div>
+                    <!-- tab-cont -->
+                    <!-- 보낸문의함 -->
+                </div>
+                <!-- tabs-body -->
+                
+            </div>
+        </div>
+    </div>
+</th:block>
+<th:block layout:fragment="add-script">
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'popup/jobCnctRecvGrid.provider.js?202106250000'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'popup/jobCnctRecvGrid.eventHandler.js?202106250000'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'popup/jobCnctSendGrid.provider.js?202106250000'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'popup/jobCnctSendGrid.eventHandler.js?202106250000'" ></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+        	jobCnctRecvGrid.eventhandler.init();
+        	jobCnctRecvGrid.eventhandler.bindButtonEvent();
+        	jobCnctSendGrid.eventhandler.init();
+        	jobCnctSendGrid.eventhandler.bindButtonEvent();
+        });
+        
+        //업무연락 작성
+        function openJobCnctRegPopup() {
+        	window.open('/popup/JobContact.jobContactRegPopup.do','reg_popup',' resizable=no scrollbars=yes width=800 height=520')
+        }
+    </script>
+</th:block>
+</body>
+</html>

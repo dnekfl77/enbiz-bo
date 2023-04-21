@@ -1,0 +1,199 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.system.StSysBbInfoMapper">
+
+    <!--
+        제 목 :시스템 공지 공지번호 취득
+        작성자 : 이광진
+        작성일 : 2021.03.10
+        params : Long
+        설 명 :
+	-->
+    <select id="getBbcNo" resultType="java.lang.Long">
+        select /* stSysBbInfoMapper.getBbcNo */ nextval('st_sys_bb_info_sq01')
+    </select>
+
+    <!--
+        제 목 :시스템 공지 정보 조회
+        작성자 : 이광진
+        작성일 : 2021.03.10
+        params : String
+        설 명 :
+	-->
+    <select id="getStSysBbInfo" parameterType="java.lang.String" resultType="StSysBbInfo">
+        SELECT  /* stSysBbInfoMapper.getStSysBbInfo */
+                BBC_NO,
+                SYS_GB_CD,
+                BB_GB_CD,
+                TITLE,
+                FXDC_YN,
+                NTC_GB_CD,
+                NTC_TYP_CD,
+                SMS_SND_YN,
+                EMAIL_SND_YN,
+                BB_YN,
+                BB_STR_DTM,
+                BB_END_DTM,
+                POP_YN,
+                POP_BB_STR_DTM,
+                POP_BB_END_DTM,
+                BBC_CONT,
+                QRY_CNT
+        FROM ST_SYS_BB_INFO
+        WHERE BBC_NO = #{bbcNo}
+    </select>
+
+
+
+    <sql id="stBbInfoListSql">
+        SELECT /* StSysBbInfo.getStSysBbInfoList */
+               BBC_NO
+             , FN_GET_CODENAME('UR005', SYS_GB_CD) AS SYS_GB_NM
+             , FN_GET_CODENAME('CM004', BB_GB_CD) AS BB_GB_NM
+             , FN_GET_CODENAME('CM005', NTC_GB_CD) AS NTC_GB_NM
+             , TITLE
+             , BB_YN
+             , CASE BB_YN WHEN 'Y' THEN TO_CHAR(BB_STR_DTM, 'YYYY-MM-DD HH24:MI:SS')  END AS BB_STR_DTM
+             , CASE BB_YN WHEN 'Y' THEN TO_CHAR(BB_END_DTM, 'YYYY-MM-DD HH24:MI:SS')  END AS BB_END_DTM
+             , FXDC_YN
+             , POP_YN
+             , QRY_CNT
+             , SYS_REG_ID
+             , TO_CHAR(SYS_REG_DTM, 'YYYY-MM-DD HH24:MI:SS') AS SYS_REG_DTM
+             , SYS_MOD_ID
+             , TO_CHAR(SYS_MOD_DTM, 'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+        FROM    ST_SYS_BB_INFO
+        WHERE   1=1
+        <if test="sysGbCd != null and sysGbCd!= ''">
+            AND SYS_GB_CD = #{sysGbCd}
+        </if>
+        <if test="bbGbCd != null and bbGbCd!= ''">
+            AND BB_GB_CD = #{bbGbCd}
+        </if>
+        <if test='termGbCd.equals("0")'>
+            <if test="strDtm != null and strDtm!= ''">
+                AND SYS_REG_DTM &gt;= TO_TIMESTAMP(#{strDtm}||' 00:00:00' , 'YYYY-MM-DD HH24:MI:SS')
+            </if>
+            <if test="endDtm != null and endDtm!= ''">
+                AND SYS_REG_DTM &lt;= TO_TIMESTAMP(#{endDtm}||' 23:59:59' , 'YYYY-MM-DD HH24:MI:SS')
+            </if>
+        </if>
+        <if test='termGbCd.equals("1")'>
+            <if test="strDtm != null and strDtm!= ''">
+                AND BB_END_DTM &gt;= TO_TIMESTAMP(#{strDtm}||' 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
+            </if>
+            <if test="endDtm != null and endDtm!= ''">
+                AND BB_STR_DTM &lt;= TO_TIMESTAMP(#{endDtm}||' 23:59:59' , 'YYYY-MM-DD HH24:MI:SS')
+            </if>
+        </if>
+
+        <if test="bbYn != null and bbYn!= ''">
+            AND BB_YN = #{bbYn}
+        </if>
+
+        <if test="ntcGbCd != null and ntcGbCd!= ''">
+            AND NTC_GB_CD = #{ntcGbCd}
+        </if>
+
+        <if test="title != null and title!= ''">
+            AND TITLE LIKE '%' || #{title} || '%'
+        </if>
+
+        <if test="sysRegId != null and sysRegId!= ''">
+            AND SYS_REG_ID = #{sysRegId}
+        </if>
+    </sql>
+
+    <sql id="paginatedBase">
+        LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+    </sql>
+
+    <!--
+        제 목 :시스템 공지 정보 리스트 조회
+        작성자 : 이광진
+        작성일 : 2021.03.10
+        params : SystemNoticeListRequest
+        설 명 :
+	-->
+    <select id="getStSysBbInfoList" resultType="SystemNoticeListResponse" parameterType="SystemNoticeListRequest">
+        /* stSysBbInfoMapper.getStBbInfoList */
+        <include refid="stBbInfoListSql"></include>
+
+        ORDER BY SYS_REG_DTM DESC
+
+        <include refid="paginatedBase"></include>
+
+    </select>
+
+
+    <!--
+        제 목 :시스템 공지 정보 건수 조회
+        작성자 : 이광진
+        작성일 : 2021.03.10
+        params : SystemNoticeListRequest
+        설 명 :
+	-->
+    <select id="getBbInfoListTotalCnt" parameterType="SystemNoticeListRequest" resultType="java.lang.Integer">
+        SELECT  /* stSysBbInfoMapper.getStBbInfoTotalCnt */
+        COUNT(1)
+        FROM (<include refid="stBbInfoListSql"></include>) AS ST_SYS_BB_INFO
+    </select>
+
+    <select id="getSysNtcInfoListByToday" parameterType="DashboardNoticeRequest" resultType="DashboardNoticeResponse">
+        /* stSysBbInfo.getSysNtcInfoListByToday */
+        <include refid="sysNtcInfoListByTodayBase"></include>
+        <include refid="paginatedBase"></include>
+    </select>
+
+    <select id="getSysNtcInfoListByTodayDetail" parameterType="DashboardNoticeRequest" resultType="DashboardNoticeResponse">
+    	/* stSysBbInfo.getSysNtcInfoListByTodayDetail */
+    	<include refid="sysNtcInfoListByTodayBase"></include>
+    </select>
+
+    <sql id="sysNtcInfoListByTodayBase">
+    	SELECT
+               BBC_NO
+             , SYS_GB_CD
+             , BB_GB_CD
+             , TITLE
+             , FXDC_YN
+             , NTC_GB_CD
+             , NTC_TYP_CD
+             , BB_YN
+             , QRY_CNT
+             , BBC_CONT
+             , TO_CHAR(SYS_REG_DTM, 'YYYY-MM-DD') AS SYS_REG_DTE
+          FROM ST_SYS_BB_INFO SSBI
+         WHERE
+           SSBI.BB_GB_CD = #{bbGbCd}
+           AND SSBI.BB_YN = 'Y'
+           AND CURRENT_DATE BETWEEN SSBI.BB_STR_DTM AND SSBI.BB_END_DTM
+           AND (
+                	( SSBI.NTC_GB_CD = '01' AND SSBI.SYS_GB_CD = #{sysGbCd} )
+                OR
+                	( SSBI.NTC_GB_CD = '02'
+                    	AND EXISTS (
+                        		SELECT 'R'
+                          			FROM ST_BB_TGT_INFO
+                         		WHERE
+                         			ENTR_NO IN (
+                                   		SELECT
+                                   			ENTR_NO
+                                     	FROM
+                                     		ST_USER_BASE
+                                    	WHERE
+                                    		USER_ID = #{sysRegId}
+                                   )
+                               )
+                    )
+               )
+           <if test="bbcNo != null and bbcNo != '' ">
+           AND SSBI.BBC_NO = #{bbcNo}
+           </if>
+           <if test="popYn != null and popYn == 'Y'.toString()">
+		   AND SSBI.POP_YN = 'Y'
+		   AND CURRENT_DATE BETWEEN SSBI.POP_BB_STR_DTM AND SSBI.POP_BB_END_DTM
+           </if>
+         ORDER BY ARRAY_POSITION(ARRAY['Y'],FXDC_YN::TEXT),  SSBI.BB_STR_DTM DESC
+    </sql>
+</mapper>

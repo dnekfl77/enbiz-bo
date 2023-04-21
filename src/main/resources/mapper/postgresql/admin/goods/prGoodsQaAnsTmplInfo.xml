@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enbiz.bo.app.repository.goods.PrGoodsQaAnsTmplInfoMapper">
+
+    <sql id="paginatedBase">
+        LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+    </sql>
+
+    <select id="getGoodsAllQAAnsTmplList" resultType="PrGoodsQaAnsTmplInfo">
+        SELECT ANS_TMPL_NO /* prGoodsQaAnsTmplInfo.getGoodsAllQAAnsTmplList */
+             , ANS_TMPL_NM
+             , ANS_TMPL_CONT
+             , USE_YN
+             , SYS_REG_ID
+             , TO_CHAR(SYS_REG_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_REG_DTM
+             , SYS_MOD_ID
+             , TO_CHAR(SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+          FROM PR_GOODS_QA_ANS_TMPL_INFO
+         WHERE USE_YN = 'Y'
+    </select>
+
+    <sql id="goodsQAAnsTmplListBase">
+        SELECT ANS_TMPL_NO /* prGoodsQaAnsTmplInfo.goodsQAAnsTmplListBase */
+             , ANS_TMPL_NM
+             , ANS_TMPL_CONT
+             , USE_YN
+             , SYS_REG_ID
+             , TO_CHAR(SYS_REG_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_REG_DTM
+             , SYS_MOD_ID
+             , TO_CHAR(SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+          FROM PR_GOODS_QA_ANS_TMPL_INFO
+         WHERE 1 = 1
+           AND SYS_REG_ID LIKE #{ansTmplRegId} || '%'
+           AND (ANS_TMPL_NM LIKE #{ansTmplNm} || '%' OR ANS_TMPL_CONT LIKE '%' || #{ansTmplNm} || '%')
+         ORDER BY SYS_MOD_DTM DESC
+    </sql>
+
+    <select id="getGoodsQAAnsTmplListCount" parameterType="GoodsQATemplateMgmtRequest" resultType="java.lang.Integer">
+        SELECT COUNT(*) /* prGoodsQaAnsTmplInfo.getGoodsQAAnsTmplListCount */
+          FROM (
+            <include refid="goodsQAAnsTmplListBase"/>
+        ) T1
+    </select>
+
+    <select id="getGoodsQAAnsTmplList" parameterType="GoodsQATemplateMgmtRequest" resultType="GoodsQATemplateMgmtResponse">
+        /* prGoodsQaAnsTmplInfo.getGoodsQAAnsTmplList */
+        <include refid="goodsQAAnsTmplListBase" />
+        <include refid="paginatedBase" />
+    </select>
+
+    <select id="getGoodsQAAnsTmplInfo" parameterType="java.lang.String" resultType="PrGoodsQaAnsTmplInfo">
+        SELECT ANS_TMPL_NO /* prGoodsQaAnsTmplInfo.getGoodsQAAnsTmplInfo */
+             , ANS_TMPL_NM
+             , ANS_TMPL_CONT
+             , USE_YN
+             , SYS_REG_ID
+             , TO_CHAR(SYS_REG_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_REG_DTM
+             , SYS_MOD_ID
+             , TO_CHAR(SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+          FROM PR_GOODS_QA_ANS_TMPL_INFO
+         WHERE ANS_TMPL_NO = #{ansTmplNo}
+    </select>
+</mapper>

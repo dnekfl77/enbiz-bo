@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.payment.OpCmsnInfoTrxMapper">
+
+    <insert id="insertClearingCommissionDetail" parameterType="opCmsnInfo">
+        INSERT INTO OP_CMSN_INFO (  /* OpCmsnInfo.insertClearingCommissionDetail */
+                  PG_GB_CD
+                , CMSN_TGT_LGRP_CD
+                , CMSN_TGT_SGRP_CD
+                , CMSN_TYP_CD
+                , APLY_STR_DTM
+                , APLY_END_DTM
+                , MERS_NO
+                , INST_MON_CNT
+                , CMSN_GB_CD
+                , CMSN_RATE
+                , CMSN_AMT
+                , VAT_INCL_YN
+                , ADJ_GB_CD
+                , RMK_CONT
+                , SYS_REG_ID
+                , SYS_REG_DTM
+                , SYS_MOD_ID
+                , SYS_MOD_DTM
+        ) VALUES (
+                  #{pgGbCd}
+                , #{cmsnTgtLgrpCd}
+                , #{cmsnTgtSgrpCd}
+                , #{cmsnTypCd}
+                , TO_TIMESTAMP(#{aplyStrDtm}, 'YYYY-MM-DD HH24:MI:SS')
+                , TO_TIMESTAMP(#{aplyEndDtm}, 'YYYY-MM-DD HH24:MI:SS')
+                , #{mersNo}
+                , #{instMonCnt}
+                , #{cmsnGbCd}
+                , #{cmsnRate}
+                , #{cmsnAmt}
+                , #{vatInclYn}
+                , #{adjGbCd}
+                , #{rmkCont}
+                , #{sysRegId}
+                , now()
+                , #{sysRegId}
+                , now()
+        )
+    </insert>
+
+    <update id="updateClearingCommissionDetail" parameterType="OpCmsnInfoRequest">
+        UPDATE 	  OP_CMSN_INFO   /* OpClmDcGdBase.updateClearingCommissionDetail */
+        SET       APLY_END_DTM      	= TO_TIMESTAMP(#{aplyEndDt}, 'YYYY-MM-DD HH24:MI:SS')
+                , SYS_MOD_ID        	= #{sysRegId}
+                , SYS_MOD_DTM       	= now()
+        WHERE 	  PG_GB_CD = #{pgGbCd}
+        AND 	  CMSN_TGT_LGRP_CD = #{cmsnTgtLgrpCd}
+        AND 	  CMSN_TGT_SGRP_CD = #{cmsnTgtSgrpCd}
+        AND 	  CMSN_TYP_CD = #{cmsnTypCd}
+        AND       APLY_STR_DTM = #{aplyStrDtm}::TIMESTAMP
+        AND       APLY_END_DTM = #{aplyEndDtm}::TIMESTAMP
+    </update>
+
+    <delete id="deleteClearingCommissionDetail" parameterType="opCmsnInfo">
+        DELETE FROM OP_CMSN_INFO   /* OpCmsnInfo.deleteClearingCommissionDetail */
+        WHERE 	  PG_GB_CD = #{pgGbCd}
+        AND 	  CMSN_TGT_LGRP_CD = #{cmsnTgtLgrpCd}
+        AND 	  CMSN_TGT_SGRP_CD = #{cmsnTgtSgrpCd}
+        AND 	  CMSN_TYP_CD = #{cmsnTypCd}
+        AND       APLY_STR_DTM = #{aplyStrDtm}::TIMESTAMP
+        AND       APLY_END_DTM = #{aplyEndDtm}::TIMESTAMP
+    </delete>
+
+</mapper>
+
+

@@ -1,0 +1,107 @@
+<!--
+* 프로그램명 : 시스템공지 상세
+* 작 성 일 : 2021.08.11
+* 작 성 자 : 이광진
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 시스템공지 상세
+* 이    력 :
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-layout}">
+<body>
+<th:block layout:fragment="popup-title-area">
+    <th:block layout:insert="~{fragments/popup/popup-title :: popup-title}"
+              th:with="title=${#messages.msg('systemNoticeMgmt.title.sys.ntc.mgmt.view')}"></th:block>
+</th:block>
+<th:block layout:fragment="popup-search-area">
+    <form id="sysNtcSaveForm">
+    <div class="data">
+        <div class="data-body toggle-cont">
+            <table class="data-table">
+                <colgroup>
+                    <col width="120">
+                    <col width="*">
+                    <col width="120">
+                    <col width="*">
+                </colgroup>
+                <tbody>
+                	<tr>
+                        <td class="label">
+                            <th:block th:text="${#messages.msg('systemNoticeMgmt.label.sys.ntc.mgmt.bb.tp')}"></th:block>
+                        </td>
+                        <td>
+                            <select class="form-control disabled" disabled>
+                            <option value="" th:text="${#messages.msg('adminCommon.select')}"></option>
+                            <option th:each="list : ${codeList.CM004}" th:value="${list?.cd}" th:utext="${list?.cdNm}"
+                            th:selected="${bbInfo.bbGbCd} == ${list?.cd}"/>
+                            </select>
+                        </td>
+                        <td class="label">
+                            <th:block th:text="${#messages.msg('systemNoticeMgmt.label.sys.ntc.mgmt.ntc.tp')}"></th:block>
+                        </td>
+                        <td>
+                            <select class="form-control disabled" disabled>
+                            <option value="" th:text="${#messages.msg('adminCommon.select')}"></option>
+                            <option th:each="list : ${codeList.CM006}" th:value="${list?.cd}" th:utext="${list?.cdNm}"
+                            th:selected="${bbInfo.ntcTypCd} == ${list?.cd}"/>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">
+                            <th:block th:utext="${#messages.msg('systemNoticeMgmt.label.sys.ntc.mgmt.tit')}"></th:block>
+                        </td>
+                        <td colspan="3">
+                            <th:block th:utext="${bbInfo.title}"></th:block>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">
+                        	<div style="min-height: 500px">
+                            <th:block th:text="${#messages.msg('systemNoticeMgmt.label.sys.ntc.mgmt.cont')}"></th:block>
+                        	</div>
+                        </td>
+                        <td colspan="3">
+                        	<div style="min-height: 500px">
+                            <th:block th:utext="${bbInfo.bbcCont}"></th:block>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr th:if="${not #lists.isEmpty(fileList)}">
+                        <td class="label" th:text="${#messages.msg('systemNoticeMgmt.label.sys.ntc.mgmt.appx.file')}"></td>
+                        <td colspan="3">
+                        	<div class="file-upload">
+                        		<ul class="file-list">
+                            		<li th:each="file : ${fileList}">
+                            		<span class="download"
+                            		th:text="${file.atchFileNm}"
+                            		th:attr="onclick=|com.x2commerce.common.Util.downloadfile('${file.atchFileRouteNm}','${file.atchFileNm}')|"
+                            		>
+                            		</span>
+                            		</li>
+                            	</ul>
+                        	</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    </form>
+</th:block>
+<th:block layout:fragment="popup-List-button-area">
+    <th:block layout:insert="~{fragments/popup/popup-btn :: popup-bottom-btn}"/>
+</th:block>
+<th:block layout:fragment="add-script">
+	<script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'popup/sysNtcDetailPopup.eventHandler.js?20210811'" ></script>
+    <script type="text/javascript">
+        $(function() {
+            sysNtcDetailPopup.eventhandler.init();
+        });
+    </script>
+</th:block>
+</body>
+</html>

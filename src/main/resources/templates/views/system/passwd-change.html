@@ -1,0 +1,111 @@
+<!--
+* 프로그램명 : 사용자 관리
+* 작 성 일 : 2021.03.09
+* 작 성 자 : 장명섭
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 비밀번호 변경
+* 이    력 :
+-->
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/page-realgrid-layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>sub title</title>
+</head>
+<body>
+<th:block layout:fragment="page-title-area">
+    <div class="page-title">
+        <div class="left">
+            <h1 th:text="${#messages.msg('passwordChange.label.title')}"></h1>
+        </div>
+    </div>
+</th:block>
+<th:block layout:fragment="page-contents">
+    <div class="page-fixed with-title">
+        <div class="data">
+            <div class="data-head">
+                <div class="left">
+                    <span class="title" th:text="${#messages.msg('passwordChange.label.title')}"></span>
+                </div>
+            </div>
+            <div class="data-body">
+                <table class="data-table">
+                    <colgroup>
+                        <col width="120">
+                        <col>
+                        <col width="120">
+                        <col>
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <td class="label">
+                            <strong th:text="${#messages.msg('psrnMgmt.label.data.current.passwd')}"></strong>
+                        </td>
+                        <td>
+                            <input type="password" id="currentPasswd" maxlength="15" class="input">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">
+                            <strong th:text="${#messages.msg('psrnMgmt.label.data.new.passwd')}"></strong>
+                        </td>
+                        <td>
+                            <input type="password" id="newPasswd" maxlength="15" class="input">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">
+                            <strong th:text="${#messages.msg('psrnMgmt.label.data.confirm.passwd')}"></strong>
+                        </td>
+                        <td>
+                            <input type="password" id="newPasswdConfirm" maxlength="15" class="input">
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <input type="hidden" id="loginId" th:value="${loginId}">
+            </div>
+        </div>
+        <div class="button-group search-btn">
+            <a href="#" class="btn_blue button dark" id="btn_passwd_change">
+                <span class="text" th:text="${#messages.msg('psrnMgmt.label.btn.confirm')}"></span>
+            </a>
+        </div>
+    </div>
+</th:block>
+<th:block layout:fragment="add-script">
+    <script type="text/javascript">
+        $(function () {
+            const passwdChangeMessage = x2coMessage.getMessage({passwdNotSame : 'psrnMgmt.alert.passwd.not.same'});
+            $('#btn_passwd_change').on('click', function () {
+                const newPasswd = $('#newPasswd').val();
+                const passwdConfirm = $('#newPasswdConfirm').val();
+                if (newPasswd !== passwdConfirm) {
+                    alert(passwdChangeMessage.passwdNotSame);
+                    return;
+               }
+
+                const loginId = $('#loginId').val();
+                if (checkPassword(newPasswd, loginId)) return;
+
+                let param = {};
+                param.newPasswd = newPasswd;
+                param.currentPasswd = $('#currentPasswd').val();
+                common.Ajax.sendJSONRequest("POST", _baseUrl + "system/passwordChange.updatePassword.do",
+                    param, passwdChangeCallback, true);
+            });
+
+
+        });
+        function passwdChangeCallback(response) {
+            $('input:password').val('');
+        }
+    </script>
+</th:block>
+
+</body>
+</html>

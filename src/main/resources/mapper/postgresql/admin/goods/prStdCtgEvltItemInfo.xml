@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enbiz.bo.app.repository.goods.PrStdCtgEvltItemInfoMapper">
+
+    <sql id="paginatedBase">
+        LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+    </sql>
+
+    <sql id="stdCtgEvltItemListBase">
+        SELECT II.STD_CTG_NO /* prStdCtgEvltItemInfo.stdCtgEvltItemListBase */
+             , II.EVLT_ITEM_NO
+             , IC.EVLT_ITEM_NM
+             , II.SORT_SEQ
+             , II.SYS_REG_ID
+             , TO_CHAR(II.SYS_REG_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_REG_DTM
+             , II.SYS_MOD_ID
+             , TO_CHAR(II.SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+          FROM PR_STD_CTG_EVLT_ITEM_INFO II
+             , PR_EVLT_ITEM_CD IC
+         WHERE 1 = 1
+           AND II.EVLT_ITEM_NO  = IC.EVLT_ITEM_NO
+           AND II.STD_CTG_NO = #{stdCtgNo}
+         ORDER BY SORT_SEQ
+    </sql>
+
+    <select id="getStdCtgEvltItemListCount" parameterType="ReviewEvaluationItemMgmtRequest" resultType="java.lang.Integer">
+        SELECT COUNT(*) /* prStdCtgEvltItemInfo.getStdCtgEvltItemListCount */
+          FROM (
+            <include refid="stdCtgEvltItemListBase"/>
+        ) T1
+    </select>
+
+    <select id="getStdCtgEvltItemList" parameterType="ReviewEvaluationItemMgmtRequest" resultType="ReviewEvaluationItemMgmtResponse">
+        /* prStdCtgEvltItemInfo.getStdCtgEvltItemList */
+        <include refid="stdCtgEvltItemListBase" />
+        <include refid="paginatedBase" />
+    </select>
+
+    <select id="checkEvltItemMappingStdCtg" parameterType="java.lang.String" resultType="java.lang.Boolean">
+        SELECT /* prStdCtgEvltItemInfo.checkEvltItemMappingStdCtg */
+               CASE WHEN COUNT(*) <![CDATA[ > ]]> 0 THEN TRUE
+               ELSE FALSE END RESULT
+         FROM PR_STD_CTG_EVLT_ITEM_INFO
+        WHERE EVLT_ITEM_NO = #{evltItemNo}
+    </select>
+
+    <select id="getMappingStdCtgList" parameterType="java.lang.String" resultType="ReviewEvaluationItemMgmtResponse">
+        SELECT (SELECT STD_CTG_NM FROM PR_STD_CTG WHERE STD_CTG_NO = SC.STD_LRG_CTG_NO ) /* prStdCtgEvltItemInfo.getMappingStdCtgList */
+                || COALESCE( (SELECT '>' || STD_CTG_NM FROM PR_STD_CTG WHERE STD_CTG_NO = SC.STD_MID_CTG_NO) , '')
+                || COALESCE( (SELECT '>' || STD_CTG_NM FROM PR_STD_CTG WHERE STD_CTG_NO = SC.STD_SML_CTG_NO) , '')
+                || COALESCE( (SELECT '>' || STD_CTG_NM FROM PR_STD_CTG WHERE STD_CTG_NO = SC.STD_THN_CTG_NO) , '')
+                AS STD_CTG_HIERARCHY
+          FROM PR_STD_CTG_EVLT_ITEM_INFO II
+             , PR_STD_CTG SC
+         WHERE 1 = 1
+           AND SC.STD_CTG_NO = II.STD_CTG_NO
+           AND II.EVLT_ITEM_NO = #{evltItemNo}
+    </select>
+</mapper>

@@ -1,0 +1,231 @@
+spring:
+  profiles:
+    active: local
+  application:
+    name: enbiz-bo
+  messages:
+    basename:
+      message.main.dashboard,
+      message.admin.adminCommon,
+      message.common.common,
+      message.popup.popupCommon,
+      message.entity.etMbrDlvpInfo,
+      message.delivery.deliveryMgmt,
+      message.vendor.vendorMgmt,
+      message.display.siteMgmt,
+      message.display.footerMgmt,
+      message.display.termsConditionsMgmt,
+      message.display.sitePopupMgmt,
+      message.display.displayTemplateMgmt,
+      message.display.displayCornerMgmt,
+      message.display.standardCategoryMgmt,
+      message.display.displayCategoryMgmt,
+      message.display.standardDisplayCategoryConnect,
+      message.display.displayConnectMgmt,
+      message.display.displayExhibitionGroupManagement,
+      message.display.marketingDisplayManagement,
+      message.customer.customerMgmt,
+      message.customer.watchCustomerMgmt,
+      message.customer.dormantCustomerInquiry,
+      message.customerservice.customerCompensMgmt,
+      message.customerservice.customerCompensPayMgmt,
+      message.customerservice.integratedCounselMgmt,
+      message.customerservice.phoneAppointmentMgmt,
+      message.customerservice.csTransferProcessing,
+      message.customerservice.counselingTemplateMgmt,
+      message.customerservice.counselingTypeMgmt,
+      message.customerservice.inquiryTypeMgmt,
+      message.customerservice.rewardTypeMgmt,
+      message.customerservice.obTypeMgmt,
+      message.customerservice.transferTypeMgmt,
+      message.customerservice.csAllocationMgmt,
+      message.order.manualOrder.goodsSearch,
+      message.order.orderReception,
+      message.payment.methodsOfPaymentManagement,
+      message.payment.paymentMeanMgmt,
+      message.payment.paymentMeanControlMgmt,
+      message.payment.franchiseeMgmt,
+      message.payment.cardBinMgmt,
+      message.payment.paymentCommissionMgmt,
+      message.payment.noInterestInstallmentGuideMgmt,
+      message.payment.claimDiscountGuideMgmt,
+      message.goods.generalGoods,
+      message.goods.packageGoods,
+      message.goods.reviewMgmt,
+      message.goods.goodsMgmt,
+      message.goods.goodsQAMgmt,
+      message.goods.brandMgmt,
+      message.goods.goodsQATemplateMgmt,
+      message.goods.reviewEvaluationItemMgmt,
+      message.goods.goodsInfoModificationHistory,
+      message.goods.webStockMgmt,
+      message.goods.advertisingWordMgmt,
+      message.goods.goodsItemMgmt,
+      message.goods.reservationGoodsMgmt,
+      message.goods.optionMgmt,
+      message.goods.goodsTemporarySaveMgmt,
+      message.goods.goodsApprovalMgmt,
+      message.marketing.couponMgmt,
+      message.marketing.couponCostMgmt,
+      message.marketing.promotionMgmt,
+      message.marketing.presentationMgmt,
+      message.marketing.appreciationEventMgmt,
+      message.marketing.noticeMessageMgmt,
+      message.system.menuMgmt,
+      message.system.baseInfoMgmt,
+      message.system.stUserBase,
+      message.system.userMgmt,
+      message.system.system,
+      message.system.holidayMgmt,
+      message.system.zipNoMgmt,
+      message.system.badWordMgmt,
+      message.system.commonCodeMgmt,
+      message.system.systemNoticeMgmt,
+      message.system.customerNoticeMgmt,
+      message.system.faqMgmt,
+      message.system.receiveGroupMgmt,
+      message.system.userDeptMgmt,
+      message.system.rightGroupMgmt,
+      message.system.menuUsageStatusInquiry,
+      message.system.userAccessHistoryInquiry,
+      message.system.userFavoriteMenuMgmt,
+      message.system.passwordChange
+# TODO redis session 설정은 dev,stg,prd 설정으로 이동
+#  redis:
+#    host: 54.180.43.197
+#    port: 6379
+#    password: enbiz
+#  session:
+#    store-type: none
+  cache:
+    jcache:
+      config: classpath:ehcache.xml
+app:
+  lang:
+    defaultCntryCd: KR
+    defaultSystemLanguage: ko
+    
+mybatis:
+  type-aliases-package: com.enbiz.bo
+  mapper-locations: classpath:mapper/postgresql/admin/**/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    default-fetch-size: 100
+    default-statement-timeout: 30
+
+logging:
+  config: classpath:logback-spring.xml
+
+debug: true
+
+server:
+  servlet:
+    session:
+      timeout: 3600
+
+management:
+  health:
+    defaults:
+      enabled: false
+  endpoint:
+    health:
+      show-details: never
+      show-components: never
+      probes:
+        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+---
+#
+# LOCAL Setting
+###########################################
+server:
+  port: 8080
+
+spring:
+  config:
+    activate:
+      on-profile: local, default
+  datasource:
+    url: jdbc:log4jdbc:postgresql://localhost:5432/postgres?currentSchema=public
+    #driver-class-name: org.postgresql.Driver
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy    
+    username: enbiz
+    password: ENC(HrUDmfNQe8eFLPyowYesfad3oA9h3Rt5mGX8EkzNJBtVnC/FDw7X/ZQHr4E7xB6f)
+#    hikari:
+#      maximum-pool-size: 500
+#      minimum-idle: 5
+#      connection-timeout: 30000
+#      validation-timeout: 5000
+#      max-lifetime: 1800000
+#      idle-timeout: 300000
+
+  session:
+    store-type: none
+
+  zipkin:
+    enabled: false
+  sleuth:
+    trace-id128: true
+    sampler:
+      probability: 0
+
+jwt:
+  service:      
+    key: ENC(tPTaIXGb/JuKzYzDn0Yba44yrURlH9GsO1vMxPW9mR6kBoNR0CWqTY4vXTuhJkSdEcTn836uapzV0ILlnCV/wQ==)
+#    secret: secret-encryption-needed
+
+app:
+  apiUrl:
+    bo: http://localhost:8097
+    sample: http://localhost:8090
+
+jasypt:
+  encryptor:
+    password: local # PROD 환경에서는 환경변수 통해 값을 넣어줄것. 
+
+
+---
+#
+# DEV Setting
+###########################################
+server:
+  port: 9022
+
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: jdbc:log4jdbc:postgresql://localhost:5432/postgres?currentSchema=public
+    #driver-class-name: org.postgresql.Driver
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy    
+    username: enbiz
+    password: ENC(HrUDmfNQe8eFLPyowYesfad3oA9h3Rt5mGX8EkzNJBtVnC/FDw7X/ZQHr4E7xB6f)
+
+  session:
+    store-type: none
+
+  zipkin:
+    base-url: http://zipkin.istio-system:9411/
+  sleuth:
+    trace-id128: true
+    sampler:
+      probability: 0
+
+jwt:
+  service:
+    key: ENC(tPTaIXGb/JuKzYzDn0Yba44yrURlH9GsO1vMxPW9mR6kBoNR0CWqTY4vXTuhJkSdEcTn836uapzV0ILlnCV/wQ==)
+#    secret: secret-encryption-needed
+
+app:
+  apiUrl:
+    bo: http://enbiz-api-bo
+    sample: http://localhost:8090
+
+jasypt:
+  encryptor:
+    password: local # PROD 환경에서는 환경변수 통해 값을 넣어줄것. 

@@ -1,0 +1,160 @@
+<!--
+* 프로그램명 : 고객보상 지급현황
+* 작 성 일 : 2021.06.13
+* 작 성 자 : 윤성원
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 고객서비스 > 상담업무관리 > 고객보상 지급현황
+* 이    력 :
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/page-realgrid-layout}">
+<head>
+    <title th:text="${#messages.msg('customerCompensPayMgmt.title')}"></title>
+</head>
+<body>
+<th:block layout:fragment="page-title-area">
+    <div class="page-title">
+        <div class="left">
+            <h1><th:block th:text="${#messages.msg('customerCompensPayMgmt.title')}"/></h1>
+        </div>
+    </div>
+</th:block>
+<th:block layout:fragment="page-contents">
+    <div class="page-fixed with-title">
+        <div class="search-cont">
+            <!-- 조회테이블 -->
+            <div class="search">
+                <form name="customerCpPayManagementForm" id="customerCpPayManagementForm">
+                    <table class="search-table">
+                        <colgroup>
+                            <col width="120">
+                            <col>
+                            <col width="120">
+                            <col>
+                            <col width="120">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                        <tr>
+                            <td class="label"><strong><th:block th:text="${#messages.msg('customerCompensPayMgmt.period')}"/></strong></td>
+                            <td>
+                                <div class="input-group">
+                                    <select class="form-control" name="periodType">
+                                        <option value="0">지급일자</option>
+                                        <option value="1">접수일자</option>
+                                    </select>
+                                    <div class="picker-group" data-lopicker="basic" id="input-2-1">
+                                        <input type="text" class="form-control disabled" id="startDate" placeholder="" disabled="disabled">
+                                        <span class="input-group-addon">~</span>
+                                        <input type="text" class="form-control disabled" id="endDate" placeholder="" disabled="disabled">
+                                        <span class="input-group-addon" id="_sch_date_st-button"><i class="icon-calendar"></i></span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="label" th:text="${#messages.msg('customerCompensPayMgmt.cpnsMeanCd')}" />
+                            <td>
+                                <select class="form-control" id="cpnsMeanCd" name="cpnsMeanCd">
+                                    <option value="" th:text="${#messages.msg('adminCommon.entirety')}"></option>
+                                    <option th:each="list : ${codeList.CS019}" th:value="${list?.cd}" th:utext="${list?.cdNm}"></option>
+                                </select>
+                            </td>
+                            <td class="label" th:text="${#messages.msg('customerCompensPayMgmt.cpnsTypNo')}" />
+                            <td>
+                                <div class="input-group">
+                                    <input type="text" class="input disabled" id="cpnsTypNm" name="cpnsTypNm" disabled="disabled">
+                                    <input type="hidden" id="cpnsTypNo" name="cpnsTypNo">
+                                    <a href="javascript:;" class="button small" id="btn-regist-cpnsTyp"><i class="icon-sarch"></i></a>
+                                    <a href="#" class="button small" id="btn-reset-cpnsTyp"><i class="icon-clear"></i></a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label" th:text="${#messages.msg('customerCompensPayMgmt.mbrNo')}" />
+                            <td>
+                                <div class="input-group">
+                                    <select class="form-control" id="mbrType" name="mbrType">
+                                        <option value="" th:text="${#messages.msg('adminCommon.select')}"></option>
+                                        <option value="1">회원ID</option>
+                                        <option value="2">회원명</option>
+                                    </select>
+                                    <input type="text" class="input disabled w40" id="mbrNm" disabled="disabled">
+                                    <input type="hidden" id="loginId" name="loginId">
+                                    <a href="javascript:;" class="button small" id="btn-regist-mbr"><i class="icon-sarch"></i></a>
+                                    <a href="#" class="button small" id="btn-reset-mbr"><i class="icon-clear"></i></a>
+                                </div>
+                            </td>
+                            <td class="label" th:text="${#messages.msg('customerCompensPayMgmt.userId')}" />
+                            <td colspan="3">
+                                <div class="input-group">
+                                    <select class="form-control" id="userType" name="userType">
+                                        <option value="" th:text="${#messages.msg('adminCommon.select')}"></option>
+                                        <option value="1">접수자</option>
+                                        <option value="2">지급자</option>
+                                    </select>
+                                    <input type="text" class="input disabled w40" id="userNm" disabled="disabled">
+                                    <input type="hidden" id="userId" name="userId">
+                                    <a href="javascript:;" class="button small" id="btn-regist-user"><i class="icon-sarch"></i></a>
+                                    <a href="#" class="button small" id="btn-reset-user"><i class="icon-clear"></i></a>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+            <!-- //조회테이블 -->
+            <!-- 검색버튼 -->
+            <div class="button-group search-btn">
+                <a href="#" class="button white" id="btn_init">
+                    <span class="text" th:text="${#messages.msg('adminCommon.button.init')}" />
+                </a>
+                <a href="#" class="button dark" id="btn_list">
+                    <span class="text" th:text="${#messages.msg('adminCommon.button.search')}" />
+                </a>
+            </div>
+            <!-- //검색버튼 -->
+            <!-- 리얼그리드 -->
+            <div class="grid-cont">
+                <div class="grid" style="overflow: hidden;">
+                    <div class="grid-head">
+                        <div class="title-area">
+                            <h2 class="title" th:text="${#messages.msg('customerCompensPayMgmt.grid.title')}" />
+                        </div>
+                        <div class="option-area">
+                            <div class="edit-option">
+                            </div>
+
+                            <div class="page-option" grid-id="customerCpPayManagementGrid" />
+                        </div>
+                    </div>
+                    <div class="grid-body">
+                        <div id="customerCpPayManagementGrid" realgrid ></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--//데이터테이블 -->
+    </div>
+    </div>
+</th:block>
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        /*]]>*/
+    </script>
+
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'customerservice/customerCpPayManagementGrid.eventHandler.js?20210618000025'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'customerservice/customerCpPayManagementGrid.provider.js?20210618000026'" ></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            customerCpPayManagementGrid.eventhandler.init();
+        });
+    </script>
+</th:block>
+
+</body>
+</html>

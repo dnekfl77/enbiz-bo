@@ -1,0 +1,351 @@
+<!--
+* 프로그램명 : 기본정보
+* 작 성 일 : 2021.03.17
+* 작 성 자 : 홍혜리
+* 수 정 자 : 홍혜리
+* 버    전 : 1.0
+* 개    요 : 기본정보
+* 이    력 : 2021.10.12 프레임워크이전
+-->
+<!DOCTYPE html>
+<html lang="ko-KR"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<body>
+    <th:block layout:fragment="goods-regist-basicInfo">
+        <div class="data">
+            <div class="data-head">
+                <div class="left">
+                    <span class="title" th:text="${#messages.msg('generalGoods.basicInfo.title')}"></span>
+                </div>
+                <div class="right">
+                  <span class="data-toggle">
+                    <button type="button" class="toggle-button"><span>닫힘</span></button>
+                  </span>
+                </div>
+            </div>
+            <div class="data-body">
+                <form name="basicInfo" id="basicInfo">
+                    <table class="data-table fixed">
+                        <colgroup>
+                            <col width="130">
+                            <col>
+                            <col width="130">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                        <tr>
+                            <!-- 임시상품번호 -->
+                            <td class="label" th:text="${#messages.msg('generalGoods.basicInfo.label.pregGoodsNo')}"></td>
+                            <td><input type="text" class="input disabled gd-num" id="pregGoodsNo" name="pregGoodsNo" readonly></td>
+                            <!-- 기간계상품번호 -->
+                            <td class="label" th:text="${#messages.msg('generalGoods.basicInfo.label.lgcGoodsNo')}"></td>
+                            <td>
+                                <input type="text" class="input gd-num" id="lgcGoodsNo" name="lgcGoodsNo" maxlength="15">
+                            </td>
+                        </tr>
+                        <tr>
+                            <!-- 상품유형 -->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.basicInfo.label.goodsType')}"></strong></td>
+                            <td>
+                                <label class="radio-inline"><input type="radio" name="goodsTypCd" value="10" checked="checked">일반상품</label>
+                                <label class="radio-inline"><input type="radio" name="goodsTypCd" value="20" >사은품</label>
+                            </td>
+                            <!-- 판매방식 -->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.basicInfo.label.saleMeth')}"></strong></td>
+                            <td>
+                                <label class="radio-inline"><input type="radio" name="saleMethCd" value="10" checked="checked">일반판매</label>
+                                <label class="radio-inline"><input type="radio" name="saleMethCd" value="20" >예약판매</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <!-- 협력사 -->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.basicInfo.label.entrNoNm')}"></strong></td>
+                            <td colspan="3">
+                                <div class="input-group gd-cop">
+                                    <input type="text" class="input disabled" id="entrNo" name="entrNo" readonly>
+                                    <input type="text" class="input disabled mr5" id="entrNm" readonly>
+                                    <a href="javascript:;" class="button small" id="btn_entr_popup_call"><i class="icon-sarch"></i></a>
+                                    <a href="javascript:;" class="button small" id="btn_entr_popup_reset"><i class="icon-clear"></i></a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <!--표준분류-->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.basicInfo.label.stdCtgHierarchy')}"></strong></td>
+                            <td>
+                                <div class="input-group">
+                                    <input type="text" class="input disabled gd-class mr5" id="stdCtgHierarchy" readonly>
+                                    <input type="hidden" name="stdCtgNo" id="stdCtgNo" readonly>
+                                    <a href="javascript:;" class="button small" id="btn_stdctg_popup_call"><i class="icon-sarch"></i></a>
+                                    <a href="javascript:;" class="button small" id="btn_stdctg_popup_reset"><i class="icon-clear"></i></a>
+                                </div>
+                            </td>
+                            <!-- 담당MD -->
+                            <td class="label" th:text="${#messages.msg('generalGoods.basicInfo.label.mdId')}"></td>
+                            <td><input type="text" class="input disabled" id="mdId" readonly></td>
+                        </tr>
+                        <tr id="section_rsvDtm" style="display: none">
+                            <!-- 예약주문가능기간 -->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.basicInfo.label.rsvDtm')}"></strong></td>
+                            <td>
+                                <div class="picker-group time-s" data-lopicker="basic">
+                                    <input type="text" class="form-control disabled" id="rsvStrtDtm" name="rsvStrtDtm" readonly>
+                                    <span class="input-group-addon">~</span>
+                                    <input type="text" class="form-control disabled" id="rsvEndDtm" name="rsvEndDtm" readonly>
+                                    <span class="input-group-addon" name="btn_callCalender" data-option="01"><i class="icon-calendar"></i></span>
+                                </div>
+                            </td>
+                            <!-- 예약상품출고지시일 -->
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.basicInfo.label.fwdidcPrarDy')}"></strong></td>
+                            <td>
+                                <div class="picker-group" data-lopicker="basic">
+                                    <input type="text" class="form-control disabled" id="fwdidcPrarDy" name="fwdidcPrarDy" readonly>
+                                    <span class="input-group-addon" name="btn_callCalender" data-option="02"><i class="icon-calendar"></i></span>
+                                </div>
+                                <label><input class="checkbox-inline" type="checkbox" id="fwdidcPrarDyCheckBox" checked="checked">기간 종료 후 일반판매로 전환 (미 체크시 품절로 전환)</label>
+                                <input type="hidden" id="rsvEndAfProcMethCd" name="rsvEndAfProcMethCd" value="01">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                </form>
+            </div>
+        </div>
+    </th:block>
+    <th:block layout:fragment="goods-detail-basicInfo">
+        <div class="data">
+            <div class="data-head">
+                <div class="left">
+                    <span class="title" th:text="${#messages.msg('generalGoods.basicInfo.title')}"></span>
+                </div>
+                <div class="right">
+                  <span class="data-toggle">
+                    <button type="button" class="toggle-button"><span>닫힘</span></button>
+                  </span>
+                </div>
+            </div>
+            <div class="data-body">
+                <form name="basicInfo" id="basicInfo">
+                    <table class="data-table fixed">
+                        <colgroup>
+                            <col width="130">
+                            <col>
+                            <col width="130">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                            <tr>
+                                <!-- 상품번호 -->
+                                <td class="label" th:text="${#messages.msg('generalGoods.basicInfo.label.goodsNo')}"></td>
+                                <td><input type="text" class="input disabled gd-num" id="goodsNo" name="goodsNo" readonly></td>
+                                <!-- 기간계상품번호 -->
+                                <td class="label" th:text="${#messages.msg('generalGoods.basicInfo.label.lgcGoodsNo')}"></td>
+                                <td>
+                                    <input type="text" class="input gd-num" id="lgcGoodsNo" name="lgcGoodsNo" maxlength="15">
+                                </td>
+                            </tr>
+                            <tr>
+                                <!-- 상품유형 -->
+                                <td class="label" th:text="${#messages.msg('generalGoods.basicInfo.label.goodsType')}"></td>
+                                <td>
+                                    <label class="radio-inline"><input type="radio" name="goodsTypCd" value="10" checked="checked">일반상품</label>
+                                    <label class="radio-inline"><input type="radio" name="goodsTypCd" value="20" >사은품</label>
+                                </td>
+                                <!-- 판매방식 -->
+                                <td class="label" th:text="${#messages.msg('generalGoods.basicInfo.label.saleMeth')}"></td>
+                                <td>
+                                    <label class="radio-inline"><input type="radio" name="saleMethCd" value="10" checked="checked">일반판매</label>
+                                    <label class="radio-inline"><input type="radio" name="saleMethCd" value="20" >예약판매</label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <!-- 협력사 -->
+                                <td class="label" th:text="${#messages.msg('generalGoods.basicInfo.label.entrNoNm')}"></td>
+                                <td colspan="3">
+                                    <div class="input-group gd-cop">
+                                        <input type="text" class="input disabled" id="entrNo" readonly>
+                                        <input type="text" class="input disabled" id="entrNm" readonly>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <!--표준분류-->
+                                <td class="label" th:text="${#messages.msg('generalGoods.basicInfo.label.stdCtgHierarchy')}"></td>
+                                <td>
+                                    <div class="input-group">
+                                        <input type="text" class="input disabled gd-class" id="stdCtgHierarchy" readonly>
+                                    </div>
+                                </td>
+                                <!-- 담당MD -->
+                                <td class="label" th:text="${#messages.msg('generalGoods.basicInfo.label.mdId')}"></td>
+                                <td><input type="text" class="input disabled" id="mdId" readonly></td>
+                            </tr>
+                            <tr id="section_rsv_ing" style="display: none">
+                                <!-- 예약주문가능기간 -->
+                                <td class="label" th:text="${#messages.msg('generalGoods.basicInfo.label.rsvDtm')}"></td>
+                                <td>
+                                    <div class="picker-group time-s" data-lopicker="basic">
+                                        <input type="text" class="form-control disabled" id="rsvStrtDtm" readonly>
+                                        <span class="input-group-addon">~</span>
+                                        <input type="text" class="form-control disabled" id="rsvEndDtm" readonly>
+                                    </div>
+                                    <a href="javascript:void(0)" class="button inside" id="btn_call_rsv_sale_hist_popup">
+                                        <span class="text" th:text="${#messages.msg('generalGoods.basicInfo.btn.rsvSaleHist')}"></span>
+                                    </a>
+                                </td>
+                                <!-- 예약상품출고지시일 -->
+                                <td class="label"><strong th:text="${#messages.msg('generalGoods.basicInfo.label.fwdidcPrarDy')}"></strong></td>
+                                <td>
+                                    <div class="picker-group" data-lopicker="basic">
+                                        <input type="text" class="input disabled" id="fwdidcPrarDy" readonly>
+                                        <span class="input-group-addon" name="btn_callCalender"><i class="icon-calendar"></i></span>
+                                    </div>
+                                    <label><input class="checkbox-inline" type="checkbox" id="fwdidcPrarDyCheckBox" checked="checked">기간 종료 후 일반판매로 전환 (미 체크시 품절로 전환)</label>
+                                    <input type="hidden" id="rsvEndAfProcMethCd" value="01">
+                                </td>
+                            </tr>
+                            <tr id="section_rsv" style="display: none">
+                                <!-- 예약중단여부 -->
+                                <td class="label"><strong th:text="${#messages.msg('generalGoods.basicInfo.label.rsvStopYn')}"/></td>
+                                <td colspan="3">
+                                    <input type="hidden" id="rsvStopYn">
+                                    <label class="radio-inline"><input type="radio" name="rsvStopYn" value="N" >예약중</label>
+                                    <label class="radio-inline"><input type="radio" name="rsvStopYn" value="Y" >예약중단</label>
+                                </td>
+                                <!-- 예약중단사유 -->
+                                <td style="display: none" class="label section_rsv_stop" th:text="${#messages.msg('generalGoods.basicInfo.label.rsvStopCausCd')}"></td>
+                                <td class="section_rsv_stop" style="display: none">
+                                    <select class="form-control" id="rsvStopCausCd">
+                                        <option value="" th:text="${#messages.msg('adminCommon.select')}"/>
+                                        <option th:each="code : ${codeList.PR034}" th:value="${code?.cd}" th:utext="${code?.cdNm}"></option>
+                                    </select>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </div>
+    </th:block>
+    <th:block layout:fragment="pkg-goods-regist-basicInfo">
+        <div class="data">
+            <div class="data-head">
+                <div class="left">
+                    <span class="title" th:text="${#messages.msg('packageGoods.basicInfo.title')}"></span>
+                </div>
+                <div class="right">
+                  <span class="data-toggle">
+                    <button type="button" class="toggle-button"><span>닫힘</span></button>
+                  </span>
+                </div>
+            </div>
+            <div class="data-body">
+                <table class="data-table fixed">
+                    <form id="pkgBasicInfo">
+                        <colgroup>
+                            <col width="130">
+                            <col>
+                            <col width="130">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                            <tr>
+                                <!-- 임시상품번호 -->
+                                <td class="label" th:text="${#messages.msg('packageGoods.basicInfo.label.pregGoodsNo')}"></td>
+                                <td><input type="text" id="pregGoodsNo" name="pregGoodsNo" class="input disabled gd-num"></td>
+                                <!-- 대표거래처/명 -->
+                                <td class="label">
+                                    <strong th:text="${#messages.msg('packageGoods.basicInfo.label.repEntrNoNm')}"></strong>
+                                </td>
+                                <td>
+                                    <div class="input-group gd-cop">
+                                        <input type="text" class="input disabled" id="entrNo" name="entrNo" readonly>
+                                        <input type="text" class="input disabled mr5" id="entrNm" readonly>
+                                        <a href="javascript:;" class="button small" id="btn_entr_popup_call"><i class="icon-sarch"></i></a>
+                                        <a href="javascript:;" class="button small" id="btn_entr_popup_reset"><i class="icon-clear"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <!-- 표준분류 -->
+                                <td class="label">
+                                    <strong th:text="${#messages.msg('packageGoods.basicInfo.label.stdCtgHierarchy')}"></strong>
+                                </td>
+                                <td>
+                                    <div class="input-group">
+                                        <input type="text" class="input disabled gd-class mr5" id="stdCtgHierarchy" readonly>
+                                        <input type="hidden" name="stdCtgNo" id="stdCtgNo" readonly>
+                                        <a href="javascript:;" class="button small" id="btn_stdctg_popup_call"><i class="icon-sarch"></i></a>
+                                        <a href="javascript:;" class="button small" id="btn_stdctg_popup_reset"><i class="icon-clear"></i></a>
+                                    </div>
+                                </td>
+                                <!-- 담당MD -->
+                                <td class="label" th:text="${#messages.msg('packageGoods.basicInfo.label.mdId')}"></td>
+                                <td><input type="text" class="input disabled" id="mdId" readonly></td>
+                            </tr>
+                        </tbody>
+                    </form>
+                </table>
+            </div>
+        </div>
+    </th:block>
+    <th:block layout:fragment="pkg-goods-detail-basicInfo">
+        <div class="data">
+            <div class="data-head">
+                <div class="left">
+                    <span class="title" th:text="${#messages.msg('packageGoods.basicInfo.title')}"></span>
+                </div>
+                <div class="right">
+                  <span class="data-toggle">
+                    <button type="button" class="toggle-button"><span>닫힘</span></button>
+                  </span>
+                </div>
+            </div>
+            <div class="data-body">
+                <table class="data-table fixed">
+                    <form id="pkgBasicInfo">
+                        <colgroup>
+                            <col width="130">
+                            <col>
+                            <col width="130">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                        <tr>
+                            <!-- 상품번호 -->
+                            <td class="label" th:text="${#messages.msg('packageGoods.basicInfo.label.goodsNo')}"></td>
+                            <td><input type="text" class="input disabled gd-num" id="goodsNo" name="goodsNo" readonly></td>
+                            <!-- 대표거래처/명 -->
+                            <td class="label">
+                                <strong th:text="${#messages.msg('packageGoods.basicInfo.label.repEntrNoNm')}"></strong>
+                            </td>
+                            <td>
+                                <div class="input-group gd-cop">
+                                    <input type="text" class="input disabled" id="entrNo" readonly>
+                                    <input type="text" class="input disabled mr5" id="entrNm" readonly>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <!-- 표준분류 -->
+                            <td class="label">
+                                <strong th:text="${#messages.msg('packageGoods.basicInfo.label.stdCtgHierarchy')}"></strong>
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <input type="text" class="input disabled gd-class mr5" id="stdCtgHierarchy" readonly>
+                                </div>
+                            </td>
+                            <!-- 담당MD -->
+                            <td class="label" th:text="${#messages.msg('packageGoods.basicInfo.label.mdId')}"></td>
+                            <td><input type="text" class="input disabled" id="mdId" readonly></td>
+                        </tr>
+                        </tbody>
+                    </form>
+                </table>
+            </div>
+        </div>
+    </th:block>
+</body>
+</html>

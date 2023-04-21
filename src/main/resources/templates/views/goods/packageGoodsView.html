@@ -1,0 +1,95 @@
+<!--
+* 프로그램명 : 묶음 상품 상세
+* 작 성 일 : 2021.06.14
+* 작 성 자 : 홍혜리
+* 수 정 자 : 홍혜리
+* 버    전 : 1.0
+* 개    요 : 상품관리 > 상품정보관리 > 상품관리 > 묶음상품상세팝업
+* 이    력 : 2021.10.20 프레임워크이전
+-->
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/goods/page-goods-layout}">
+<body>
+<th:block layout:fragment="page-title-area">
+    <script th:inline="javascript">
+        var pageType = [[${pageType}]];
+        var goodsInfo = [[${goodsInfo}]];
+    </script>
+    <div class="page-title">
+        <!-- 타이틀 영역 -->
+        <th:block layout:insert="~{fragments/goods/goods-title :: pkg-goods-detail-title}"/>
+        <!--// 타이틀 영역 -->
+
+        <!-- 버튼 영역 -->
+        <th:block layout:insert="~{fragments/goods/goods-button :: pkg-goods-detail-button}"/>
+        <!--// 버튼 영역 -->
+    </div>
+</th:block>
+<th:block layout:fragment="page-contents">
+    <div class="page-fixed with-title">
+        <div class="search-cont">
+            <!-- 기본정보 영역 -->
+            <th:block layout:fragment="content-basicInfo">
+                <th:block layout:insert="~{fragments/goods/goods-basicInfo :: pkg-goods-detail-basicInfo}"/>
+            </th:block>
+            <!--// 기본정보 영역 -->
+
+            <!-- 상품정보 영역 -->
+            <th:block layout:fragment="content-goodsInfo">
+                <th:block layout:insert="~{fragments/goods/goods-goodsInfo :: pkg-goods-detail-goodsInfo}"/>
+            </th:block>
+            <!--// 상품정보 영역 -->
+
+            <!-- 묶음상품구성 영역 -->
+            <th:block layout:fragment="content-pkgInfo">
+                <th:block layout:insert="~{fragments/goods/goods-pkgInfo :: pkg-goods-detail-pkgInfo}"/>
+            </th:block>
+            <!--// 묶음상품구성 영역 -->
+
+            <!-- 상품상세설명 영역 -->
+            <th:block layout:fragment="content-detailInfo">
+                <th:block layout:insert="~{fragments/goods/goods-detailInfo :: pkg-goods-detailInfo}"/>
+            </th:block>
+            <!--// 상품상세설명 영역 -->
+
+            <!-- 상품이미지 영역 -->
+            <th:block layout:fragment="content-imageInfo">
+                <th:block layout:insert="~{fragments/goods/goods-imageInfo :: pkg-goods-imageInfo}"/>
+            </th:block>
+            <!--// 상품이미지 영역 -->
+        </div>
+    </div>
+</th:block>
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        var _saleStatCd = [[${goodsInfo.prGoodsBase.saleStatCd}]]; // 판매상태
+    </script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/packageGoods/detailPackageCommon.eventHandler.js?20211020'"></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/packageGoods/detailPackageBasicInfo.eventHandler.js?20211020'"></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/packageGoods/detailPackageGoodsInfo.eventHandler.js?20211020'"></script>
+
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/temporaryPackageGoods/packageRelatedGoodsListGrid.eventHandler.js?20211020'"></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/temporaryPackageGoods/packageRelatedGoodsListGrid.provider.js?20211020'"></script>
+
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/temporaryPackageGoods/packageDetailInfo.eventHandler.js?20211020'"></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/temporaryPackageGoods/packageImageInfo.eventHandler.js?20211020'"></script>
+
+    <script th:inline="javascript">
+        $(function(){
+
+            detailPackageBasicInfo.eventhandler.init();  // 기본정보
+            detailPackageGoodsInfo.eventhandler.init();  // 상품정보
+
+            packageRelatedGoodsListGrid.eventhandler.init();  // 묶음상품구성
+            packageDetailInfo.eventhandler.init();            // 상품상세설명
+            packageImageInfo.eventhandler.init();             // 상품이미지
+
+            detailPackageCommon.eventhandler.init();
+        });
+    </script>
+</th:block>
+</body>
+</html>

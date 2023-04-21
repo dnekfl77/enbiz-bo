@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.system.StStdCdMapper">
+
+	<sql id="paginatedBase">
+		LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+	</sql>
+
+	<sql id="getStStdCdListBase">
+		SELECT /* StStdCd.getStStdCdListBase */
+			   GRP_CD
+			 , CD
+			 , CD_NM
+			 , CD_DESC
+			 , USE_YN
+			 , SORT_SEQ
+			 , REF_1_VAL
+			 , REF_2_VAL
+			 , REF_3_VAL
+			 , REF_4_VAL
+			 , REF_5_VAL
+			 , SYS_REG_ID
+			 , TO_CHAR(SYS_REG_DTM, 'YYYY-MM-DD HH24:MI:SS') SYS_REG_DTM
+			 , SYS_MOD_ID
+			 , TO_CHAR(SYS_MOD_DTM, 'YYYY-MM-DD HH24:MI:SS') SYS_MOD_DTM
+	      FROM ST_STD_CD
+		 WHERE GRP_CD = #{grpCd}
+		 ORDER BY SORT_SEQ, CD
+	</sql>
+
+	<select id="getStStdCdList" parameterType="StandardCodeRequest" resultType="StandardCodeResponse">
+		/* StStdCd.getStStdCdList */
+		<include refid="getStStdCdListBase" />
+		<include refid="paginatedBase" />
+	</select>
+
+	<select id="getStStdCdListCount" parameterType="StandardCodeRequest" resultType="java.lang.Integer">
+		SELECT /* StStdCd.getStStdCdListCount */
+		       COUNT(*)
+		  FROM (
+		  	   <include refid="getStStdCdListBase" />
+		       ) v
+	</select>
+
+	<select id="getStStdCd" parameterType="map" resultType="StStdCd">
+		/* StStdCd.getStStdCd */
+		SELECT GRP_CD
+			 , CD
+			 , CD_NM
+			 , CD_DESC
+			 , USE_YN
+			 , SORT_SEQ
+			 , REF_1_VAL
+			 , REF_2_VAL
+			 , REF_3_VAL
+			 , REF_4_VAL
+			 , REF_5_VAL
+			 , SYS_REG_ID
+			 , SYS_REG_DTM
+			 , SYS_MOD_ID
+			 , SYS_MOD_DTM
+	      FROM ST_STD_CD
+		 WHERE (
+			<foreach collection="array" item="arr" separator="or">
+				GRP_CD = #{arr}
+			</foreach>
+		)
+		AND USE_YN = 'Y'
+		ORDER BY GRP_CD , SORT_SEQ
+	</select>
+
+	<select id="getCdCheck" parameterType="StandardCodeRequest" resultType="java.lang.Integer">
+		SELECT COUNT(*) /* StStdCd.getCdCheck */
+		  FROM ST_STD_CD
+		 WHERE GRP_CD = #{grpCd}
+		   AND CD = #{cd}
+	</select>
+
+	<select id="getCdNmCheck" parameterType="StandardCodeRequest" resultType="java.lang.Integer">
+		SELECT COUNT(*) /* StStdCd.getCdNmCheck */
+		  FROM ST_STD_CD
+		 WHERE GRP_CD = #{grpCd}
+		   AND CD_NM = #{cdNm}
+		   AND CD <![CDATA[ <> ]]> #{cd}
+	</select>
+</mapper>
+
+

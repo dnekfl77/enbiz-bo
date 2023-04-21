@@ -1,0 +1,193 @@
+<!--
+* 프로그램명 : 청구할인 안내 등록/수정 팝업
+* 작 성 일 : 2021.07.27
+* 작 성 자 : 권다솜
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 결제관리 > 결제수단관리 > 청구할인 안내 관리 > 청구할인 카드 등록 > 청구할인 안내 등록/수정 팝업
+* 이    력 :
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-update-layout}">
+<body>
+
+<th:block layout:fragment="header-area">
+    <div class="header">
+        <h1 class="title" th:if="${requestData.argInsertUpdate} == 'I'"
+            th:text="${#messages.msg('methodsOfPaymentManagement.claimDiscountInfoManagement.popupInsert.title')}"></h1>
+        <h1 class="title" th:if="${requestData.argInsertUpdate} == 'U'"
+            th:text="${#messages.msg('methodsOfPaymentManagement.claimDiscountInfoManagement.popupUpdate.title')}"></h1>
+    </div>
+</th:block>
+
+<th:block layout:fragment="data-area">
+    <div class="data">
+        <div class="data-body">
+            <form name="claimDiscountMersGridForm" id="claimDiscountMersGridForm">
+                <table class="data-table">
+                    <colgroup>
+                        <col style="width:120px;"/>
+                        <col />
+                        <col style="width:120px;"/>
+                        <col />
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <td class="label"><strong th:text="${#messages.msg('methodsOfPaymentManagement.claimDiscountInfoManagement.popupUpdate.label.acqrCd')}"></strong></td>
+                        <td>
+                            <select class="form-control w40" id="acqrCd" name="acqrCd">
+                                <option value="" th:text="${#messages.msg('baseInfoMgmt.label.select')}"></option>
+                                <option th:each="list : ${codeList.OM028}" th:value="${list.cd}" th:text="${list.cdNm}"></option>
+                            </select>
+                        </td>
+                        <td class="label"><strong th:text="${#messages.msg('methodsOfPaymentManagement.claimDiscountInfoManagement.popupUpdate.label.clmDcGdNo')}"></strong></td>
+                        <td>
+                            <span id="clmDcGdNoText"></span>
+                            <input type="hidden" id="clmDcGdNo" name="clmDcGdNo"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label"><strong th:text="${#messages.msg('methodsOfPaymentManagement.claimDiscountInfoManagement.popupUpdate.label.aplyStrDtm')}"></strong></td>
+                        <td>
+                            <div class="input-group">
+                                <div class="picker-group" data-lopicker="basic">
+                                    <input type="text" class="input disabled" name="aplyStartDate" id="aplyStartDate" disabled>
+                                    <span class="input-group-addon"><i class="icon-calendar" id="calendarButton1"></i></span>
+                                </div>
+                                <select class="form-control" id="aplyStartHour" name="aplyStartHour">
+                                    <option th:each="num,numStat : ${#numbers.sequence(0,23)}"
+                                            th:value="${#numbers.formatInteger(numStat.index,2)}"
+                                            th:text="${#numbers.formatInteger(numStat.index,2)}"></option>
+                                </select>
+                                <em> : </em>
+                                <select class="form-control" id="aplyStartMinute" name="aplyStartMinute">
+                                    <option th:each="num,numStat : ${#numbers.sequence(0,59)}"
+                                            th:value="${#numbers.formatInteger(numStat.index,2)}"
+                                            th:text="${#numbers.formatInteger(numStat.index,2)}"></option>
+                                </select>
+                                <input class="input" type="hidden" name="aplyStrDtm" id="aplyStrDtm"/>
+                            </div>
+                        </td>
+                        <td class="label"><strong th:text="${#messages.msg('methodsOfPaymentManagement.interestFreeInstallmentInfoManagement.popupUpdate.label.aplyEndDtm')}"></strong></td>
+                        <td>
+                            <div class="input-group">
+                                <div class="picker-group" data-lopicker="basic">
+                                    <input type="text" class="input disabled" name="aplyEndDate" id="aplyEndDate" disabled>
+                                    <span class="input-group-addon"><i class="icon-calendar" id="calendarButton2"></i></span>
+                                </div>
+                                <select class="form-control" id="aplyEndHour" name="aplyEndHour">
+                                    <option th:each="num,numStat : ${#numbers.sequence(0,23)}"
+                                            th:value="${#numbers.formatInteger(numStat.index,2)}"
+                                            th:text="${#numbers.formatInteger(numStat.index,2)}"></option>
+                                </select>
+                                <em> : </em>
+                                <select class="form-control" id="aplyEndMinute" name="aplyEndMinute">
+                                    <option th:each="num,numStat : ${#numbers.sequence(0,59)}"
+                                            th:value="${#numbers.formatInteger(numStat.index,2)}"
+                                            th:text="${#numbers.formatInteger(numStat.index,2)}"></option>
+                                </select>
+                                <input class="input" type="hidden" name="aplyEndDtm" id="aplyEndDtm"/>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label"><strong th:text="${#messages.msg('methodsOfPaymentManagement.claimDiscountInfoManagement.popupUpdate.label.payStdAmt')}"></strong></td>
+                        <td colspan="3">
+                            <input type="text" class="input w20" id="payStdAmt" name="payStdAmt" maxlength="10" onKeyup="number(this)"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label"><strong th:text="${#messages.msg('methodsOfPaymentManagement.claimDiscountInfoManagement.popupUpdate.label.dcRateAmt')}"></strong></td>
+                        <td>
+                            <div class="input-group">
+                                <select class="form-control w40" id="fixamtFxrtGbCd" name="fixamtFxrtGbCd">
+                                    <option value="" th:text="${#messages.msg('baseInfoMgmt.label.select')}"></option>
+                                    <option th:each="list : ${codeList.MK005}" th:value="${list.cd}" th:text="${list.cdNm}"></option>
+                                </select>
+                                <input type="text" class="input w50" id="dcRateAmt" name="dcRateAmt" maxlength="10" onKeyup="number(this)"/>
+                            </div>
+                        </td>
+                        <td class="label"><strong th:text="${#messages.msg('methodsOfPaymentManagement.claimDiscountInfoManagement.popupUpdate.label.maxDcAmt')}"></strong></td>
+                        <td>
+                            <input type="text" class="input w50" id="maxDcAmt" name="maxDcAmt" maxlength="10" onKeyup="number(this)"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label"><strong th:text="${#messages.msg('methodsOfPaymentManagement.interestFreeInstallmentInfoManagement.popupUpdate.label.mersChoose')}"></strong></td>
+                        <td colspan="3">
+                            <div class="grid-cont">
+                                <div class="grid" style="overflow: hidden;">
+                                    <div class="grid-body">
+                                        <div id="claimDiscountMersGrid" realgrid></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <input class="input" type="hidden" name="mersList" id="mersList"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label" th:text="${#messages.msg('methodsOfPaymentManagement.interestFreeInstallmentInfoManagement.popupUpdate.label.sysModId')}"></td>
+                        <td>
+                            <span id="sysModId"></span>
+                        </td>
+                        <td class="label" th:text="${#messages.msg('methodsOfPaymentManagement.interestFreeInstallmentInfoManagement.popupUpdate.label.sysModDtm')}"></td>
+                        <td>
+                            <span id="sysModDtm"></span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </div>
+</th:block>
+
+<th:block layout:fragment="button-area">
+    <div class="button-group" style="margin-top: 0px !important;" >
+        <a href="#" class="button" id="btn_popup_cancel">
+            <span class="text" th:text="${#messages.msg('adminCommon.button.cancel')}">취소</span>
+        </a>
+        <a href="#" class="button" id="btn_popup_delete" th:if="${requestData.argInsertUpdate} == 'U'">
+            <span class="text" th:text="${#messages.msg('baseInfoMgmt.label.delete')}">삭제</span>
+        </a>
+        <a href="#" class="button large" id="btn_popup_save">
+            <span class="text" th:text="${#messages.msg('adminCommon.button.save')}">저장</span>
+        </a>
+    </div>
+</th:block>
+
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        var req         = [[${requestData}]];
+        var reqMers     = {};
+
+        if(req.argInsertUpdate == "U") {
+            reqMers     = [[${mersList}]];
+        }
+
+        var msg = x2coMessage.getMessage( {
+            cancel : 'methodsOfPaymentManagement.claimDiscountInfoManagement.message.cancel',
+            doneSave : 'methodsOfPaymentManagement.claimDiscountInfoManagement.message.doneSave',
+            necessaryCheckMessage : 'methodsOfPaymentManagement.claimDiscountInfoManagement.message.necessaryCheckMessage',
+            dataCheck1 : 'methodsOfPaymentManagement.claimDiscountInfoManagement.message.dataCheck1',
+            dataCheck3 : 'methodsOfPaymentManagement.claimDiscountInfoManagement.message.dataCheck3',
+            acqrCheck : 'methodsOfPaymentManagement.claimDiscountInfoManagement.message.acqrCheck',
+            deleteState : 'methodsOfPaymentManagement.claimDiscountInfoManagement.message.deleteState',
+            deleteMessage : 'methodsOfPaymentManagement.claimDiscountInfoManagement.message.deleteMessage',
+            mersCheck : 'methodsOfPaymentManagement.claimDiscountInfoManagement.message.mersCheck',
+            save : 'methodsOfPaymentManagement.claimDiscountInfoManagement.message.save'
+        });
+    </script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'payment/claimDiscountMersGrid.eventHandler.js?202107270001'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'payment/claimDiscountMersGrid.provider.js?202107270001'" ></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            claimDiscountMersGrid.eventhandler.init();
+        });
+    </script>
+</th:block>
+
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!--
+* 프로그램명 : 보상유형 조회 팝업
+* 작 성 일 : 2021.05.21
+* 작 성 자 : 권다솜
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 보상유형 조회 팝업 UI
+* 이    력 :
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-layout}">
+<body>
+
+<!--Title Area-->
+<th:block layout:fragment="popup-title-area">
+    <th:block layout:insert="~{fragments/popup/popup-title :: popup-title}"
+              th:with="title=${#messages.msg('rewardTypeMgmt.title')}"></th:block>
+</th:block>
+<!--Title Area-->
+
+<!--Search Area-->
+<th:block layout:fragment="popup-search-area">
+    <div class="search">
+        <form name="csCpnsTypCdPopupGridForm" id="csCpnsTypCdPopupGridForm">
+            <table class="search-table">
+                <colgroup>
+                    <col width="120">
+                    <col>
+                </colgroup>
+                <tbody>
+                <tr>
+                    <td class="label" th:text="${#messages.msg('rewardTypeMgmt.search.label.cpnsTypNm')}"></td>
+                    <td>
+                        <input class="input inputtxt w100" type="text" name="cpnsTypNm" id="cpnsTypNm" maxlength="33"/>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+</th:block>
+<!--Search Area-->
+
+<!--Search Button Area-->
+<th:block layout:fragment="popup-search-button-area">
+    <th:block layout:insert="~{fragments/popup/popup-btn :: popup-search-btn}"/>
+</th:block>
+<!--Search Button Area-->
+
+<!--List Area-->
+<th:block layout:fragment="popup-List-area">
+    <div class="grid">
+        <div class="grid-head" style="overflow: hidden;">
+            <div class="title-area">
+                <h2 class="title" th:text="${#messages.msg('rewardTypeMgmt.grid.title')}"></h2>
+            </div>
+            <div class="option-area">
+                <div class="page-option">
+                    <span class="total">총 <span id="csCpnsTypCdPopupGrid_totalCount">0</span> 건</span>
+                </div>
+            </div>
+        </div>
+        <div class="grid-body with-head">
+            <div id="csCpnsTypCdPopupGrid" class="rg-root rg-grid" realgrid></div>
+        </div>
+    </div>
+</th:block>
+<!--List Area-->
+
+<!--List Button Area-->
+<th:block layout:fragment="popup-List-button-area">
+    <th:block layout:insert="~{fragments/popup/popup-btn :: popup-List-btn}"/>
+</th:block>
+
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        var _gridType = '1';
+    </script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'customerservice/csCpnsTypCdPopupGrid.eventHandler.js?20210802'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'customerservice/csCpnsTypCdPopupGrid.provider.js?20210521000003'" ></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            csCpnsTypCdPopupGrid.eventhandler.init();
+        });
+    </script>
+</th:block>
+</body>
+</html>

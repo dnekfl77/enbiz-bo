@@ -1,0 +1,335 @@
+<!--
+* 프로그램명 : 업무이관상세
+* 작 성 일 : 2021.06.03
+* 작 성 자 : 윤성원
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 업무이관상세
+* 이    력 :
+-->
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-update-layout}">
+
+<body>
+<!--Title Area-->
+<th:block layout:fragment="header-area">
+    <div class="header">
+        <h1 class="title" th:text="${#messages.msg('csTransferProcessing.detail.pop.title')}"></h1>
+    </div>
+</th:block>
+<!--Title Area-->
+
+<th:block layout:fragment="data-area">
+    <div class="data-cont">
+        <div class="data">
+            <div class="data-head">
+                <div class="left"><span class="title" th:text="${#messages.msg('csTransferProcessing.detail.pop.formTitle')}"></span>
+                    <div>
+                        <a href="#" id="btn_cancel" class="button inside">
+                            <span class="text" th:text="${#messages.msg('csTransferProcessing.detail.pop.form.cancel')}"></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="data-body bo-tnone">
+                    <table class="data-table fixed">
+                        <colgroup>
+                            <col width="120">
+                            <col>
+                            <col width="120">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                        <tr>
+                            <td class="label"><th:block th:text="${#messages.msg('csTransferProcessing.detail.pop.form.memberInfo')}" /></td>
+                            <td>
+                                <th:block th:text="${popData.mbrNm} == null ? '' : ${popData.mbrNm} "></th:block>
+                                <th:block th:text="${popData.emailAddr} == null ? '' : |'/'${popData.emailAddr}|"></th:block>
+                            </td>
+                            <td class="label"><th:block th:text="${#messages.msg('csTransferProcessing.detail.pop.form.telNo')}" /></td>
+                            <td>
+                                <th:block th:text="${popData.telRgnNo} == null ? '' : ${popData.telRgnNo} "></th:block>
+                                <th:block th:text="${popData.telTxnoNo} == null ? '' : |-${popData.telTxnoNo}|"></th:block>
+                                <th:block th:text="${popData.telEndNo} == null ? '' : |-${popData.telEndNo}|"></th:block>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label"><th:block th:text="${#messages.msg('csTransferProcessing.detail.pop.form.ordNo')}" /></td>
+                            <td>
+                                <th:block th:text="${popData.ordNo} == null ? '' : ${popData.ordNo} "></th:block>
+                            </td>
+                            <td class="label"><th:block th:text="${#messages.msg('csTransferProcessing.detail.pop.form.ccnNo')}" /></td>
+                            <td>
+                                <a><th:block th:text="${popData.ccnNo} == null ? '' : ${popData.ccnNo} "></th:block></a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label"><th:block th:text="${#messages.msg('csTransferProcessing.detail.pop.form.goodsNo')}" /></td>
+                            <td>
+                                <th:block th:text="${popData.goodsNo} == null ? '' : ${popData.goodsNo} "></th:block>
+                            </td>
+                            <td class="label"><th:block th:text="${#messages.msg('csTransferProcessing.detail.pop.form.goodsNm')}" /></td>
+                            <td>
+                                <th:block th:text="${popData.goodsNm} == null ? '' : ${popData.goodsNm} "></th:block>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label"><th:block th:text="${#messages.msg('csTransferProcessing.detail.pop.form.itemNo')}" /></td>
+                            <td>
+                                <th:block th:text="${popData.itmNo} == null ? '' : ${popData.itmNo} "></th:block>
+                            </td>
+                            <td class="label"><th:block th:text="${#messages.msg('csTransferProcessing.detail.pop.form.itemNm')}" /></td>
+                            <td>
+                                <th:block th:text="${popData.itmNm} == null ? '' : ${popData.itmNm} "></th:block>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label"><th:block th:text="${#messages.msg('csTransferProcessing.detail.pop.form.entrNm')}" /></td>
+                            <td>
+                                <th:block th:text="${popData.entrNm} == null ? '' : ${popData.entrNm} "></th:block>
+                            </td>
+                            <td class="label"></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="label"><th:block th:text="${#messages.msg('csTransferProcessing.detail.pop.form.custCnslGbCd')}" /></td>
+                            <td>
+                                <th:block th:text="${popData.custCnslGbNm} == null ? '' : ${popData.custCnslGbNm} "></th:block>
+                            </td>
+                            <td class="label"><th:block th:text="${#messages.msg('csTransferProcessing.detail.pop.form.ccnPrgsStatCd')}" /></td>
+                            <td>
+                                <th:block th:text="${popData.ccnPrgsStatNm} == null ? '' : ${popData.ccnPrgsStatNm} "></th:block>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label"><th:block th:text="${#messages.msg('csTransferProcessing.detail.pop.form.cnslTypNo')}" /></td>
+                            <td colspan="3">
+                                <th:block th:text="${popData.cnslTypNm} == null ? '' : ${popData.cnslTypNm} "></th:block>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label"><th:block th:text="${#messages.msg('csTransferProcessing.detail.pop.form.cnslTypNo')}" /></td>
+                            <td colspan="3" class="pd0">
+                                <div class="scroll-a">
+                                     <table>
+                                         <colgroup>
+                                             <col>
+                                         </colgroup>
+                                         <tbody>
+                                         <tr>
+                                             <td class="label">
+                                                 <p>접수일시 : <th:block th:text="${popData.accpDtm}"></th:block></p>
+                                                 접수자 : <th:block th:text="${popData.acptmnNm}"></th:block>
+                                             </td>
+                                         </tr>
+                                         <tr>
+                                             <td class="con">
+                                                 <th:block th:text="${popData.accpCont}"></th:block>
+                                             </td>
+                                         </tr>
+                                         </tbody>
+                                     </table>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+            </div>
+        </div>
+
+
+        <div class="data">
+            <div class="data-head">
+                <div class="left">
+                    <span class="title" th:text="${#messages.msg('csTransferProcessing.detail.pop.formTitle2')}"></span>
+                </div>
+            </div>
+            <div class="data-body bo-tnone">
+                <table class="data-table fixed">
+                    <colgroup>
+                        <col width="120">
+                        <col>
+                        <col width="120">
+                        <col>
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <td class="label"><th:block th:text="${#messages.msg('csTransferProcessing.detail.pop.form2.csMvotTypNm')}" /></td>
+                        <td colspan="3">
+                            <th:block th:text="${popData.csMvotTypNm} == null ? '' : ${popData.csMvotTypNm} "></th:block>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label"><th:block th:text="${#messages.msg('csTransferProcessing.detail.pop.form2.mvotProcStatNm')}" /></td>
+                        <td>
+                            <th:block th:text="${popData.mvotProcStatNm} == null ? '' : ${popData.mvotProcStatNm} "></th:block>
+                        </td>
+                        <td class="label"><th:block th:text="${#messages.msg('csTransferProcessing.detail.pop.form2.emergMvotYn')}" /></td>
+                        <td>
+                            <th:block th:text="${popData.emergMvotYn} == null ? '' : ${popData.emergMvotYn} "></th:block>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label"><th:block th:text="${#messages.msg('csTransferProcessing.detail.pop.form2.mvotReqCont')}" /></td>
+                        <td colspan="3" class="pd0">
+                            <div class="scroll-a">
+                                <table>
+                                    <colgroup>
+                                        <col>
+                                    </colgroup>
+                                    <tbody>
+                                    <tr>
+                                        <td class="label">
+                                            <p>이관접수일시 : <th:block th:text="${popData.mvotReqDtm}"></th:block></p>
+                                            이관 접수자 : <th:block th:text="${popData.mvotReqmnNm}"></th:block>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="con">
+                                            <th:block th:text="${popData.mvotReqCont}"></th:block>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- //data-body -->
+        </div>
+
+
+        <div class="data">
+            <div class="data-head">
+                <div class="left">
+                    <span class="title" th:text="${#messages.msg('csTransferProcessing.detail.pop.formTitle3')}"></span>
+                </div>
+            </div>
+            <div class="data-body bo-tnone">
+                <table class="data-table fixed">
+                    <colgroup>
+                        <col width="120">
+                        <col>
+                        <col width="120">
+                        <col>
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <td class="label"><th:block th:text="${#messages.msg('csTransferProcessing.detail.pop.form3.quotDtm')}" /></td>
+                        <td>
+                            <th:block th:text="${popData.goodsNm} == null ? '' : ${popData.quotDtm} "></th:block>
+                        </td>
+                        <td class="label"><th:block th:text="${#messages.msg('csTransferProcessing.detail.pop.form3.mvotAfAempNm')}" /></td>
+                        <td>
+                            <th:block th:text="${popData.goodsNm} == null ? '' : ${popData.mvotAfAempNm} "></th:block>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label"><th:block th:text="${#messages.msg('csTransferProcessing.detail.pop.form3.mvotAnsProcCont')}" /></td>
+                        <td colspan="3" class="pd0">
+                            <div class="scroll-a">
+                                <table>
+                                    <colgroup>
+                                        <col>
+                                    </colgroup>
+                                    <tbody>
+                                    <tr>
+                                        <td class="label">
+                                            <p>완료일시 : <th:block th:text="${popData.fnshDtm}"></th:block></p>
+                                            완료자 : <th:block th:text="${popData.fnshmnNm}"></th:block>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="con">
+                                            <th:block th:text="${popData.mvotAnsProcCont}"></th:block>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- //data-body -->
+        </div>
+
+    </div>
+
+
+
+    <div class="button-group search-btn">
+        <a href="#" class="button" id="close"><span class="text">확인</span></a>
+    </div>
+
+</th:block>
+
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+
+        var alertMessage = x2coMessage.getMessage( {
+            cancel  : "csTransferProcessing.detail.pop.msg.cancel",
+            mvotAfAempId  : "csTransferProcessing.detail.pop.msg.mvotAfAempId",
+            mvotProcStatCd  : "csTransferProcessing.detail.pop.msg.mvotProcStatCd",
+            cancelSuccess  : "csTransferProcessing.detail.pop.msg.cancelSuccess",
+            cancelFail  : "csTransferProcessing.detail.pop.msg.cancelFail",
+        });
+
+        var popData = [[${popData}]];
+        var loginRequest = [[${loginRequest}]];
+
+        console.log(popData);
+        console.log(loginRequest);
+
+        /*]]>*/
+    </script>
+
+
+    <script type="text/javascript">
+
+        $('#close').click(function () {
+            window.close();
+        })
+
+        $('#btn_cancel').click(function(){
+            if(!confirm(alertMessage.cancel)) {
+                return;
+            }
+
+            if(popData.mvotAfAempId !== loginRequest.loginId){
+                alert(alertMessage.mvotAfAempId);
+                return;
+            }
+
+            if(popData.mvotProcStatCd !== '10'){
+                alert(alertMessage.mvotProcStatCd);
+                return;
+            }
+
+            var param = {};
+            param.ccnNo       = popData.ccnNo;
+            param.cnslProcSeq = popData.cnslProcSeq;
+            common.Ajax.sendJSONRequest(
+                "post",
+                _baseUrl + "customerservice/csTransferProcessing.cancelCsTransfer.do",
+                param,
+                function (result) {
+                    if(result.succeeded){
+                        alert(alertMessage.cancelSuccess);
+                    }else{
+                        alert(alertMessage.cancelFail);
+                    }
+                });
+
+        })
+
+    </script>
+</th:block>
+
+</body>
+
+</html>

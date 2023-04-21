@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enbiz.bo.app.repository.display.PrStdCtgTrxMapper">
+
+    <insert id="insertStandardCategory"  parameterType="prStdCtg">
+        INSERT INTO PR_STD_CTG ( /* prStdCtgTrx.insertStandardCategory */
+               STD_CTG_NO
+             , STD_CTG_NM
+             , LEAF_CTG_YN
+             , USE_YN
+             , SORT_SEQ
+             , UPR_STD_CTG_NO
+             , STD_LRG_CTG_NO
+             , STD_MID_CTG_NO
+             , STD_SML_CTG_NO
+             , STD_THN_CTG_NO
+             , MD_ID
+             , SAFE_CERTI_NEED_YN
+             , GOODS_NOTI_LISART_CD
+             , SYS_REG_ID
+             , SYS_REG_DTM
+             , SYS_MOD_ID
+             , SYS_MOD_DTM
+        ) VALUES (
+               #{stdCtgNo}
+             , #{stdCtgNm}
+             , #{leafCtgYn}
+             , #{useYn}
+             , #{sortSeq}
+             , #{uprStdCtgNo}
+             , #{stdLrgCtgNo}
+             , #{stdMidCtgNo}
+             , #{stdSmlCtgNo}
+             , #{stdThnCtgNo}
+             , #{mdId}
+             , #{safeCertiNeedYn}
+             , #{goodsNotiLisartCd}
+             , #{sysRegId}
+             , NOW()
+             , #{sysRegId}
+             , NOW()
+        )
+    </insert>
+
+    <update id="saveStandardCategoryMgmtInfo" parameterType="prStdCtg">
+        UPDATE PR_STD_CTG /* prStdCtgTrx.saveStandardCategoryMgmtInfo */
+        SET    STD_CTG_NM           = #{stdCtgNm}
+             , USE_YN               = #{useYn}
+             , SORT_SEQ             = #{sortSeq}
+             , SAFE_CERTI_NEED_YN   = #{safeCertiNeedYn}
+             , MD_ID                = #{mdId}
+             , GOODS_NOTI_LISART_CD = #{goodsNotiLisartCd}
+             , SYS_MOD_ID           = #{sysModId}
+             , SYS_MOD_DTM          = NOW()
+        WHERE STD_CTG_NO = #{stdCtgNo}
+    </update>
+
+    <update id="updateStandardCategoryGrid"  parameterType="prStdCtg">
+        UPDATE PR_STD_CTG /* prStdCtgTrx.updateStandardCategoryGrid */
+        SET    STD_CTG_NM      = #{stdCtgNm}
+             , USE_YN          = #{useYn}
+             , SORT_SEQ        = #{sortSeq}
+             , LEAF_CTG_YN     = #{leafCtgYn}
+             , SYS_MOD_ID      = #{sysModId}
+             , SYS_MOD_DTM     = NOW()
+         WHERE STD_CTG_NO = #{stdCtgNo}
+    </update>
+
+    <delete id="deleteStandardCategory"  parameterType="prStdCtg">
+        DELETE /* prStdCtgTrx.deleteStandardCategory */
+        FROM PR_STD_CTG
+        WHERE STD_CTG_NO = #{stdCtgNo}
+    </delete>
+</mapper>

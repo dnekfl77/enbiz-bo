@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enbiz.bo.app.repository.goods.PrAdveWrdHistMapper">
+    <sql id="paginatedBase">
+        LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+    </sql>
+
+    <!-- 홍보문구 관리 조회 -->
+    <sql id="prAdveWrdHist">
+        SELECT /* prAdveWrdHist.prAdveWrdHist */
+               PAWH.GOODS_NO
+             , PGB.GOODS_NM
+             , SUBSTRING(APLY_STR_DT,1,4)||'-'||SUBSTRING(APLY_STR_DT,5,2)||'-'||SUBSTRING(APLY_STR_DT,7,2) AS APLY_STR_DT
+             , SUBSTRING(APLY_END_DT,1,4)||'-'||SUBSTRING(APLY_END_DT,5,2)||'-'||SUBSTRING(APLY_END_DT,7,2) AS APLY_END_DT
+             , ADVE_WRD
+             , USE_YN
+             , PAWH.SYS_MOD_ID
+             , TO_CHAR(PAWH.SYS_MOD_DTM,'yyyy-mm-dd hh24:mi:ss') AS SYS_MOD_DTM
+          FROM PR_ADVE_WRD_HIST PAWH
+             , PR_GOODS_BASE PGB
+         WHERE PAWH.GOODS_NO = PGB.GOODS_NO
+           AND ADVE_WRD LIKE #{adveWrd} || '%'
+           AND APLY_STR_DT <![CDATA[>=]]> #{aplyStrDt} || '%'
+           AND APLY_END_DT <![CDATA[<=]]> #{aplyEndDt} || '%'
+           AND PGB.GOODS_NO LIKE #{goodsNo} || '%'
+           AND PGB.GOODS_NM LIKE #{goodsNm} || '%'
+           AND PAWH.USE_YN LIKE #{useYn} || '%'
+         ORDER BY APLY_STR_DT
+    </sql>
+
+    <select id="getPrAdveWrdHistList" parameterType="AdvertisingWordMgmtRequest" resultType="AdvertisingWordMgmtResponse">
+        /* prAdveWrdHist.getPrAdveWrdHistList */
+        <include refid="prAdveWrdHist" />
+        <include refid="paginatedBase" />
+    </select>
+
+    <select id="getPrAdveWrdHistListCount" parameterType="AdvertisingWordMgmtRequest" resultType="java.lang.Integer">
+        SELECT /* prAdveWrdHist.getPrAdveWrdHistListCount */
+        COUNT(*)
+        FROM (
+        <include refid="prAdveWrdHist" />
+        ) v
+    </select>
+
+    <select id="checkDuplicatedAdveWrdAplyDt" parameterType="PrAdveWrdHist" resultType="boolean">
+        SELECT EXISTS ( /* prAdveWrdHist.checkDuplicatedAdveWrdAplyDt */
+                       SELECT *
+                         FROM PR_ADVE_WRD_HIST
+                        WHERE GOODS_NO = #{goodsNo}
+                          AND ( APLY_STR_DT BETWEEN REPLACE(#{aplyStrDt},'-','') AND REPLACE(#{aplyEndDt},'-','')
+                           OR   APLY_END_DT BETWEEN REPLACE(#{aplyStrDt},'-','') AND REPLACE(#{aplyEndDt},'-','')
+                           OR ( APLY_STR_DT <![CDATA[ < ]]> REPLACE(#{aplyStrDt},'-','') AND REPLACE(#{aplyEndDt},'-','') <![CDATA[ < ]]> APLY_END_DT ))
+                   ) AS EXIST
+    </select>
+
+    <select id="getAdvertisingWordList" parameterType="java.lang.String" resultType="PrAdveWrdHist">
+        SELECT GOODS_NO  /* prAdveWrdHist.getAdvertisingWordList */
+             , SUBSTRING(APLY_STR_DT,1,4)||'-'||SUBSTRING(APLY_STR_DT,5,2)||'-'||SUBSTRING(APLY_STR_DT,7,2) AS APLY_STR_DT
+             , SUBSTRING(APLY_END_DT,1,4)||'-'||SUBSTRING(APLY_END_DT,5,2)||'-'||SUBSTRING(APLY_END_DT,7,2) AS APLY_END_DT
+             , ADVE_WRD
+             , USE_YN
+             , SYS_REG_ID
+             , TO_CHAR(SYS_REG_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_REG_DTM
+             , SYS_MOD_ID
+             , TO_CHAR(SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+          FROM PR_ADVE_WRD_HIST
+         WHERE GOODS_NO = #{goodsNo}
+         ORDER BY APLY_STR_DT, APLY_END_DT
+    </select>
+</mapper>
+
+

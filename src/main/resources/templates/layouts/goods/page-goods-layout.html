@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/page-realgrid-layout}">
+<body>
+    <th:block layout:fragment="page-title-area"></th:block>
+    <th:block layout:fragment="page-contents">
+        <!-- 기본정보 영역 -->
+        <th:block layout:fragment="content-basicInfo"></th:block>
+        <!-- 상품정보 영역 -->
+        <th:block layout:fragment="content-goodsInfo"></th:block>
+        <!-- 상품고시품목정보 영역 -->
+        <th:block layout:fragment="content-announcementInfo"></th:block>
+        <!-- 가격정보 영역 -->
+        <th:block layout:fragment="content-priceInfo"></th:block>
+        <!-- 배송정보 영역 -->
+        <th:block layout:fragment="content-deliveryInfo"></th:block>
+        <!-- 판매옵션 영역 -->
+        <th:block layout:fragment="content-saleInfo"></th:block>
+        <!-- 상품상세설명 영역 -->
+        <th:block layout:fragment="content-detailInfo"></th:block>
+        <!-- 부가정보 영역 -->
+        <th:block layout:fragment="content-additionalInfo"></th:block>
+        <!-- 상품이미지 영역 -->
+        <th:block layout:fragment="content-imageInfo"></th:block>
+    </th:block>
+    <th:block layout:fragment="add-script"></th:block>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enbiz.bo.app.repository.vendor.EtEntrAempInfoTrxMapper">
+
+     <insert id="insertEtEntrAempInfoTrx" parameterType="etEntrAempInfo">
+          <selectKey keyProperty="aempSeq" resultType="long" order="BEFORE">
+               SELECT coalesce(MAX(AEMP_SEQ), 0) + 1 as aempSeq
+                 FROM ET_ENTR_AEMP_INFO
+                WHERE ENTR_NO = #{entrNo}
+          </selectKey>
+          INSERT INTO ET_ENTR_AEMP_INFO ( /* etEntrAempInfoTrx.insertEtEntrAempInfoTrx */
+                 ENTR_NO
+               , AEMP_SEQ
+               , DUTY_CD
+               , AEMP_NM
+               , TEL_RGN_NO
+               , TEL_TXNO_NO
+               , TEL_END_NO
+               , CELL_SCT_NO
+               , CELL_TXNO_NO
+               , CELL_END_NO
+               , EMAIL_ADDR
+               , SYS_REG_ID
+               , SYS_REG_DTM
+               , SYS_MOD_ID
+               , SYS_MOD_DTM
+          ) VALUES (
+                 #{entrNo}
+               , #{aempSeq}
+               , #{dutyCd}
+               , #{aempNm}
+               , #{telRgnNo}
+               , #{telTxnoNo}
+               , #{telEndNo}
+               , #{cellSctNo}
+               , #{cellTxnoNo}
+               , #{cellEndNo}
+               , #{emailAddr}
+               , #{sysRegId}
+               , now()
+               , #{sysModId}
+               , now()
+          )
+     </insert>
+     <update id="updateEtEntrAempInfoTrx" parameterType="etEntrAempInfo">
+          UPDATE ET_ENTR_AEMP_INFO /* etEntrAempInfoTrx.updateEtEntrAempInfoTrx */
+             SET DUTY_CD = #{dutyCd}
+               , AEMP_NM = #{aempNm}
+               , TEL_RGN_NO = #{telRgnNo}
+               , TEL_TXNO_NO = #{telTxnoNo}
+               , TEL_END_NO = #{telEndNo}
+               , CELL_SCT_NO = #{cellSctNo}
+               , CELL_TXNO_NO = #{cellTxnoNo}
+               , CELL_END_NO = #{cellEndNo}
+               , EMAIL_ADDR = #{emailAddr}
+               , SYS_MOD_DTM = now()
+               , SYS_MOD_ID = #{sysModId}
+           WHERE AEMP_SEQ = #{aempSeq} AND ENTR_NO = #{entrNo}
+     </update>
+     <delete id="deleteEtEntrAempInfoTrx" parameterType="etEntrAempInfo">
+          DELETE /* etEntrAempInfoTrx.deleteEtEntrAempInfoTrx */
+            FROM ET_ENTR_AEMP_INFO
+           WHERE AEMP_SEQ = #{aempSeq} AND ENTR_NO = #{entrNo}
+     </delete>
+</mapper>

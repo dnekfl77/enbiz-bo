@@ -1,0 +1,172 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns="http://www.navercorp.com/lucy-xss-servlet">
+   <defenders>
+       <!-- XssPreventer 등록 -->
+       <defender>
+           <name>xssPreventerDefender</name>
+           <class>com.navercorp.lucy.security.xss.servletfilter.defender.XssPreventerDefender</class>
+       </defender>
+   </defenders>
+ 
+    <!-- default defender 선언, 별다른 defender 선언이 없으면 default defender를 사용해 필터링 한다. -->
+    <default>
+        <defender>xssPreventerDefender</defender>
+    </default>
+
+	<!-- global 필터링 룰 선언 -->
+	<global>
+		<!-- 모든 url에서 들어오는 noXss_로 시작하는 파라메터는 필터링 되지 않는다.  -->
+		<params>
+			<param name="noXss" usePrefix="true" useDefender="false" />
+		</params>
+	</global>
+    
+    <!-- url 별 필터링 룰 선언 -->
+    <url-rule-set>
+
+        <!-- 브랜드 관리 -->
+        <url-rule>
+           <url>/goods/brandMgmt.saveBrand.do</url>
+           <params>
+                <param name="BrandMgmtRequest" useDefender="false" />
+            </params>
+        </url-rule>
+        <!--// 브랜드 관리 -->
+
+        <!-- 상품Q&A답변 템플릿관리 -->
+        <url-rule>
+            <url>/goods/GoodsQATemplateMgmt.goodsQATemplateSaveView.do</url>
+            <params>
+                <param name="ansTmpl" useDefender="false" usePrefix="true"/>
+            </params>
+        </url-rule>
+        <!--// 상품Q&A답변 템플릿관리 -->
+
+        <!-- 상품Q&A관리 -->
+        <url-rule>
+            <url>/goods/GoodsQAMgmt.saveGoodsAnswer.do</url>
+            <params>
+                <param name="ansCont" useDefender="false"/>
+            </params>
+        </url-rule>
+        <url-rule>
+            <url>/goods/GoodsQAMgmt.transferGoodsQuestion.do</url>
+            <params>
+                <param name="mvotCaus" useDefender="false"/>
+            </params>
+        </url-rule>
+        <!--// 상품Q&A관리 -->
+
+        <!-- 리뷰관리 -->
+        <url-rule>
+            <url>/goods/ReviewMgmt.reviewReplyRegistView.do</url>
+            <params>
+                <param name="replyCont" useDefender="false"/>
+            </params>
+        </url-rule>
+        <url-rule>
+            <url>/goods/ReviewMgmt.registReviewReply.do</url>
+            <params>
+                <param name="replyCont" useDefender="false"/>
+            </params>
+        </url-rule>
+        <!--// 리뷰관리 -->
+
+        <!-- 임시 일반상품 등록 -->
+        <url-rule>
+            <url disable="true">/goods/TemporaryGeneralGoods.registTemporaryGeneralGoods.do</url>
+        </url-rule>
+        <!--// 임시 일반상품 등록 -->
+
+        <!-- 임시 일반상품 수정 -->
+        <url-rule>
+            <url disable="true">/goods/TemporaryGeneralGoods.modifyTemporaryGeneralGoods.do</url>
+        </url-rule>
+        <!--// 임시 일반상품 수정 -->
+
+        <!-- 임시 묶음상품 등록/수정 -->
+        <url-rule>
+            <url disable="true">/goods/TemporaryPackageGoods.saveTemporaryPackageGoods.do</url>
+        </url-rule>
+        <!--// 묶음상품 등록/수정 -->
+
+        <!-- 일반상품 수정 -->
+        <url-rule>
+            <url disable="true">/goods/GoodsCommon.modifyGeneralGoods.do</url>
+        </url-rule>
+        <!--// 일반상품 수정 -->
+
+        <!-- 묶음상품 수정 -->
+        <url-rule>
+            <url disable="true">/goods/GoodsCommon.modifyPackageGoods.do</url>
+        </url-rule>
+        <!--// 묶음상품 수정 -->
+
+        <!-- 상품승인관리 -->
+        <url-rule>
+            <url>/goods/GoodsApprovalMgmt.returnGoods.do</url>
+            <params>
+                <param name="retnCaus" useDefender="false"/>
+            </params>
+        </url-rule>
+        <!--// 상품승인관리 -->
+
+        <!-- 전시관리 > 사이트관리 > 약관&이용안내 관리 -->
+        <url-rule>
+            <url>/display/termsConditionsMgmt.saveTermsConditionsMgmt.do</url>
+            <params>
+                <param name="wrdCont" useDefender="false"/>
+            </params>
+        </url-rule>
+        <!--//  전시관리 > 사이트관리 > 약관&이용안내 관리 -->
+
+        <!-- 전시관리 > 사이트관리 > 푸터관리 -->
+        <url-rule>
+            <url>/display/footerMgmt.saveFooterMgmtFotrCont.do</url>
+            <params>
+                <param name="fotrCont" useDefender="false"/>
+            </params>
+        </url-rule>
+        <!--//  전시관리 > 사이트관리 > 푸터관리 -->
+
+       <url-rule>
+           <url disable="true">/display/sitePopupMgmt.saveSitePopupMgmt.do</url>
+       </url-rule>
+       <url-rule>
+           <url disable="true">/display/displayCornerMgmt.saveDetailDisplayCornerMgmt.do</url>
+       </url-rule>
+       <url-rule>
+           <url disable="true">/system/customerNoticeMgmt.saveCustomerNotice.do</url>
+       </url-rule>
+       <url-rule>
+       	   <url disable="true">/system/faqMgmt.saveFaq.do</url>
+       </url-rule>
+       <url-rule>
+       	   <url disable="true">/system/systemNoticeMgmt.saveSystemNotice.do</url>
+       </url-rule>
+       <url-rule>
+       	   <url disable="true">/popup/goodsMgmtPopup.getGoodsList.do</url>
+       </url-rule>
+       <url-rule>
+       	   <url disable="true">/customerservice/integratedCounselMgmt.saveCounsel.do</url>
+       </url-rule>
+       <url-rule>
+       	   <url disable="true">/customerservice/integratedCounselMgmt.saveCustomerCompens.do</url>
+       </url-rule>
+       <url-rule>
+       	   <url disable="true">/customerservice/integratedCounselMgmt.saveCounselProcess.do</url>
+       </url-rule>
+       <url-rule>
+       	   <url disable="true">/customerservice/counselingTemplateMgmt.saveCounselingTemplateInfo.do</url>
+       </url-rule>
+       <url-rule>
+       	   <url disable="true">/customerservice/csTransferProcessing.saveCsTransferAnswerInfo.do</url>
+       </url-rule>
+       <url-rule>
+       	   <url disable="true">/customerservice/csTransferProcessing.saveCsTransferAnswerInfo.do</url>
+       </url-rule>
+       <url-rule>
+       	   <url disable="true">/customerservice/customerCompensMgmt.approveCustomerCompensMgmt.do</url>
+       </url-rule>
+    </url-rule-set>
+</config>

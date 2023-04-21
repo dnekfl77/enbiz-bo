@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.goods.PrGoodsBaseTrxMapper">
+
+    <update id="updateGoodsItmChangesDueToGoodsSaleStatus" parameterType="PrGoodsBase">
+        UPDATE PR_GOODS_BASE /* PrGoodsBaseTrx.updateGoodsItmChangesDueToGoodsSaleStatus */
+           SET SALE_STAT_CD = #{saleStatCd}
+             , SYS_MOD_ID   = #{sysModId}
+             , SYS_MOD_DTM  = now()
+         WHERE GOODS_NO = #{goodsNo}
+    </update>
+
+    <update id="updateSaleMethCd" parameterType="PrGoodsBase">
+        UPDATE PR_GOODS_BASE /* PrGoodsBaseTrx.updateSaleMethCd */
+           SET SALE_METH_CD = #{saleMethCd}
+             , SYS_MOD_ID   = #{sysModId}
+             , SYS_MOD_DTM  = now()
+         WHERE GOODS_NO = #{goodsNo}
+    </update>
+
+    <update id="updatePrGoodsBase" parameterType="PrGoodsBase">
+        UPDATE PR_GOODS_BASE    /* PrGoodsBaseTrx.updatePrGoodsBase */
+           SET GOODS_NM              = #{goodsNm}
+             , SHRT_GOODS_NM         = #{shrtGoodsNm}
+             , LGC_GOODS_NO          = #{lgcGoodsNo}
+             , BRAND_NO              = #{brandNo}
+             , MODL_NM               = #{modlNm}
+             , HOME_NM               = #{homeNm}
+             , MFCO_NM               = #{mfcoNm}
+             , INCOM_NM              = #{incomNm}
+             , SALEMN_NM             = #{salemnNm}
+             , SAFE_CERTI_TGT_YN     = #{safeCertiTgtYn}
+             , BUYR_AGE_LMT_CD       = #{buyrAgeLmtCd}
+             , DISP_YN               = #{dispYn}
+             , SALE_STAT_CD          = #{saleStatCd}
+             , SALE_END_DTM          = TO_TIMESTAMP(#{saleEndDtm}||' 23:59:59', 'YYYY-MM-DD HH24:MI:SS')
+             , STK_MGR_YN            = #{stkMgrYn}
+             , BUY_QTY_LMT_YN        = #{buyQtyLmtYn}
+             , MIN_LMT_QTY           = #{minLmtQty}
+             , MAX_LMT_QTY           = #{maxLmtQty}
+             , DELI_GOODS_GB_CD      = #{deliGoodsGbCd}
+             , DELI_DDAY             = #{deliDday}
+             , TDAY_SND_PSB_YN       = #{tdaySndPsbYn}
+             , WD_SND_PSB_TM         = #{wdSndPsbTm}
+             , SDAY_SND_PSB_YN       = #{sdaySndPsbYn}
+             , SDAY_SND_PSB_TM       = #{sdaySndPsbTm}
+             , ITM_SOUT_NOTI_YN      = #{itmSoutNotiYn}
+             , DELI_POLC_NO          = #{deliPolcNo}
+             , BDL_DELI_PSB_YN       = #{bdlDeliPsbYn}
+             , BDL_RTN_PSB_YN        = #{bdlRtnPsbYn}
+             , RTN_PSB_YN            = #{rtnPsbYn}
+             , EXCH_PSB_YN           = #{exchPsbYn}
+             , PRC_COMPA_EXP_YN      = #{prcCompaExpYn}
+             , SCH_PSB_YN            = #{schPsbYn}
+             , SCH_KWD_1_NM          = #{schKwd1Nm}
+             , SCH_KWD_2_NM          = #{schKwd2Nm}
+             , SCH_KWD_3_NM          = #{schKwd3Nm}
+             , SYS_MOD_ID            = #{sysModId}
+             , SYS_MOD_DTM           = now()
+        WHERE GOODS_NO = #{goodsNo}
+    </update>
+
+    <update id="updatePkgPrGoodsBase" parameterType="PrGoodsBase">
+        UPDATE PR_GOODS_BASE    /* PrGoodsBaseTrx.updatePkgPrGoodsBase */
+           SET GOODS_NM              = #{goodsNm}
+             , BRAND_NO              = #{brandNo}
+             , MODL_NM               = #{modlNm}
+             , HOME_NM               = #{homeNm}
+             , MFCO_NM               = #{mfcoNm}
+             , INCOM_NM              = #{incomNm}
+             , SALEMN_NM             = #{salemnNm}
+             , DISP_YN               = #{dispYn}
+             , SALE_STAT_CD          = #{saleStatCd}
+             , SALE_END_DTM          = TO_TIMESTAMP(#{saleEndDtm}||' 23:59:59', 'YYYY-MM-DD HH24:MI:SS')
+             , PRC_COMPA_EXP_YN      = #{prcCompaExpYn}
+             , SCH_PSB_YN            = #{schPsbYn}
+             , SCH_KWD_1_NM          = #{schKwd1Nm}
+             , SCH_KWD_2_NM          = #{schKwd2Nm}
+             , SCH_KWD_3_NM          = #{schKwd3Nm}
+             , PKG_GOODS_PRIO_RNK_CD = #{pkgGoodsPrioRnkCd}
+             , SYS_MOD_ID            = #{sysModId}
+             , SYS_MOD_DTM           = now()
+         WHERE GOODS_NO = #{goodsNo}
+    </update>
+</mapper>

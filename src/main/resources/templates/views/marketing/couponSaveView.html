@@ -1,0 +1,618 @@
+<!--
+* 프로그램명 : 쿠폰 등록
+* 작 성 일 : 2021.02.24
+* 작 성 자 : 윤성원
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 쿠폰 등록 팝업
+* 이    력 :
+-->
+<html lang="ko-KR"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/page-realgrid-layout}">
+
+<body>
+<th:block layout:fragment="page-contents">
+<div class="win-popup page-root">
+    <div class="page-fixed">
+        <div class="search-cont">
+         <div class="header">
+                <h1 class="title"><th:block th:text="${couponData} == null or ${couponData} == '' ?
+                   ${#messages.msg('couponMgmt.info.title.add')} : ${#messages.msg('couponMgmt.info.title.mod')} "/>
+</h1>
+              </div>
+        <!-- tab-area -->
+        <div class="tabs-areas">
+            <ul class="tabs">
+                <li id="li-tab1" class="active">
+	                <a href="javascript:void(0);">
+	                <th:block th:text="${#messages.msg('couponMgmt.info.title.infoTitle')}"/>
+	                </a>
+                </li>
+                <li id="li-tab2" th:if="${couponData} != null">
+	                <a href="javascript:void(0);">
+	                <th:block th:text="${#messages.msg('couponMgmt.info.title.userTitle')}"/>
+	                </a>
+                </li>
+            </ul>
+
+            <div class="tabs-body">
+                <!--쿠폰기본정보 -->
+                    <div class="tab-conts" id="tab-cont1">
+                        <form id="coupon-form">
+                        <!--기본정보 Form -->
+                        <div class="data-cont">
+                            <div class="data">
+                                <div class="data-head">
+                                    <div class="left"><span class="title">
+                                    <th:block th:text="${#messages.msg('couponMgmt.info.label.basicInfo')}"/></span>
+                                    </div>
+                                </div>
+                                <!-- //data-head -->
+
+                                <div class="data-body">
+                                    <table class="data-table fixed">
+                                        <colgroup>
+                                            <col width="120">
+                                            <col>
+                                            <col width="120">
+                                            <col>
+                                        </colgroup>
+                                        <tbody>
+                                        <tr>
+                                            <td class="label"><strong><th:block th:text="${#messages.msg('couponMgmt.info.label.couponNoAndNm')}"/></strong></td>
+                                            <td colspan="3">
+                                                <input type="text" name="promoNo" class="input disabled w10" id="coupon-no" disabled="disabled"
+                                                    th:value=" ${couponData} == null ? '' : ${couponData.promoNo}">
+                                                <input type="text" name="promoNm" class="input" id="coupon-name"
+                                                    th:value=" ${couponData} == null ? '' : ${couponData.promoNm}">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="label"><strong><th:block th:text="${#messages.msg('couponMgmt.info.label.couponType')}"/></strong></td>
+                                            <td>
+                                                <select class="form-control" id="form-select-coupon-type" name="promoTypCd">
+                                                    <option value="" th:text="${#messages.msg('adminCommon.select')}"></option>
+                                                    <option th:if="${couponData} == null and ${list?.ref1Val}==10" th:each="list : ${codeList.MK002}" th:value="${list?.cd}" th:utext="${list?.cdNm}"></option>
+                                                    <option th:if="${couponData} != null and ${list?.ref1Val}==10" th:each="list : ${codeList.MK002}" th:value="${list?.cd}" th:utext="${list?.cdNm}"
+                                                            th:selected="${couponData.promoTypCd} == ${list?.cd}" ></option>
+                                                </select>
+                                            </td>
+                                            <td class="label"><strong><th:block th:text="${#messages.msg('couponMgmt.info.label.couponStatus')}"/></strong></td>
+                                            <td>
+                                                <select class="form-control" id="form-select-coupon-status" name="promoStatCd">
+                                                    <option th:if="${couponData} == null" th:each="list : ${codeList.MK003}" th:value="${list?.cd}" th:utext="${list?.cdNm}"></option>
+                                                    <option th:unless="${couponData} == null" th:each="list : ${codeList.MK003}" th:value="${list?.cd}" th:utext="${list?.cdNm}"
+                                                            th:selected="${couponData.promoStatCd} == ${list?.cd}" ></option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="label"><strong><th:block th:text="${#messages.msg('couponMgmt.info.label.period')}"/></strong></td>
+                                            <td colspan="3">
+                                                <div class="input-group">
+                                                    <div class="picker-group time" data-lopicker="basic" id="input-2-1">
+                                                        <input type="text" class="form-control disabled" id="disp-start-date" placeholder="" disabled="disabled"
+                                                               th:value=" ${couponData} == null ? '' : ${couponData.promoStrDtm}">
+                                                        <span class="input-group-addon">~</span>
+                                                        <input type="text" class="form-control disabled"  id="disp-end-date" placeholder="" disabled="disabled"
+                                                               th:value=" ${couponData} == null ? '' : ${couponData.promoEndDtm}">
+                                                        <span class="input-group-addon" id="display-calendar"><i class="icon-calendar"></i></span>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="label"><strong><th:block th:text="${#messages.msg('couponMgmt.info.label.explain')}"/></strong></td>
+                                            <td colspan="3">
+                                                <input type="text" class="input w100" id="input-promo-desc" name="promoDesc" th:value=" ${couponData} == null ? '' : ${couponData.promoDesc}">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="label"><th:block th:text="${#messages.msg('adminCommon.label.sys.reg.id')}"/></td>
+                                            <td>
+                                                <th:block th:text=" ${couponData} == null ? '' : ${couponData.sysRegId}"></th:block>
+                                            </td>
+                                            <td class="label"><th:block th:text="${#messages.msg('adminCommon.label.sys.reg.date')}"/></td>
+                                            <td>
+                                                <th:block th:text=" ${couponData} == null ? '' : ${couponData.sysRegDtm}"></th:block>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="label"><th:block th:text="${#messages.msg('adminCommon.label.sys.mod.id')}"/></td>
+                                            <td>
+                                                <th:block th:text=" ${couponData} == null ? '' : ${couponData.sysModId}"></th:block>
+                                            </td>
+                                            <td class="label"><th:block th:text="${#messages.msg('adminCommon.label.sys.mod.date')}"/></td>
+                                            <td>
+                                                <th:block th:text="${couponData} == null ? '' : ${couponData.sysModDtm}"></th:block>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <!-- //data-body -->
+                            </div>
+                        </div>
+                        <!--  기본정보 Form End -->
+                        <!-- 쿠폰혜택 Form Start -->
+                        <div class="data-cont">
+                            <div class="data">
+                                <div class="data-head">
+                                    <div class="left"><span class="title"><th:block th:text="${#messages.msg('couponMgmt.info.label.couponBenefits')}"/></span>
+                                    </div>
+                                </div>
+                                <!-- //data-head -->
+
+                                <div class="data-body">
+                                    <table class="data-table fixed">
+                                        <colgroup>
+                                            <col width="120">
+                                            <col>
+                                            <col width="120">
+                                            <col>
+                                        </colgroup>
+                                        <tbody>
+                                        <tr>
+                                            <td class="label"><strong><th:block th:text="${#messages.msg('couponMgmt.info.label.issuSubCd')}"/></strong></td>
+                                            <td>
+                                                <select name="issuSubCd" class="form-control" id="select-form-issusubcd">
+                                                    <option value="" th:text="${#messages.msg('adminCommon.select')}"></option>
+                                                    <option th:if="${couponData} == null" th:each="list : ${codeList.MK006}" th:value="${list?.cd}" th:utext="${list?.cdNm}"></option>
+                                                    <option th:unless="${couponData} == null" th:each="list : ${codeList.MK006}" th:value="${list?.cd}" th:utext="${list?.cdNm}"
+                                                            th:selected="${couponData.issuSubCd} == ${list?.cd}" ></option>
+                                                </select>
+                                            </td>
+                                            <td class="label"><strong><th:block th:text="${#messages.msg('couponMgmt.info.label.issuanceRestrict')}"/></strong></td>
+                                            <td>
+                                                <div class="input-group">
+                                                    <label class="radio-inline"><input type="radio" name="benefitRestrict" value="Y"
+                                                                                       th:checked="${couponData} == null ? true : ${couponData.issuLmtYn}=='Y'"></label>
+                                                    <input type="text" class="input w20" id="issu-restrict-count" numberOnly
+                                                           th:value=" ${couponData} == null ? '' : ${couponData.issuQty}"><em>회</em>
+                                                    <label class="radio-inline"><input type="radio" name="benefitRestrict" value="N"
+                                                                                       th:checked="${couponData} == null ? false : ${couponData.issuLmtYn}=='N'">무제한</label>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="label"><strong><th:block th:text="${#messages.msg('couponMgmt.info.label.applyMedia')}"/></strong></td>
+                                            <td>
+                                                <div class="checkbox">
+                                                    <label class="checkbox-inline">
+                                                        <input type="checkbox" name="apply-media-all" value="all" class="js-not-checkall"
+                                                               data-target-name="apply-media-all">전체
+                                                    </label>
+                                                    <label>
+                                                        <input class="checkbox-inline" type="checkbox" name="apply-media" value="01"
+                                                               th:text="${#messages.msg('couponMgmt.info.label.applyMedia.pc')}">
+                                                    </label>
+                                                    <label>
+                                                        <input class="checkbox-inline" type="checkbox" name="apply-media" value="02"
+                                                               th:text="${#messages.msg('couponMgmt.info.label.applyMedia.mobile')}">
+                                                    </label>
+                                                    <label>
+                                                        <input class="checkbox-inline" type="checkbox" name="apply-media" value="03"
+                                                               th:text="${#messages.msg('couponMgmt.info.label.applyMedia.bo')}">
+                                                    </label>
+                                                </div>
+                                            </td>
+                                            <td class="label"><strong><th:block th:text="${#messages.msg('couponMgmt.info.label.applyUser')}"/></strong></td>
+                                            <td>
+                                                <div class="input-group">
+                                                    <select class="form-control" id="apply-user" name="mbrGradeCd">
+                                                        <option th:if="${couponData} == null" th:each="list : ${mbrGradeList.ME024}" th:value="${list?.cd}" th:utext="${list?.cdNm}"></option>
+                                                        <option th:unless="${couponData} == null" th:each="list : ${mbrGradeList.ME024}" th:value="${list?.cd}" th:utext="${list?.cdNm}"
+                                                                th:selected="${couponData.mbrGradeCd} == ${list?.cd}" ></option>
+                                                    </select>
+                                                    <label class="ml5">
+                                                        <input class="checkbox-inline" type="checkbox" id="apply-user-checkbox" value="" th:text="${#messages.msg('couponMgmt.info.label.upUser')}">
+                                                    </label>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="label"><strong><th:block th:text="${#messages.msg('couponMgmt.info.label.issuMethCd')}"/></strong></td>
+                                            <td colspan="3">
+                                                    <select class="form-control" id="select-form-issumethcd" name="issuMethCd">
+                                                        <option th:each="list : ${codeList.MK007}" th:value="${list?.cd}" th:utext="${list?.cdNm}"></option>
+                                                    </select>
+                                                    <div class="input-group" id="condition-issued" style="display:none">
+                                                        <em>· 발급유형</em>
+                                                        <select class="form-control" id="benefit-autoissu-typcd" name="autoIssuTypCd">
+                                                            <option th:each="list : ${codeList.MK008}" th:value="${list?.cd}" th:utext="${list?.cdNm}"></option>
+                                                        </select><em>· 발급 시점</em>
+                                                        <select class="form-control" id="benefit-autoissu-potmcd" name="autoIssuPotmCd">
+                                                            <option th:each="list : ${codeList.MK009}" th:value="${list?.cd}" th:utext="${list?.cdNm}"></option>
+                                                        </select>
+                                                        <input type="text" class="input w10" id="condition-issued-days" name="anvyBeIssuDaynub" numberOnly><em>일</em>
+                                                    </div>
+                                                    <div class="input-group" id="user-issued" style="display:none">
+                                                        <em>· 쿠폰북전시여부</em>
+                                                        <select class="form-control" id="cpbook-disp-yn" name="cpbookDispYn">
+                                                            <option value="Y" th:text="${#messages.msg('adminCommon.use') }"></option>
+                                                            <option value="N" th:text="${#messages.msg('adminCommon.disuse')}"></option>
+                                                        </select><em>· 할인쿠폰북코드</em>
+                                                        <select class="form-control" id="benefit-issue-methcd" name="dcCpbookCd">
+                                                            <option th:each="list : ${codeList.MK010}" th:value="${list?.cd}" th:utext="${list?.cdNm}"></option>
+                                                        </select>
+                                                    </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="label"><strong><th:block th:text="${#messages.msg('couponMgmt.info.label.validPeriod')}"/></strong></td>
+                                            <td colspan="3">
+                                                <div class="input-group">
+                                                    <label class="radio-inline  mr5"><input type="radio" name="benefit-period" value="Y" checked="checked">발급일로부터</label>
+                                                    <input type="text" class="input w10 mr10" id="from-period" numberOnly>
+                                                    <label class="radio-inline"><input type="radio" name="benefit-period" value="N">일자지정</label>
+                                                    <div class="picker-group" data-lopicker="basic" id="input-2-1">
+                                                        <input type="text" class="form-control coupon-calendar-start disabled" id="use-start-date" placeholder="" disabled="disabled">
+                                                        <span class="input-group-addon">~</span>
+                                                        <input type="text" class="form-control coupon-calendar-end disabled"  id="use-end-date" placeholder="" disabled="disabled">
+                                                        <span class="input-group-addon" id="use-period-calendar"><i class="icon-calendar"></i></span>
+                                                    </div>
+                                                    <span class="checkbox ml20">
+                                                        <label class="checkbox-inline mr5">
+                                                            <input type="checkbox" name="days-all" value="all" class="js-not-checkall"
+                                                                   data-target-name="days-all"> 모든요일
+                                                        </label>
+                                                        <label>
+                                                            <input class="checkbox-inline" type="checkbox" name="apply-day" value="1">월</label>
+                                                        <label>
+                                                            <input class="checkbox-inline" type="checkbox" name="apply-day" value="2">화</label>
+                                                        <label>
+                                                            <input class="checkbox-inline" type="checkbox" name="apply-day" value="3">수</label>
+                                                        <label>
+                                                            <input class="checkbox-inline" type="checkbox" name="apply-day" value="4">목</label>
+                                                        <label>
+                                                            <input class="checkbox-inline" type="checkbox" name="apply-day" value="5">금</label>
+                                                        <label>
+                                                            <input class="checkbox-inline" type="checkbox" name="apply-day" value="6">토</label>
+                                                        <label>
+                                                            <input class="checkbox-inline" type="checkbox" name="apply-day" value="0">일</label>
+                                                    </span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="label"><th:block th:text="${#messages.msg('couponMgmt.info.label.useTime')}"/></td>
+                                            <td colspan="3">
+                                                <div class="input-group">
+                                                    <label>
+                                                    <input class="checkbox-inline" type="checkbox" name="" value="" id="time-coupon">타임쿠폰</label>
+                                                    <th:block th:with="time=${T(com.enbiz.bo.base.util.BindingUtil).selectTimeUtil()}">
+                                                        <select class="form-control" name="time-coupon-hm" id="use-start-hours" disabled="disabled">
+                                                            <option th:each="list : ${time[0]}" th:value="${list}" th:utext="${list}"></option>
+                                                        </select><em>시</em>
+                                                        <select class="form-control" name="time-coupon-hm" id="use-start-minute" disabled="disabled">
+                                                            <option th:each="list : ${time[1]}" th:value="${list}" th:utext="${list}"></option>
+                                                        </select><em>분 ~ </em>
+                                                        <select class="form-control" name="time-coupon-hm" id="use-end-hours" disabled="disabled">
+                                                            <option th:each="list : ${time[0]}" th:value="${list}" th:utext="${list}" th:selected="${list}=='23'"></option>
+                                                        </select><em>시</em>
+                                                        <select class="form-control" name="time-coupon-hm" id="use-end-minute" disabled="disabled">
+                                                            <option th:each="list : ${time[1]}" th:value="${list}" th:utext="${list}" th:selected="${list}=='59'"></option>
+                                                        </select><em>분</em>
+                                                    </th:block>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="label"><strong><th:block th:text="${#messages.msg('couponMgmt.info.label.discountType')}"/></strong></td>
+                                            <td colspan="3">
+                                                <div class="input-group">
+                                                    <label class="radio-inline">
+                                                        <input type="radio" name="discount-amt-rate" value="01" checked="checked" th:text="${#messages.msg('couponMgmt.info.label.discountAmt')}">
+                                                    </label>
+                                                    <label class="radio-inline">
+                                                        <input type="radio" name="discount-amt-rate" value="02" th:text="${#messages.msg('couponMgmt.info.label.discountRate')}">
+                                                    </label>
+                                                    <input type="text" name="dcRateAmt" value="" class="price input w15" id="discount-amtandrate" numberOnly><em>(원/%)</em><em class="ml40">· 최소구매금액</em>
+                                                    <input type="text" name="minBuyAmt" value="" class="price input w15" id="discount-minbuyAmt" numberOnly><em>· 최대할인금액</em>
+                                                    <input type="text" name="maxDcAmt" value="" class="price input w15" id="discount-maxdcamt" numberOnly>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <!-- //data-body -->
+                            </div>
+                        </div>
+                        </form>
+                        <!--  쿠폰혜택 Form End -->
+                        <!--  적용대상 Form Start -->
+                        <div class="data-cont" id="apply-target-form">
+                            <div class="data">
+                                <div class="data-head">
+                                    <div class="left"><span class="title"><th:block th:text="${#messages.msg('couponMgmt.info.label.applyTarget')}"/></span>
+                                    </div>
+                                    <div class="right">
+                                        <a href="#" class="button inside" id="apply-clear-all"><span class="text" th:text="${#messages.msg('couponMgmt.info.btn.allInit')}"></span></a>
+                                    </div>
+                                </div>
+                                <!-- //data-head -->
+
+                                <div class="data-body">
+                                    <table class="data-table">
+                                        <colgroup>
+                                            <col width="120">
+                                            <col>
+                                            <col width="120">
+                                            <col>
+                                            <col width="120">
+                                            <col>
+                                        </colgroup>
+                                        <tbody>
+                                        <tr>
+                                            <td class="label"><th:block th:text="${#messages.msg('couponMgmt.info.label.site')}"/></td>
+                                            <td colspan="5">
+                                                <div class="quick-search">
+                                                    <ul id="apply-site-ul">
+                                                    </ul>
+                                                    <div class="add">
+                                                        <a href="#" class="button inside target-init"><span class="text" th:text="${#messages.msg('adminCommon.button.init')}"></span></a>
+                                                        <a href="#" class="button inside" id="apply-site"><span class="text" th:text="${#messages.msg('adminCommon.button.add')}"></span></a>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="label"><th:block th:text="${#messages.msg('couponMgmt.info.label.goods')}"/></td>
+                                            <td colspan="5">
+                                                <div class="quick-search">
+                                                    <ul id="apply-goods-ul">
+                                                    </ul>
+                                                    <div class="add">
+                                                        <a href="#" class="button inside target-init"><span class="text" th:text="${#messages.msg('adminCommon.button.init')}"></span></a>
+                                                        <a href="#" class="button inside" id="apply-goods"><span class="text" th:text="${#messages.msg('adminCommon.button.add')}"></span></a>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="label"><th:block th:text="${#messages.msg('couponMgmt.info.label.stdGoods')}"/></td>
+                                            <td colspan="5">
+                                                <div class="quick-search">
+                                                    <ul id="apply-stdgoods-ul">
+                                                    </ul>
+                                                    <div class="add">
+                                                        <a href="#" class="button inside target-init"><span class="text" th:text="${#messages.msg('adminCommon.button.init')}"></span></a>
+                                                        <a href="#" class="button inside" id="apply-stdGoods"><span class="text" th:text="${#messages.msg('adminCommon.button.add')}"></span></a>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="label"><th:block th:text="${#messages.msg('couponMgmt.info.label.category')}"/></td>
+                                            <td colspan="5">
+                                                <div class="quick-search">
+                                                    <ul id="apply-category-ul">
+                                                    </ul>
+                                                    <div class="add">
+                                                        <a href="#" class="button inside target-init"><span class="text" th:text="${#messages.msg('adminCommon.button.init')}"></span></a>
+                                                        <a href="#" class="button inside" id="apply-category"><span class="text" th:text="${#messages.msg('adminCommon.button.add')}"></span></a>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="label"><th:block th:text="${#messages.msg('couponMgmt.info.label.brand')}"/></td>
+                                            <td colspan="5">
+                                                <div class="quick-search">
+                                                    <ul id="apply-brand-ul">
+                                                    </ul>
+                                                    <div class="add">
+                                                        <a href="#" class="button inside target-init"><span class="text" th:text="${#messages.msg('adminCommon.button.init')}"></span></a>
+                                                        <a href="#" class="button inside" id="apply-brand"><span class="text" th:text="${#messages.msg('adminCommon.button.add')}"></span></a>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="label"><th:block th:text="${#messages.msg('couponMgmt.info.label.entr')}"/></td>
+                                            <td colspan="5">
+                                                <div class="quick-search">
+                                                    <ul id="apply-entr-ul">
+                                                    </ul>
+                                                    <div class="add">
+                                                        <a href="#" class="button inside target-init"><span class="text" th:text="${#messages.msg('adminCommon.button.init')}"></span></a>
+                                                        <a href="#" class="button inside" id="apply-entr"><span class="text" th:text="${#messages.msg('adminCommon.button.add')}"></span></a>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="label"><th:block th:text="${#messages.msg('couponMgmt.info.label.channel')}"/></td>
+                                            <td colspan="5">
+                                                <div class="quick-search">
+                                                    <ul id="apply-channel-ul">
+                                                    </ul>
+                                                    <div class="add">
+                                                        <a href="#" class="button inside target-init"><span class="text" th:text="${#messages.msg('adminCommon.button.init')}"></span></a>
+                                                        <a href="#" class="button inside" id="apply-channel"><span class="text" th:text="${#messages.msg('adminCommon.button.add')}"></span></a>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <!-- //data-body -->
+                            </div>
+                        </div>
+                        <!-- 적용대상 Form End -->
+                        <!-- 제외대상 Form Start -->
+                        <div class="data-cont" id="except-target-form">
+                            <div class="data">
+                                <div class="data-head">
+                                    <div class="left"><span class="title"><th:block th:text="${#messages.msg('couponMgmt.info.label.exceptTarget')}"/></span>
+                                    </div>
+                                </div>
+                                <!-- //data-head -->
+
+                                <div class="data-body">
+                                    <table class="data-table">
+                                        <colgroup>
+                                            <col width="120">
+                                            <col>
+                                            <col width="120">
+                                            <col>
+                                            <col width="120">
+                                            <col>
+                                        </colgroup>
+                                        <tbody>
+                                        <tr>
+                                            <td class="label"><th:block th:text="${#messages.msg('couponMgmt.info.label.goods')}"/></td>
+                                            <td colspan="5">
+                                                <div class="quick-search">
+                                                    <ul id="except-goods-ul">
+                                                    </ul>
+                                                    <div class="add">
+                                                        <a href="#" class="button inside target-init"><span class="text" th:text="${#messages.msg('adminCommon.button.init')}"></span></a>
+                                                        <a href="#" class="button inside" id="except-goods"><span class="text" th:text="${#messages.msg('adminCommon.button.add')}"></span></a>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="label"><th:block th:text="${#messages.msg('couponMgmt.info.label.stdGoods')}"/></td>
+                                            <td colspan="5">
+                                                <div class="quick-search">
+                                                    <ul id="except-stdGoods-ul">
+                                                    </ul>
+                                                    <div class="add">
+                                                        <a href="#" class="button inside target-init"><span class="text" th:text="${#messages.msg('adminCommon.button.init')}"></span></a>
+                                                        <a href="#" class="button inside" id="except-stdGoods"><span class="text" th:text="${#messages.msg('adminCommon.button.add')}"></span></a>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <!-- //data-body -->
+                            </div>
+                        </div>
+                        <!--  제외대상 Form End -->
+                        <div class="button-group search-btn">
+                            <a th:if="${couponData} != null" href="#" class="button" id="coupon-manage-delete"><span class="text" th:text="${#messages.msg('adminCommon.button.delete')}"></span></a>
+                            <a href="#" class="button" id="coupon-manage-close"><span class="text" th:text="${#messages.msg('adminCommon.button.cancel')}"></span></a>
+                            <a href="#" class="button" id="coupon-manage-save"><span class="text" th:text="${#messages.msg('adminCommon.button.save')}"></span></a>
+                        </div>
+                        </form>
+                    </div>
+                    <!--  쿠폰 회원 등록              -->
+<!--                    <div class="tab-cont" th:if="${couponData} != null">-->
+                    <div class="tab-conts" id="tab-cont2">
+                        <div class="search-cont">
+                            <!-- 조회테이블 -->
+                            <div class="search">
+                                <form name="cpnMbrGridForm" id="cpnMbrGridForm">
+                                    <table class="search-table">
+                                        <colgroup>
+                                            <col width="15%">
+                                            <col width="35%">
+                                            <col width="15%">
+                                            <col width="35%">
+                                        </colgroup>
+                                        <tbody>
+                                        <tr>
+                                            <td class="label" th:text="${#messages.msg('couponMgmt.info.label.applyId')}" />
+                                            <td>
+                                                <div class="input-group">
+                                                    <input type="text" class="input disabled w30" id="input-mbr-id" readonly>
+                                                    <input type="text" class="input disabled" id="input-mbr-nm" readonly>
+                                                    <input type="hidden" id="input-mbr-no" name="mbrNo" value="">
+                                                    <a href="javascript:;" class="button small" id="btn-mbr-search"><i class="icon-sarch"></i></a>
+                                                    <a href="javascript:;" class="button small" id="btn-mbr-reset"><i class="icon-clear"></i></a>
+                                                </div>
+                                            </td>
+                                            <td class="label" th:text="${#messages.msg('adminCommon.use.yn')}" />
+                                            <td>
+                                                <select class="form-control" id="useYn" name="useYn">
+                                                    <option value="" th:text="${#messages.msg('adminCommon.entirety')}"></option>
+                                                    <option value="Y" th:text="${#messages.msg('adminCommon.use')}"></option>
+                                                    <option value="N" th:text="${#messages.msg('adminCommon.disuse')}"></option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </form>
+                            </div>
+                            <!-- //조회테이블 -->
+                            <!-- 검색버튼 -->
+                            <div class="button-group search-btn">
+                                <a href="#" class="btn_gblue button white" id="btn_init">
+                                    <span class="text" th:text="${#messages.msg('adminCommon.button.init')}" />
+                                </a>
+                                <a href="#" class="btn_blue button dark" id="btn_list">
+                                    <span class="text" th:text="${#messages.msg('adminCommon.button.search')}" />
+                                </a>
+                            </div>
+                            <!-- //검색버튼 -->
+                            <!-- 리얼그리드 -->
+                            <div class="grid-cont">
+                                <div class="grid" style="overflow: hidden;">
+                                    <div class="grid-head">
+                                        <div class="title-area">
+                                            <h2 class="title" th:text="${#messages.msg('couponMgmt.info.label.issuedList')}" />
+                                        </div>
+                                        <div class="option-area">
+                                            <div class="edit-option">
+                                                <div class="button-group">
+                                                    <a href="#" class="button inside" id="btn_grid_excel">
+                                                        <span class="text" th:text="${#messages.msg('adminCommon.button.add.many')}" />
+                                                    </a>
+                                                    <a href="#" class="button inside" id="btn_grid_add">
+                                                        <span class="text" th:text="${#messages.msg('couponMgmt.info.label.mbrAdd')}" />
+                                                    </a>
+                                                    <a href="#" class="button inside" id="btn_grid_save">
+                                                        <span class="text" th:text="${#messages.msg('adminCommon.button.save')}" />
+                                                    </a>
+                                                    <input type="file" id="input-coupon-excel" name="input-coupon-excel" style="display: none;">
+                                                </div>
+                                            </div>
+
+                                            <div class="page-option" grid-id="cpnMbrGrid" />
+                                        </div>
+                                    </div>
+                                    <div class="grid-body">
+                                        <div id="cpnMbrGrid" realgrid ></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- //리얼그리드 -->
+                        </div>
+                    </div>
+            </div>
+        </div>
+        <!-- //tab-area -->
+    </div>
+    </div>
+</th:block>
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        var coupon = [[${couponData}]];
+    </script>
+
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'marketing/cpnMbrGrid.eventHandler.js?202104290005'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'marketing/cpnMbrGrid.provider.js?202104290001'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'marketing/coupon.eventHandler.js?202104290009'" ></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            couponDetail.init();
+            if(coupon!=null){
+                cpnMbrGrid.eventhandler.init();
+            }
+            $("#tab-cont2").hide();
+        });
+    </script>
+</th:block>
+</body>
+</html>

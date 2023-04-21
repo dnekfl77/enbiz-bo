@@ -1,0 +1,152 @@
+<!--
+* 프로그램명 : 가맹점관리
+* 작 성 일 : 2021.07.13
+* 작 성 자 : 권다솜
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 결제관리 > 결제수단관리 > 가맹점관리
+* 이    력 :
+-->
+<html lang="ko-KR"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/page-realgrid-layout}">
+
+<head>
+    <title>sub title</title>
+</head>
+<body>
+<th:block layout:fragment="page-title-area">
+    <div class="page-title">
+        <div class="left">
+            <h1><th:block th:text="${#messages.msg('methodsOfPaymentManagement.franchiseeManagement.title')}"/></h1>
+        </div>
+    </div>
+</th:block>
+<th:block layout:fragment="page-contents">
+    <div class="page-fixed with-title">
+        <div class="search-cont">
+            <!-- 조회테이블 -->
+            <div class="search">
+                <form name="franchiseeGridForm" id="franchiseeGridForm">
+                <table class="search-table">
+                    <colgroup>
+                        <col width="120">
+                        <col>
+                        <col width="120">
+                        <col>
+                        <col width="120">
+                        <col>
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <td class="label" th:text="${#messages.msg('methodsOfPaymentManagement.franchiseeManagement.label.mersNo')}" />
+                        <td>
+                            <input class="input w40" type="text" name="mersNo" id="mersNo" maxlength="20" onKeyup="number(this)"/>
+                        </td>
+                        <td class="label" th:text="${#messages.msg('methodsOfPaymentManagement.franchiseeManagement.label.acqrCd')}" />
+                        <td>
+                            <select class="form-control w40" id="acqrCd" name="acqrCd">
+                                <option value="" th:text="${#messages.msg('baseInfoMgmt.label.full')}"></option>
+                                <option th:each="list : ${codeList.OM028}" th:value="${list.cd}" th:text="${list.cdNm}"></option>
+                            </select>
+                        </td>
+                        <td class="label" th:text="${#messages.msg('methodsOfPaymentManagement.franchiseeManagement.label.aplySiteGbCd')}" />
+                        <td>
+                            <select class="form-control w40" id="aplySiteGbCd" name="aplySiteGbCd">
+                                <option value="" th:text="${#messages.msg('baseInfoMgmt.label.full')}"></option>
+                                <option th:each="list : ${codeList.OM036}" th:value="${list.cd}" th:text="${list.cdNm}"></option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label" th:text="${#messages.msg('methodsOfPaymentManagement.franchiseeManagement.label.nintUseYn')}" />
+                        <td>
+                            <select class="form-control w40" id="nintUseYn" name="nintUseYn">
+                                <option value="" th:text="${#messages.msg('baseInfoMgmt.label.full')}"></option>
+                                <option value="Y" th:text="${#messages.msg('methodsOfPaymentManagement.label.useYn_Y')}"></option>
+                                <option value="N" th:text="${#messages.msg('methodsOfPaymentManagement.label.useYn_N')}"></option>
+                            </select>
+                        </td>
+                        <td class="label" th:text="${#messages.msg('methodsOfPaymentManagement.franchiseeManagement.label.pointUseYn')}" />
+                        <td>
+                            <select class="form-control w40" id="pointUseYn" name="pointUseYn">
+                                <option value="" th:text="${#messages.msg('baseInfoMgmt.label.full')}"></option>
+                                <option value="Y" th:text="${#messages.msg('methodsOfPaymentManagement.label.useYn_Y')}"></option>
+                                <option value="N" th:text="${#messages.msg('methodsOfPaymentManagement.label.useYn_N')}"></option>
+                            </select>
+                        </td>
+                        <td class="label" th:text="${#messages.msg('methodsOfPaymentManagement.franchiseeManagement.label.useYn')}" />
+                        <td>
+                            <select class="form-control w40" id="useYn" name="useYn">
+                                <option value="" th:text="${#messages.msg('baseInfoMgmt.label.full')}"></option>
+                                <option value="Y" th:text="${#messages.msg('methodsOfPaymentManagement.label.useYn_Y')}"></option>
+                                <option value="N" th:text="${#messages.msg('methodsOfPaymentManagement.label.useYn_N')}"></option>
+                            </select>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                </form>
+            </div>
+            <!-- //조회테이블 -->
+            <!-- 검색버튼 -->
+            <div class="button-group search-btn">
+                <a href="#" class="btn_gblue button white" id="btn_init">
+                    <span class="text" th:text="${#messages.msg('baseInfoMgmt.label.initialization')}" />
+                </a>
+                <a href="#" class="btn_blue button dark" id="btn_list">
+                    <span class="text" th:text="${#messages.msg('baseInfoMgmt.label.list')}" />
+                </a>
+            </div>
+            <!-- //검색버튼 -->
+            <!-- 리얼그리드 -->
+            <div class="grid-cont">
+                <div class="grid" style="overflow: hidden;">
+                    <div class="grid-head">
+                        <div class="title-area">
+                            <h2 class="title" th:text="${#messages.msg('methodsOfPaymentManagement.franchiseeManagement.franchiseeGrid.title')}" />
+                        </div>
+                        <div class="option-area">
+                            <div class="edit-option">
+                                <div class="button-group">
+                                    <a href="#" class="button inside" id="btn_grid_insert">
+                                        <span class="text" th:text="${#messages.msg('methodsOfPaymentManagement.label.franchiseeInsert')}" />
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="page-option" grid-id="franchiseeGrid" />
+                        </div>
+                    </div>
+                    <div class="grid-body with-head">
+                        <div id="franchiseeGrid" realgrid></div>
+                    </div>
+                </div>
+            </div>
+            <!-- //리얼그리드 -->
+        </div>
+    </div>
+</th:block>
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        var msg = x2coMessage.getMessage( {
+              gridNoSelected: 'franchiseeMgmt.message.gridNoSelected'
+            , gridInit: 'franchiseeMgmt.message.gridInit'
+
+            ,messageNotCheckedData : 'adminCommon.grid.alert.no.selected.row'
+            ,noSearchedDataMsg : 'adminCommon.grid.alert.no.searched.data'
+        });
+    </script>
+
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'payment/franchiseeGrid.eventHandler.js?202107130001'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'payment/franchiseeGrid.provider.js?202107130001'" ></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            franchiseeGrid.eventhandler.init();
+        });
+    </script>
+</th:block>
+
+</body>
+</html>

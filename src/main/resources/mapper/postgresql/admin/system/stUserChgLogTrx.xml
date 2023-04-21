@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.system.StUserChgLogTrxMapper">
+
+    <insert id="saveStUserChgLog" parameterType="stUserChgLog">
+        <selectKey keyProperty="histSeq" resultType="long" order="BEFORE">
+            SELECT COALESCE(MAX(HIST_SEQ) + 1, 1)
+            FROM ST_USER_CHG_LOG
+            WHERE USER_ID = #{userId}
+        </selectKey>
+        INSERT INTO ST_USER_CHG_LOG ( /*StUserChgLogTrxMapper.saveStUserChgLog*/
+            USER_ID
+            , HIST_SEQ
+            , SESS_ID
+            , USER_IP_ADDR
+            , CHG_TGT_TP_CD
+            , CHG_CONT
+            , SYS_REG_ID
+            , SYS_REG_DTM
+        )
+        VALUES (
+            #{userId}
+            , #{histSeq}
+            , #{sessId}
+            , #{userIpAddr}
+            , #{chgTgtTpCd}
+            , #{chgCont}
+            , #{sysRegId}
+            , NOW()
+        )
+    </insert>
+
+</mapper>

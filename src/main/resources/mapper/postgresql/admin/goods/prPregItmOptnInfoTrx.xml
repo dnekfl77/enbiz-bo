@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enbiz.bo.app.repository.goods.PrPregItmOptnInfoTrxMapper">
+
+    <insert id="insertPregItmOptnInfo" parameterType="PrPregItmOptnInfo">
+        INSERT INTO PR_PREG_ITM_OPTN_INFO ( /* prPregItmOptnInfoTrx.insertPregItmOptnInfo */
+               PREG_GOODS_NO
+             , OPTN_CAT_NO
+             , OPTN_NO
+             , OPTN_CAT_NM
+             , OPTN_NM
+             , SYS_REG_ID
+             , SYS_REG_DTM
+             , SYS_MOD_ID
+             , SYS_MOD_DTM
+        ) VALUES (
+               #{pregGoodsNo}
+             , #{optnCatNo}
+             , #{optnNo}
+             , #{optnCatNm}
+             , #{optnNm}
+             , #{sysRegId}
+             , now()
+             , #{sysRegId}
+             , now()
+        )
+    </insert>
+
+    <insert id="applyPregItmOptnInfo" parameterType="PrPregGoodsBase">
+        INSERT INTO PR_ITM_OPTN_INFO( /* prPregItmOptnInfoTrx.applyPregItmOptnInfo */
+               GOODS_NO
+             , OPTN_CAT_NO
+             , OPTN_NO
+             , OPTN_CAT_NM
+             , OPTN_NM
+             , SYS_REG_ID
+             , SYS_REG_DTM
+             , SYS_MOD_ID
+             , SYS_MOD_DTM
+        )
+        SELECT #{goodsNo}
+             , OPTN_CAT_NO
+             , OPTN_NO
+             , OPTN_CAT_NM
+             , OPTN_NM
+             , #{sysRegId}
+             , now()
+             , #{sysRegId}
+             , now()
+          FROM PR_PREG_ITM_OPTN_INFO
+         WHERE PREG_GOODS_NO = #{pregGoodsNo}
+    </insert>
+
+    <delete id="deletePregItmOptnInfo" parameterType="java.lang.String">
+        DELETE /* prPregItmOptnInfoTrx.deletePregItmOptnInfo */
+          FROM PR_PREG_ITM_OPTN_INFO
+         WHERE PREG_GOODS_NO = #{pregGoodsNo}
+    </delete>
+
+</mapper>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ko-KR"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <title>enbiz Solution</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+
+    <!--css-->
+    <link type="text/css" rel="stylesheet" th:href="${@domainConfig.getProperty('cssUrl')} + 'reset.css?202102260000'">
+    <link type="text/css" rel="stylesheet" th:href="${@domainConfig.getProperty('cssUrl')} + 'layout.css?202102260000'">
+    <link type="text/css" rel="stylesheet" th:href="${@domainConfig.getProperty('cssUrl')} + 'common.css?202103080003'">
+    <link type="text/css" rel="stylesheet" th:href="${@domainConfig.getProperty('cssUrl')} + 'main.css?20210804000'">
+    <!--//css-->
+
+    <!--js libs-->
+    <script th:src="${@domainConfig.getProperty('jsUrl')} + 'libs/jquery/jquery-3.4.1.min.js?202102260000'"></script>
+    <script th:src="${@domainConfig.getProperty('jsUrl')} + 'contents.js?202108111500'"></script>
+    <!--//js libs-->
+
+    <!--js dev-->
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'common/common.js?202108131241'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'common/ajax.js?202102260000'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'common/util.js?202102260000'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'common/main.js?202102260000'"></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'common/form.js?202102260000'"></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'common/validate.js?202102260000'"></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'common/cookie.js?202102260000'"></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'common/message.js?202102260001'"></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'common/popup.js?202108121250'"></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'common/text.js?202103080001'"></script>
+    <!--//js dev-->
+
+    <!--js current page-->
+    <!--//js current page-->
+    <style>
+	  .win-popup.account {
+		border: 1px;
+		border-style: solid;
+	  }
+	</style>
+</head>
+<body>
+
+</body>
+</html>

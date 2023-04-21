@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.vendor.EtDeliPolcBaseMapper">
+
+    <sql id="paginatedBase">
+        LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+    </sql>
+
+    <select id="getEtDeliPolcBaseList" parameterType="string" resultType="etDeliPolcBase">
+        SELECT /* etDeliPolcBase.getEtDeliPolcBaseList */
+               DELI_POLC_NO
+             , ENTR_NO
+             , DLEX_TYP_CD
+             , STD_AMT
+             , DLEX_AMT
+             , FERRY_RGN_DLEX_AMT
+             , JEJU_DLEX
+             , JEJU_FERRY_RGN_DLEX_AMT
+             , RTN_AMT
+             , USE_YN
+             , SYS_REG_ID
+             , SYS_REG_DTM
+             , SYS_MOD_ID
+             , SYS_MOD_DTM
+          FROM ET_DELI_POLC_BASE
+         WHERE ENTR_NO = #{entrNo}
+    </select>
+
+    <select id="getEntrDeliveryPolicyList" parameterType="java.lang.String" resultType="DeliveryPolicyResponse">
+        SELECT /* etDeliPolcBase.getEntrDeliveryPolicyList */
+            CASE DLEX_TYP_CD
+               WHEN '10' THEN '배송비 무료 / 반품비 '|| CASE WHEN RTN_AMT > 0 THEN RTN_AMT::VARCHAR||'원' ELSE ' 무료' END
+               WHEN '20' THEN                   '배송비 '||DLEX_AMT::VARCHAR||'원 / 반품비 '||RTN_AMT::VARCHAR||'원'
+               WHEN '30' THEN STD_AMT::VARCHAR||'원미만 '||DLEX_AMT::VARCHAR||'원 / 반품비 '||RTN_AMT::VARCHAR||'원'
+        END AS DISP_DLEX_AMT, A.DELI_POLC_NO
+          FROM ET_DELI_POLC_BASE A
+         WHERE 1 = 1
+           AND ENTR_NO = #{entrNo}
+        AND USE_YN  = 'Y'
+        ORDER BY SYS_REG_DTM DESC
+    </select>
+</mapper>
+
+

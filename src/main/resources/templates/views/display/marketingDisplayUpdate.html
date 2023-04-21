@@ -1,0 +1,383 @@
+<!--
+* 프로그램명 : 기획전 등록/수정
+* 작 성 일 : 2021.04.26
+* 작 성 자 : 권다솜
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 기획전 관리 > 기획전 관리 > 기획전 등록/수정
+* 이    력 :
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-update-layout}">
+<body>
+
+<th:block layout:fragment="header-area">
+    <div class="header">
+        <h1 class="title" th:if="${requestData.argInsertUpdate} == 'I'"
+            th:text="${#messages.msg('marketingDisplayManagement.marketingDisplayPopup.insertTitle')}"></h1>
+        <h1 class="title" th:if="${requestData.argInsertUpdate} == 'U'"
+            th:text="${#messages.msg('marketingDisplayManagement.marketingDisplayPopup.updateTitle')}"></h1>
+        <div class="button-group">
+            <a href="#" class="button" id="mobilePreView"><span class="text" th:text="${#messages.msg('marketingDisplayManagement.btn.mobilePreView')}"></span></a>
+            <a href="#" class="button" id="pcPreView"><span class="text" th:text="${#messages.msg('marketingDisplayManagement.btn.pcPreView')}"></span></a>
+        </div>
+    </div>
+</th:block>
+
+<th:block layout:fragment="data-area">
+        <!-- tabs-area -->
+        <div class="tabs-area">
+            <ul class="tabs">
+                <li class="active">
+                    <a href="javascript:void(0);" th:text="${#messages.msg('marketingDisplayManagement.marketingDisplayPopup.tab1')}"></a>
+                </li>
+                <li>
+                    <a href="javascript:void(0);" th:text="${#messages.msg('marketingDisplayManagement.marketingDisplayPopup.tab2')}"></a>
+                </li>
+            </ul>
+            <!-- tabs-body -->
+            <div class="tabs-body">
+                <!-- tab-cont -->
+                <div class="tab-cont">
+
+                    <form name="marketingDisplayForm" id="marketingDisplayForm">
+                        <div class="data-cont">
+                        <div class="data">
+                            <div class="data-body">
+                                <table class="data-table">
+                                    <colgroup>
+                                        <col width="120">
+                                        <col>
+                                        <col width="120">
+                                        <col width="260">
+                                    </colgroup>
+                                    <tbody>
+                                    <tr>
+                                        <td class="label" th:text="${#messages.msg('marketingDisplayManagement.marketingDisplayPopup.mkdpNo')}"></td>
+                                        <td>
+                                            <input type="hidden" th:id="mkdpNo" th:name="mkdpNo"/>
+                                            <sapn class="text" id="marketingDisplayNo"></sapn>
+                                        </td>
+                                        <td class="label"><strong th:text="${#messages.msg('marketingDisplayManagement.marketingDisplayPopup.siteNo')}"></strong></td>
+                                        <td>
+                                            <select class="form-control w80" id="siteNo" name="siteNo">
+                                                <option value="" th:text="${#messages.msg('baseInfoMgmt.label.select')}"></option>
+                                                <option th:each="list : ${siteList}" th:value="${list.siteNo}" th:text="${list.siteNm}"></option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="label"><strong th:text="${#messages.msg('marketingDisplayManagement.marketingDisplayPopup.mkdpTypCd')}"></strong></td>
+                                        <td>
+                                            <select class="form-control w60" id="mkdpTypCd" name="mkdpTypCd">
+                                                <option value="" th:text="${#messages.msg('baseInfoMgmt.label.full')}"></option>
+                                                <option th:each="list : ${codeList.DP008}" th:value="${list.cd}" th:text="${list.cdNm}"></option>
+                                            </select>
+                                        </td>
+                                        <td class="label"><strong th:text="${#messages.msg('marketingDisplayManagement.marketingDisplayPopup.mkdpNm')}"></strong></td>
+                                        <td>
+                                            <input type="text" class="input w100" th:id="mkdpNm" th:name="mkdpNm" maxlength="300">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="label" th:text="${#messages.msg('marketingDisplayManagement.marketingDisplayPopup.MdNm')}"></td>
+                                        <td>
+                                            <input class="input disabled w60" type="text" th:id="mdNm" th:readonly="true"/>
+                                            <input type="hidden" th:id="mdId" th:name="mdId"/>
+                                            <a href="#" class="button small" id="btn_call_md_popup"><i class="icon-sarch"></i></a>
+                                            <a href="#" class="button small" id="btn_reset_md_popup"><i class="icon-clear"></i></a>
+                                        </td>
+                                        <td class="label"><strong th:text="${#messages.msg('marketingDisplayManagement.marketingDisplayPopup.dispSeq')}"></strong></td>
+                                        <td>
+                                            <input type="text" class="input w40" th:id="dispSeq" th:name="dispSeq" onKeyup="number(this)" maxlength="5">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="label"><strong th:text="${#messages.msg('marketingDisplayManagement.marketingDisplayPopup.listCount')}"></strong></td>
+                                        <td>
+                                            <input type="text" class="input w60" th:id="mkdpListPrtCnt" th:name="mkdpListPrtCnt" onKeyup="number(this)" maxlength="10">
+                                        </td>
+                                        <td class="label"><strong th:text="${#messages.msg('marketingDisplayManagement.marketingDisplayPopup.dispYn')}"></strong></td>
+                                        <td>
+                                            <div class="input-group">
+                                                <label class="radio-inline" th:for="dispYn_Y">
+                                                    <input type="radio" name="dispYn" th:value="Y" th:id="dispYn_Y">
+                                                    <span th:text="${#messages.msg('marketingDisplayManagement.label.disp')}"></span>
+                                                </label>
+                                                <label class="radio-inline" th:for="dispYn_N">
+                                                    <input type="radio" name="dispYn" th:value="N" th:id="dispYn_N">
+                                                    <span th:text="${#messages.msg('marketingDisplayManagement.label.disdisp')}"></span>
+                                                </label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="label"><strong th:text="${#messages.msg('marketingDisplayManagement.marketingDisplayPopup.template')}"></strong></td>
+                                        <td colspan="3">
+                                            <div class="input-group w100">
+                                                <input class="input disabled w30" type="text" th:id="tmplNm" th:readonly="true"/>
+                                                <input class="input disabled w60" type="text" th:id="tmplPathNm" th:readonly="true"/>
+                                                <input type="hidden" th:id="tmplNo" th:name="tmplNo"/>
+                                                <a href="#" class="button small" th:id="btn_call_tmpl_popup"><i class="icon-sarch"></i></a>
+                                                <a href="#" class="button small" th:id="btn_reset_tmpl_popup"><i class="icon-clear"></i></a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="label" th:text="${#messages.msg('marketingDisplayManagement.marketingDisplayPopup.keyWord')}"></td>
+                                        <td colspan="3">
+                                            <div class="input-group w100">
+                                                <input type="text" class="input w30" th:id="kwd1Nm" th:name="kwd1Nm" maxlength="300">
+                                                <input type="text" class="input w30" th:id="kwd2Nm" th:name="kwd2Nm" maxlength="300">
+                                                <input type="text" class="input w30" th:id="kwd3Nm" th:name="kwd3Nm" maxlength="300">
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="label"><strong th:text="${#messages.msg('marketingDisplayManagement.marketingDisplayPopup.dispDate')}"></strong></td>
+                                        <td colspan="3">
+                                            <div class="input-group">
+                                                <div class="picker-group" data-lopicker="basic" id="picker-group-1">
+                                                    <input type="text" class="input disabled" name="startDate" id="startDate" disabled>
+                                                    <span class="input-group-addon"><i class="icon-calendar" id="calendarButton1"></i></span>
+                                                </div>
+                                                <select class="form-control" id="startHour" name="startHour">
+                                                    <option th:each="num,numStat : ${#numbers.sequence(0,23)}"
+                                                            th:value="${#numbers.formatInteger(numStat.index,2)}"
+                                                            th:text="${#numbers.formatInteger(numStat.index,2)}"></option>
+                                                </select>
+                                                <em> : </em>
+                                                <select class="form-control" id="startMinute" name="startMinute">
+                                                    <option th:each="num,numStat : ${#numbers.sequence(0,59)}"
+                                                            th:value="${#numbers.formatInteger(numStat.index,2)}"
+                                                            th:text="${#numbers.formatInteger(numStat.index,2)}"></option>
+                                                </select>
+                                                <input class="input" type="hidden" name="dispStrDtm" id="dispStrDtm"/>
+                                                <em> ~ </em>
+
+                                                <div class="picker-group" data-lopicker="basic">
+                                                    <input type="text" class="input disabled" name="endDate" id="endDate" disabled>
+                                                    <span class="input-group-addon"><i class="icon-calendar" id="calendarButton2"></i></span>
+                                                </div>
+                                                <select class="form-control" id="endHour" name="endHour">
+                                                    <option th:each="num,numStat : ${#numbers.sequence(0,23)}"
+                                                            th:value="${#numbers.formatInteger(numStat.index,2)}"
+                                                            th:text="${#numbers.formatInteger(numStat.index,2)}"></option>
+                                                </select>
+                                                <em> : </em>
+                                                <select class="form-control" id="endMinute" name="endMinute">
+                                                    <option th:each="num,numStat : ${#numbers.sequence(0,59)}"
+                                                            th:value="${#numbers.formatInteger(numStat.index,2)}"
+                                                            th:text="${#numbers.formatInteger(numStat.index,2)}"></option>
+                                                </select>
+                                                <input class="input" type="hidden" name="dispEndDtm" id="dispEndDtm"/>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="label" th:text="${#messages.msg('marketingDisplayManagement.marketingDisplayPopup.sysModId')}"></td>
+                                        <td><sapn class="text" name="sysRegId" id="sysModId"></sapn></td>
+                                        <td class="label" th:text="${#messages.msg('marketingDisplayManagement.marketingDisplayPopup.sysModDtm')}"></td>
+                                        <td><sapn class="text" name="sysModDtm" id="sysModDtm"></sapn></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="label" th:text="${#messages.msg('marketingDisplayManagement.marketingDisplayPopup.PcBanner')}"></td>
+                                        <td colspan="2">
+
+                                            <div class="image-upload">
+                                                <div class="input-group file-upload file-first ml10">
+                                                    <input type="text" class="input disabled imageFileName" name="image1" readonly>
+                                                    <a href="#" class="button small gray btn_image_upload"><span class="text" th:text="${#messages.msg('marketingDisplayManagement.btn.selectFile')}"></span></a>
+                                                    <a href="#" class="button small gray btn_image_clear"><span class="text" th:text="${#messages.msg('marketingDisplayManagement.btn.removeFile')}"></span></a>
+                                                    <input type="file" style="display:none" name="files" class="imageFile" id="imageFile1"/>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="center">
+                                                <a class="original_s" target="_blank">
+                                                 <div id="imgFile1"></div>
+                                                 <div class="born">
+                                                    <div id="imgFile1"></div>
+                                                    </div>
+                                                 </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="label" th:text="${#messages.msg('marketingDisplayManagement.marketingDisplayPopup.MobileBanner')}"></td>
+                                        <td colspan="2">
+                                            <div class="image-upload">
+                                                <div class="input-group file-upload file-first ml10">
+                                                    <input type="text" class="input disabled imageFileName" name="image2" readonly>
+                                                    <a href="#" class="button small gray btn_image_upload"><span class="text" th:text="${#messages.msg('marketingDisplayManagement.btn.selectFile')}"></span></a>
+                                                    <a href="#" class="button small gray btn_image_clear"><span class="text" th:text="${#messages.msg('marketingDisplayManagement.btn.removeFile')}"></span></a>
+                                                    <input type="file" style="display:none" name="files" class="imageFile" id="imageFile2"/>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="center">
+                                            <a class="original_s" target="_blank">
+                                                <div id="imgFile2"></div>
+                                                <div class="born">
+                                                   <div id="imgFile2"></div>
+                                                   </div>
+                                                </a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="label" th:text="${#messages.msg('marketingDisplayManagement.marketingDisplayPopup.titleHtml')}"></td>
+                                        <td colspan="3">
+                                            <textarea id="mkdpTtlHtml" name="mkdpTtlHtml" style="display:none; width: 100%; height: 200px;"></textarea>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    </form>
+
+                    <div class="button-group search-btn">
+                        <a href="#" class="button" id="btn_popup_cancel">
+                            <span class="text" th:text="${#messages.msg('marketingDisplayManagement.btn.cancel')}"></span>
+                        </a>
+                        <a href="#" class="button large" id="btn_popup_save">
+                            <span class="text" th:text="${#messages.msg('marketingDisplayManagement.btn.save')}"></span>
+                        </a>
+                    </div>
+                </div>
+                <!-- tab-cont -->
+
+                <!-- tab-cont -->
+                <div class="tab-cont">
+
+                    <div class="grid-cont">
+                        <div class="grid">
+                            <div class="grid-head">
+                                <div class="title-area">
+                                    <h2 class="title" th:text="${#messages.msg('marketingDisplayManagement.marketingDisplayPopup.gridTitle1')}"></h2>
+                                </div>
+                                <div class="option-area">
+                                    <div class="edit-option">
+                                        <div class="button-group">
+                                            <a href="#" class="button inside" id="btn_mkdpDivGrid_add">
+                                                <span class="text" th:text="${#messages.msg('marketingDisplayManagement.btn.add')}" />
+                                            </a>
+                                            <a href="#" class="button inside" id="btn_mkdpDivGrid_remove">
+                                                <span class="text" th:text="${#messages.msg('marketingDisplayManagement.btn.remove')}" />
+                                            </a>
+                                            <a href="#" class="button inside" id="btn_mkdpDivGrid_reset">
+                                                <span class="text" th:text="${#messages.msg('marketingDisplayManagement.btn.reset')}" />
+                                            </a>
+                                            <a href="#" class="button inside" id="btn_mkdpDivGrid_save">
+                                                <span class="text" th:text="${#messages.msg('marketingDisplayManagement.btn.save')}" />
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="page-option">
+                                        <span class="total">총 <span id="mkdpDivGrid_totalCount">0</span> 건</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="grid-body with-head">
+                                <div id="mkdpDivGrid" realgrid></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid-cont">
+                        <div class="grid">
+                            <div class="grid-head">
+                                <input type="hidden" id="mkdpGoodsGrid_divobjNo" name="mkdpGoodsGrid_divobjNo">
+                                <div class="title-area">
+                                    <h2 class="title" th:text="${#messages.msg('marketingDisplayManagement.marketingDisplayPopup.gridTitle2')}"></h2>
+                                </div>
+                                <div class="option-area">
+                                    <div class="edit-option">
+                                        <div class="button-group">
+                                            <a href="#" class="button inside" id="btn_mkdpGoodsGrid_insert">
+                                                <span class="text" th:text="${#messages.msg('marketingDisplayManagement.btn.insertGoods')}" />
+                                            </a>
+                                            <a href="#" class="button inside" id="btn_mkdpGoodsGrid_remove">
+                                                <span class="text" th:text="${#messages.msg('marketingDisplayManagement.btn.remove')}" />
+                                            </a>
+                                            <a href="#" class="button inside" id="btn_mkdpGoodsGrid_reset">
+                                                <span class="text" th:text="${#messages.msg('marketingDisplayManagement.btn.reset')}" />
+                                            </a>
+                                            <a href="#" class="button inside" id="btn_mkdpGoodsGrid_save">
+                                                <span class="text" th:text="${#messages.msg('marketingDisplayManagement.btn.save')}" />
+                                            </a>
+                                        </div>
+                                        <span class="text">총 상품 수 : <span id="goodsTotalCount">0</span></span>
+                                        <span class="text">품절 상품 수 :  <span id="goodsSoldOutCount">0</span></span>
+                                    </div>
+                                    <div class="page-option">
+                                        <span class="total">총 <span id="mkdpGoodsGrid_totalCount">0</span> 건</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="grid-body with-head">
+                                <div id="mkdpGoodsGrid" realgrid></div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- tab-cont -->
+
+            </div>
+            <!-- tabs-body -->
+        </div>
+        <!-- tabs-area -->
+</th:block>
+
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        var req                         = [[${requestData}]];
+        var reqImg                      = [[${ImgRequestData}]];
+        var maxUploadSizeImgFile        = [[${maxUploadSizeImgFile}]];
+
+        // 구분자 그리드 내 selectBox 옵션 셋팅 (템플릿)
+        var tmplList = [[${tmplList}]];
+        var tmplCode = [];
+        var tmplCdValues = [];
+        if(tmplList != null){
+            for(const item of tmplList){
+                tmplCode.push(item.cd);
+                tmplCdValues.push(item.cdNm);
+            }
+        }
+
+        var msg = x2coMessage.getMessage( {
+             fileLength : 'marketingDisplayManagement.message.fileLength'
+            , fileLimitSize : 'marketingDisplayManagement.message.fileLimitSize'
+            , fileTypeError : 'marketingDisplayManagement.message.fileTypeError'
+            , cancelMessage : 'marketingDisplayManagement.message.cancelMessage'
+            , dataCheck1 : 'marketingDisplayManagement.message.dataCheck1'
+            , dataCheck3 : 'marketingDisplayManagement.message.dataCheck3'
+            , necessaryCheckMessage : 'marketingDisplayManagement.message.necessaryCheckMessage'
+            , successfully : 'adminCommon.message.saved.successfully'
+            , removeRowValidMessage : 'marketingDisplayManagement.message.removeRowValidMessage'
+            , checkDispSeq : 'marketingDisplayManagement.message.checkDispSeq'
+            , gridNoSelected : 'marketingDisplayManagement.message.gridNoSelected'
+            , gridSave : 'marketingDisplayManagement.message.gridSave'
+            , gridInit : 'marketingDisplayManagement.message.gridInit'
+        });
+    </script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/display.marketingDisplayManagement.mkdpDivGrid.eventHandler.js?202105040002'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/display.marketingDisplayManagement.mkdpDivGrid.provider.js?202105040002'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/display.marketingDisplayManagement.mkdpGoodsGrid.eventHandler.js?202105040001'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/display.marketingDisplayManagement.mkdpGoodsGrid.provider.js?202105040001'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/display.marketingDisplayManagement.marketingDisplayPopup.eventHandler.js?202104270002'" ></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            marketingDisplayPopup.eventhandler.init();
+        });
+    </script>
+</th:block>
+
+</body>
+</html>

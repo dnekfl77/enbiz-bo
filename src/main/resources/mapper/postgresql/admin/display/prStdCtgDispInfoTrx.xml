@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.display.PrStdCtgDispInfoTrxMapper">
+
+	<insert id="insertPrStdCtgDispInfo" parameterType="prStdCtgDispInfo">
+		/* prStdCtgDispInfoTrx.insertPrStdCtgDispInfo */
+		INSERT INTO PR_STD_CTG_DISP_INFO (
+			STD_CTG_NO
+			, DISP_CTG_NO
+			, REP_CTG_YN
+			, USE_YN
+			, SYS_REG_ID
+			, SYS_REG_DTM
+			, SYS_MOD_ID
+			, SYS_MOD_DTM
+		) VALUES(
+				#{stdCtgNo}
+				, #{dispCtgNo}
+				, #{repCtgYn}
+				, #{useYn}
+				, #{sysRegId}
+				, NOW()
+				, #{sysRegId}
+				, NOW()
+			)
+	</insert>
+
+	<update id="updatePrStdCtgDispInfo" parameterType="prStdCtgDispInfo">
+		/* prStdCtgDispInfoTrx.updatePrStdCtgDispInfo */
+		UPDATE PR_STD_CTG_DISP_INFO
+		SET
+			   	  REP_CTG_YN	  = #{repCtgYn}
+				, USE_YN		  = #{useYn}
+				, SYS_MOD_ID	  = #{sysModId}
+				, SYS_MOD_DTM	 = NOW()
+		WHERE 	  STD_CTG_NO = #{stdCtgNo}
+		AND 	  DISP_CTG_NO = #{dispCtgNo}
+	</update>
+
+	<delete id="deletePrStdCtgDispInfo" parameterType="prStdCtgDispInfo">
+		/* prStdCtgDispInfoTrx.deletePrStdCtgDispInfo */
+		DELETE FROM PR_STD_CTG_DISP_INFO
+		WHERE  	STD_CTG_NO = #{stdCtgNo}
+		AND 	DISP_CTG_NO = #{dispCtgNo}
+	</delete>
+
+	<insert id="insertPrStdCtgDispInfoFromGoods" parameterType="PrStdCtgDispInfo">
+		INSERT INTO PR_STD_CTG_DISP_INFO ( /* prStdCtgDispInfoTrx.insertPrStdCtgDispInfoFromGoods */
+			   STD_CTG_NO
+			 , DISP_CTG_NO
+			 , REP_CTG_YN
+			 , USE_YN
+			 , SYS_REG_ID
+			 , SYS_REG_DTM
+			 , SYS_MOD_ID
+			 , SYS_MOD_DTM
+		) VALUES (
+			  #{stdCtgNo}
+			, #{dispCtgNo}
+			, #{repCtgYn}
+			, #{useYn}
+			, #{sysRegId}
+			, NOW()
+			, #{sysRegId}
+			, NOW()
+		)
+	</insert>
+
+	<update id="updatePrStdCtgDispInfoFromGoods" parameterType="PrStdCtgDispInfo">
+		UPDATE PR_STD_CTG_DISP_INFO /* prStdCtgDispInfoTrx.updatePrStdCtgDispInfoFromGoods */
+		   SET REP_CTG_YN = #{repCtgYn}
+		     , SYS_MOD_ID = #{sysModId}
+		     , SYS_MOD_DTM = NOW()
+		 WHERE STD_CTG_NO = #{stdCtgNo}
+		   AND DISP_CTG_NO = #{dispCtgNo}
+	</update>
+
+	<delete id="deletePrStdCtgDispInfoFromGoods" parameterType="PrStdCtgDispInfo">
+		DELETE  /* prStdCtgDispInfoTrx.deletePrStdCtgDispInfoFromGoods */
+		  FROM PR_STD_CTG_DISP_INFO
+		 WHERE STD_CTG_NO = #{stdCtgNo}
+		   AND DISP_CTG_NO = #{dispCtgNo}
+	</delete>
+</mapper>

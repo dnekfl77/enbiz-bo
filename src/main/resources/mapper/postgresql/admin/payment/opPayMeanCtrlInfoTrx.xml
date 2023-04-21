@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.payment.OpPayMeanCtrlInfoTrxMapper">
+
+	<insert id="opPayMeanCtrlInfoInsert" parameterType="opPayMeanCtrlInfo">
+		<selectKey keyProperty="payMeanCtrlNo" resultType="String" order="BEFORE">
+			SELECT NEXTVAL('OP_PAY_MEAN_CTRL_INFO_SQ01') AS payMeanCtrlNo
+		</selectKey>
+		INSERT INTO OP_PAY_MEAN_CTRL_INFO (  /* opPayMeanCtrlInfoTrx.opPayMeanCtrlInfoInsert */
+				  PAY_MEAN_CTRL_NO
+				, USE_LMT_STR_DTM
+				, USE_LMT_END_DTM
+				, DVC_GB_CD
+				, USE_YN
+				, DISP_YN
+				, DISP_STR_DTM
+				, DISP_END_DTM
+				, TITLE
+				, CONT
+				, SYS_REG_ID
+				, SYS_REG_DTM
+				, SYS_MOD_ID
+				, SYS_MOD_DTM
+		) VALUES (
+				  #{payMeanCtrlNo}
+				, TO_TIMESTAMP(#{useLmtStrDtm}, 'YYYY-MM-DD HH24:MI:SS')
+				, TO_TIMESTAMP(#{useLmtEndDtm}, 'YYYY-MM-DD HH24:MI:SS')
+				, #{dvcGbCd}
+				, #{useYn}
+				, #{dispYn}
+				, TO_TIMESTAMP(#{dispStrDtm}, 'YYYY-MM-DD HH24:MI:SS')
+				, TO_TIMESTAMP(#{dispEndDtm}, 'YYYY-MM-DD HH24:MI:SS')
+				, #{title}
+				, #{cont}
+				, #{sysRegId}
+				, now()
+				, #{sysRegId}
+				, now()
+		)
+	</insert>
+
+	<update id="opPayMeanCtrlInfoUpdate" parameterType="opPayMeanCtrlInfo">
+		UPDATE    OP_PAY_MEAN_CTRL_INFO  /* opPayMeanCtrlInfoTrx.opPayMeanCtrlInfoUpdate */
+		SET
+				  USE_LMT_STR_DTM  = TO_TIMESTAMP(#{useLmtStrDtm}, 'YYYY-MM-DD HH24:MI:SS')
+				, USE_LMT_END_DTM  = TO_TIMESTAMP(#{useLmtEndDtm}, 'YYYY-MM-DD HH24:MI:SS')
+				, DVC_GB_CD        = #{dvcGbCd}
+				, USE_YN      	= #{useYn}
+				, DISP_YN      	= #{dispYn}
+				, DISP_STR_DTM  = TO_TIMESTAMP(#{dispStrDtm}, 'YYYY-MM-DD HH24:MI:SS')
+				, DISP_END_DTM  = TO_TIMESTAMP(#{dispEndDtm}, 'YYYY-MM-DD HH24:MI:SS')
+				, TITLE      	= #{title}
+				, CONT    		= #{cont}
+				, SYS_MOD_ID 	= #{sysModId}
+				, SYS_MOD_DTM 	= now()
+		WHERE     PAY_MEAN_CTRL_NO = #{payMeanCtrlNo}
+	</update>
+
+</mapper>
+
+

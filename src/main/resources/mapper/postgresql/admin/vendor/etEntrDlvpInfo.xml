@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.vendor.EtEntrDlvpInfoMapper">
+
+    <select id="getEtEntrDlvpInfoList" parameterType="string" resultType="CooperateDeliveryInfoResponse">
+        SELECT /* etEntrDlvpInfo.getEtEntrDlvpInfoList */
+               ENTR_DLVP_NO
+             , ENTR_NO
+             , DLVP_TYP_CD
+             , DLVP_NM
+             , USE_YN
+             , ZIP_NO_SEQ
+             , ZIP_NO
+             , ZIP_ADDR
+             , DTL_ADDR
+             , UTAKMN_NM
+             , AEMP_TEL_RGN_NO
+             , AEMP_TEL_TXNO_NO
+             , AEMP_TEL_END_NO
+             , CASE COALESCE(AEMP_TEL_RGN_NO,'') || COALESCE(AEMP_TEL_TXNO_NO, '') || COALESCE(AEMP_TEL_END_NO, '')
+               WHEN '' THEN ''
+               ELSE COALESCE(AEMP_TEL_RGN_NO,'') || COALESCE(AEMP_TEL_TXNO_NO, '') || COALESCE(AEMP_TEL_END_NO, '')
+               END AS AEMP_TEL_NO
+             , AEMP_CELL_SCT_NO
+             , AEMP_CELL_TXNO_NO
+             , AEMP_CELL_END_NO
+             , CASE COALESCE(AEMP_CELL_SCT_NO,'') || COALESCE(AEMP_CELL_TXNO_NO, '') || COALESCE(AEMP_CELL_END_NO, '')
+               WHEN '' THEN ''
+               ELSE COALESCE(AEMP_CELL_SCT_NO,'') || COALESCE(AEMP_CELL_TXNO_NO, '') || COALESCE(AEMP_CELL_END_NO, '')
+               END AS AEMP_CELL_NO
+             , SYS_REG_ID
+             , SYS_REG_DTM
+             , SYS_MOD_ID
+             , SYS_MOD_DTM
+          FROM ET_ENTR_DLVP_INFO
+         WHERE ENTR_NO = #{entrNo}
+    </select>
+
+</mapper>
+
+

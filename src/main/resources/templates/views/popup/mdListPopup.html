@@ -1,0 +1,91 @@
+<!--
+* 프로그램명 : MD 조회 팝업
+* 작 성 일 : 2021.02.22
+* 작 성 자 : 홍혜리
+* 수 정 자 : 홍혜리
+* 버    전 : 1.0
+* 개    요 : MD 조회 팝업
+* 이    력 : 2021.08.02 단일선택시 적용방식 수정
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-layout}">
+<body>
+    <!--Title Area-->
+    <th:block layout:fragment="popup-title-area">
+        <th:block layout:insert="~{fragments/popup/popup-title :: popup-title}"
+                  th:with="title=${#messages.msg('baseInfoMgmt.label.popup.mdlist.title')}"></th:block>
+    </th:block>
+    <!--Title Area-->
+
+    <!--Search Area-->
+    <th:block layout:fragment="popup-search-area">
+        <div class="search">
+            <form name="mdGridForm" id="mdGridForm">
+                <table class="search-table">
+                    <colgroup>
+                        <col style="width:20%;" />
+                        <col style="width:80%;" />
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <td class="label" th:text="${#messages.msg('baseInfoMgmt.label.popup.mdlist.search.mdNm')}"></td>
+                        <td><input type="text" class="input" name="userNm" id="userNm" maxlength="100"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </th:block>
+    <!--Search Area-->
+
+    <!--Search Button Area-->
+    <th:block layout:fragment="popup-search-button-area">
+        <th:block layout:insert="~{fragments/popup/popup-btn :: popup-search-btn}"/>
+    </th:block>
+    <!--Search Button Area-->
+
+    <!--List Area-->
+    <th:block layout:fragment="popup-List-area">
+        <div class="grid">
+            <div class="grid-head" style="overflow: hidden;">
+                <div class="title-area">
+                    <h2 class="title" th:text="${#messages.msg('baseInfoMgmt.label.popup.mdlist.grid.title')}"></h2>
+                </div>
+                <div class="option-area">
+                    <div class="page-option" grid-id="mdGrid">
+                        <span class='total'>총<span id='mdGrid-totalcount'>0</span>건</span>
+                    </div>
+                </div>
+            </div>
+            <div class="grid-body with-head">
+                <div class="rg-root rg-grid" id="mdGrid" realgrid></div>
+            </div>
+        </div>
+    </th:block>
+    <!--List Area-->
+
+    <!--List Button Area-->
+    <th:block layout:fragment="popup-List-button-area">
+        <th:block layout:insert="~{fragments/popup/popup-btn :: popup-List-btn}"/>
+    </th:block>
+
+    <!-- Additional Script -->
+    <th:block layout:fragment="add-script">
+        <script th:inline="javascript">
+            var _gridType       = [[${requestData.argSelectType}]]; // 필수값 (선택 구분 1/N)
+            var _argUseYn       = [[${requestData.argUseYn}]];      // 필수값 (사용 여부 Y/N)
+            var _argWorkStatCd  = [[${requestData.argWorkStatCd}]]; // 필수값 (근무 상태 코드)
+        </script>
+        <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'popup/popup.mdList.mdGrid.eventHandler.js?2021080201'" ></script>
+        <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'popup/popup.mdList.mdGrid.provider.js?202104260000'" ></script>
+
+        <script type="text/javascript">
+            $(function() {
+                 mdGrid.eventhandler.init();
+            });
+        </script>
+    </th:block>
+</body>
+</html>

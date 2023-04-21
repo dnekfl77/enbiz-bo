@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.customerservice.CsCustInqTypCdTrxMapper">
+    <insert id="insertInquiryType" parameterType="CsCustInqTypCd" useGeneratedKeys="false">
+        <selectKey keyProperty="custInqTypCd" resultType="String" order="BEFORE">
+            SELECT NEXTVAL('CS_CUST_INQ_TYP_CD_SQ01') AS custInqTypCd
+        </selectKey>
+        INSERT INTO CS_CUST_INQ_TYP_CD(/* CsCustInqTypCdMapper.insertInquiryType */
+                    CUST_INQ_TYP_CD
+                  , CUST_INQ_TYP_NM
+                  , SORT_SEQ
+                  , USE_YN
+                  , ORD_GOODS_MDTY_YN
+                  , ANS_SUB_CD
+                  , CNSL_TYP_NO
+                  , UPR_CUST_INQ_TYP_CD
+                  , SYS_REG_ID
+                  , SYS_REG_DTM
+                  , SYS_MOD_ID
+                  , SYS_MOD_DTM
+               )
+            VALUES(
+                    #{custInqTypCd}
+                  , #{custInqTypNm}
+                  , #{sortSeq}
+                  , #{useYn}
+                  , #{ordGoodsMdtyYn}
+                  , #{ansSubCd}
+                  , #{cnslTypNo}
+                  , #{uprCustInqTypCd}
+                  , #{sysRegId}
+                  , now()
+                  , #{sysModId}
+                  , now()
+            )
+    </insert>
+    <update id="updateInquiryType" parameterType="CsCustInqTypCd">
+        UPDATE CS_CUST_INQ_TYP_CD
+           SET /* CsCustInqTypCdMapper.updateInquiryType */
+               CUST_INQ_TYP_NM = #{custInqTypNm}
+             , SORT_SEQ = #{sortSeq}
+             , USE_YN = #{useYn}
+             , ORD_GOODS_MDTY_YN = #{ordGoodsMdtyYn}
+             , ANS_SUB_CD = #{ansSubCd}
+             , CNSL_TYP_NO = #{cnslTypNo}
+             , UPR_CUST_INQ_TYP_CD = #{uprCustInqTypCd}
+             , SYS_MOD_ID = #{sysModId}
+             , SYS_MOD_DTM = NOW()
+         WHERE CUST_INQ_TYP_CD = #{custInqTypCd}
+    </update>
+</mapper>

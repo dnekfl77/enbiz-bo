@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.payment.OpAplySiteMersInfoMapper">
+
+	<delete id="deleteOpAplySiteMersInfo" parameterType="java.lang.String">
+		DELETE FROM OP_APLY_SITE_MERS_INFO     /* OpAplySiteMersInfo.deleteOpAplySiteMersInfo */
+		WHERE MERS_NO = #{mersNo}
+	</delete>
+
+	<insert id="saveOpAplySiteMersInfo" parameterType="opAplySiteMersInfo">
+		INSERT INTO OP_APLY_SITE_MERS_INFO (    /* OpAplySiteMersInfo.saveOpAplySiteMersInfo */
+				  MERS_NO
+				, SITE_NO
+				, SYS_REG_ID
+				, SYS_REG_DTM
+				, SYS_MOD_ID
+				, SYS_MOD_DTM
+		) VALUES (
+				  #{mersNo}
+				, #{siteNo}
+				, #{sysRegId}
+				, now()
+				, #{sysRegId}
+				, now()
+		)
+	</insert>
+
+</mapper>
+
+

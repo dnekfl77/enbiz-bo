@@ -1,0 +1,235 @@
+<!--
+* 프로그램명 : 상품상세설명
+* 작 성 일 : 2021.04.01
+* 작 성 자 : 홍혜리
+* 수 정 자 : 홍혜리
+* 버    전 : 1.0
+* 개    요 : 상품상세설명
+* 이    력 : 2021.10.12 프레임워크 이전
+-->
+<!DOCTYPE html>
+<html lang="ko-KR"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<body>
+    <th:block layout:fragment="goods-detailInfo">
+        <div class="data">
+            <div class="data-head">
+                <div class="left">
+                    <span class="title" th:text="${#messages.msg('generalGoods.detailInfo.title')}"></span>
+                </div>
+                <div class="right">
+                  <span class="data-toggle">
+                    <button type="button" class="toggle-button"><span>닫힘</span></button>
+                  </span>
+                </div>
+            </div>
+            <div class="data-body">
+                <form id="detailInfo" name="detailInfo">
+                     <table class="data-table fixed">
+                        <colgroup>
+                            <col width="130">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                        <tr>
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.detailInfo.label.detailType')}"></strong></td>
+                            <td>
+                                <label class="radio-inline"><input type="radio" name="detailType" value="01" checked="checked">HTML</label>
+                                <label class="radio-inline"><input type="radio" name="detailType" value="02">이미지</label>
+                                <div class="button-group ml10" style="display:none" id="section_detail_image_btn">
+                                    <a href="#" class="button inside" id="btn_add_detail_image"><span class="text" th:text="${#messages.msg('adminCommon.button.add')}"></span></a>
+                                    <a href="#" class="button inside" id="btn_remove_detail_image"><span class="text" th:text="${#messages.msg('adminCommon.button.delete')}"></span></a>
+                                </div>
+                            </td>
+                        </tr>
+                        <!-- HTML -->
+                        <tr id="section_detail_html">
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.detailInfo.label.detailInfo')}"></strong></td>
+                            <td>
+                                <div class="comment mb10">
+                                    <p class="title">[상품상세 등록시 유의사항]</p>
+                                    <ul class="list-info left">
+                                        <li>상품을 쉽게 이해할 수 있도록 기술해주세요.</li>
+                                        <li>표, 상세이미지는 <span class="warning">가로 900픽셀, 세로 1000픽셀</span>이하만 가능합니다. (세로 1000픽셀 초과 시 여러 장으로 나눠 등록)</li>
+                                        <li><span class="warning">[필수] 상품의 특징, 기능, 상품의 규격</span> [선택] 제조자 소개, 브랜드 소개</li>
+                                        <li class="warning">현행법(저작권, 상표권, 초상권)을 위반하는 사진, 동영상, 컨텐츠, 방송캡처화면 등은 등록하지 말아주세요.</li>
+                                        <li class="warning">현행법(식품위생법)을 위반하는 허위, 과장된 설명은 등록하지 말아주세요.</li>
+                                        <li>상품 상세설명의 이미지는 당사의 이미지 서버로 전환되어 저장됩니다. 외부 이미지 변경 시 당사 이미지가 변경되지 않습니다.</li>
+                                    </ul>
+                                </div>
+                                <!-- 웹에디터 -->
+                                <textarea class="textarea" name="detailHtmlEditor" id="detailHtmlEditor" style="width:100%;"></textarea>
+                            </td>
+                        </tr>
+                        <!-- 이미지 -->
+                        <tr id="section_detail_image" style="display: none">
+                            <td class="label"><strong th:text="${#messages.msg('generalGoods.detailInfo.label.detailInfo')}"></strong></td>
+                            <td>
+                                <div class="comment mb10">
+                                    <p class="title">[상품상세 등록시 유의사항]</p>
+                                    <ul class="list-info left">
+                                        <li>상품을 쉽게 이해할 수 있도록 기술해주세요.</li>
+                                        <li>표, 상세이미지는 <span class="warning">가로 900픽셀, 세로 1000픽셀</span>이하만 가능합니다. (세로 1000픽셀 초과 시 여러 장으로 나눠 등록)</li>
+                                        <li><span class="warning">[필수] 상품의 특징, 기능, 상품의 규격</span> [선택] 제조자 소개, 브랜드 소개</li>
+                                        <li class="warning">현행법(저작권, 상표권, 초상권)을 위반하는 사진, 동영상, 컨텐츠, 방송캡처화면 등은 등록하지 말아주세요.</li>
+                                        <li class="warning">현행법(식품위생법)을 위반하는 허위, 과장된 설명은 등록하지 말아주세요.</li>
+                                        <li>상품 상세설명의 이미지는 당사의 이미지 서버로 전환되어 저장됩니다. 외부 이미지 변경 시 당사 이미지가 변경되지 않습니다.</li>
+                                    </ul>
+                                </div>
+                                <table class="data-table inbox">
+                                    <colgroup>
+                                        <col width="80">
+                                        <col>
+                                   </colgroup>
+                                    <thead>
+                                        <th th:text="${#messages.msg('generalGoods.detailInfo.label.imageNo')}"></th>
+                                        <th th:text="${#messages.msg('generalGoods.detailInfo.label.imageInfo')}"></th>
+                                    </thead>
+                                    <tbody id="detailImageList">
+                                        <!-- 이미지 등록 템플릿 -->
+                                        <tr type="detail_image_tmpl" style="display:none">
+                                            <td class="center"><em class="imageNo">0</em></td>
+                                            <td>
+                                                <div class="image-upload">
+                                                    <a class="original" target="_blank">
+                                                    <img class="image noimg imageView" accept="image/jpg" style="width: 100px;height:100px;">
+                                                    <div class="born">
+                                                        <img class="image imageView noimg"></div>
+                                                </a>
+                                                    <div class="input-group file-upload ml10">
+                                                        <input type="text" class="input disabled imageFileName mr5" readonly>
+                                                        <a href="#" class="button small gray btn_image_upload"><span class="text" th:text="${#messages.msg('adminCommon.button.select.file')}"></span></a>
+                                                        <input type="file" style="display:none" name="files" class="imageFile"/>
+                                                        <input type="hidden" class="imageFileSize">
+                                                        <span class="imageSize"></span> <!-- 이미지 크기 -->
+                                                        <p class="tip mt5 tip fl-right">접근성 준수를 위한 대체텍스트 입력</p>
+                                                        <textarea class="textarea mt5 w100 imageReplaceText" rows="3" cols="50" style="height: 72px;"></textarea>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <!--// 이미지 등록 템플릿 -->
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </div>
+    </th:block>
+    <th:block layout:fragment="pkg-goods-detailInfo">
+        <div class="data">
+            <div class="data-head">
+                <div class="left">
+                    <span class="title" th:text="${#messages.msg('packageGoods.detailInfo.title')}"></span>
+                </div>
+                <div class="right">
+                  <span class="data-toggle">
+                    <button type="button" class="toggle-button"><span>닫힘</span></button>
+                  </span>
+                </div>
+            </div>
+            <div class="data-body">
+                <form id="detailInfo" name="detailInfo">
+                    <table class="data-table fixed">
+                        <colgroup>
+                            <col width="130">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                        <tr>
+                            <td class="label"><strong th:text="${#messages.msg('packageGoods.detailInfo.label.detailType')}"></strong></td>
+                            <td>
+                                <label class="radio-inline"><input type="radio" name="detailType" value="01" checked="checked">HTML</label>
+                                <label class="radio-inline"><input type="radio" name="detailType" value="02">이미지</label>
+                                <div class="button-group ml10" style="display:none" id="section_detail_image_btn">
+                                    <a href="#" class="button inside" id="btn_add_detail_image"><span class="text" th:text="${#messages.msg('adminCommon.button.add')}"></span></a>
+                                    <a href="#" class="button inside" id="btn_remove_detail_image"><span class="text" th:text="${#messages.msg('adminCommon.button.delete')}"></span></a>
+                                </div>
+                            </td>
+                        </tr>
+                        <!-- HTML -->
+                        <tr id="section_detail_html">
+                            <td class="label"><strong th:text="${#messages.msg('packageGoods.detailInfo.label.detailInfo')}"></strong></td>
+                            <td>
+                                <div class="comment mb10">
+                                    <p class="title">[상품상세 등록시 유의사항]</p>
+                                    <ul class="list-info left">
+                                        <li>상품을 쉽게 이해할 수 있도록 기술해주세요.</li>
+                                        <li>표, 상세이미지는 <span class="warning">가로 900픽셀, 세로 1000픽셀</span>이하만 가능합니다. (세로 1000픽셀 초과 시 여러 장으로 나눠 등록)</li>
+                                        <li><span class="warning">[필수] 상품의 특징, 기능, 상품의 규격</span> [선택] 제조자 소개, 브랜드 소개</li>
+                                        <li class="warning">현행법(저작권, 상표권, 초상권)을 위반하는 사진, 동영상, 컨텐츠, 방송캡처화면 등은 등록하지 말아주세요.</li>
+                                        <li class="warning">현행법(식품위생법)을 위반하는 허위, 과장된 설명은 등록하지 말아주세요.</li>
+                                        <li>상품 상세설명의 이미지는 당사의 이미지 서버로 전환되어 저장됩니다. 외부 이미지 변경 시 당사 이미지가 변경되지 않습니다.</li>
+                                    </ul>
+                                </div>
+                                <!-- 웹에디터 -->
+                                <textarea class="textarea" name="detailHtmlEditor" id="detailHtmlEditor" style="width:100%;"></textarea>
+                            </td>
+                        </tr>
+                        <!-- 이미지 -->
+                        <tr id="section_detail_image" style="display: none">
+                            <td class="label"><strong th:text="${#messages.msg('packageGoods.detailInfo.label.detailInfo')}"></strong></td>
+                            <td>
+                                <div class="comment mb10">
+                                    <p class="title">[상품상세 등록시 유의사항]</p>
+                                    <ul class="list-info left">
+                                        <li>상품을 쉽게 이해할 수 있도록 기술해주세요.</li>
+                                        <li>표, 상세이미지는 <span class="warning">가로 900픽셀, 세로 1000픽셀</span>이하만 가능합니다. (세로 1000픽셀 초과 시 여러 장으로 나눠 등록)</li>
+                                        <li><span class="warning">[필수] 상품의 특징, 기능, 상품의 규격</span> [선택] 제조자 소개, 브랜드 소개</li>
+                                        <li class="warning">현행법(저작권, 상표권, 초상권)을 위반하는 사진, 동영상, 컨텐츠, 방송캡처화면 등은 등록하지 말아주세요.</li>
+                                        <li class="warning">현행법(식품위생법)을 위반하는 허위, 과장된 설명은 등록하지 말아주세요.</li>
+                                        <li>상품 상세설명의 이미지는 당사의 이미지 서버로 전환되어 저장됩니다. 외부 이미지 변경 시 당사 이미지가 변경되지 않습니다.</li>
+                                    </ul>
+                                </div>
+                                <table class="data-table inbox">
+                                    <colgroup>
+                                        <col width="80">
+                                        <col>
+                                    </colgroup>
+                                    <thead>
+                                    <th th:text="${#messages.msg('packageGoods.detailInfo.label.imageNo')}"></th>
+                                    <th th:text="${#messages.msg('packageGoods.detailInfo.label.imageInfo')}"></th>
+                                    </thead>
+                                    <tbody id="detailImageList">
+                                    <!-- 이미지 등록 템플릿 -->
+                                    <tr type="detail_image_tmpl" style="display:none">
+                                        <td class="center"><em class="imageNo">0</em></td>
+                                        <td>
+                                            <div class="image-upload">
+                                                <a class="original" target="_blank">
+                                                    <img class="image noimg imageView" accept="image/jpg" style="width: 100px;height:100px;">
+                                                    <div class="born">
+                                                        <img class="image imageView noimg"></div>
+                                                </a>
+                                                <div class="input-group file-upload ml10">
+                                                    <input type="text" class="input disabled imageFileName mr5" readonly>
+                                                    <a href="#" class="button small gray btn_image_upload"><span class="text" th:text="${#messages.msg('adminCommon.button.select.file')}"></span></a>
+                                                    <input type="file" style="display:none" name="files" class="imageFile"/>
+                                                    <input type="hidden" class="imageFileSize">
+                                                    <span class="imageSize"></span> <!-- 이미지 크기 -->
+                                                    <p class="tip mt5 tip fl-right">접근성 준수를 위한 대체텍스트 입력</p>
+                                                    <textarea class="textarea mt5 w100 imageReplaceText" rows="3" cols="50" style="height: 72px;"></textarea>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <!--// 이미지 등록 템플릿 -->
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </div>
+    </th:block>
+</body>
+</html>
+
+
+

@@ -1,0 +1,266 @@
+<!--
+* 프로그램명 : 처리내역등록
+* 작 성 일 : 2021.05.26
+* 작 성 자 : 윤성원
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 처리내역등록 팝업
+* 이    력 :
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-update-layout}">
+<body>
+<!--Title Area-->
+<th:block layout:fragment="header-area">
+    <div class="header">
+        <h1 class="title" th:text="${#messages.msg('integratedCounselMgmt.csProcRegistrationPopup.title')}"></h1>
+    </div>
+</th:block>
+<!--Title Area-->
+
+<th:block layout:fragment="data-area">
+
+    <div class="data-cont">
+        <div class="data">
+            <div class="data-body">
+                <form name="csCnslTypInfoForm" id="csCnslTypInfoForm">
+                    <table class="data-table fixed">
+                        <colgroup>
+                            <col width="120">
+                            <col>
+                            <col width="120">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                        <tr>
+                            <td class="label"><strong><th:block th:text="${#messages.msg('integratedCounselMgmt.csProcRegistrationPopup.ccnPrgsStatCd')}"/></strong></td>
+                            <td colspan="3">
+                                <label class="radio-inline">
+                                    <input type="radio" name="ccnPrgsStatCd" value="20" checked="checked" th:text="${#messages.msg('integratedCounselMgmt.csProcRegistrationPopup.inProgress')}">
+                                </label>
+                                <label class="radio-inline">
+                                    <input type="radio" name="ccnPrgsStatCd" value="40" th:text="${#messages.msg('integratedCounselMgmt.csProcRegistrationPopup.complete')}">
+                                </label>
+                                <label class="radio-inline">
+                                    <input type="radio" name="ccnPrgsStatCd" value="50" th:text="${#messages.msg('integratedCounselMgmt.csProcRegistrationPopup.completeAll')}">
+                                </label>
+                            </td>
+                        </tr>
+                        <tr th:if="${custCnslGbCd} != null and ${custCnslGbCd} == 20">
+                            <td class="label"><strong><th:block th:text="${#messages.msg('integratedCounselMgmt.csProcRegistrationPopup.obProcTypCd')}"/></strong></td>
+                            <td colspan="3">
+                                <select class="form-control" id="obProcTypCd" name="obProcTypCd">
+                                    <option value="" th:text="${#messages.msg('adminCommon.select')}"></option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label"><th:block th:text="${#messages.msg('integratedCounselMgmt.csRegistrationPopup.cnslProcCont')}"/></td>
+                            <td colspan="3">
+                                <textarea id="cnslProcCont" name="cnslProcCont"
+                                          rows="10" class="textarea dataCont"
+                                          data-limitByte="4000" data-markId="cnslProcContByte" th:text="${#messages.msg('integratedCounselMgmt.csRegistrationPopup.cnslProcContText')}"></textarea>
+                                <em><span id="cnslProcContByte">0</span>/4000</em>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label"><th:block th:text="${#messages.msg('integratedCounselMgmt.csRegistrationPopup.afterTask')}"/></td>
+                            <td colspan="3">
+                                <div class="checkbox">
+                                    <label>
+                                        <input class="checkbox-inline afterTask" type="checkbox" id="afterCall" name="afterCall" value="tab1">
+                                        <th:block th:text="${#messages.msg('integratedCounselMgmt.csRegistrationPopup.afterCall')}"/>
+                                    </label>
+                                    <label>
+                                        <input class="checkbox-inline afterTask" type="checkbox" id="afterTransfer" name="afterTransfer" value="tab2">
+                                        <th:block th:text="${#messages.msg('integratedCounselMgmt.csRegistrationPopup.afterTransfer')}"/>
+                                    </label>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+            <!-- //data-body -->
+        </div>
+    </div>
+
+    <!-- tabs-area -->
+    <div class="tabs-area">
+        <ul class="tabs">
+            <li style="display:none;" class="tab1">
+                <a href="javascript:void(0);" th:text="${#messages.msg('integratedCounselMgmt.csRegistrationPopup.telePhoneTab')}"></a>
+            </li>
+            <li style="display:none;" class="tab2">
+                <a href="javascript:void(0);" th:text="${#messages.msg('integratedCounselMgmt.csRegistrationPopup.transferTab')}"></a>
+            </li>
+        </ul>
+
+        <!-- tabs-body -->
+        <div class="tabs-body" style="display:none;">
+            <!-- tab-cont -->
+            <div class="tab-cont tab1" style="display:none;">
+                <!-- 조회테이블 -->
+                <div class="search">
+                    <form name="telForm" id="telForm">
+                        <table class="search-table">
+                            <colgroup>
+                                <col width="120">
+                                <col>
+                                <col width="120">
+                                <col>
+                            </colgroup>
+                            <tbody>
+                            <tr>
+                                <td class="label"><strong><th:block th:text="${#messages.msg('integratedCounselMgmt.csRegistrationPopup.prmsDtm')}"/></strong></td>
+                                <td colspan="3">
+                                    <div class="input-group">
+                                        <div class="picker-group time" data-lopicker="basic">
+                                            <input type="text" class="form-control disabled"  id="prmsDtm" name="prmsDtm" placeholder="" disabled="disabled">
+                                            <span class="input-group-addon" id="display-calendar"><i class="icon-calendar"></i></span>
+                                        </div>
+                                    </div>
+                                    <select class="form-control" id="notiTmCd" name="notiTmCd">
+                                        <option value="" th:text="${#messages.msg('adminCommon.select')}"></option>
+                                        <option th:each="list : ${codeList.CS013}" th:value="${list?.cd}" th:utext="${list?.cdNm}"></option>
+                                    </select> 분전 알림
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label"><strong><th:block th:text="${#messages.msg('integratedCounselMgmt.csRegistrationPopup.prmsMethCd')}"/></strong></td>
+                                <td colspan="3">
+                                    <label class="radio-inline" th:each="list : ${codeList.CS008}">
+                                        <input type="radio" name="prmsMethCd" th:value="${list?.cd}"><th:block th:text="${list?.cdNm}"/>
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label"><strong><th:block th:text="${#messages.msg('integratedCounselMgmt.csRegistrationPopup.telNo')}"/></strong></td>
+                                <td colspan="3">
+                                    <div class="input-group">
+                                        <input type="text" class="input w20" maxlength="4"
+                                               oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                                               name="telRgnNo" id="telRgnNo">
+                                        <input type="text" class="input w20" maxlength="4"
+                                               oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                                               name="telTxnoNo" id="telTxnoNo">
+                                        <input type="text" class="input w20" maxlength="4"
+                                               oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                                               name="telEndNo" id="telEndNo">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label"><strong><th:block th:text="${#messages.msg('integratedCounselMgmt.csRegistrationPopup.cnslMemo')}"/></strong></td>
+                                <td colspan="3">
+                                     <textarea id="cnslMemo" name="cnslMemo"
+                                               rows="3" class="textarea dataCont"
+                                               data-limitByte="400" data-markId="cnslMemoByte"></textarea>
+                                    <em><span id="cnslMemoByte">0</span>/400</em>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+                <!-- //조회테이블 -->
+
+            </div>
+            <!-- tab-cont -->
+
+            <!-- tab-cont -->
+            <div class="tab-cont tab2" style="display:none;">
+                <!-- 조회테이블 -->
+                <div class="search">
+                    <form name="transferForm" id="transferForm">
+                        <table class="search-table">
+                            <colgroup>
+                                <col width="120">
+                                <col>
+                                <col width="120">
+                                <col>
+                            </colgroup>
+                            <tbody>
+                            <tr>
+                                <td class="label" th:text="${#messages.msg('integratedCounselMgmt.csRegistrationPopup.mvotProcStatCd')}" />
+                                <td>
+                                    <input type="hidden" id="mvotProcStatCd" name="mvotProcStatCd" value="10">
+                                    <input class="input w40" type="text" name="mvotProcStatNm" id="mvotProcStatNm" value="접수" disabled="disabled"/>
+                                </td>
+                                <td class="label"><strong><th:block th:text="${#messages.msg('integratedCounselMgmt.csRegistrationPopup.procmnId')}"/></strong></td>
+                                <td>
+                                    <input type="text" class="input disabled" id="mvotAfAempNm" disabled="disabled">
+                                    <input type="hidden" id="mvotAfAempId" name="mvotAfAempId">
+                                    <a href="javascript:;" class="button small" id="btn-regist-user"><i class="icon-sarch"></i></a>
+                                    <a href="#" class="button small" id="btn-reset-user"><i class="icon-clear"></i></a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label"><strong><th:block th:text="${#messages.msg('integratedCounselMgmt.csRegistrationPopup.csMvotTypNo')}"/></strong></td>
+                                <td colspan="3">
+                                    <div class="input-group">
+                                        <select class="form-control" id="csMvotTypNo" name="csMvotTypNo">
+                                            <option value="" th:text="${#messages.msg('adminCommon.select')}" th:data-memo="${#messages.msg('integratedCounselMgmt.csRegistrationPopup.mvotReqContText')}"></option>
+                                            <option th:each="list : ${csMvotTypCdList}" th:value="${list?.csMvotTypNo}" th:utext="${list?.csMvotTypNm}" th:data-memo="${list?.tmplMemo}" ></option>
+                                        </select>
+                                        <label class="ml5">
+                                            <input class="checkbox-inline" type="checkbox" id="emergMvotYn" value="" th:text="${#messages.msg('integratedCounselMgmt.csRegistrationPopup.emergMvotYn')}">
+                                        </label>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label"><strong><th:block th:text="${#messages.msg('integratedCounselMgmt.csRegistrationPopup.mvotReqCont')}"/></strong></td>
+                                <td colspan="3">
+                                     <textarea id="mvotReqCont" name="mvotReqCont"
+                                               rows="3" class="textarea dataCont"
+                                               data-limitByte="1000" data-markId="mvotReqContByte" th:text="${#messages.msg('integratedCounselMgmt.csRegistrationPopup.mvotReqContText')}"></textarea>
+                                    <em><span id="mvotReqContByte">0</span>/400</em>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+                <!-- //조회테이블 -->
+            </div>
+            <!-- tab-cont -->
+
+        </div>
+
+    </div>
+    <!-- tabs-area -->
+
+    <div class="button-group search-btn">
+        <a href="#" class="button" id="close"><span class="text">닫기</span></a>
+        <a href="#" class="button" id="apply"><span class="text">저장</span></a>
+    </div>
+
+</th:block>
+
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        var cellPhoneList = [[${codeList.CM013}]];
+        var ccnNo = [[${ccnNo}]];
+        var custCnslGbCd = [[${custCnslGbCd}]];
+        var processingDetails = [[${processingDetails}]];
+        console.log(processingDetails);
+        /*]]>*/
+    </script>
+
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'customerservice/csProcRegistrationPopup.eventHandler.js?202105260000018'" ></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('.tabs-area').hide();
+            csProcRegistrationPopup.eventhandler.init();
+        });
+    </script>
+</th:block>
+
+</body>
+</html>

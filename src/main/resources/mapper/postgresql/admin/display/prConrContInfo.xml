@@ -1,0 +1,477 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.display.PrConrContInfoMapper">
+
+	<sql id="prConrContInfoGoodsList">
+		SELECT   /* PrConrContInfoMapper.prConrContInfoGoodsList */
+				  PCCI.DISP_CTG_NO
+				, PCCI.CONR_NO
+				, PCCI.CONR_TGT_NO
+				, PCCI.CONR_TGT_CD
+				, PCCI.CONR_CONT_NO
+				, TO_CHAR(PCCI.DISP_STR_DTM,'YYYY-MM-DD HH24:MI:SS') AS DISP_STR_DTM
+				, TO_CHAR(PCCI.DISP_END_DTM,'YYYY-MM-DD HH24:MI:SS') AS DISP_END_DTM
+				, PCCI.DISP_SEQ
+				, PCCI.DISP_YN
+				, PGB.GOODS_NO
+				, PGB.GOODS_NM
+				, FN_GET_CODENAME( 'PR002', PGB.GOODS_TYP_CD ) AS GOODS_TYP_CD
+				, PGPH.NOR_PRC
+				, PGPH.SALE_PRC
+				, FN_GET_CODENAME( 'PR005', PGB.SALE_STAT_CD ) AS SALE_STAT_CD
+		FROM 	  PR_CONR_CONT_INFO PCCI
+				, PR_GOODS_BASE PGB
+				, PR_GOODS_PRC_HIST PGPH
+		WHERE 	  PGB.GOODS_NO = PCCI.CONR_CONT_NO
+		AND 	  PGB.GOODS_NO = PGPH.GOODS_NO
+		AND 	  PGPH.HIST_END_DTM = TO_TIMESTAMP('2999-12-31 23:59:59', 'YYYY-MM-DD HH24:MI:SS')
+		AND 	  PCCI.DISP_CTG_NO = #{dispCtgNo}
+		AND 	  PCCI.CONR_NO = #{conrNo}
+		AND 	  PCCI.CONR_TGT_NO = #{conrTgtNoSelect}
+		AND 	  PCCI.CONR_TGT_CD = #{conrTgtCdSelect}
+		ORDER BY  PCCI.DISP_SEQ
+
+	</sql>
+
+	<select id="getPrConrContInfoGoodsList" parameterType="PrConrContInfoRequest" resultType="PrConrContInfoResponse">
+		<include refid="prConrContInfoGoodsList" />
+	</select>
+
+	<select id="getPrConrContInfoListGoodsCount" parameterType="PrConrContInfoRequest" resultType="java.lang.Integer">
+		SELECT   /* PrConrContInfoMapper.getPrConrContInfoGoodsListCount */
+		COUNT(*)
+		FROM (
+		<include refid="prConrContInfoGoodsList" />
+		) T1
+	</select>
+
+	<sql id="prConrContInfoReviewList">
+		SELECT   /* PrConrContInfoMapper.prConrContInfoReviewList */
+				  PCCI.DISP_CTG_NO
+				, PCCI.CONR_NO
+				, PCCI.CONR_TGT_NO
+				, PCCI.CONR_TGT_CD
+				, PCCI.CONR_CONT_NO
+				, TO_CHAR(PCCI.DISP_STR_DTM,'YYYY-MM-DD HH24:MI:SS') AS DISP_STR_DTM
+				, TO_CHAR(PCCI.DISP_END_DTM,'YYYY-MM-DD HH24:MI:SS') AS DISP_END_DTM
+				, PCCI.DISP_SEQ
+				, PCCI.DISP_YN
+				, PGRI.REV_CONT
+				, PGRI.REV_SCR_VAL
+				, PGRI.GOODS_NO
+				, PGB.GOODS_NM
+				, PSC.MD_ID
+				, SUB.USER_NM AS MD_NM
+				, PGPH.SALE_PRC
+		FROM 	  PR_CONR_CONT_INFO PCCI
+				, PR_GOODS_REV_INFO PGRI 	-- 상품리뷰정보 테이블
+				, PR_GOODS_BASE PGB 	    -- 상품기본 테이블
+				, PR_STD_CTG PSC 		    -- 표준카테고리 테이블
+				, ST_USER_BASE SUB 		    -- 사용자 기본 테이블
+				, PR_GOODS_PRC_HIST PGPH    -- 상품가격이력 테이블
+		WHERE 	  PGRI.REV_NO 		= PCCI.CONR_CONT_NO -- 리뷰번호
+		AND	  	  PGRI.GOODS_NO  	= PGB.GOODS_NO 		-- 상품번호
+		AND	      PGRI.GOODS_NO  	= PGPH.GOODS_NO 	-- 상품번호
+		AND		  PGRI.STD_CTG_NO  	= PSC.STD_CTG_NO 	-- 표준카테고리번호
+		AND		  PSC.MD_ID  		= SUB.USER_ID 		-- 사용자 아이디
+		AND 	  PGPH.HIST_END_DTM = TO_TIMESTAMP('2999-12-31 23:59:59', 'YYYY-MM-DD HH24:MI:SS')
+		AND 	  PCCI.DISP_CTG_NO = #{dispCtgNo}
+		AND 	  PCCI.CONR_NO = #{conrNo}
+		AND 	  PCCI.CONR_TGT_NO = #{conrTgtNoSelect}
+		AND 	  PCCI.CONR_TGT_CD = #{conrTgtCdSelect}
+		ORDER BY  PCCI.DISP_SEQ
+	</sql>
+
+	<select id="getPrConrContInfoReviewList" parameterType="PrConrContInfoRequest" resultType="PrConrContInfoResponse">
+		<include refid="prConrContInfoReviewList" />
+	</select>
+
+	<select id="getPrConrContInfoReviewListCount" parameterType="PrConrContInfoRequest" resultType="java.lang.Integer">
+		SELECT   /* PrConrContInfoMapper.getPrConrContInfoReviewListCount */
+		COUNT(*)
+		FROM (
+		<include refid="prConrContInfoReviewList" />
+		) T1
+	</select>
+
+	<insert id="insertPrConrContInfo" parameterType="PrConrContInfo">
+		INSERT INTO PR_CONR_CONT_INFO (  /* PrConrContInfoMapper.insertPrConrContInfo */
+				  DISP_CTG_NO
+				, CONR_NO
+				, CONR_TGT_NO
+				, CONR_TGT_CD
+				, CONR_CONT_NO
+				, DISP_STR_DTM
+				, DISP_END_DTM
+				, DISP_SEQ
+				, DISP_YN
+				, CONT_TITLE_NM
+				, LINK_URL_ADDR
+				, MOV_FRME_CD
+				, CONT_PATH_NM
+				, CONT_FILE_NM
+				, CONT_DESC
+				, ALT_CONT
+				, HTML_FILE_CONT
+				, SYS_REG_ID
+				, SYS_REG_DTM
+				, SYS_MOD_ID
+				, SYS_MOD_DTM
+		) VALUES (
+				  #{dispCtgNo}
+				, #{conrNo}
+				, #{conrTgtNo}
+				, #{conrTgtCd}
+				, #{conrContNo}
+				, TO_TIMESTAMP(#{dispStrDtm}, 'YYYY-MM-DD HH24:MI:SS')
+				, TO_TIMESTAMP(#{dispEndDtm}, 'YYYY-MM-DD HH24:MI:SS')
+				, #{dispSeq}
+				, #{dispYn}
+				, #{contTitleNm}
+				, #{linkUrlAddr}
+				, #{movFrmeCd}
+				, #{contPathNm}
+				, #{contFileNm}
+				, #{contDesc}
+				, #{altCont}
+				, #{htmlFileCont}
+				, #{sysRegId}
+				, now()
+				, #{sysModId}
+				, now()
+		)
+	</insert>
+
+	<insert id="prConrContInfoInsert" parameterType="PrConrContInfo">
+		<selectKey keyProperty="conrContNo" resultType="String" order="BEFORE">
+			SELECT NEXTVAL('PR_CONR_CONT_INFO_SQ01') AS conrContNo
+		</selectKey>
+		INSERT INTO PR_CONR_CONT_INFO (  /* PrConrContInfoMapper.insertPrConrContInfo */
+		DISP_CTG_NO
+		, CONR_NO
+		, CONR_TGT_NO
+		, CONR_TGT_CD
+		, CONR_CONT_NO
+		, DISP_STR_DTM
+		, DISP_END_DTM
+		, DISP_SEQ
+		, DISP_YN
+		, CONT_TITLE_NM
+		, LINK_URL_ADDR
+		, MOV_FRME_CD
+		, CONT_PATH_NM
+		, CONT_FILE_NM
+		, CONT_DESC
+		, ALT_CONT
+		, HTML_FILE_CONT
+		, SYS_REG_ID
+		, SYS_REG_DTM
+		, SYS_MOD_ID
+		, SYS_MOD_DTM
+		) VALUES (
+		#{dispCtgNo}
+		, #{conrNo}
+		, #{conrTgtNo}
+		, #{conrTgtCd}
+		, #{conrContNo}
+		, TO_TIMESTAMP(#{dispStrDtm}, 'YYYY-MM-DD HH24:MI:SS')
+		, TO_TIMESTAMP(#{dispEndDtm}, 'YYYY-MM-DD HH24:MI:SS')
+		, #{dispSeq}
+		, #{dispYn}
+		, #{contTitleNm}
+		, #{linkUrlAddr}
+		, #{movFrmeCd}
+		, #{contPathNm}
+		, #{contFileNm}
+		, #{contDesc}
+		, #{altCont}
+		, #{htmlFileCont}
+		, #{sysRegId}
+		, now()
+		, #{sysModId}
+		, now()
+		)
+	</insert>
+
+	<update id="updatePrConrContInfo" parameterType="PrConrContInfo">
+		UPDATE 	PR_CONR_CONT_INFO                  /* PrConrContInfoMapper.updatePrConrContInfo */
+		SET
+				  DISP_STR_DTM  	= TO_TIMESTAMP(#{dispStrDtm}, 'YYYY-MM-DD HH24:MI:SS')
+				, DISP_END_DTM  	= TO_TIMESTAMP(#{dispEndDtm}, 'YYYY-MM-DD HH24:MI:SS')
+				, DISP_SEQ          = #{dispSeq}
+				, DISP_YN           = #{dispYn}
+				, CONT_TITLE_NM     = #{contTitleNm}
+				, LINK_URL_ADDR     = #{linkUrlAddr}
+				, MOV_FRME_CD       = #{movFrmeCd}
+				, CONT_PATH_NM      = #{contPathNm}
+				, CONT_FILE_NM      = #{contFileNm}
+				, CONT_DESC         = #{contDesc}
+				, ALT_CONT          = #{altCont}
+				, HTML_FILE_CONT    = #{htmlFileCont}
+				, SYS_MOD_ID 		= #{sysModId}
+				, SYS_MOD_DTM 		= now()
+		WHERE 	  DISP_CTG_NO  = #{dispCtgNo}
+		AND 	  CONR_NO 	   = #{conrNo}
+		AND 	  CONR_TGT_NO  = #{conrTgtNo}
+		AND 	  CONR_TGT_CD  = #{conrTgtCd}
+		AND 	  CONR_CONT_NO = #{conrContNo}
+	</update>
+
+	<delete id="deletePrConrContInfo" parameterType="PrConrContInfo">
+		DELETE                  /* PrConrContInfoMapper.deletePrConrContInfo */
+		FROM 	PR_CONR_CONT_INFO
+		WHERE 	  DISP_CTG_NO  = #{dispCtgNo}
+		AND 	  CONR_NO 	   = #{conrNo}
+		AND 	  CONR_TGT_NO  = #{conrTgtNo}
+		AND 	  CONR_TGT_CD  = #{conrTgtCd}
+		AND 	  CONR_CONT_NO = #{conrContNo}
+	</delete>
+
+	<select id="getBrandDetail" parameterType="PrBrandMstRequest" resultType="PrBrandMstResponse">
+		SELECT   /* PrConrContInfoMapper.getBrandDetail */
+						    PBM.BRAND_NO
+						  , PBM.BRAND_NM
+						  , PBI.IMG_ROUTE_NM AS BRANDIMG
+		FROM 	  			PR_BRAND_MST PBM
+		LEFT OUTER JOIN 	PR_BRAND_IMG PBI 	ON 	(PBM.BRAND_NO = PBI.BRAND_NO AND PBI.IMG_SIZE_CD = '01')
+		WHERE 	  			PBM.BRAND_NO = #{brandNo}
+	</select>
+
+	<sql id="prConrContInfoBrandList">
+		SELECT   /* PrConrContInfoMapper.prConrContInfoBrandList */
+		PCCI.DISP_CTG_NO
+		, PCCI.CONR_NO
+		, PCCI.CONR_TGT_NO
+		, PCCI.CONR_TGT_CD
+		, PCCI.CONR_CONT_NO
+		, TO_CHAR(PCCI.DISP_STR_DTM,'YYYY-MM-DD HH24:MI:SS') AS DISP_STR_DTM
+		, TO_CHAR(PCCI.DISP_END_DTM,'YYYY-MM-DD HH24:MI:SS') AS DISP_END_DTM
+		, PCCI.DISP_SEQ
+		, PCCI.DISP_YN
+		, PCCI.LINK_URL_ADDR
+		, PCCI.MOV_FRME_CD
+		, PBM.BRAND_NM
+		, PBI.IMG_ROUTE_NM AS BRANDIMG
+		FROM 	  			PR_CONR_CONT_INFO PCCI
+						  , PR_BRAND_MST PBM
+		LEFT OUTER JOIN 	PR_BRAND_IMG PBI 			ON 	(PBM.BRAND_NO = PBI.BRAND_NO AND PBI.IMG_SIZE_CD = '01')
+		WHERE 	  PBM.BRAND_NO = PCCI.CONR_CONT_NO
+		AND 	  PCCI.DISP_CTG_NO = #{dispCtgNo}
+		AND 	  PCCI.CONR_NO = #{conrNo}
+		AND 	  PCCI.CONR_TGT_NO = #{conrTgtNoSelect}
+		AND 	  PCCI.CONR_TGT_CD = #{conrTgtCdSelect}
+		ORDER BY  PCCI.DISP_SEQ
+	</sql>
+
+	<select id="getPrConrContInfoBrandList" parameterType="PrConrContInfoRequest" resultType="PrConrContInfoResponse">
+		<include refid="prConrContInfoBrandList" />
+	</select>
+
+	<select id="getPrConrContInfoListBrandCount" parameterType="PrConrContInfoRequest" resultType="java.lang.Integer">
+		SELECT   /* PrConrContInfoMapper.getPrConrContInfoListBrandCount */
+			COUNT(*)
+		FROM (
+		<include refid="prConrContInfoGoodsList" />
+		) T1
+	</select>
+
+	<sql id="prConrContInfoMkdpList">
+		<![CDATA[
+		SELECT   /* PrConrContInfoMapper.prConrContInfoMkdpList */
+				  PCCI.DISP_CTG_NO
+				, PCCI.CONR_NO
+				, PCCI.CONR_TGT_NO
+				, PCCI.CONR_TGT_CD
+				, PCCI.CONR_CONT_NO
+				, TO_CHAR(PCCI.DISP_STR_DTM,'YYYY-MM-DD HH24:MI:SS') AS DISP_STR_DTM
+				, TO_CHAR(PCCI.DISP_END_DTM,'YYYY-MM-DD HH24:MI:SS') AS DISP_END_DTM
+				, PCCI.DISP_SEQ
+				, PCCI.DISP_YN
+				, CASE
+						WHEN PMB.DISP_STR_DTM >  NOW()	AND PMB.DISP_END_DTM > 	NOW() 	THEN '준비중'
+						WHEN PMB.DISP_STR_DTM <= NOW()	AND PMB.DISP_END_DTM >= NOW() 	THEN '진행중'
+						WHEN PMB.DISP_STR_DTM <	 NOW() 	AND PMB.DISP_END_DTM <	NOW()	THEN '종료'
+						END AS DISP_STAT
+				, PMB.MKDP_NM
+				, FN_GET_CODENAME( 'DP008', PMB.MKDP_TYP_CD) AS MKDP_TYP_CD
+				, (SELECT SUB.USER_NM FROM ST_USER_BASE SUB WHERE SUB.USER_ID = PMB.MD_ID) AS MD_NM
+		FROM 	  PR_CONR_CONT_INFO PCCI
+				, PR_MKDP_BASE PMB
+		]]>
+		WHERE 	  PMB.MKDP_NO = PCCI.CONR_CONT_NO
+		AND 	  PCCI.DISP_CTG_NO = #{dispCtgNo}
+		AND 	  PCCI.CONR_NO = #{conrNo}
+		AND 	  PCCI.CONR_TGT_NO = #{conrTgtNoSelect}
+		AND 	  PCCI.CONR_TGT_CD = #{conrTgtCdSelect}
+		ORDER BY  PCCI.DISP_SEQ
+	</sql>
+
+	<select id="getPrConrContInfoMkdpList" parameterType="PrConrContInfoRequest" resultType="PrConrContInfoResponse">
+		<include refid="prConrContInfoMkdpList" />
+	</select>
+
+	<select id="getPrConrContInfoMkdpListCount" parameterType="PrConrContInfoRequest" resultType="java.lang.Integer">
+		SELECT   /* PrConrContInfoMapper.getPrConrContInfoMkdpListCount */
+			COUNT(*)
+		FROM (
+		<include refid="prConrContInfoMkdpList" />
+		) T1
+	</select>
+
+	<sql id="prConrContInfoHtmlList">
+		SELECT   /* PrConrContInfoMapper.prConrContInfoHtmlList */
+				  PCCI.DISP_CTG_NO
+				, PCCI.CONR_NO
+				, PCCI.CONR_TGT_NO
+				, PCCI.CONR_TGT_CD
+				, PCCI.CONR_CONT_NO
+				, TO_CHAR(PCCI.DISP_STR_DTM,'YYYY-MM-DD HH24:MI:SS') AS DISP_STR_DTM
+				, TO_CHAR(PCCI.DISP_END_DTM,'YYYY-MM-DD HH24:MI:SS') AS DISP_END_DTM
+				, PCCI.DISP_SEQ
+				, PCCI.DISP_YN
+				, PCCI.CONT_DESC
+				, PCCI.HTML_FILE_CONT
+		FROM 	  PR_CONR_CONT_INFO PCCI
+		WHERE 	  PCCI.DISP_CTG_NO = #{dispCtgNo}
+		AND 	  PCCI.CONR_NO = #{conrNo}
+		AND 	  PCCI.CONR_TGT_NO = #{conrTgtNoSelect}
+		AND 	  PCCI.CONR_TGT_CD = #{conrTgtCdSelect}
+		ORDER BY  PCCI.DISP_SEQ
+	</sql>
+
+	<select id="getPrConrContInfoHtmlList" parameterType="PrConrContInfoRequest" resultType="PrConrContInfoResponse">
+		<include refid="prConrContInfoHtmlList" />
+	</select>
+
+	<select id="getPrConrContInfoHtmlListCount" parameterType="PrConrContInfoRequest" resultType="java.lang.Integer">
+		SELECT   /* PrConrContInfoMapper.getPrConrContInfoHtmlListCount */
+		COUNT(*)
+		FROM (
+		<include refid="prConrContInfoHtmlList" />
+		) T1
+	</select>
+
+	<select id="getPrConrContInfoHtmlDetail" parameterType="PrConrContInfoRequest" resultType="PrConrContInfoResponse">
+		SELECT   /* PrConrContInfoMapper.getPrConrContInfoHtmlDetail */
+				  PCCI.DISP_CTG_NO
+				, PCCI.CONR_NO
+				, PCCI.CONR_TGT_NO
+				, PCCI.CONR_TGT_CD
+				, PCCI.CONR_CONT_NO
+				, TO_CHAR(PCCI.DISP_STR_DTM,'YYYY-MM-DD HH24:MI:SS') AS DISP_STR_DTM
+				, TO_CHAR(PCCI.DISP_END_DTM,'YYYY-MM-DD HH24:MI:SS') AS DISP_END_DTM
+				, PCCI.DISP_SEQ
+				, PCCI.DISP_YN
+				, PCCI.CONT_DESC
+				, PCCI.HTML_FILE_CONT
+		FROM 	  PR_CONR_CONT_INFO PCCI
+		WHERE 	  PCCI.DISP_CTG_NO = #{dispCtgNo}
+		AND 	  PCCI.CONR_NO = #{conrNo}
+		AND 	  PCCI.CONR_TGT_NO = #{conrTgtNo}
+		AND 	  PCCI.CONR_TGT_CD = #{conrTgtCd}
+		AND 	  PCCI.CONR_CONT_NO = #{conrContNo}
+	</select>
+
+	<sql id="prConrContInfoImgList">
+		SELECT   /* PrConrContInfoMapper.prConrContInfoImgList */
+				  PCCI.DISP_CTG_NO
+				, PCCI.CONR_NO
+				, PCCI.CONR_TGT_NO
+				, PCCI.CONR_TGT_CD
+				, PCCI.CONR_CONT_NO
+				, TO_CHAR(PCCI.DISP_STR_DTM,'YYYY-MM-DD HH24:MI:SS') AS DISP_STR_DTM
+				, TO_CHAR(PCCI.DISP_END_DTM,'YYYY-MM-DD HH24:MI:SS') AS DISP_END_DTM
+				, PCCI.DISP_SEQ
+				, PCCI.DISP_YN
+				, PCCI.CONT_PATH_NM AS IMG_BANNER
+				, PCCI.MOV_FRME_CD
+				, PCCI.LINK_URL_ADDR
+				, PCCI.CONT_DESC
+				, PCCI.CONT_PATH_NM
+				, PCCI.ALT_CONT
+		FROM 	  PR_CONR_CONT_INFO PCCI
+		WHERE 	  PCCI.DISP_CTG_NO = #{dispCtgNo}
+		AND 	  PCCI.CONR_NO = #{conrNo}
+		AND 	  PCCI.CONR_TGT_NO = #{conrTgtNoSelect}
+		AND 	  PCCI.CONR_TGT_CD = #{conrTgtCdSelect}
+		ORDER BY  PCCI.DISP_SEQ
+	</sql>
+
+	<select id="getPrConrContInfoImgList" parameterType="PrConrContInfoRequest" resultType="PrConrContInfoResponse">
+		<include refid="prConrContInfoImgList" />
+	</select>
+
+	<select id="getPrConrContInfoImgListCount" parameterType="PrConrContInfoRequest" resultType="java.lang.Integer">
+		SELECT   /* PrConrContInfoMapper.getPrConrContInfoImgListCount */
+		COUNT(*)
+		FROM (
+		<include refid="prConrContInfoImgList" />
+		) T1
+	</select>
+
+	<select id="getPrConrContInfoImgDetail" parameterType="PrConrContInfoRequest" resultType="PrConrContInfoResponse">
+		SELECT   /* PrConrContInfoMapper.getPrConrContInfoImgDetail */
+				  PCCI.DISP_CTG_NO
+				, PCCI.CONR_NO
+				, PCCI.CONR_TGT_NO
+				, PCCI.CONR_TGT_CD
+				, PCCI.CONR_CONT_NO
+				, TO_CHAR(PCCI.DISP_STR_DTM,'YYYY-MM-DD HH24:MI:SS') AS DISP_STR_DTM
+				, TO_CHAR(PCCI.DISP_END_DTM,'YYYY-MM-DD HH24:MI:SS') AS DISP_END_DTM
+				, PCCI.DISP_SEQ
+				, PCCI.DISP_YN
+				, PCCI.CONT_PATH_NM AS IMG_BANNER
+				, PCCI.MOV_FRME_CD
+				, PCCI.LINK_URL_ADDR
+				, PCCI.CONT_DESC
+				, PCCI.CONT_PATH_NM
+				, PCCI.CONT_FILE_NM
+				, PCCI.ALT_CONT
+		FROM 	  PR_CONR_CONT_INFO PCCI
+		WHERE 	  PCCI.DISP_CTG_NO = #{dispCtgNo}
+		AND 	  PCCI.CONR_NO = #{conrNo}
+		AND 	  PCCI.CONR_TGT_NO = #{conrTgtNo}
+		AND 	  PCCI.CONR_TGT_CD = #{conrTgtCd}
+		AND 	  PCCI.CONR_CONT_NO = #{conrContNo}
+	</select>
+
+	<sql id="prConrContInfoTextList">
+		SELECT   /* PrConrContInfoMapper.prConrContInfoTextList */
+				  PCCI.DISP_CTG_NO
+				, PCCI.CONR_NO
+				, PCCI.CONR_TGT_NO
+				, PCCI.CONR_TGT_CD
+				, PCCI.CONR_CONT_NO
+				, TO_CHAR(PCCI.DISP_STR_DTM,'YYYY-MM-DD HH24:MI:SS') AS DISP_STR_DTM
+				, TO_CHAR(PCCI.DISP_END_DTM,'YYYY-MM-DD HH24:MI:SS') AS DISP_END_DTM
+				, PCCI.DISP_SEQ
+				, PCCI.DISP_YN
+				, PCCI.MOV_FRME_CD
+				, PCCI.LINK_URL_ADDR
+				, PCCI.CONT_DESC
+				, PCCI.CONT_TITLE_NM
+		FROM 	  PR_CONR_CONT_INFO PCCI
+		WHERE 	  PCCI.DISP_CTG_NO = #{dispCtgNo}
+		AND 	  PCCI.CONR_NO = #{conrNo}
+		AND 	  PCCI.CONR_TGT_NO = #{conrTgtNoSelect}
+		AND 	  PCCI.CONR_TGT_CD = #{conrTgtCdSelect}
+		ORDER BY  PCCI.DISP_SEQ
+	</sql>
+
+	<select id="getPrConrContInfoTextList" parameterType="PrConrContInfoRequest" resultType="PrConrContInfoResponse">
+		<include refid="prConrContInfoTextList" />
+	</select>
+
+	<select id="getPrConrContInfoTextListCount" parameterType="PrConrContInfoRequest" resultType="java.lang.Integer">
+		SELECT   /* PrConrContInfoMapper.getPrConrContInfoTextListCount */
+		COUNT(*)
+		FROM (
+		<include refid="prConrContInfoTextList" />
+		) T1
+	</select>
+
+</mapper>
+
+

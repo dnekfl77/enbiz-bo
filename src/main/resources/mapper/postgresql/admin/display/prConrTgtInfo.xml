@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.display.PrConrTgtInfoMapper">
+
+	<select id="getCornerTargetInfoList" parameterType="PrConrBaseRequest" resultType="PrConrTgtInfoResponse">
+		WITH CORN AS (   /* prConrTgtInfo.getCornerTargetInfoList */
+			SELECT
+					  CTI.CONR_NO
+					, CTI.CONR_TGT_NO
+					, CTI.CONR_TGT_NM
+					, CTI.CONR_TGT_CD
+					, CTI.CONR_TGT_CNT
+					, CTI.DISP_SEQ
+					, CTI.DPTH_NO
+					, CTI.UPR_CONR_TGT_NO
+					, CASE WHEN CTI.UPR_CONR_TGT_NO IS null THEN CTI.CONR_TGT_NO
+						   WHEN CTI.UPR_CONR_TGT_NO = '' THEN CTI.CONR_TGT_NO
+						   ELSE CTI.UPR_CONR_TGT_NO
+						   END AS TGT_ORDER
+			FROM      PR_CONR_TGT_INFO CTI
+					, PR_CONR_BASE CB
+			WHERE  	CB.CONR_NO  = CTI.CONR_NO
+			AND  	CB.CONR_NO  = #{conrNo}
+		)
+		SELECT 	*
+		FROM 	CORN
+		ORDER BY TGT_ORDER, DPTH_NO, DISP_SEQ
+	</select>
+
+</mapper>
+
+

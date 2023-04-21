@@ -1,0 +1,140 @@
+<!--
+* 프로그램명 : 약관/이용안내 등록/수정
+* 작 성 일 : 2021.02.24
+* 작 성 자 : 박혜진
+* 수 정 자 : 권다솜
+* 버    전 : 1.0
+* 개    요 : 약관/이용안내 등록/수정
+* 이    력 :
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-update-layout}">
+<body>
+
+<th:block layout:fragment="header-area">
+    <div class="header">
+        <h1 class="title" th:if="${ccCmAgmtPolcInfo} == null"
+            th:text="${#messages.msg('termsConditionsMgmt.into.title.insert')}"></h1>
+        <h1 class="title" th:unless="${ccCmAgmtPolcInfo} == null"
+            th:text="${#messages.msg('termsConditionsMgmt.into.title.update')}"></h1>
+    </div>
+</th:block>
+
+<!--Search Area-->
+<th:block layout:fragment="data-area">
+    <div class="data">
+        <div class="data-body">
+            <form name="termsConditionsForm" id="termsConditionsForm">
+                <input type="hidden" name="cmAgmtSeq" id="cmAgmtSeq" th:value="${ccCmAgmtPolcInfo} == null ? '' : ${ccCmAgmtPolcInfo.cmAgmtSeq}"/>
+                <table class="data-table">
+                    <colgroup>
+                        <col style="width:120px;" />
+                        <col/>
+                        <col style="width: 120px;" />
+                        <col/>
+                    </colgroup>
+                    <tbody>
+                        <tr>
+                            <td class="label"><strong th:text="${#messages.msg('termsConditionsMgmt.grid.field.cmAgmtPolcGbCd')}"></strong></td>
+                            <td>
+                                <select class="form-control w50" id="cmAgmtPolcGbCd" name="cmAgmtPolcGbCd" th:disabled="${ccCmAgmtPolcInfo} != null and ${ccCmAgmtPolcInfo.aplyStrYn} == 'Y'">
+                                    <option value="" th:text="${#messages.msg('adminCommon.select')}"></option>
+                                    <option th:each="list : ${codeList.CH010}" th:value="${list.cd}" th:utext="${list.cdNm}"></option>
+                                </select>
+                            </td>
+                            <td class="label"><strong th:text="${#messages.msg('termsConditionsMgmt.into.label.agmtPolcCd')}"></strong></td>
+                            <td>
+                                <select class="form-control w60" id="agmtPolcCd" name="agmtPolcCd" th:disabled="${ccCmAgmtPolcInfo} != null and ${ccCmAgmtPolcInfo.aplyStrYn} == 'Y'">
+                                    <option value="" th:text="${#messages.msg('adminCommon.select')}"></option>
+                                    <option th:each="list : ${codeList.CH005}" th:value="${list.cd}" th:utext="${list.cdNm}"></option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label"><strong th:text="${#messages.msg('termsConditionsMgmt.into.label.aplyStrDt')}"></strong></td>
+                            <td>
+                                <div class="picker-group" data-lopicker="basic">
+                                    <input type="text" class="input disabled" name="aplyStrDt" id="aplyStrDt" disabled>
+                                    <span class="input-group-addon"><i class="icon-calendar" id="calendarButton1"></i></span>
+                                </div>
+                            </td>
+                            <td class="label"><strong th:text="${#messages.msg('termsConditionsMgmt.into.label.aplyEndDt')}"></strong></td>
+                            <td>
+                                <div class="picker-group" data-lopicker="basic">
+                                    <input type="text" class="input disabled" name="aplyEndDt" id="aplyEndDt" disabled>
+                                    <span class="input-group-addon"><i class="icon-calendar" id="calendarButton2"></i></span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label"><strong th:text="${#messages.msg('termsConditionsMgmt.into.label.title')}"></strong></td>
+                            <td>
+                                <input class="input w100" type="text" maxlength="200" name="title" id="title" th:disabled="${ccCmAgmtPolcInfo} != null and ${ccCmAgmtPolcInfo.aplyStrYn} == 'Y'"/>
+                            </td>
+                            <td class="label"><strong th:text="${#messages.msg('termsConditionsMgmt.into.label.siteNo')}"></strong></td>
+                            <td>
+                                <select class="form-control w50" id="siteNo" name="siteNo" th:disabled="${ccCmAgmtPolcInfo} != null and ${ccCmAgmtPolcInfo.aplyStrYn} == 'Y'">
+                                    <option value="" th:text="${#messages.msg('adminCommon.select')}"></option>
+                                    <option th:each="list : ${siteNmList}" th:value="${list.siteNo}" th:text="${list.siteNm}"></option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label"><strong th:text="${#messages.msg('termsConditionsMgmt.into.label.wrdCont')}"></strong></td>
+                            <td colspan="3">
+                                <textarea class="textarea" id="wrdCont" name="wrdCont" rows="10" th:disabled="${ccCmAgmtPolcInfo} != null and ${ccCmAgmtPolcInfo.aplyStrYn} == 'Y'"></textarea>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </div>
+</th:block>
+
+<th:block layout:fragment="button-area">
+    <div class="button-group" style="margin-top: 0px !important;" >
+        <a href="#" class="button" id="btn_popup_cancel">
+            <span class="text" th:text="${#messages.msg('adminCommon.button.cancel')}"></span>
+        </a>
+        <a href="#" class="button large" id="btn_popup_save">
+            <span class="text" th:text="${#messages.msg('adminCommon.button.save')}"></span>
+        </a>
+    </div>
+</th:block>
+
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        var oEditors            = [];
+        var ccCmAgmtPolcInfo    = [[${ccCmAgmtPolcInfo}]];
+        var codeList_CH005      = [[${codeList.CH005}]];
+
+        var col = x2coMessage.getMessage({
+                cmAgmtPolcGbCd    : 'termsConditionsMgmt.into.label.cmAgmtPolcGbCd'
+              , agmtPolcCd  : 'termsConditionsMgmt.into.label.agmtPolcCd'
+              , aplyStrDt   : 'termsConditionsMgmt.into.label.aplyStrDt'
+              , aplyEndDt   : 'termsConditionsMgmt.into.label.aplyEndDt'
+              , title       : 'termsConditionsMgmt.into.label.title'
+              , siteNo      : 'termsConditionsMgmt.into.label.siteNo'
+              , wrdCont     : 'termsConditionsMgmt.into.label.wrdCont'
+        });
+
+        var msg = x2coMessage.getMessage({
+                  necessaryCheckMessage : 'adminCommon.alert.required.parameter'
+                , dataSizeCheck         : 'adminCommon.alert.MSG0002'
+                , dataCheck1Msg         : 'termsConditionsMgmt.error.msg.dataCheck1Msg'
+                , dataCheck3Msg         : 'termsConditionsMgmt.error.msg.dataCheck3Msg'
+                , saveQuestionMsg       : 'adminCommon.alert.save'
+        });
+    </script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/termsConditions.eventHandler.js'" ></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            termsConditions.settings.init();
+        });
+    </script>
+</th:block>
+</body>
+</html>

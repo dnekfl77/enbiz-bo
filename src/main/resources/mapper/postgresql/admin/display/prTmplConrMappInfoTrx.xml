@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.display.PrTmplConrMappInfoTrxMapper">
+
+	<insert id="insertPrTmplConrMappInfo" parameterType="prTmplConrMappInfo">
+		INSERT INTO PR_TMPL_CONR_MAPP_INFO (  /* prTmplConrMappInfoTrx.insertPrTmplConrMappInfo */
+			  TMPL_NO
+			, CONR_NO
+			, DISP_SEQ
+			, SYS_REG_ID
+			, SYS_REG_DTM
+			, SYS_MOD_ID
+			, SYS_MOD_DTM
+		) VALUES (
+			  #{tmplNo}
+			, #{conrNo}
+			, 0
+			, #{sysRegId}
+			, NOW()
+			, #{sysModId}
+			, NOW()
+		)
+	</insert>
+
+	<update id="updatePrTmplConrMappInfo" parameterType="prTmplConrMappInfo">
+		UPDATE 	PR_TMPL_CONR_MAPP_INFO                  /* prTmplConrMappInfoTrx.updatePrTmplConrMappInfo */
+		SET
+				  DISP_SEQ 			= 0
+				, SYS_MOD_ID 		= #{sysModId}
+				, SYS_MOD_DTM 		= NOW()
+		WHERE 	  TMPL_NO = #{tmplNo}
+		AND 	  CONR_NO = #{conrNo}
+	</update>
+
+	<delete id="deletePrTmplConrMappInfo" parameterType="prTmplConrMappInfo">
+		DELETE                  /* prTmplConrMappInfoTrx.deletePrTmplConrMappInfo */
+		FROM 	PR_TMPL_CONR_MAPP_INFO
+		WHERE 	TMPL_NO = #{tmplNo}
+		AND 	CONR_NO = #{conrNo}
+	</delete>
+
+	<insert id="createDisplayCorner" parameterType="prTmplConrMappInfo">
+		INSERT INTO PR_TMPL_CONR_MAPP_INFO (  /* prTmplConrMappInfoTrx.createDisplayCorner */
+			  TMPL_NO
+			, CONR_NO
+			, DISP_YN
+			, DISP_STR_DTM
+			, DISP_END_DTM
+			, DISP_SEQ
+			, SYS_REG_ID
+			, SYS_REG_DTM
+			, SYS_MOD_ID
+			, SYS_MOD_DTM
+		) VALUES (
+			  #{tmplNo}
+			, #{conrNo}
+			, #{dispYn}
+			, TO_TIMESTAMP(#{dispStrDtm}, 'YYYY-MM-DD HH24:MI:SS')
+			, TO_TIMESTAMP(#{dispEndDtm}, 'YYYY-MM-DD HH24:MI:SS')
+			, #{dispSeq}
+			, #{sysRegId}
+			, NOW()
+			, #{sysModId}
+			, NOW()
+		)
+	</insert>
+
+	<update id="updateDisplayCorner" parameterType="prTmplConrMappInfo">
+		UPDATE 	PR_TMPL_CONR_MAPP_INFO                  /* prTmplConrMappInfoTrx.updateDisplayCorner */
+		SET
+				  DISP_YN 			= #{dispYn}
+				, DISP_STR_DTM 		= TO_TIMESTAMP(#{dispStrDtm}, 'YYYY-MM-DD HH24:MI:SS')
+				, DISP_END_DTM 		= TO_TIMESTAMP(#{dispEndDtm}, 'YYYY-MM-DD HH24:MI:SS')
+				, DISP_SEQ 			= #{dispSeq}
+				, SYS_MOD_ID 		= #{sysModId}
+				, SYS_MOD_DTM 		= NOW()
+		WHERE 	  TMPL_NO = #{tmplNo}
+		AND 	  CONR_NO = #{conrNo}
+	</update>
+
+	<delete id="deleteDisplayCorner" parameterType="prTmplConrMappInfo">
+		DELETE                  /* prTmplConrMappInfoTrx.deleteDisplayCorner */
+		FROM 	PR_TMPL_CONR_MAPP_INFO
+		WHERE 	TMPL_NO = #{tmplNo}
+		AND 	CONR_NO = #{conrNo}
+	</delete>
+
+</mapper>
+
+

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.display.PrConrBaseTrxMapper">
+
+	<update id="updateDisplayCornerBase" parameterType="prConrBase">
+		UPDATE 	PR_CONR_BASE                  /* prConrBaseTrx.updateDisplayCornerBase */
+		SET 	  USE_YN 	= #{useYn}
+				, SYS_MOD_ID 	= #{sysModId}
+				, SYS_MOD_DTM 	= NOW()
+		WHERE 	CONR_NO = #{conrNo}
+	</update>
+
+	<delete id="deleteDisplayCornerBase" parameterType="prConrBase">
+		DELETE                  /* prConrBaseTrx.deleteDisplayCornerBase */
+		FROM 	PR_CONR_BASE
+		WHERE 	CONR_NO = #{conrNo}
+	</delete>
+
+	<insert id="prConrBaseInsert" parameterType="prConrBase">
+		<selectKey keyProperty="conrNo" resultType="String" order="BEFORE">
+			SELECT NEXTVAL('PR_CONR_BASE_SQ01') AS conrNo
+		</selectKey>
+		INSERT INTO PR_CONR_BASE (  /* prConrBaseTrx.prConrBaseInsert */
+			  CONR_NO
+			, CONR_NM
+			, USE_YN
+			, AEMP_ID
+			, SET_USE_YN
+			, SET_CNT
+			, CONR_IMG_PATH_NM
+			, CONR_IMG_FILE_NM
+			, CONR_DESC
+			, SYS_REG_ID
+			, SYS_REG_DTM
+			, SYS_MOD_ID
+			, SYS_MOD_DTM
+		) VALUES (
+			#{conrNo}
+			, #{conrNm}
+			, #{useYn}
+			, #{aempId}
+			, #{setUseYn}
+			, #{setCnt}
+			, #{conrImgPathNm}
+			, #{conrImgFileNm}
+			, #{conrDesc}
+			, #{sysRegId}
+			, NOW()
+			, #{sysModId}
+			, NOW()
+		)
+	</insert>
+
+	<update id="prConrBaseUpdate" parameterType="prConrBase">
+		UPDATE 	PR_CONR_BASE                  /* prConrBaseTrx.prConrBaseUpdate */
+		SET 	  CONR_NM 			= #{conrNm}
+				, USE_YN 			= #{useYn}
+				, AEMP_ID 			= #{aempId}
+				, SET_USE_YN 		= #{setUseYn}
+				, SET_CNT 			= #{setCnt}
+				, CONR_IMG_PATH_NM 	= #{conrImgPathNm}
+				, CONR_IMG_FILE_NM 	= #{conrImgFileNm}
+				, CONR_DESC 		= #{conrDesc}
+				, SYS_MOD_ID 		= #{sysModId}
+				, SYS_MOD_DTM 		= NOW()
+		WHERE 	CONR_NO = #{conrNo}
+	</update>
+
+</mapper>
+
+

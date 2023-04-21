@@ -1,0 +1,88 @@
+<html lang="ko-KR">
+<head>
+  <title>x2</title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+  <link type="text/css" rel="stylesheet" href="../css/reset.css">
+  <link type="text/css" rel="stylesheet" href="../css/layout.css">
+  <link type="text/css" rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" type="text/css" href="../css/realgrid-style.css">
+  <script src="../js/libs/jquery/jquery-3.4.1.min.js"></script>
+  <script src="../js/contents.js"></script>
+</head>
+
+<body>
+  <div class="win-popup page-root">
+    <div class="page-fixed">
+      <!-- page-title 가 있을경우 with-title 클래스 추가 -->
+      <div class="search-cont">
+        <!-- 높이갚 최대일때 full-height 클래스 추가 -->
+        <div class="header">
+          <h1 class="title" id="">자동배분설정</h1>
+        </div>
+
+        <div class="search-cont">
+            <div class="data-cont col-30">
+              <div class="data">
+                <div class="data-head">
+                  <div class="left"><span class="title">조직도</span></div>
+                </div>
+    
+                <div class="data-body">
+                   <!-- Ztree -->
+                   <ul id="pscTree" class="ztree"></ul>
+                   <!-- Ztree -->
+                </div>
+                <div class="grid-body with-head" id="realgrid" realgrid>realgrid area</div>
+              </div>
+              <!-- //전시매장 조회 -->
+                <div class="grid">
+                  <div class="grid-head">
+                    <div class="title-area"><h2 class="title">매장 전시상품 목록</h2></div>
+                    <div class="option-area">
+                      <div class="edit-option">
+                        <div class="button-group">
+                          <a href="#" class="button inside"><span class="text">행삭제</span></a>
+                          <a href="#" class="button inside"><span class="text">변경취소</span></a>
+                          <a href="#" class="button inside"><span class="text">할당중지</span></a>
+                          <a href="#" class="button inside"><span class="text">할당진행</span></a>
+                          <a href="#" class="button inside"><span class="text">저장</span></a>
+                        </div>
+                      </div>
+      
+                      <div class="page-option">
+                        <span class="total">총 <em>24</em>건</span>
+                        <select class="form-control">
+                          <option value="0">20건씩</option>
+                          <option value="1">30건씩</option>
+                          <option value="2">100건씩</option>
+                        </select>
+                        <select class="form-control">
+                            <option value="0">0쪽</option>
+                          </select>
+                      </div>
+                    </div>
+                    <!-- //option-area -->
+                  </div>
+    
+                  <div class="grid-body with-head" id="realgrid" realgrid>realgrid area</div>
+                  <!-- //grid-body -->
+                </div>
+              </div>
+    
+            </div>
+            <!-- //data-cont -->
+            
+          </div>
+      </div>
+      <!-- //search-cont -->
+
+      <div class="button-group">
+        <a href="#" class="button"><span class="text">취소</span></a>
+        <a href="#" class="button"><span class="text">저장</span></a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

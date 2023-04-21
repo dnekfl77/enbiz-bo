@@ -1,0 +1,337 @@
+<!--
+* 프로그램명 : 리뷰 상세
+* 작 성 일 : 2021.06.30
+* 작 성 자 : 홍혜리
+* 수 정 자 : 홍혜리
+* 버    전 : 1.0
+* 개    요 : 상품관리 > 상품리뷰관리 > 리뷰 상세
+* 이    력 : 2021.09.23 프레임워크 이전
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-layout}">
+<body>
+
+<th:block layout:fragment="popup-title-area">
+    <!--Title Area-->
+    <th:block layout:insert="~{fragments/popup/popup-title :: popup-title}"
+              th:with="title=${#messages.msg('reviewMgmt.reviewDetail.title')}"></th:block>
+    <!--Title Area-->
+</th:block>
+
+<th:block layout:fragment="popup-search-area">
+    <!--Review Info Area-->
+    <div class="data-cont">
+        <div class="data">
+            <div class="data-head">
+                <div class="left">
+                    <span class="title" th:text="${#messages.msg('reviewMgmt.reviewDetail.info.title')}"></span>
+                </div>
+            </div>
+            <div class="data-body toggle-cont">
+                <table class="data-table">
+                    <colgroup>
+                        <col width="600">
+                        <col width="120">
+                        <col>
+                        <col width="120">
+                        <col>
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <!-- 첨부파일 -->
+                        <td rowspan="12">
+                            <div class="data-cont col-80 mg20">
+                                <div class="center">
+                                    <th:block  th:if="${not #lists.isEmpty(revFiles)}" th:each="file,index : ${revFiles}">
+                                        <img class="thumbnail-l" th:if="${index.index} == 0" th:src="${@domainConfig.getProperty('imageUrl') + file.atchFileRouteNm + file.atchFileNm}">
+                                    </th:block>
+                                    <th:block th:unless="${not #lists.isEmpty(revFiles)}">
+                                        <img class="thumbnail-l">
+                                    </th:block>
+                                </div>
+                                <div class="right" style="height: 500px; overflow: auto; margin-left: 25px;">
+                                    <th:block  th:if="${not #lists.isEmpty(revFiles)}" th:each="file,index : ${revFiles}">
+                                        <img class="thumbnail" name="atchFiles" th:src="${@domainConfig.getProperty('imageUrl') + file.atchFileRouteNm + file.atchFileNm}">
+                                    </th:block>
+                                    <th:block  th:unless="${not #lists.isEmpty(revFiles)}">
+                                        <img class="thumbnail">
+                                    </th:block>
+                                </div>
+                            </div>
+                        </td>
+                        <!-- 상품번호 -->
+                        <td class="label" th:text="${#messages.msg('reviewMgmt.reviewDetail.info.label.goodsNo')}"></td>
+                        <td>
+                            <span th:text="${revInfo.goodsNo}"></span>
+                        </td>
+                        <!-- 상품명 -->
+                        <td class="label" th:text="${#messages.msg('reviewMgmt.reviewDetail.info.label.goodsNm')}"></td>
+                        <td>
+                            <span th:text="${revInfo.goodsNm}"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <!-- 회원ID -->
+                        <td class="label" th:text="${#messages.msg('reviewMgmt.reviewDetail.info.label.loginId')}"></td>
+                        <td>
+                            <span th:text="${revInfo.loginId}"></span>
+                        </td>
+                        <!-- 주문번호 -->
+                        <td class="label" th:text="${#messages.msg('reviewMgmt.reviewDetail.info.label.ordNo')}"></td>
+                        <td>
+                            <span th:text="${revInfo.ordNo}"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <!-- 리뷰번호 -->
+                        <td class="label" th:text="${#messages.msg('reviewMgmt.reviewDetail.info.label.revNo')}"></td>
+                        <td>
+                            <span th:text="${revInfo.revNo}"></span>
+                        </td>
+                        <!-- 작성일시 -->
+                        <td class="label" th:text="${#messages.msg('reviewMgmt.reviewDetail.info.label.revWrtDtm')}"></td>
+                        <td>
+                            <span th:text="${revInfo.revWrtDtm}"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <!-- 리뷰유형 -->
+                        <td class="label" th:text="${#messages.msg('reviewMgmt.reviewDetail.info.label.revTypCdNm')}"></td>
+                        <td>
+                            <span th:text="${revInfo.revTypCdNm}"></span>
+                        </td>
+                        <!-- 리뷰구분 -->
+                        <td class="label" th:text="${#messages.msg('reviewMgmt.reviewDetail.info.label.revGbCdNm')}"></td>
+                        <td>
+                            <span th:text="${revInfo.revGbCdNm}"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <!-- 도움돼요수 -->
+                        <td class="label" th:text="${#messages.msg('reviewMgmt.reviewDetail.info.label.hlpfulCnt')}"></td>
+                        <td>
+                            <span th:text="${revInfo.hlpfulCnt}"></span>
+                        </td>
+                        <!-- 만족도1 -->
+                        <td class="label" th:text="${#messages.msg('reviewMgmt.reviewDetail.info.label.stfd1Yn')}"></td>
+                        <td>
+                            <div class="input-group">
+                                <label class="radio-inline" th:for="stfd1Yn_Y">
+                                    <input type="radio" th:value="Y" th:id="stfd1Yn_Y" th:disabled="true"
+                                           th:checked="${revInfo.stfd1Yn} == 'Y'">
+                                    <span th:text="${#messages.msg('reviewMgmt.reviewDetail.info.label.stfdY')}"></span>
+                                </label>
+                                <label class="radio-inline" th:for="stfd1Yn_N">
+                                    <input type="radio" th:value="N" th:id="stfd1Yn_N" th:disabled="true"
+                                           th:checked="${revInfo.stfd1Yn} == 'N'">
+                                    <span th:text="${#messages.msg('reviewMgmt.reviewDetail.info.label.stfdN')}"></span>
+                                </label>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <!-- 답글수 -->
+                        <td class="label" th:text="${#messages.msg('reviewMgmt.reviewDetail.info.label.replyCnt')}"></td>
+                        <td>
+                            <span th:text="${revInfo.replyCnt}"></span>
+                        </td>
+                        <!-- 만족도2 -->
+                        <td class="label" th:text="${#messages.msg('reviewMgmt.reviewDetail.info.label.stfd2Yn')}"></td>
+                        <td>
+                            <div class="input-group">
+                                <label class="radio-inline" th:for="stfd2Yn_Y">
+                                    <input type="radio" th:value="Y" th:id="stfd2Yn_Y" th:disabled="true"
+                                           th:checked="${revInfo.stfd2Yn} == 'Y'">
+                                    <span th:text="${#messages.msg('reviewMgmt.reviewDetail.info.label.stfdY')}"></span>
+                                </label>
+                                <label class="radio-inline" th:for="stfd2Yn_N">
+                                    <input type="radio" th:value="N" th:id="stfd2Yn_N" th:disabled="true"
+                                           th:checked="${revInfo.stfd2Yn} == 'N'">
+                                    <span th:text="${#messages.msg('reviewMgmt.reviewDetail.info.label.stfdN')}"></span>
+                                </label>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <!-- 리뷰별점 -->
+                        <td class="label" th:text="${#messages.msg('reviewMgmt.reviewDetail.info.label.revScrVal')}"></td>
+                        <td>
+                            <span th:text="${revInfo.revScrVal}"></span>
+                        </td>
+                        <!-- 만족도3 -->
+                        <td class="label" th:text="${#messages.msg('reviewMgmt.reviewDetail.info.label.stfd3Yn')}"></td>
+                        <td>
+                            <div class="input-group">
+                                <label class="radio-inline" th:for="stfd3Yn_Y">
+                                    <input type="radio" th:value="Y" th:id="stfd3Yn_Y" th:disabled="true"
+                                           th:checked="${revInfo.stfd3Yn} == 'Y'">
+                                    <span th:text="${#messages.msg('reviewMgmt.reviewDetail.info.label.stfdY')}"></span>
+                                </label>
+                                <label class="radio-inline" th:for="stfd3Yn_N">
+                                    <input type="radio" th:value="N" th:id="stfd3Yn_N" th:disabled="true"
+                                           th:checked="${revInfo.stfd3Yn} == 'N'">
+                                    <span th:text="${#messages.msg('reviewMgmt.reviewDetail.info.label.stfdN')}"></span>
+                                </label>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <!-- 리뷰전시상태 -->
+                        <td class="label">
+                            <strong th:text="${#messages.msg('reviewMgmt.reviewDetail.info.label.revDispStatCd')}"></strong>
+                        </td>
+                        <td>
+                            <select class="form-control" id="revDispStatCd">
+                                <option value="" th:text="${#messages.msg('adminCommon.select')}"/>
+                                <option th:each="list : ${codeList.PR022}" th:value="${list?.cd}" th:utext="${list?.cdNm}"
+                                        th:selected="${revInfo.revDispStatCd} == ${list?.cd}"/>
+                            </select>
+                            <a href="#" class="button inside" id="btn_revDispStat_save">
+                                <span class="text" th:text="${#messages.msg('adminCommon.button.save')}"></span>
+                            </a>
+                        </td>
+                        <!-- 사진전시상태 -->
+                        <td class="label">
+                            <strong th:text="${#messages.msg('reviewMgmt.reviewDetail.info.label.photoDispStatCd')}"></strong>
+                        </td>
+                        <td>
+                            <select class="form-control" id="photoDispStatCd">
+                                <option value="" th:text="${#messages.msg('adminCommon.select')}"/>
+                                <option th:each="list : ${codeList.PR022}" th:value="${list?.cd}" th:utext="${list?.cdNm}"
+                                        th:selected="${revInfo.photoDispStatCd} == ${list?.cd}"/>
+                            </select>
+                            <a href="#" class="button inside" id="btn_photoDispStat_save">
+                                <span class="text" th:text="${#messages.msg('adminCommon.button.save')}"></span>
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <!-- 전시처리자ID -->
+                        <td class="label" th:text="${#messages.msg('reviewMgmt.reviewDetail.info.label.dispProcmnId')}"></td>
+                        <td>
+                            <span th:text="${revInfo.dispProcmnId}"></span>
+                        </td>
+                        <!-- 전시처리일자 -->
+                        <td class="label" th:text="${#messages.msg('reviewMgmt.reviewDetail.info.label.dispProcDtm')}"></td>
+                        <td>
+                            <span th:text="${revInfo.dispProcDtm}"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <!-- 평가항목 -->
+                        <td class="label" th:text="${#messages.msg('reviewMgmt.reviewDetail.info.label.evltItem')}"></td>
+                        <td colspan="3">
+                            <a href="#" id="btn_call_evltItem_layer_popup" th:if="${not #lists.isEmpty(revEvltItems)}" th:text="${#messages.msg('reviewMgmt.reviewDetail.info.label.itemDetail')}"></a>
+                            <span th:unless="${not #lists.isEmpty(revEvltItems)}">-</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" class="label center" th:text="${#messages.msg('reviewMgmt.reviewDetail.info.label.revCont')}">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">
+                            <textarea class="textarea w100 disabled" rows="10" th:text="${revInfo.revCont}" th:readonly="true"></textarea>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--Review Info Area-->
+</th:block>
+<th:block layout:fragment="popup-List-area">
+    <!--List Area-->
+    <div class="grid">
+        <div class="grid-head" style="overflow: hidden;">
+            <div class="title-area">
+                <h2 class="title" th:text="${#messages.msg('reviewMgmt.reviewDetail.grid.title')}"></h2>
+            </div>
+            <div class="option-area">
+                <div class="edit-option">
+                    <div class="button-group">
+                        <a href="#" class="button inside" id="btn_call_revReplyRegist_popup"><span class="text" th:text="${#messages.msg('reviewMgmt.reviewDetail.grid.btn.add')}"></span></a>
+                        <a href="#" class="button inside" id="btn_display"><span class="text" th:text="${#messages.msg('adminCommon.grid.button.display')}"></span></a>
+                        <a href="#" class="button inside" id="btn_hide"><span class="text" th:text="${#messages.msg('adminCommon.grid.button.hide')}"></span></a>
+                    </div>
+                </div>
+                <div class="page-option" grid-id="reviewReplyListGrid"></div>
+            </div>
+        </div>
+        <div class="grid-body with-head">
+            <div id="reviewReplyListGrid" class="rg-root rg-grid" realgrid></div>
+        </div>
+    </div>
+    <!--List Area-->
+
+    <!-- 평가항목 레이어팝업 -->
+    <div class="layer-popup fix-center" id="layerPop-evltItem">
+        <div class="scroll-wrap">
+            <div class="win-popup account white">
+                <div class="login-wrap editor">
+                    <div class="box">
+                        <h1 style="margin-bottom: 0 !important;"
+                            th:text="${#messages.msg('reviewMgmt.reviewDetail.layer.title')}"></h1>
+                        <button class="btn-close">×</button>
+                        <div class="cont">
+                            <div class="data">
+                                <div class="data-head">
+                                    <div class="left"><span class="title" th:text="${#messages.msg('reviewMgmt.reviewDetail.layer.subtitle')}"></span></div>
+                                </div>
+                                <div class="data-body">
+                                    <table class="data-table">
+                                        <colgroup>
+                                            <col width="120">
+                                            <col>
+                                        </colgroup>
+                                        <tbody>
+                                            <th:block th:if="${not #lists.isEmpty(revEvltItems)}" th:each="item : ${revEvltItems}">
+                                                <tr>
+                                                    <td class="label" th:text="${item.evltItemNm}"></td>
+                                                    <td>
+                                                        <span th:text="${item.evltVal}"></span>
+                                                    </td>
+                                                </tr>
+                                            </th:block>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 평가항목 레이어팝업 -->
+
+</th:block>
+
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        var _gridType = '';
+        /*<![CDATA[*/
+        var _revInfo = [[${revInfo}]];
+        var _revFiles = [[${revFiles}]];
+
+        var _dispStatCdList = {};
+        /*[# th:each="list : ${codeList.PR022}"]*/
+        var key = /*[[${list.cd}]]*/;
+        _dispStatCdList[key] = /*[[${list.cdNm}]]*/;
+        /*[/]*/
+
+        /*]]>*/
+    </script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/reviewReplyListGrid.eventHandler.js?20210923'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/reviewReplyListGrid.provider.js?20210923'" ></script>
+    <script type="text/javascript">
+        $(function() {
+            reviewReplyListGrid.eventhandler.init();
+        });
+    </script>
+</th:block>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.display.CcChlBaseTrxMapper">
+
+	<insert id="insertCcChlBase" parameterType="CcChlBase" useGeneratedKeys="false">
+		<selectKey keyProperty="chlNo" resultType="String" order="BEFORE">
+			SELECT NEXTVAL('cc_chl_base_sq01') AS chlNo
+		</selectKey>
+		INSERT /* CcChlBaseTrxMapper.insertCcChlBase */
+		       INTO CC_CHL_BASE (
+ 			   CHL_NO
+ 			 , SITE_NO
+ 			 , CHL_CLSS_CD
+ 			 , CHL_TYP_CD
+ 			 , CHL_NM
+ 			 , APLY_STR_DT
+ 			 , APLY_END_DT
+ 			 , CHL_DESC
+ 			 , ENTR_NO
+ 			 , SYS_REG_ID
+ 			 , SYS_REG_DTM
+ 			 , SYS_MOD_ID
+ 			 , SYS_MOD_DTM
+		) VALUES (
+			  #{chlNo}
+			 , #{siteNo}
+			 , #{chlClssCd}
+			 , #{chlTypCd}
+			 , #{chlNm}
+			 , #{aplyStrDt}
+			 , #{aplyEndDt}
+			 , #{chlDesc}
+			 , #{entrNo}
+			 , #{sysRegId}
+			 , now()
+			 , #{sysModId}
+			 , now()
+		)
+	</insert>
+
+	<update id="updateCcChlBase" parameterType="CcChlBase">
+		UPDATE /* CcChlBaseTrxMapper.updateCcChlBase */
+		       CC_CHL_BASE
+		   SET SITE_NO     = #{siteNo}
+		     , CHL_CLSS_CD = #{chlClssCd}
+		     , CHL_TYP_CD  = #{chlTypCd}
+		     , CHL_NM      = #{chlNm}
+		     , APLY_STR_DT = #{aplyStrDt}
+		     , APLY_END_DT = #{aplyEndDt}
+		     , CHL_DESC    = #{chlDesc}
+		     , ENTR_NO     = #{entrNo}
+		     , SYS_MOD_ID  = #{sysModId}
+		     , SYS_MOD_DTM = now()
+		 WHERE CHL_NO = #{chlNo}
+	</update>
+
+	<delete id="deleteCcChlBase" parameterType="CcChlBase">
+		DELETE /* CcChlBaseTrxMapper.deleteCcChlBase */ 
+		  FROM CC_CHL_BASE
+		 WHERE CHL_NO = #{chlNo}
+	</delete>
+
+	<insert id="insertCcChlDtlInfo" parameterType="CcChlDtlInfo" useGeneratedKeys="false">
+		<selectKey keyProperty="chlDtlNo" resultType="String" order="BEFORE">
+			SELECT NEXTVAL('cc_chl_dtl_info_sq01') AS chlDtlNo
+		</selectKey>
+		INSERT /* CcChlBaseTrxMapper.insertCcChlDtlInfo */
+		       INTO CC_CHL_DTL_INFO (
+		       CHL_DTL_NO
+		     , CHL_NO
+		     , CHL_DTL_NM
+		     , CHL_DTL_DESC
+		     , USE_YN
+		     , SYS_REG_ID
+		     , SYS_REG_DTM
+		     , SYS_MOD_ID
+		     , SYS_MOD_DTM
+		) VALUES(
+		       #{chlDtlNo}
+		     , #{chlNo}
+		     , #{chlDtlNm}
+		     , #{chlDtlDesc}
+		     , #{useYn}
+		     , #{sysRegId}
+		     , now()
+		     , #{sysModId}
+		     , now()
+		)
+	</insert>
+
+	<update id="updateCcChlDtlInfo" parameterType="CcChlDtlInfo">
+		UPDATE /* CcChlBaseTrxMapper.updateCcChlDtlInfo */
+		       CC_CHL_DTL_INFO
+		   SET CHL_NO    	= #{chlNo}
+		     , CHL_DTL_NM   = #{chlDtlNm}
+		     , CHL_DTL_DESC = #{chlDtlDesc}
+		     , USE_YN  		= #{useYn}
+		     , SYS_MOD_ID   = #{sysModId}
+		     , SYS_MOD_DTM  = now()
+		 WHERE CHL_DTL_NO   = #{chlDtlNo}
+	</update>
+
+	<delete id="deleteCcChlDtlInfo" parameterType="CcChlDtlInfo">
+		DELETE /* CcChlBaseTrxMapper.deleteCcChlDtlInfo */
+		       FROM CC_CHL_DTL_INFO
+		 WHERE CHL_DTL_NO = #{chlDtlNo}
+	</delete>
+
+</mapper>

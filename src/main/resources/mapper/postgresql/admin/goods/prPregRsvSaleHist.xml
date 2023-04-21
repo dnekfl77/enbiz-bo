@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enbiz.bo.app.repository.goods.PrPregRsvSaleHistMapper">
+
+    <select id="getPregRsvSalesHist" parameterType="java.lang.String" resultType="PrPregRsvSaleHist">
+        SELECT PREG_GOODS_NO /* prPregRsvSaleHist.getPregRsvSalesHist */
+             , TO_CHAR(RSV_STRT_DTM,'YYYY-MM-DD HH24:MI:SS') AS RSV_STRT_DTM
+             , TO_CHAR(RSV_END_DTM,'YYYY-MM-DD HH24:MI:SS') AS RSV_END_DTM
+             , SUBSTRING(FWDIDC_PRAR_DY,1,4)||'-'||SUBSTRING(FWDIDC_PRAR_DY,5,2)||'-'||SUBSTRING(FWDIDC_PRAR_DY,7,2) AS FWDIDC_PRAR_DY
+             , RSV_END_AF_PROC_METH_CD
+             , SYS_REG_ID
+             , TO_CHAR(SYS_REG_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_REG_DTM
+             , SYS_MOD_ID
+             , TO_CHAR(SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+          FROM PR_PREG_RSV_SALE_HIST
+         WHERE PREG_GOODS_NO = #{pregGoodsNo}
+    </select>
+
+</mapper>

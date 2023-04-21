@@ -1,0 +1,172 @@
+<!--
+* 프로그램명 : FAQ 등록/수정 팝업
+* 작 성 일 : 2021.06.24
+* 작 성 자 : 권다솜
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 시스템관리 > 공지사항관리 > FAQ관리 > FAQ 등록, 수정
+* 이    력 :
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-update-layout}">
+<body>
+
+<th:block layout:fragment="header-area">
+    <div class="header">
+        <h1 class="title" th:if="${requestData.argInsertUpdate} == 'I'"
+            th:text="${#messages.msg('faqMgmt.insertTitle')}"></h1>
+        <h1 class="title" th:if="${requestData.argInsertUpdate} == 'U'"
+            th:text="${#messages.msg('faqMgmt.updateTitle')}"></h1>
+    </div>
+</th:block>
+
+<th:block layout:fragment="data-area">
+    <form name="faqForm" id="faqForm">
+        <input type="hidden" id="argInsertUpdate" name="argInsertUpdate" th:value="${requestData.argInsertUpdate}" >
+        <input type="hidden" id="faqNo" name="faqNo">
+        <!--data-cont-->
+        <div class="data-cont">
+            <div class="data">
+                <div class="data-head">
+                    <div class="left">
+                        <span class="title" th:text="${#messages.msg('faqMgmt.update.info')}"></span>
+                    </div>
+                </div>
+                <div class="data-body toggle-cont">
+                    <table class="data-table">
+                        <colgroup>
+                            <col width="100">
+                            <col>
+                            <col width="100">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                            <tr>
+                                <td class="label"><strong th:text="${#messages.msg('faqMgmt.label.title')}"></strong></td>
+                                <td colspan="3">
+                                    <input class="input w100" type="text" name="title" id="title"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label"><strong th:text="${#messages.msg('faqMgmt.label.categoryLag')}"></strong></td>
+                                <td>
+                                    <select class="form-control w60" id="faqLgrpCd" name="faqLgrpCd">
+                                        <option value="" th:text="${#messages.msg('adminCommon.select')}"></option>
+                                        <option th:each="list : ${codeList.CM014}" th:value="${list.cd}" th:text="${list.cdNm}"></option>
+                                    </select>
+                                </td>
+                                <td class="label"><strong th:text="${#messages.msg('faqMgmt.label.categoryMid')}"></strong></td>
+                                <td>
+                                    <select class="form-control w60" id="faqMgrpCd" name="faqMgrpCd">
+                                        <option value="" th:text="${#messages.msg('adminCommon.select')}"></option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label"><strong th:text="${#messages.msg('faqMgmt.label.bbYn')}"></strong></td>
+                                <td>
+                                    <div class="input-group">
+                                        <label class="radio-inline" th:for="bbYn_Y">
+                                            <input type="radio" name="bbYn" th:value="Y" th:id="bbYn_Y">
+                                            <span th:text="${#messages.msg('faqMgmt.label.bbYn_Y')}"></span>
+                                        </label>
+                                        <label class="radio-inline" th:for="bbYn_N">
+                                            <input type="radio" name="bbYn" th:value="N" th:id="bbYn_N">
+                                            <span th:text="${#messages.msg('faqMgmt.label.bbYn_N')}"></span>
+                                        </label>
+                                    </div>
+                                </td>
+                                <td class="label"><strong th:text="${#messages.msg('faqMgmt.label.sortSeq')}"></strong></td>
+                                <td>
+                                    <input class="input w30" type="text" name="sortSeq" id="sortSeq" maxlength="5" onKeyup="number(this)"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label"><strong th:text="${#messages.msg('faqMgmt.label.uprFixYn')}"></strong></td>
+                                <td colspan="3">
+                                    <div class="input-group">
+                                        <label class="radio-inline" th:for="uprFixYn_Y">
+                                            <input type="radio" name="uprFixYn" th:value="Y" th:id="uprFixYn_Y">
+                                            <span th:text="${#messages.msg('faqMgmt.label.uprFixYn_Y')}"></span>
+                                        </label>
+                                        <label class="radio-inline" th:for="uprFixYn_N">
+                                            <input type="radio" name="uprFixYn" th:value="N" th:id="uprFixYn_N">
+                                            <span th:text="${#messages.msg('faqMgmt.label.uprFixYn_N')}"></span>
+                                        </label>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!--//data-cont-->
+
+        <!--data-cont-->
+        <div class="data-cont">
+            <div class="data">
+                <div class="data-head">
+                    <div class="left">
+                        <span class="title" th:text="${#messages.msg('faqMgmt.update.cont')}"></span>
+                    </div>
+                </div>
+                <div class="data-body toggle-cont">
+                    <table class="data-table">
+                        <colgroup>
+                            <col width="100">
+                            <col>
+                        </colgroup>
+                        <tbody id="conrTargetTable">
+                            <tr>
+                                <td class="label" th:text="${#messages.msg('faqMgmt.label.contPc')}"></td>
+                                <td>
+                                    <textarea id="pcNtcCont" name="pcNtcCont" style="display:none; width: 100%; height: 200px;"></textarea>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label" th:text="${#messages.msg('faqMgmt.label.contMo')}"></td>
+                                <td>
+                                    <textarea id="moNtcCont" name="moNtcCont" style="display:none; width: 100%; height: 200px;"></textarea>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!--//data-cont-->
+
+    </form>
+</th:block>
+<th:block layout:fragment="button-area">
+    <th:block layout:insert="~{fragments/popup/popup-btn :: popup-dtl-btn}"/>
+</th:block>
+
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        var oEditorsPc = [];
+        var oEditorsMo = [];
+        var req         = [[${requestData}]];
+        var codeList    = [[${codeList.CM015}]];
+
+        var msg = x2coMessage.getMessage( {
+              cancelMessage: 'faqMgmt.message.cancelMessage'
+            , necessaryCheckMessage : 'faqMgmt.message.necessaryCheckMessage'
+            , contNecessaryCheckMessage : 'faqMgmt.message.contNecessaryCheckMessage'
+            , save : 'faqMgmt.message.save'
+            , overLapCheckMessage : 'faqMgmt.message.overLapCheckMessage'
+        });
+    </script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'system/faqUpdate.eventHandler.js?202108191500'" ></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+        	faqUpdate.eventhandler.init();
+        });
+    </script>
+</th:block>
+
+</body>
+</html>

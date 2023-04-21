@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="ko-KR"
+      xmlns:th="http://www.thymeleaf.org">
+
+<th:block th:fragment="la-aside-cont">
+    <nav id="snb" class="toggle-cont tabs-area">
+        <ul class="tabs">
+            <li class="active"><a>기본메뉴</a></li>
+            <li><a>마이메뉴</a></li>
+        </ul>
+        <div class="tabs-body">
+            <th:block th:replace="fragments/container/la-aside-base-cont :: la-aside-base-cont" />
+            <th:block th:replace="fragments/container/la-aside-fvt-cont :: la-aside-fvt-cont" />
+        </div>
+    </nav>
+</th:block>
+
+</html>

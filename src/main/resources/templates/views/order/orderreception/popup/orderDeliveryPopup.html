@@ -1,0 +1,89 @@
+<!--
+* 프로그램명 : 수기주문접수 > 배송지 추가 (회원)
+* 작 성 일 : 2021.07.13
+* 작 성 자 : yoon
+* 수 정 자 :
+* 버	전 : 1.0
+* 개	요 : 배송지 추가 팝업 ( 회원 )
+* 이	력 :
+-->
+<!DOCTYPE html>
+<html lang="ko"
+	  xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{layouts/page-realgrid-layout}">
+<head>
+
+</head>
+<body>
+	<th:block layout:fragment="page-contents">
+	<div class="win-popup page-root">
+		<div class="page-fixed">
+			<div class="search-cont">
+				<div class="header">
+					<h1 class="title" id="">
+						<th:block th:text="${#messages.msg('orderReception.deliveryPopup.member.title')}"/>
+					</h1>
+				</div>
+
+				<form name="deliveryGridForm" id="deliveryGridForm">
+					<input type="hidden" id="mbrNo" name="mbrNo" th:value="${mbrNo}"/><!-- 회원ID -->
+				</form>
+
+				<div class="grid">
+					<div class="grid-head">
+						<!-- //title-area -->
+
+						<div class="option-area">
+							<div class="edit-option">
+								<div class="button-group">
+									<a href="#" class="button inside" id="btnGridAdd"><span class="text">행추가</span></a>	<!-- 행추가 -->
+									<a href="#" class="button inside" id="btnGridReset"><span class="text">변경취소</span></a><!-- 변경취소 -->
+									<a href="#" class="button inside" id="btnGridSave"><span class="text">저장</span></a>	<!-- 저장 -->
+								</div>
+							</div>
+
+						</div>
+						<!-- //option-area -->
+					</div>
+					<!-- //grid-head -->
+
+					<div class="grid-body with-head" id="deliveryMemberGrid" realgrid></div>
+					<!-- //grid-body -->
+				</div>
+				<!-- //grid -->
+
+			</div>
+
+			<div class="button-group search-btn">
+				<a href="#" class="button white" id="btn_popup_close">
+					<span class="text">닫기</span>
+				</a>
+				<a href="#" class="button large" id="btn_popup_apply">
+					<span class="text">적용</span>
+				</a>
+			</div>
+
+		</div>
+		<!-- //page-fixed -->
+	</div>
+	</th:block>
+	<th:block layout:fragment="add-script">
+		<script th:inline="javascript">
+			/*<![CDATA[*/
+			var mbrNo = [[${mbrNo}]];
+			/*]]>*/
+		</script>
+
+		<!-- 배송지 그리드 -->
+		<script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'order/orderreception/popup/deliveryMemberGrid.provider.js?20210715000075'"></script>
+		<script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'order/orderreception/popup/deliveryMemberGrid.eventHandler.js?20210715000075'"></script>
+
+		<script type="text/javascript">
+			$(document).ready(function() {
+				deliveryMemberGrid.eventhandler.init();//배송지 그리드 초기화
+			});
+		</script>
+	</th:block>
+</body>
+</html>

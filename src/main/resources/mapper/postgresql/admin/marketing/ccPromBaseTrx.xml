@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.marketing.CcPromBaseTrxMapper">
+
+    <insert id="insertCoupon" parameterType="ccPromBase" useGeneratedKeys="false">
+        <selectKey keyProperty="promoNo" resultType="String" order="BEFORE">
+            SELECT 'C'||NEXTVAL('CC_PROM_BASE_SQ01') AS promoNo
+        </selectKey>
+
+        INSERT INTO CC_PROM_BASE (/* CcPromBaseTrxMapper.insertCoupon */
+               PROMO_NO
+             , PROMO_NM
+             , PROMO_TYP_CD
+             , PROMO_STAT_CD
+             , PROMO_STR_DTM
+             , PROMO_END_DTM
+             , PROMO_DESC
+             , ISSU_SUB_CD
+             , ISSU_METH_CD
+             , APLY_TERM_GB_CD
+             , ISSU_DD_STD_CPN_USE_DDS
+             , TM_CPN_YN
+             , USE_PSB_STR_DT
+             , USE_PSB_END_DT
+             , USE_PSB_STR_TM
+             , USE_PSB_END_TM
+             , ID_ISSU_CNT_CD
+             , ISSU_LMT_YN
+             , ISSU_QTY
+             , AUTO_ISSU_TYP_CD
+             , AUTO_ISSU_POTM_CD
+             , ANVY_BE_ISSU_DAYNUB
+             , CPBOOK_DISP_YN
+             , DC_CPBOOK_CD
+             , CARDCO_CD
+             , MBR_GRADE_CD
+             , MBR_UPR_GRADE_APLY_YN
+             , FIXAMT_FXRT_GB_CD
+             , DC_RATE_AMT
+             , MIN_BUY_AMT
+             , MAX_DC_AMT
+             , SYS_REG_ID
+             , SYS_REG_DTM
+             , SYS_MOD_ID
+             , SYS_MOD_DTM)
+        VALUES (
+               #{promoNo}
+             , #{promoNm}
+             , #{promoTypCd}
+             , #{promoStatCd}
+             , TO_TIMESTAMP(#{promoStrDtm}||'00', 'YYYYMMDDHH24MISS')
+             , TO_TIMESTAMP(#{promoEndDtm}||'59', 'YYYYMMDDHH24MISS')
+             , #{promoDesc}
+             , #{issuSubCd}
+             , #{issuMethCd}
+             , #{aplyTermGbCd}
+             , #{issuDdStdCpnUseDds}
+             , #{tmCpnYn}
+             , #{usePsbStrDt}
+             , #{usePsbEndDt}
+             , #{usePsbStrTm}
+             , #{usePsbEndTm}
+             , #{idIssuCntCd}
+             , #{issuLmtYn}
+             , #{issuQty}
+             , #{autoIssuTypCd}
+             , #{autoIssuPotmCd}
+             , #{anvyBeIssuDaynub}
+             , #{cpbookDispYn}
+             , #{dcCpbookCd}
+             , #{cardcoCd}
+             , #{mbrGradeCd}
+             , #{mbrUprGradeAplyYn}
+             , #{fixamtFxrtGbCd}
+             , COALESCE(#{dcRateAmt}::numeric,0)
+             , COALESCE(#{minBuyAmt}::numeric,0)
+             , COALESCE(#{maxDcAmt}::numeric,0)
+             , #{sysRegId}
+             , now()
+             , #{sysModId}
+             , now()
+       )
+    </insert>
+
+    <update id="updateCoupon" parameterType="ccPromBase">
+        UPDATE CC_PROM_BASE
+        SET /* CcPromBaseTrxMapper.updateCoupon */
+            PROMO_NM = #{promoNm}
+          , PROMO_TYP_CD = #{promoTypCd}
+          , PROMO_STAT_CD = #{promoStatCd}
+          , PROMO_STR_DTM = TO_TIMESTAMP(#{promoStrDtm}||'00', 'YYYYMMDDHH24MISS')
+          , PROMO_END_DTM = TO_TIMESTAMP(#{promoEndDtm}||'59', 'YYYYMMDDHH24MISS')
+          , PROMO_DESC = #{promoDesc}
+          , ISSU_SUB_CD = #{issuSubCd}
+          , ISSU_METH_CD = #{issuMethCd}
+          , APLY_TERM_GB_CD = #{aplyTermGbCd}
+          , ISSU_DD_STD_CPN_USE_DDS = #{issuDdStdCpnUseDds}
+          , TM_CPN_YN =  #{tmCpnYn}
+          , USE_PSB_STR_DT = #{usePsbStrDt}
+          , USE_PSB_END_DT = #{usePsbEndDt}
+          , USE_PSB_STR_TM = #{usePsbStrTm}
+          , USE_PSB_END_TM = #{usePsbEndTm}
+          , ID_ISSU_CNT_CD = #{idIssuCntCd}
+          , ISSU_LMT_YN = #{issuLmtYn}
+          , ISSU_QTY = #{issuQty}
+          , AUTO_ISSU_TYP_CD = #{autoIssuTypCd}
+          , AUTO_ISSU_POTM_CD =  #{autoIssuPotmCd}
+          , ANVY_BE_ISSU_DAYNUB = #{anvyBeIssuDaynub}
+          , CPBOOK_DISP_YN = #{cpbookDispYn}
+          , DC_CPBOOK_CD = #{dcCpbookCd}
+          , CARDCO_CD = #{cardcoCd}
+          , MBR_GRADE_CD = #{mbrGradeCd}
+          , MBR_UPR_GRADE_APLY_YN = #{mbrUprGradeAplyYn}
+          , FIXAMT_FXRT_GB_CD = #{fixamtFxrtGbCd}
+          , DC_RATE_AMT =  #{dcRateAmt}
+          , MIN_BUY_AMT = #{minBuyAmt}
+          , MAX_DC_AMT = #{maxDcAmt}
+          , SYS_MOD_ID = #{sysModId}
+          , SYS_MOD_DTM = now()
+        WHERE PROMO_NO = #{promoNo}
+    </update>
+
+    <insert id="insertPromotionMedia" parameterType="ccPromoAplyMediaInfo" useGeneratedKeys="false">
+        INSERT INTO CC_PROMO_APLY_MEDIA_INFO (/* CcPromBaseTrxMapper.insertCouponMedia */
+               PROMO_NO
+             , APLY_PSB_MEDIA_CD
+             , SYS_REG_ID
+             , SYS_REG_DTM
+             , SYS_MOD_ID
+             , SYS_MOD_DTM)
+        VALUES (
+               #{promoNo}
+             , #{aplyPsbMediaCd}
+             , #{sysRegId}
+             , now()
+             , #{sysModId}
+             , now()
+        )
+    </insert>
+
+
+    <insert id="insertPromotionWdays" parameterType="ccPromoUseWdayInfo" useGeneratedKeys="false">
+        INSERT INTO CC_PROMO_USE_WDAY_INFO (/* CcPromBaseTrxMapper.insertCouponWdays */
+               PROMO_NO
+             , USE_WDAY_CD
+             , SYS_REG_ID
+             , SYS_REG_DTM
+             , SYS_MOD_ID
+             , SYS_MOD_DTM)
+        VALUES (
+               #{promoNo}
+             , #{useWdayCd}
+             , #{sysRegId}
+             , now()
+             , #{sysModId}
+             , now()
+             )
+    </insert>
+
+    <insert id="insertPromotionAplyInfo" parameterType="ccPromoAplyInfo" useGeneratedKeys="false">
+        INSERT INTO CC_PROMO_APLY_INFO (/* CcPromBaseTrxMapper.insertCouponAplyInfo */
+               PROMO_NO
+             , FVR_APLY_GB_CD
+             , FVR_APLY_TYP_CD
+             , FVR_TGT_NO
+             , SYS_REG_ID
+             , SYS_REG_DTM
+             , SYS_MOD_ID
+             , SYS_MOD_DTM)
+        VALUES (
+               #{promoNo}
+             , #{fvrAplyGbCd}
+             , #{fvrAplyTypCd}
+             , #{fvrTgtNo}
+             , #{sysRegId}
+             , now()
+             , #{sysModId}
+             , now()
+             )
+    </insert>
+
+    <delete id="deletePromotionMedia"  parameterType="ccPromoAplyMediaInfo">
+       DELETE /* CcPromBaseTrxMapper.deleteCouponMedia */
+         FROM CC_PROMO_APLY_MEDIA_INFO
+        WHERE PROMO_NO = #{promoNo}
+    </delete>
+
+    <delete id="deletePromotionWdays"  parameterType="ccPromoUseWdayInfo">
+       DELETE /* CcPromBaseTrxMapper.deleteCouponWdays */
+         FROM CC_PROMO_USE_WDAY_INFO
+        WHERE PROMO_NO = #{promoNo}
+    </delete>
+
+    <delete id="deletePromotionAplyInfo"  parameterType="ccPromoAplyInfo">
+        DELETE /* CcPromBaseTrxMapper.deletePromoAplyInfo */
+          FROM CC_PROMO_APLY_INFO
+         WHERE PROMO_NO = #{promoNo}
+    </delete>
+
+    <delete id="deletePromotion"  parameterType="ccPromBase">
+        DELETE /* CcPromBaseTrxMapper.deleteCoupon */
+          FROM CC_PROM_BASE
+         WHERE PROMO_NO = #{promoNo}
+    </delete>
+
+    <insert id="registCouponIssuedMbr" parameterType="ccCpnIsuMbr" useGeneratedKeys="false">
+        <selectKey keyProperty="cpnIsuNo" resultType="String" order="BEFORE">
+            SELECT NEXTVAL('CC_CPN_ISU_MBR_SQ01') AS cpnIsuNo
+        </selectKey>
+
+        INSERT INTO PUBLIC.CC_CPN_ISU_MBR( /* CcPromBaseTrxMapper.registCouponIssuedMbr */
+               CPN_ISU_NO
+             , MBR_NO
+             , CPN_NO
+             , CPN_ISU_DTM
+             , VALI_STRT_DTM
+             , VALI_END_DTM
+             , USE_YN
+             , SYS_REG_ID
+             , SYS_REG_DTM
+             , SYS_MOD_ID
+             , SYS_MOD_DTM
+        )
+        VALUES(
+              #{cpnIsuNo}
+             ,#{mbrNo}
+             ,#{cpnNo}
+             ,now()
+             ,TO_TIMESTAMP(#{valiStrtDtm}||'000000', 'YYYY-MM-DDHH24MISS')
+             ,TO_TIMESTAMP(#{valiEndDtm}||'235959', 'YYYY-MM-DDHH24MISS')
+             ,'N'
+             ,#{sysRegId}
+             ,now()
+             ,#{sysModId}
+             ,now()
+        )
+    </insert>
+
+    <insert id="insertPromotion" parameterType="ccPromBase" useGeneratedKeys="false">
+        <selectKey keyProperty="promoNo" resultType="String" order="BEFORE">
+            SELECT 'C'||NEXTVAL('CC_PROM_BASE_SQ01') AS promoNo
+        </selectKey>
+
+        INSERT INTO CC_PROM_BASE (/* CcPromBaseTrxMapper.insertPromotion */
+                    PROMO_NO
+                  , PROMO_NM
+                  , PROMO_TYP_CD
+                  , PROMO_STAT_CD
+                  , PROMO_STR_DTM
+                  , PROMO_END_DTM
+                  , PROMO_DESC
+                  , CARDCO_CD
+                  , MBR_GRADE_CD
+                  , MBR_UPR_GRADE_APLY_YN
+                  , FIXAMT_FXRT_GB_CD
+                  , DC_RATE_AMT
+                  , MIN_BUY_AMT
+                  , MAX_DC_AMT
+                  , SYS_REG_ID
+                  , SYS_REG_DTM
+                  , SYS_MOD_ID
+                  , SYS_MOD_DTM )
+             VALUES (
+                    #{promoNo}
+                  , #{promoNm}
+                  , #{promoTypCd}
+                  , #{promoStatCd}
+                  , TO_TIMESTAMP(#{promoStrDtm}||'00', 'YYYYMMDDHH24MISS')
+                  , TO_TIMESTAMP(#{promoEndDtm}||'59', 'YYYYMMDDHH24MISS')
+                  , #{promoDesc}
+                  , #{cardcoCd}
+                  , #{mbrGradeCd}
+                  , #{mbrUprGradeAplyYn}
+                  , #{fixamtFxrtGbCd}
+                  , #{dcRateAmt}
+                  , #{minBuyAmt}
+                  , #{maxDcAmt}
+                  , #{sysRegId}
+                  , now()
+                  , #{sysModId}
+                  , now()
+        )
+    </insert>
+
+    <update id="updatePromotion" parameterType="ccPromBase">
+        UPDATE CC_PROM_BASE
+           SET /* CcPromBaseTrxMapper.updatePromotion */
+               PROMO_NM = #{promoNm}
+             , PROMO_TYP_CD = #{promoTypCd}
+             , PROMO_STAT_CD = #{promoStatCd}
+             , PROMO_STR_DTM = TO_TIMESTAMP(#{promoStrDtm}||'00', 'YYYYMMDDHH24MISS')
+             , PROMO_END_DTM = TO_TIMESTAMP(#{promoEndDtm}||'59', 'YYYYMMDDHH24MISS')
+             , PROMO_DESC = #{promoDesc}
+             , CARDCO_CD = #{cardcoCd}
+             , MBR_GRADE_CD = #{mbrGradeCd}
+             , MBR_UPR_GRADE_APLY_YN = #{mbrUprGradeAplyYn}
+             , FIXAMT_FXRT_GB_CD = #{fixamtFxrtGbCd}
+             , DC_RATE_AMT =  #{dcRateAmt}
+             , MIN_BUY_AMT = #{minBuyAmt}
+             , MAX_DC_AMT = #{maxDcAmt}
+             , SYS_MOD_ID = #{sysModId}
+             , SYS_MOD_DTM = now()
+         WHERE PROMO_NO = #{promoNo}
+    </update>
+
+</mapper>
+
+

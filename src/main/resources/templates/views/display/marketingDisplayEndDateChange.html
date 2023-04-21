@@ -1,0 +1,109 @@
+<!--
+* 프로그램명 : 전시시간 일괄변경
+* 작 성 일 : 2021.05.06
+* 작 성 자 : 권다솜
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 기획전 관리 > 전시기간 일괄변경
+* 이    력 :
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-update-layout}">
+
+<th:block layout:fragment="header-area">
+    <div class="header">
+        <h1><th:block th:text="${#messages.msg('marketingDisplayManagement.endDateChange.title')}"/></h1>
+    </div>
+</th:block>
+
+<th:block layout:fragment="data-area">
+<div class="search">
+    <form>
+                <table class="search-table">
+                    <colgroup>
+                        <col width="120px">
+                        <col>
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <td class="label" th:text="${#messages.msg('marketingDisplayManagement.endDateChange.type')}"></td>
+                        <td>
+                            <div class="input-group">
+                                <label class="radio-inline" th:for="type1">
+                                    <input type="radio" name="type" th:value="1" th:id="type1">
+                                    <span th:text="${#messages.msg('marketingDisplayManagement.endDateChange.type1')}"></span>
+                                </label>
+                                <label class="radio-inline" th:for="type2">
+                                    <input type="radio" name="type" th:value="2" th:id="type2">
+                                    <span th:text="${#messages.msg('marketingDisplayManagement.endDateChange.type2')}"></span>
+                                </label>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr id="content1">
+                        <td class="label" th:text="${#messages.msg('marketingDisplayManagement.endDateChange.content')}"></td>
+                        <td>
+                            <div class="input-group">
+                                <div class="picker-group" data-lopicker="basic">
+                                    <input type="text" class="input disabled" name="endDate" id="endDate" disabled>
+                                    <span class="input-group-addon"><i class="icon-calendar" id="calendarButton1"></i></span>
+                                </div>
+                                <select class="form-control" id="endHour" name="endHour">
+                                    <option th:each="num,numStat : ${#numbers.sequence(0,23)}"
+                                            th:value="${#numbers.formatInteger(numStat.index,2)}"
+                                            th:text="${#numbers.formatInteger(numStat.index,2)}"></option>
+                                </select>
+                                <em> : </em>
+                                <select class="form-control" id="endMinute" name="endMinute">
+                                    <option th:each="num,numStat : ${#numbers.sequence(0,59)}"
+                                            th:value="${#numbers.formatInteger(numStat.index,2)}"
+                                            th:text="${#numbers.formatInteger(numStat.index,2)}"></option>
+                                </select>
+                                <input class="input" type="hidden" name="popupDispEndDtm" id="popupDispEndDtm"/>
+                                <em th:text="${#messages.msg('marketingDisplayManagement.endDateChange.contentType1')}"></em>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr id="content2">
+                        <td class="label" th:text="${#messages.msg('marketingDisplayManagement.endDateChange.content')}"></td>
+                        <td>
+                            <div class="input-group">
+                                <em th:text="${#messages.msg('marketingDisplayManagement.endDateChange.contentType2_1')}"></em>
+                                <input type="text" class="input w10" th:id="dateCount" onkeyup="number(this)">
+                                <em th:text="${#messages.msg('marketingDisplayManagement.endDateChange.contentType2_2')}"></em>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </form>
+</div>
+
+<div class="button-group search-btn">
+    <a href="#" class="button white" id="btn_popup_cancel">
+        <span class="text" th:text="${#messages.msg('marketingDisplayManagement.btn.cancel')}"></span>
+    </a>
+    <a href="#" class="button large" id="btn_popup_apply">
+        <span class="text" th:text="${#messages.msg('marketingDisplayManagement.btn.apply')}"></span>
+    </a>
+</div>
+</th:block>
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        var msg = x2coMessage.getMessage( {
+            dataCheck2 : 'marketingDisplayManagement.message.dataCheck2'
+            , dateCountCheck1 : 'marketingDisplayManagement.message.dateCountCheck1'
+        });
+    </script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'display/display.marketingDisplayManagement.endDateChange.eventHandler.js?202105060001'" ></script>
+    <script th:inline="javascript">
+        $(document).ready(function() {
+            endDateChange.eventhandler.init();
+        });
+    </script>
+</th:block>
+
+</body>
+</html>

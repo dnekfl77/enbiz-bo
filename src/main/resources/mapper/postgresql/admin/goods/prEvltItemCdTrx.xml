@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enbiz.bo.app.repository.goods.PrEvltItemCdTrxMapper">
+
+    <insert id="insertPrEvltItemCd" parameterType="PrEvltItemCd">
+        INSERT INTO PR_EVLT_ITEM_CD ( /* PrEvltItemCdTrx.insertPrEvltItemCd */
+                    EVLT_ITEM_NO
+                  , EVLT_ITEM_NM
+                  , USE_YN
+                  , SYS_REG_ID
+                  , SYS_REG_DTM
+                  , SYS_MOD_ID
+                  , SYS_MOD_DTM
+        ) VALUES(
+                    NEXTVAL('PR_EVLT_ITEM_CD_SQ01')
+                  , #{evltItemNm}
+                  , #{useYn}
+                  , #{sysRegId}
+                  , now()
+                  , #{sysRegId}
+                  , now()
+        )
+    </insert>
+
+    <update id="updatePrEvltItemCd" parameterType="PrEvltItemCd">
+        UPDATE PR_EVLT_ITEM_CD /* PrEvltItemCdTrx.updatePrEvltItemCd */
+           SET EVLT_ITEM_NM = #{evltItemNm}
+             , USE_YN = #{useYn}
+             , SYS_MOD_ID = #{sysModId}
+             , SYS_MOD_DTM = now()
+        WHERE EVLT_ITEM_NO = #{evltItemNo}
+    </update>
+
+</mapper>

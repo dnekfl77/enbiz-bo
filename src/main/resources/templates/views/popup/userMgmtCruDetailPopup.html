@@ -1,0 +1,373 @@
+<!--
+* 프로그램명 : 사용자 상세정보 CRU
+* 프로그램명 : userMgmtCruDetailPopup.html
+* 작 성 일 : 2021.04.22
+* 작 성 자 : N.J.Kim
+* 수 정 자 :
+* 버	전 : 1.0
+* 개	요 : 사용자 CRU 관리를 하는 UI
+* 이	력 :
+-->
+<html lang="ko-KR" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/page-realgrid-layout}">
+<head>
+	<title>sub title</title>
+</head>
+<body>
+<th:block layout:fragment="page-contents">
+<div class="win-popup page-root">
+<div class="page-fixed">
+	<div class="search-cont"><!-- 높이갚 최대일때 full-height 클래스 추가 -->
+		<div class="header">
+			<h1 class="title" id="pageTitle"><th:block th:text="${#messages.msg('userMgmt.popup.label.insert.title')}"/></h1><!-- 사용자 등록 -->
+		</div>
+	<div class="data-cont">
+		<!--데이터테이블-->
+		<form id="userInfoForm">
+			<div class="data">
+
+				<!-- 기본정보 -->
+				<div class="data-head">
+					<div class="left">
+						<!-- 사용자 상세정보 -->
+						<span class="title" th:text="${#messages.msg('userMgmt.basic.popup.lable.title')}"></span><!-- 기본정보 -->
+					</div>
+				</div>
+				<div class="data-body br-btm">
+					<table class="data-table">
+						<colgroup>
+							<col width="120"><col>
+							<col width="120"><col>
+							<col width="120"><col>
+						</colgroup>
+						<tbody>
+						<tr>
+							<!-- 사용자 아이디 -->
+							<td class="label">
+								<strong th:text="${#messages.msg('userMgmt.label.userId')}"></strong></td>
+							<td>
+								<input type="text" maxlength="12" class="input" id="userId">
+								<a href="#" id="btn_id_dupl_check" class="button inside">
+									<span class="text" th:text="${#messages.msg('userMgmt.label.data.duplicate.check')}"></span><!-- 중복체크 -->
+								</a>
+							</td>
+
+							<!-- 사용자명 -->
+							<td class="label">
+								<strong th:text="${#messages.msg('userMgmt.label.userNm')}"></strong></td>
+							<td>
+								<input type="text" maxlength="100" class="input" id="userNm">
+							</td>
+
+							<!-- 비밀번호 -->
+							<td class="label">
+								<strong th:text="${#messages.msg('userMgmt.label.data.password')}"></strong>
+							</td>
+							<td>
+								<input type="password" maxlength="15" class="input" id="pwd">
+								<a href="#" class="button inside" id="btn_user_dtl_pwd_init" style="display:none;">
+									<span class="text" th:text="${#messages.msg('adminCommon.button.init')}"></span><!-- 초기화 -->
+								</a>
+							</td>
+						</tr>
+						<tr>
+
+							<!-- 전화번호 -->
+							<td class="label" th:text="${#messages.msg('userMgmt.label.data.telNo')}"></td>
+							<td>
+								<div class="input-group">
+									<input type="text" class="input" maxlength="4" id="telRgnNo" style="width:50px;">
+									<span>-</span>
+									<input type="text" class="input" maxlength="4" id="telTxnoNo" style="width:50px;">
+									<span>-</span>
+									<input type="text" class="input" maxlength="4" id="telEndNo" style="width:50px;">
+								</div>
+							</td>
+
+							<!-- 휴대폰번호 -->
+							<td class="label">
+								<strong th:text="${#messages.msg('userMgmt.label.data.cellNo')}"></strong>
+							</td>
+							<td>
+								<div class="input-group">
+									<select class="form-control" id="cellSctNo">
+										<option th:each="list : ${codeList.CM013}" th:value="${list?.cd}"
+												th:utext="${list?.cdNm}"></option>
+									</select>
+									<span>-</span>
+									<input type="text" class="input" maxlength="4" id="cellTxnoNo" style="width:50px;">
+									<span>-</span>
+									<input type="text" class="input" maxlength="4" id="cellEndNo" style="width:50px;">
+								</div>
+							</td>
+
+							<!-- 권한그룹 -->
+							<td class="label">
+								<strong th:text="${#messages.msg('userMgmt.label.data.rtGrp')}"></strong>
+							</td>
+							<td>
+								<input type="text" maxlength="15" class="input disabled" id="rtGrpNo" disabled="disabled">
+								<a href="#" class="button small" id="btn_user_dtl_rtGrp_pop">
+									<i class="icon-sarch"></i>
+								</a>
+							</td>
+						</tr>
+						<tr>
+
+							<!-- 이메일주소 -->
+							<td class="label">
+								<strong th:text="${#messages.msg('userMgmt.label.data.emailAddr')}"></strong>
+							</td>
+							<td colspan="3">
+								<div class="input-group">
+									<input type="text" class="input" maxlength="100" id="emailId">
+									<span>@</span>
+									<input type="text" class="input" maxlength="100" id="emailDomain">
+									<select class="form-control" id="domainSelectBox">
+										<option value="" th:text="${#messages.msg('userMgmt.label.data.domain.write')}"></option><!-- 직접입력 -->
+										<option th:each="list : ${codeList.CM012}" th:value="${list?.cdNm}" th:utext="${list?.cdNm}"></option>
+									</select>
+								</div>
+							</td>
+
+							<!-- 사용여부 -->
+							<td class="label">
+								<strong th:text="${#messages.msg('adminCommon.use.yn')}"></strong>
+							</td>
+							<td>
+								<input class="checkbox-inline" type="checkbox" id="useYn" value="Y">
+							</td>
+						</tr>
+						<tr>
+
+							<!-- 최근사용일시 -->
+							<td class="label" th:text="${#messages.msg('userMgmt.label.data.rcnt.use.dttm')}"></td>
+							<td colspan="3">
+								<span id="rcntUseDtm"></span>
+							</td>
+
+							<!-- 개인정보취급여부 -->
+							<td class="label">
+								<strong th:text="${#messages.msg('userMgmt.label.data.ind.info.deal.yn')}"></strong>
+							</td>
+							<td>
+								<input class="checkbox-inline" type="checkbox" id="indInfoDealYn" value="Y">
+							</td>
+						<tr>
+						<tr id="indInfoCheckbox" style="display: none">
+							<!-- 개인정보조회권한 -->
+							<td class="label">
+								<strong th:text="${#messages.msg('userMgmt.label.data.ind.info.qry.rt')}"></strong>
+							</td>
+							<td colspan="5">
+								<div class="checkbox">
+									<label th:each="list : ${codeList.UR008}">
+										<input class="checkbox-inline" type="checkbox" th:name="indInfoRight" th:value="${list.cd}">
+										<span th:text="${list.cdNm}"></span>
+									</label>
+								</div>
+							</td>
+						</tr>
+						</tbody>
+					</table>
+				</div>
+
+				<!-- 조직정보 -->
+				<div class="data-head" style="border-top:1px; border-color:#878787">
+					<div class="left">
+						<!-- 조직정보 -->
+						<span class="title" th:text="${#messages.msg('userMgmt.orgInfo.popup.lable.title')}"></span><!-- 조직정보 -->
+					</div>
+				</div>
+				<div class="data-body br-btm">
+					<table class="data-table">
+						<colgroup>
+							<col width="120"><col>
+							<col width="120"><col>
+							<col width="120"><col>
+						</colgroup>
+						<tbody>
+						<tr>
+							<!-- 부서명 -->
+							<td class="label" th:text="${#messages.msg('userMgmt.label.data.deptNm')}"></td>
+							<td>
+								<input type="text" class="input" maxlength="200" id="deptCd" value="">
+							</td>
+
+							<!-- 업무그룹 -->
+							<td class="label">
+								<strong th:text="${#messages.msg('userMgmt.label.orgTyp')}"></strong></td>
+							<td>
+								<select class="form-control" id="jobGrpCd">
+									<option th:text="${#messages.msg('baseInfoMgmt.label.select')}" value=""></option><!-- :: 선택 :: -->
+									<option th:each="list : ${codeList.UR002}" th:value="${list?.cd}" th:utext="${list?.cdNm}"></option>
+								</select>
+							</td>
+
+							<!-- 조직역할 -->
+							<td class="label">
+								<strong th:text="${#messages.msg('userMgmt.label.data.orgRol')}"></strong>
+							</td>
+							<td>
+								<select class="form-control" id="ocpCd">
+									<option th:text="${#messages.msg('baseInfoMgmt.label.select')}" value=""></option><!-- :: 선택 :: -->
+									<option th:each="list : ${codeList.UR003}" th:value="${list?.cd}" th:utext="${list?.cdNm}"></option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<!-- 사용시작일시 -->
+							<td class="label">
+								<strong th:text="${#messages.msg('userMgmt.label.data.use.strt.dttm')}"></strong>
+							</td>
+							<td>
+								<input type="text" class="input disabled" id="useStrtDt" disabled="disabled">
+							</td>
+
+							<!-- 사용종료일시 -->
+							<td class="label">
+								<strong th:text="${#messages.msg('userMgmt.label.data.use.end.dttm')}"></strong>
+							</td>
+							<td>
+								<input type="text" class="input disabled" id="useEndDt" disabled="disabled">
+							</td>
+
+							<!-- 근무상태 -->
+							<td class="label"><strong th:text="${#messages.msg('userMgmt.label.data.workStat')}"></strong>
+							</td>
+							<td>
+								<select class="form-control" id="workStatCd">
+									<option th:text="${#messages.msg('baseInfoMgmt.label.select')}" value=""></option><!-- :: 선택 :: -->
+									<option th:each="list : ${codeList.UR004}" th:value="${list?.cd}" th:utext="${list?.cdNm}"></option>
+								</select>
+							</td>
+						</tr>
+						</tbody>
+					</table>
+				</div>
+
+				<!-- 상담원 정보 -->
+				<div class="data-head">
+					<div class="left">
+						<!-- 상담원정보 -->
+						<span class="title" th:text="${#messages.msg('userMgmt.cnslInfo.popup.lable.title')}"></span><!-- 상담원정보 -->
+					</div>
+				</div>
+				<div class="data-body br-btm">
+					<table class="data-table">
+						<colgroup>
+							<col width="120"><col>
+							<col width="120"><col>
+							<col width="120"><col>
+						</colgroup>
+						<tbody>
+						<tr>
+
+							<!-- 상담업체명 -->
+							<td class="label" th:text="${#messages.msg('userMgmt.label.data.cnslEntpNm')}"></td>
+							<td>
+								<input type="text" class="input disabled" maxlength="20" id="cnslEntpNm" disabled="disabled">
+							</td>
+
+							<!-- 내선번호 -->
+							<td class="label" th:text="${#messages.msg('userMgmt.label.data.itelNo')}"></td>
+							<td>
+								<input type="text" class="input disabled" maxlength="20" id="itelNo" disabled="disabled">
+							</td>
+
+							<!-- CTI번호 -->
+							<td class="label" th:text="${#messages.msg('userMgmt.label.data.ctiNo')}"></td>
+							<td>
+								<input type="text" class="input disabled" maxlength="20" id="ctiNo" disabled="disabled">
+							</td>
+						</tr>
+						<tr>
+
+							<!-- 수정자 -->
+							<td class="label" th:text="${#messages.msg('adminCommon.label.sys.mod.id')}"></td>
+							<td>
+								<span id="sysModId"></span>
+							</td>
+
+							<!-- 수정일시 -->
+							<td class="label" th:text="${#messages.msg('adminCommon.label.sys.mod.date')}"></td>
+							<td>
+								<span id="sysModDtm"></span>
+							</td>
+						</tr>
+						</tbody>
+					</table>
+				</div>
+
+				<!-- 비밀번호 및 계정관리 -->
+				<div class="data-head">
+					<div class="left">
+						<span class="title" th:text="${#messages.msg('userMgmt.label.data.passwd.mgmt.title')}"></span><!-- 비밀번호 및 계정관리 -->
+					</div>
+				</div>
+				<div class="data-body">
+					<table class="data-table">
+						<colgroup>
+							<col width="140">
+							<col>
+							<col width="140">
+							<col>
+						</colgroup>
+						<tbody>
+						<tr>
+							<td class="label" th:text="${#messages.msg('userMgmt.label.data.passwd.lock.yn')}"></td><!-- 비밀번호잠김여부 -->
+							<td colspan="3">
+								<input class="checkbox-inline" type="checkbox" id="pwdLockYn" value="Y" disabled="disabled">
+								<a href="#" class="button inside" id="btn_user_dtl_pwd_unlock" style="display: none">
+									<span class="text" th:text="${#messages.msg('userMgmt.label.data.passwd.unlock')}"></span><!-- 비밀번호 잠김 해제 -->
+								</a>
+							</td>
+						</tr>
+						<tr>
+							<td class="label" th:text="${#messages.msg('userMgmt.label.data.passwd.fail.cntn')}"></td><!-- 비밀번호 연속 실패 수 -->
+							<td>
+								<input type="text" class="input disabled" id="pwdCntnFailCnt" disabled="disabled">
+							</td>
+							<td class="label" th:text="${#messages.msg('userMgmt.label.data.passwd.lst.chg.dtm')}"></td><!-- 최종비밀번호 변경 일시 -->
+							<td>
+								<input type="text" class="input disabled" id="lstPwdChgDtm" disabled="disabled">
+							</td>
+						</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+   		</form>
+	</div>
+	<div class="button-group search-btn">
+		<a href="#" class="button white" id="btnUserMgmtCruCancel"><span class="text" th:text="${#messages.msg('adminCommon.button.cancel')}"></span></a><!-- 취소 -->
+		<a href="#" class="button dark" id="btnUserMgmtCruSave"><span class="text" th:text="${#messages.msg('adminCommon.button.save')}"></span></a><!-- 저장 -->
+	</div>
+</div>
+</div>
+</div>
+</th:block>
+
+<th:block layout:fragment="add-script">
+	<script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'common/message.js'"></script>
+	<script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'common/util.js'"></script>
+	<script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'common/validate.js'"></script>
+	<script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'common/form.js'"></script>
+
+
+	<script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'system/userMgmtEventHandler.js'"></script>
+
+	<!-- 사용자 ID -->
+	<input type="hidden" id="paramUserId" th:value="${userId}">
+	<script type="text/javascript">
+		var msg = x2coMessage.getMessage( {
+	        cancelMessage: 'adminCommon.alert.cancel'
+	    });
+		$(function () {
+			$("#workStatCd").val("01").prop("selected", true);//근무상태 재직중 기본 선택
+			userMgmtEventhandler.init($("#paramUserId").val());
+		});
+	</script>
+</th:block>
+
+</body>
+</html>

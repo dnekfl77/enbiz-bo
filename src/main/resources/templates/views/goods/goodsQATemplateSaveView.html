@@ -1,0 +1,68 @@
+<!--
+* 프로그램명 : 템플릿 등록/수정 팝업
+* 작 성 일 : 2021.07.23
+* 작 성 자 : 홍혜리
+* 수 정 자 : 홍혜리
+* 버    전 : 1.0
+* 개    요 : 상품관리 > 상품Q&A관리 > 상품Q&A답변템플릿관리 > 템플릿 등록/수정 팝업
+* 이    력 : 2021.09.09 프레임워크 이전
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-update-layout}">
+<body>
+<th:block layout:fragment="header-area">
+    <div style="margin-bottom: 20px;">
+        <h1><th:block th:text="${#messages.msg('goodsQATemplateMgmt.save.popup.title')}"/></h1>
+    </div>
+</th:block>
+<th:block layout:fragment="data-area">
+    <div class="search">
+        <table class="search-table">
+            <colgroup>
+                <col width="100">
+                <col>
+            </colgroup>
+            <tbody>
+            <tr>
+                <td class="label">
+                    <strong th:text="${#messages.msg('goodsQATemplateMgmt.grid.field.ansTmplNm')}"></strong>
+                </td>
+                <td>
+                    <textarea class="w100" id="ansTmplNm" cols="30" rows="1" maxlength="100" th:text="${ansTmplNm}"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td class="label">
+                    <strong th:text="${#messages.msg('goodsQATemplateMgmt.grid.field.ansTmplCont')}"></strong>
+                </td>
+                <td>
+                    <textarea class="w100" id="ansTmplCont" cols="30" rows="10" maxlength="4000" th:text="${ansTmplCont}"></textarea>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</th:block>
+<th:block layout:fragment="button-area">
+    <div class="button-group search-btn">
+        <a href="#" class="button white" id="btn_popup_cancel">
+            <span class="text" th:text="${#messages.msg('adminCommon.button.cancel')}"></span>
+        </a>
+        <a href="#" class="button large" id="btn_popup_apply">
+            <span class="text" th:text="${#messages.msg('adminCommon.button.apply')}"></span>
+        </a>
+    </div>
+</th:block>
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+    </script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'goods/goodsQATemplateDetail.eventhandler.js?20210908'" ></script>
+    <script th:inline="javascript">
+        $(function(){
+            goodsQATemplateDetail.eventhandler.init();
+        });
+    </script>
+</th:block>
+</body>

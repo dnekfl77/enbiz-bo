@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ko-KR"
+      xmlns:th="http://www.thymeleaf.org">
+
+<th:block th:fragment="la-aside-fvt-cont">
+    <ul id="fvtMenu" class="tab-cont"><!-- 2021-04-27 토글오류변경 -->
+        <li class="title">
+            <a data="2000">마이메뉴</a>
+            <ul id="fvtMenu-01" class="depth2" style="display: block;">
+                <li th:each="fvtMenu, fvtIter : ${fvtMenuResponseList}">
+                    <th:block th:if="${fvtMenu.callUrl != null && fvtMenu.callUrl != ''}">
+                        <a href="javascript:void(0)"
+                           th:data-id="|${fvtMenu.rtTgtSeq}-${fvtMenu.uprRtTgtSeq}|"
+                           th:data-link="|${fvtMenu.callUrl}|"
+                           th:id="${fvtMenu.rtTgtSeq}">
+                            <th:block th:text="${fvtMenu.rtTgtNm}" />
+                        </a>
+                    </th:block>
+                    <th:block th:unless="${fvtMenu.callUrl != null && fvtMenu.callUrl != ''}">
+                        <a href="#">
+                            <th:block th:text="${fvtMenu.rtTgtNm}" />
+                        </a>
+                    </th:block>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</th:block>
+
+</html>

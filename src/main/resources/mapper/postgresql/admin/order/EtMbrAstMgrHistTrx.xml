@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.order.EtMbrAstMgrHistTrxMapper">
+
+    <insert id="insertCsCpMbrAstMgrHist" parameterType="EtMbrAstMgrHist" useGeneratedKeys="false">
+        <selectKey keyProperty="astMgrSeq" resultType="String" order="BEFORE">
+            SELECT NEXTVAL('ET_MBR_AST_MGR_HIST_SQ01') AS astMgrSeq
+        </selectKey>
+
+        INSERT INTO ET_MBR_AST_MGR_HIST( /* EtMbrAstMgrHist.insertCsCpMbrAstMgrHist */
+                    AST_MGR_SEQ
+                  , MBR_NO
+                  , AST_GB_CD
+                  , RSRV_USE_GB_CD
+                  , AST_RSRV_TYP_CD
+                  , AST_MGR_NO
+                  , OCUR_DTM
+                  , OCUR_AMT
+                  , BAL_AMT
+                  , AVAL_STRT_DT
+                  , AVAL_END_DT
+                  , SYS_REG_ID
+                  , SYS_REG_DTM
+                  , SYS_MOD_ID
+                  , SYS_MOD_DTM
+            )
+            VALUES(
+                    #{astMgrSeq}
+                  , #{mbrNo}
+                  , #{astGbCd}
+                  , #{rsrvUseGbCd}
+                  , #{astRsrvTypCd}
+                  , #{astMgrNo}
+                  , NOW()
+                  , #{ocurAmt}
+                  , #{balAmt}
+                  , TO_CHAR(NOW(),'YYYYMMDD')
+           <if test='astGbCd != null and astGbCd == "30"'>
+                  , TO_CHAR((now() + #{avalEndDt}::INTERVAL),'YYYYMMDD')
+           </if>
+           <if test='astGbCd != null and astGbCd == "50"'>
+                  , #{avalEndDt}
+           </if>
+                  , #{sysRegId}
+                  , NOW()
+                  , #{sysModId}
+                  , NOW()
+            )
+    </insert>
+
+</mapper>

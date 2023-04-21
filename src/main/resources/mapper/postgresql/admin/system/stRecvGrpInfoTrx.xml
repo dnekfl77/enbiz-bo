@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.system.StRecvGrpInfoTrxMapper">
+
+	<!-- 수신그룹 등록 -->
+	<insert id="insertRecvGrp" parameterType="ReceiveGroupRequest">
+		<selectKey keyProperty="recvGrpNo" resultType="String" order="BEFORE">
+			SELECT NEXTVAL('st_recv_grp_info_sq01') AS recvGrpNo
+		</selectKey>	
+		INSERT INTO ST_RECV_GRP_INFO(		/* stRecvGrpInfo.insertRecvGrp */
+				RECV_GRP_NO
+				, RECV_GRP_NM
+				, PBL_YN
+				, USE_YN
+				, SYS_REG_ID
+				, SYS_REG_DTM
+				, SYS_MOD_ID
+				, SYS_MOD_DTM
+		) VALUES (
+			#{recvGrpNo}
+			, #{recvGrpNm}
+			, #{pblYn}
+			, #{useYn}
+		    , #{sysRegId}
+		    , now()
+		    , #{sysRegId}
+		    , now()			
+		)
+	</insert>
+	
+	<!-- 수신그룹 수정 -->
+	<update id="updateRecvGrp" parameterType="ReceiveGroupRequest">
+		UPDATE ST_RECV_GRP_INFO		/* stRecvGrpInfo.updateRecvGrp */
+			SET RECV_GRP_NM = #{recvGrpNm}
+					, PBL_YN = #{pblYn}
+					, USE_YN = #{useYn}
+					, SYS_MOD_ID = #{sysRegId}
+					, SYS_MOD_DTM = now()
+		WHERE RECV_GRP_NO = #{recvGrpNo}
+	</update>
+	
+	<!-- 수신그룹 삭제 -->
+	<update id="deleteRecvGrp" parameterType="ReceiveGroupRequest">
+		DELETE /* stRecvGrpInfo.deleteRecvGrp */
+		   FROM ST_RECV_GRP_INFO
+		WHERE RECV_GRP_NO = #{recvGrpNo}
+	</update>
+
+</mapper>
+
+

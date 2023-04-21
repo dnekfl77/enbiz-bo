@@ -1,0 +1,149 @@
+<!--
+* 프로그램명 : 업무연락 문의 상세 화면
+* 작 성 일 : 2021.06.17
+* 작 성 자 : 임성범
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 업무연락 문의 상세 UI
+* 이    력 :
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-update-layout}">
+<body>
+<th:block layout:fragment="header-area">
+    <th:block layout:insert="~{fragments/popup/popup-title :: popup-title}"
+              th:with="title=${#messages.msg('common.title.job.cnct.detail')}"></th:block>
+</th:block>
+
+<th:block layout:fragment="data-area">
+    <div class="data-cont col-50">
+        <div class="data">
+            <div class="data-head">
+                <div class="left">
+                    <span class="title" th:text="${#messages.msg('common.title.job.cnct.detail.ques')}"></span>
+                </div>
+            </div> 
+            <div class="data-body">
+                <table class="data-table">
+                    <colgroup>
+						<col style="width:15%;" />
+						<col style="width:35%;" />
+						<col style="width:15%;" />
+						<col style="width:35%;" />
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <td class="label"><th:block th:text="${#messages.msg('common.label.job.cnct.detail.sendDtm')}"/></td>
+                        <td colspan="3"><th:block th:text="${quesInfo.sendDtm}"/></td>
+                    </tr>
+                    <tr>
+                        <td class="label"><th:block th:text="${#messages.msg('common.label.job.cnct.detail.user')}"/></td>
+                        <td><th:block th:text="${quesInfo.user}"/></td>
+                        <td class="label"><th:block th:text="${#messages.msg('common.label.job.cnct.detail.dept')}"/></td>
+                        <td><th:block th:text="${quesInfo.userDept}"/></td>
+                    </tr>
+                    <tr>
+                        <td class="label"><th:block th:text="${#messages.msg('common.label.job.cnct.detail.title')}"/></td>
+                        <td colspan="3"><th:block th:text="${quesInfo.title}"></td>
+                    </tr>
+                    <tr>
+                        <td class="label"><th:block th:text="${#messages.msg('common.label.job.cnct.detail.cont')}"></td>
+                        <td colspan="3">
+                        	<textarea rows="5" class="textarea dataCont" id="cont" name="cont" readOnly><th:block th:text="${quesInfo.cont}"/></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label"><th:block th:text="${#messages.msg('common.label.job.cnct.detail.atchFile')}"/></td>
+                        <td colspan="3"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="data">
+            <div class="data-head">
+                <div class="left">
+                    <span class="title" th:text="${#messages.msg('common.title.job.cnct.detail.ans')}"></span>
+                </div>
+            </div>         
+            <div class="data-body">
+            <form name="jobContactAnsForm" id="jobContactAnsForm">
+            	<input type="hidden" id="jobCnctTypeCd" name="jobCnctTypeCd" th:value="${jobCnctTypeCd}"/>
+            	<input type="hidden" id="jobCnctNo" name="jobCnctNo" th:value="${ansInfo.jobCnctNo}"/>
+               <table class="data-table">
+                    <colgroup>
+						<col style="width:20%;" />
+						<col style="width:30%;" />
+						<col style="width:20%;" />
+						<col style="width:30%;" />
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <td class="label"><th:block th:text="${#messages.msg('common.label.job.cnct.detail.ansDtm')}"/></td>
+                        <td colspan="3"><th:block th:text="${ansInfo.ansDtm}"/></td>
+                    </tr>
+                    <tr>
+                        <td class="label"><th:block th:text="${#messages.msg('common.label.job.cnct.detail.dsmnAnsConfDtm')}"/></td>
+                        <td colspan="3"><th:block th:text="${ansInfo.dsmnAnsConfDtm}"/></td>
+                    </tr>
+                    <tr>
+                        <td class="label"><th:block th:text="${#messages.msg('common.label.job.cnct.detail.recvmn')}"/></td>
+                        <td><th:block th:text="${ansInfo.recvmn}"/></td>
+                        <td class="label"><th:block th:text="${#messages.msg('common.label.job.cnct.detail.dept')}"/></td>
+                        <td><th:block th:text="${ansInfo.recvmnDept}"/></td>
+                    </tr>
+                    <tr>
+                        <td class="label"><strong><th:block th:text="${#messages.msg('common.label.job.cnct.detail.ansCont')}"/></strong></td>
+                        <td colspan="3">
+                        	<textarea rows="5" class="textarea dataCont" id="ansCont" name="ansCont" data-limitByte="4000" data-markId="accpContByte"></textarea>
+                        	<em><span id="accpContByte">0</span>/4000</em>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label"><th:block th:text="${#messages.msg('common.label.job.cnct.detail.atchFile')}"/></td>
+                        <td colspan="3"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </form>
+            </div>
+        </div>
+    </div>
+</th:block>
+
+<th:block layout:fragment="button-area">
+    <div class="button-group" style="margin-top: 0px !important;" >
+        <a href="#" class="button" id="btn_popup_close">
+            <span id="btnPopupCancel" th:text="${#messages.msg('adminCommon.button.close')}"></span>
+        </a>
+        <a href="#" class="button" id="btn_popup_cancel">
+            <span id="btnPopupCancel" th:text="${#messages.msg('adminCommon.button.cancel')}"></span>
+        </a>
+        <a href="#" class="button large" id="btn_popup_save">
+            <span id="btnPopupSave"  th:text="${#messages.msg('common.label.job.cnct.detail.btn.send')}"></span>
+        </a>
+    </div>
+</th:block>
+
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const _jobCnctTypeCd = [[${jobCnctTypeCd}]];
+        const _quesInfo = [[${quesInfo}]];
+        const _ansInfo = [[${ansInfo}]];
+        /*]]>*/
+    </script>
+
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'popup/jobContactDetailInfoPopup.eventHandler.js?202106180001'" ></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+        	jobContactDetailInfoPopup.eventhandler.init();
+        });
+    </script>
+</th:block>
+</body>
+</html>

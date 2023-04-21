@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.payment.OpNintInstGdBaseMapper">
+
+	<sql id="paginatedBase">
+		LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+	</sql>
+
+	<sql id="interestFreeInstallmentInfo">
+		<![CDATA[
+		SELECT DISTINCT  				/* opNintInstGdBase.interestFreeInstallmentInfo */
+				  ONIGB.NINT_INST_GD_NO
+				, FN_GET_CODENAME('OM028', ONIGB.ACQR_CD) AS ACQR_CD
+				, (
+						SELECT 	MIN(SUBMI.MERS_NO)
+						FROM 	OP_NINT_INST_GD_MERS_INFO SUBMI
+						WHERE 	ONIGB.NINT_INST_GD_NO = SUBMI.NINT_INST_GD_NO
+				  ) AS MERS_NO
+				, ONIGB.NINT_INST_NM
+				, TO_CHAR(ONIGB.APLY_STR_DTM,'YYYY-MM-DD HH24:MI') AS APLY_STR_DTM
+				, TO_CHAR(ONIGB.APLY_END_DTM,'YYYY-MM-DD HH24:MI') AS APLY_END_DTM
+				, ONIGDI.TGT_AMT
+			    , CONCAT_WS(',', 	CASE WHEN NINT_2_MON_YN = 'Y' THEN '2' END,
+									CASE WHEN NINT_3_MON_YN = 'Y' THEN '3' END,
+									CASE WHEN NINT_4_MON_YN = 'Y' THEN '4' END,
+									CASE WHEN NINT_5_MON_YN = 'Y' THEN '5' END,
+									CASE WHEN NINT_6_MON_YN = 'Y' THEN '6' END,
+									CASE WHEN NINT_7_MON_YN = 'Y' THEN '7' END,
+									CASE WHEN NINT_8_MON_YN = 'Y' THEN '8' END,
+									CASE WHEN NINT_9_MON_YN = 'Y' THEN '9' END,
+									CASE WHEN NINT_10_MON_YN = 'Y' THEN '10' END,
+									CASE WHEN NINT_11_MON_YN = 'Y' THEN '11' END,
+									CASE WHEN NINT_12_MON_YN = 'Y' THEN '12' END
+				  ) AS NINT_MONTH
+				, CASE  WHEN ONIGB.APLY_STR_DTM >  NOW()	AND ONIGB.APLY_END_DTM >   NOW() THEN '대기'
+						WHEN ONIGB.APLY_STR_DTM <= NOW()	AND ONIGB.APLY_END_DTM >=  NOW() THEN '진행'
+						WHEN ONIGB.APLY_STR_DTM <  NOW() 	AND ONIGB.APLY_END_DTM <   NOW() THEN '종료'
+						END AS STATE
+				, ONIGB.SYS_MOD_ID
+				, TO_CHAR(ONIGB.SYS_MOD_DTM,'YYYY-MM-DD HH24:MI') AS SYS_MOD_DTM
+		FROM 	  OP_NINT_INST_GD_BASE ONIGB
+				, OP_NINT_INST_GD_MERS_INFO ONIGMI
+				, OP_NINT_INST_GD_DTL_INFO ONIGDI
+		]]>
+
+		WHERE 	  ONIGB.NINT_INST_GD_NO = ONIGMI.NINT_INST_GD_NO
+		AND 	  ONIGB.NINT_INST_GD_NO = ONIGDI.NINT_INST_GD_NO
+		AND 	  ONIGMI.MERS_NO 	LIKE 	#{mersNo} 	|| '%'
+		AND 	  ONIGB.ACQR_CD 	LIKE 	#{acqrCd} 	|| '%'
+		<if test='aplyStrTotal != "Y"'><!-- 적용시작일자 : 전체조회가 아닌 경우 -->
+			<![CDATA[
+			AND ONIGB.APLY_STR_DTM 	>= #{startDate}::TIMESTAMP
+			AND ONIGB.APLY_STR_DTM  <= #{endDate}::TIMESTAMP
+			]]>
+		</if>
+		<if test='state == "1"'><!-- 대기 -->
+			<![CDATA[
+			AND ONIGB.APLY_STR_DTM > NOW()
+			AND ONIGB.APLY_END_DTM > NOW()
+			]]>
+		</if>
+		<if test='state == "2"'><!-- 진행 -->
+			<![CDATA[
+			AND ONIGB.APLY_STR_DTM <= NOW()
+			AND ONIGB.APLY_END_DTM >= NOW()
+			]]>
+		</if>
+		<if test='state == "3"'><!-- 종료 -->
+			<![CDATA[
+			AND ONIGB.APLY_STR_DTM < NOW()
+			AND ONIGB.APLY_END_DTM < NOW()
+			]]>
+		</if>
+	</sql>
+
+	<select id="getInterestFreeInstallmentInfoList" parameterType="OpNintInstGdBaseRequest" resultType="OpNintInstGdBaseResponse">
+		<include refid="interestFreeInstallmentInfo" />
+		<include refid="paginatedBase" />
+	</select>
+
+	<select id="getInterestFreeInstallmentInfoListCount" parameterType="OpNintInstGdBaseRequest" resultType="java.lang.Integer">
+		SELECT   /* opNintInstGdBase.getInterestFreeInstallmentInfoListCount */
+				COUNT(*)
+		FROM (
+				<include refid="interestFreeInstallmentInfo"/>
+		) T1
+	</select>
+
+	<select id="getMersList" resultType="OpNintInstGdBaseResponse">
+		WITH MERS AS (				/* opNintInstGdBase.getMersList */
+			SELECT
+					  OMI.MERS_NO
+					, (CASE WHEN OMI.ONOFF_LINE_GB_CD = 'ON' THEN '온라인' ELSE '오프라인' END) AS ONOFF_GB
+					, FN_GET_CODENAME('OM036', OMI.APLY_SITE_GB_CD) ||
+						   CASE WHEN OMI.APLY_SITE_GB_CD = '20'
+						   	    THEN
+						   	    '(' ||
+						   	    (	 	SELECT 	  ARRAY_TO_STRING(ARRAY_AGG(CSB.SITE_NM),',')
+										FROM 	  OP_APLY_SITE_MERS_INFO OASMI
+												, CC_SITE_BASE CSB
+										WHERE 	  OASMI.SITE_NO  = CSB.SITE_NO
+										AND 	  OMI.MERS_NO = OASMI.MERS_NO
+						   	    )
+						   	    || ')'
+						   	    ELSE ''
+						   END
+					  AS APLY_SITE
+			FROM 	  OP_MERS_INFO OMI
+		)
+		SELECT
+				   ONIGMI.NINT_INST_GD_NO AS PARENT_CD
+				,  ONIGMI.MERS_NO AS CODE
+				, (ONIGMI.MERS_NO || '(' || MERS.ONOFF_GB || ', ' || MERS.APLY_SITE || ')' ) AS CODE_NAME
+		FROM 	   OP_NINT_INST_GD_MERS_INFO ONIGMI
+				, MERS
+		WHERE 	  ONIGMI.MERS_NO = MERS.MERS_NO
+	</select>
+
+	<select id="getInterestFreeInstallmentInfoDetail" parameterType="OpNintInstGdBaseRequest" resultType="OpNintInstGdBaseResponse">
+		<![CDATA[
+		SELECT  				/* opNintInstGdBase.getInterestFreeInstallmentInfoDetail */
+				  ONIGB.NINT_INST_GD_NO
+				, ONIGB.ACQR_CD
+				, ONIGB.NINT_INST_NM
+				, TO_CHAR(ONIGB.APLY_STR_DTM,'YYYY-MM-DD HH24:MI') AS APLY_STR_DTM
+				, TO_CHAR(ONIGB.APLY_END_DTM,'YYYY-MM-DD HH24:MI') AS APLY_END_DTM
+				, CASE  WHEN ONIGB.APLY_STR_DTM >  NOW()	AND ONIGB.APLY_END_DTM >   NOW() THEN '1'
+						WHEN ONIGB.APLY_STR_DTM <= NOW()	AND ONIGB.APLY_END_DTM >=  NOW() THEN '2'
+						WHEN ONIGB.APLY_STR_DTM <  NOW() 	AND ONIGB.APLY_END_DTM <   NOW() THEN '3'
+				  END AS STATE
+				, ONIGB.SYS_MOD_ID
+				, TO_CHAR(ONIGB.SYS_MOD_DTM,'YYYY-MM-DD HH24:MI') AS SYS_MOD_DTM
+		FROM 	  OP_NINT_INST_GD_BASE ONIGB
+		]]>
+		WHERE 	  ONIGB.NINT_INST_GD_NO = #{nintInstGdNo}
+	</select>
+
+	<sql id="totalMersList">
+		SELECT 					/* opNintInstGdBase.totalMersList */
+				  OMI.MERS_NO
+				, (CASE WHEN OMI.ONOFF_LINE_GB_CD = 'ON' THEN '온라인' ELSE '오프라인' END) AS ONOFF_LINE_GB_CD
+				, FN_GET_CODENAME('OM036', OMI.APLY_SITE_GB_CD) ||
+					CASE WHEN OMI.APLY_SITE_GB_CD = '20'
+						 THEN
+						 '(' ||
+								 (	 	SELECT 	  ARRAY_TO_STRING(ARRAY_AGG(CSB.SITE_NM),',')
+								 		FROM 	  OP_APLY_SITE_MERS_INFO OASMI
+								 				, CC_SITE_BASE CSB
+								 		WHERE 	  OASMI.SITE_NO  = CSB.SITE_NO
+								 		AND 	  OMI.MERS_NO = OASMI.MERS_NO
+								 )
+						 || ')'
+						 ELSE ''
+					END
+				  AS APLY_SITE
+		FROM 	  OP_MERS_INFO OMI
+		ORDER BY  OMI.MERS_NO
+	</sql>
+
+	<select id="getTotalMersList" resultType="OpNintInstGdBaseResponse">
+		<include refid="totalMersList" />
+	</select>
+
+	<select id="getTotalMersListCount" resultType="java.lang.Integer">
+		SELECT   /* opNintInstGdBase.getTotalMersListCount */
+				COUNT(*)
+		FROM (
+				<include refid="totalMersList"/>
+		) T1
+	</select>
+
+	<select id="getDetailList" parameterType="OpNintInstGdBaseRequest" resultType="OpNintInstGdBaseResponse">
+		SELECT  				/* opNintInstGdBase.getDetailList */
+				  TGT_AMT
+				, CONCAT_WS(',', 	CASE WHEN NINT_2_MON_YN = 'Y' THEN '2' END,
+				  					CASE WHEN NINT_3_MON_YN = 'Y' THEN '3' END,
+				  					CASE WHEN NINT_4_MON_YN = 'Y' THEN '4' END,
+				  					CASE WHEN NINT_5_MON_YN = 'Y' THEN '5' END,
+				  					CASE WHEN NINT_6_MON_YN = 'Y' THEN '6' END,
+				  					CASE WHEN NINT_7_MON_YN = 'Y' THEN '7' END,
+				  					CASE WHEN NINT_8_MON_YN = 'Y' THEN '8' END,
+				  					CASE WHEN NINT_9_MON_YN = 'Y' THEN '9' END,
+				  					CASE WHEN NINT_10_MON_YN = 'Y' THEN '10' END,
+				  					CASE WHEN NINT_11_MON_YN = 'Y' THEN '11' END,
+				  					CASE WHEN NINT_12_MON_YN = 'Y' THEN '12' END
+				  ) AS NINT_MONTH
+		FROM 	  OP_NINT_INST_GD_DTL_INFO
+		WHERE 	  NINT_INST_GD_NO = #{nintInstGdNo}
+	</select>
+
+	<select id="getMappingMersList" parameterType="OpNintInstGdBaseRequest" resultType="OpNintInstGdBaseResponse">
+		SELECT 			/* opNintInstGdBase.getMappingMersList */
+			  	  ARRAY_TO_STRING(ARRAY_AGG(MERS_NO),',') AS MERS_LIST
+		FROM 	  OP_NINT_INST_GD_MERS_INFO
+		WHERE 	  NINT_INST_GD_NO = #{nintInstGdNo}
+	</select>
+
+	<select id="getAcqrCheck" parameterType="OpNintInstGdBaseRequest" resultType="java.lang.Integer">
+		<![CDATA[
+		SELECT   /* opNintInstGdBase.getAcqrCheck */
+		COUNT(ACQR_CD)
+		FROM 	OP_NINT_INST_GD_BASE
+		WHERE
+		(		(APLY_STR_DTM 	>= #{startDate}::TIMESTAMP   AND 	APLY_STR_DTM	<= #{endDate}::TIMESTAMP)
+		OR 		(APLY_END_DTM 	>= #{startDate}::TIMESTAMP   AND 	APLY_END_DTM	<= #{endDate}::TIMESTAMP)
+		)
+		AND 	ACQR_CD = #{acqrCd}
+		]]>
+	</select>
+
+	<select id="getAcqrCheckNo" parameterType="OpNintInstGdBaseRequest" resultType="java.lang.String">
+		<![CDATA[
+		SELECT   /* opNintInstGdBase.getAcqrCheckNo */
+				NINT_INST_GD_NO
+		FROM 	OP_NINT_INST_GD_BASE
+		WHERE
+		(		(APLY_STR_DTM 	>= #{startDate}::TIMESTAMP   AND 	APLY_STR_DTM	<= #{endDate}::TIMESTAMP)
+		OR 		(APLY_END_DTM 	>= #{startDate}::TIMESTAMP   AND 	APLY_END_DTM	<= #{endDate}::TIMESTAMP)
+		)
+		AND 	ACQR_CD = #{acqrCd}
+		]]>
+	</select>
+
+</mapper>
+
+

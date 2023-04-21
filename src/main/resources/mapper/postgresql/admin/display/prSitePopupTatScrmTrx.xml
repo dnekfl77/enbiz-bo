@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.display.PrSitePopupTgtScrnTrxMapper">
+
+	<insert id="prSitePopupTgtScrnInsert" parameterType="prSitePopupTgtScrn">
+		INSERT INTO PR_SITE_POPUP_TGT_SCRN (  		/* prSitePopupTgtScrn.prSitePopupTgtScrnInsert */
+				  POPUP_NO
+				, POPUP_TGT_SCRN_CD
+				, SYS_REG_ID
+				, SYS_REG_DTM
+				, SYS_MOD_ID
+				, SYS_MOD_DTM
+		) VALUES (
+				  #{popupNo}
+				, #{popupTgtScrnCd}
+				, #{sysRegId}
+				, NOW()
+				, #{sysModId}
+				, NOW()
+		)
+	</insert>
+
+</mapper>
+
+

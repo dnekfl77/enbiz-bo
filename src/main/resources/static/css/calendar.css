@@ -1,0 +1,80 @@
+@charset "utf-8";
+/************************************/
+/*	Name: X2CO Back Office	*/
+/*	PART: COMMON STYLE     	        */
+/*	Version: 1.0                    */
+/*	Author: [써냐]BLUEWEBD™        */
+/************************************/
+
+.layer{position:relative;border-radius:3px;border: 1px solid #666; background: #f8f8f8;}
+
+
+.layer .layer_lb {margin:10px; height: 280px !important;}
+.layer_rt {margin:0 !important;}
+.layer_rb {margin:0 !important;}
+.layer .header {position:absolute; width:18px; height:18px; top:0; right:0;}
+.layer .tCenter {height:32px;color:#333;font-size:12px;text-align:center;}
+.layer .tCenter img {vertical-align:middle; }
+.layer .tCenter span {display:inline-block;}
+.layer .input_box {text-align:center;}
+.layer .input_box input {height:14px; padding-top:2px; font-size:11px; color:#8e8e8e; text-align:center;}
+.layer .mr10 {margin-right:5px;}
+.layer .ml10 {margin-left:5px;}
+.layer .v_md {vertical-align:middle;}
+.layer .btn_pop {text-align:center;}
+.layer .button-group {display: block !important; margin-top:15px; text-align: center;}
+.layer .button-group .button + .button {margin-left:5px}
+
+.layer_rb #table td{vertical-align:top;}
+.grid_calendar{text-align:center;padding:0 3px}
+.grid_calendar * {box-sizing: border-box;}
+.grid_calendar table {width:100%;table-layout:fixed;margin:0 auto; border-collapse:collapse;font-size:12px}
+.grid_calendar table i{font-style:normal;}
+.grid_calendar table th {background:#f3f3f3; font-weight:normal; text-align:center;height:25px;}
+.grid_calendar table th.red {color:#ed1f8f !important;}
+.grid_calendar table th.blue {color:#0a5cd1 !important;}
+.grid_calendar table td {text-align:center;color:#8e8e8e;}
+/*.grid_calendar table tbody td.red a {color:#ed1f8f !important;}
+.grid_calendar table tbody td.blue a {color:#0a5cd1 !important;} */
+.grid_calendar table td.bg_blue a {background:#1c84ff;color:#fff;}
+.grid_calendar table td.bg_blue a:hover{background:#1c84ff;}
+.grid_calendar table .note_s {text-align:center}
+.grid_calendar table .note_s a {display:block; width:28px;line-height:23px;color:#8e8e8e; text-decoration:none;border-radius:3px;margin:0 auto;text-align:center;color:#333}
+.grid_calendar table .note_s a:hover{background-color:#f2f2f2;text-decoration:none ;}
+
+.newCalendar {display: flex;}
+.newCalendar  .month{height:40px;position:relative;padding-top:10px;text-align:center}
+.cal_box {position:relative;width:210px;float:left;margin-top:32px;border: 1px solid #999;padding-bottom:6px;
+    background: #fdfdfd;
+    -webkit-background-clip: padding-box;
+    -moz-background-clip: padding;
+    background-clip: padding-box;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;}
+.cal_box:nth-child(2) {margin-left:10px}
+/* .loat-right{position:relative;width:210px;float:right;margin-top:32px;border: 1px solid #ebebeb;padding-bottom:6px;
+    background: #fdfdfd;
+    -webkit-background-clip: padding-box;
+    -moz-background-clip: padding;
+    background-clip: padding-box;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    margin-left:10px} */
+
+.btn_area:before{content:'';display:block;clear:both}
+.i-prev,
+.i-next{position:absolute;top:10px;display:block;font-size:0;width:20px;height:20px;border-radius:10px;}
+.i-prev{left:5px;}
+.i-next{right:5px;}
+.i-prev:before,
+.i-next:before{content:'';position:absolute;top:6px; border-top:2px solid #333; border-left:2px solid #333; width:7px;height:7px;display:inline-block;}
+.i-prev:before{transform: rotate(-45deg);left:8px}
+.i-next:before{transform: rotate(135deg);right:8px;}
+.i-prev:hover, .newCalendar .i-next:hover{opacity:0.7;background-color:#000;}
+.i-prev:hover:before,.newCalendar .i-next:hover:before{opacity:1;border-color:#FFF}
+.newCalendar .day-send{position:absolute;top:-31px;left:-1px;width:210px;;height:32px;background-color:#777;border:1px solid #777;border-radius:3px 3px 0 0;color:#fff;text-align:center;line-height:32px;font-size:12px}
+.newCalendar .day-send input{height:30px;border:0;background-color:#777;color:#fff; font-size:12px;letter-spacing: 0; vertical-align: 0;padding:0}
+.cal_time{width:40px;height:20px;margin-left:2px}
+.newCalendar .btn_area{clear:both}

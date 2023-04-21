@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.customerservice.CsCcnOrdGoodsInfoTrxMapper">
+
+    <insert id="insertCsCcnOrdGoodsInfo" parameterType="CsCcnOrdGoodsInfo" useGeneratedKeys="false">
+        INSERT INTO CS_CCN_ORD_GOODS_INFO(/* CsCcnOrdGoodsInfo.insertCsCcnOrdGoodsInfo */
+                    CCN_NO
+                  , CUST_CNSL_SEQ
+                  , ORD_NO
+                  , GOODS_NO
+                  , SYS_REG_ID
+                  , SYS_REG_DTM
+                  , SYS_MOD_ID
+                  , SYS_MOD_DTM)
+            VALUES(
+                    #{ccnNo}
+                  , #{custCnslSeq}
+                  , #{ordNo}
+                  , #{goodsNo}
+                  , #{sysRegId}
+                  , NOW()
+                  , #{sysModId}
+                  , NOW()
+                  )
+    </insert>
+</mapper>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ko-KR"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<body>
+<th:block layout:fragment="popup-search-btn">
+    <div class="button-group search-btn">
+        <a href="#" class="button white" id="btn_popup_init">
+            <span class="text" th:text="${#messages.msg('adminCommon.button.init')}">초기화</span>
+        </a>
+        <a href="#" class="button" id="btn_popup_list">
+            <span class="text" th:text="${#messages.msg('adminCommon.button.search')}">조회</span>
+        </a>
+    </div>
+</th:block>
+
+<th:block layout:fragment="popup-dtl-btn">
+    <div class="button-group search-btn">
+        <a href="#" class="button white" id="btn_popup_close">
+            <span class="text" th:text="${#messages.msg('adminCommon.button.cancel')}">취소</span>
+        </a>
+        <a href="#" class="button large" id="btn_popup_apply">
+            <span class="text" th:text="${#messages.msg('adminCommon.button.save')}">저장</span>
+        </a>
+    </div>
+</th:block>
+
+<th:block layout:fragment="popup-List-btn">
+    <div class="button-group search-btn">
+        <a href="#" class="button white" id="btn_popup_close">
+            <span class="text" th:text="${#messages.msg('adminCommon.button.close')}">닫기</span>
+        </a>
+        <a href="#" class="button large" id="btn_popup_apply">
+            <span class="text" th:text="${#messages.msg('adminCommon.button.apply')}">적용</span>
+        </a>
+    </div>
+</th:block>
+
+<th:block layout:fragment="popup-bottom-btn">
+    <div class="button-group search-btn">
+        <a href="#" class="button" id="btn_popup_bottom_close">
+            <span class="text" th:text="${#messages.msg('adminCommon.button.close')}">닫기</span>
+        </a>
+    </div>
+</th:block>
+</body>
+</html>

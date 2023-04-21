@@ -1,0 +1,185 @@
+<!--
+* 프로그램명 : 배송상세내역
+* 작 성 일 : 2021.06.21
+* 작 성 자 : 권다솜
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 배송관리 > 배송관리 > 배송조회 > 그리드 배송컬럼 > 배송배송상세내역
+* 이    력 :
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-update-layout}">
+<body>
+
+<th:block layout:fragment="header-area">
+    <div class="header">
+        <h1 class="title" th:text="${#messages.msg('deliveryMgmt.deliveryDetail.title')}"></h1>
+    </div>
+</th:block>
+
+<th:block layout:fragment="data-area">
+    <form name="deliveryDetailForm" id="deliveryDetailForm">
+        <!--data-cont-->
+        <div class="data-cont">
+            <div class="data">
+                <div class="data-head">
+                    <div class="left">
+                        <span class="title" th:text="${#messages.msg('deliveryMgmt.deliveryDetail.subTitle1')}"></span>
+                    </div>
+                </div>
+                <div class="data-body toggle-cont">
+                    <table class="data-table">
+                        <colgroup>
+                            <col width="100">
+                            <col>
+                            <col width="100">
+                            <col>
+                            <col width="100">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                            <tr>
+                                <td class="label" th:text="${#messages.msg('deliveryMgmt.deliveryDetail.label.ordFnshDtm')}"></td>
+                                <td>
+                                    <span th:text="${deliveryDetail.ordFnshDtm}"></span>
+                                </td>
+                                <td class="label" th:text="${#messages.msg('deliveryMgmt.deliveryDetail.label.ordNo')}"></td>
+                                <td>
+                                    <span id="ordNo" th:text="${deliveryDetail.ordNo}"></span>
+                                </td>
+                                <td class="label" th:text="${#messages.msg('deliveryMgmt.deliveryDetail.label.ordererNm')}"></td>
+                                <td>
+                                    <span th:text="${deliveryDetail.ordererNm}"></span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!--//data-cont-->
+
+        <!--data-cont-->
+        <div class="data-cont">
+            <div class="data">
+                <div class="data-head">
+                    <div class="left">
+                        <span class="title" th:text="${#messages.msg('deliveryMgmt.deliveryDetail.subTitle2')}"></span>
+                    </div>
+                </div>
+                <div class="data-body toggle-cont">
+                    <table class="data-table">
+                        <colgroup>
+                            <col width="100">
+                            <col>
+                            <col width="100">
+                            <col>
+                            <col width="100">
+                            <col>
+                        </colgroup>
+                        <tbody>
+                            <tr>
+                                <td class="label" th:text="${#messages.msg('deliveryMgmt.deliveryDetail.label.deliNo')}"></td>
+                                <td>
+                                    <span id="deliNo" th:text="${deliveryDetail.deliNo}"></span>
+                                </td>
+                                <td class="label" th:text="${#messages.msg('deliveryMgmt.deliveryDetail.label.deliTypCd')}"></td>
+                                <td>
+                                    <span th:text="${deliveryDetail.deliTypCd}"></span>
+                                </td>
+                                <td class="label" th:text="${#messages.msg('deliveryMgmt.deliveryDetail.label.siteNm')}"></td>
+                                <td>
+                                    <span th:text="${deliveryDetail.siteNm}"></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label" th:text="${#messages.msg('deliveryMgmt.deliveryDetail.label.deliProcTypCd')}"></td>
+                                <td>
+                                    <span th:text="${deliveryDetail.deliProcTypCd}"></span>
+                                </td>
+                                <td class="label" th:text="${#messages.msg('deliveryMgmt.deliveryDetail.label.deliWayCd')}"></td>
+                                <td colspan="3">
+                                    <span th:text="${deliveryDetail.deliWayCd}"></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label" th:text="${#messages.msg('deliveryMgmt.deliveryDetail.label.rcvmnNm')}"></td>
+                                <td>
+                                    <span th:text="${deliveryDetail.rcvmnNm}"></span>
+                                </td>
+                                <td class="label" th:text="${#messages.msg('deliveryMgmt.deliveryDetail.label.rcvmnCell')}"></td>
+                                <td>
+                                    <span th:text="${deliveryDetail.rcvmnCell}"></span>
+                                </td>
+                                <td class="label" th:text="${#messages.msg('deliveryMgmt.deliveryDetail.label.rcvmnTel')}"></td>
+                                <td>
+                                    <span th:text="${deliveryDetail.rcvmnTel}"></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label" th:text="${#messages.msg('deliveryMgmt.deliveryDetail.label.addr')}"></td>
+                                <td colspan="5">
+                                    <span th:text="${deliveryDetail.addr}"></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label" th:text="${#messages.msg('deliveryMgmt.deliveryDetail.label.deliMsg')}"></td>
+                                <td colspan="5">
+                                    <span th:text="${deliveryDetail.deliMsg}"></span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!--//data-cont-->
+
+        <!-- grid-cont -->
+        <div class="grid-cont">
+            <div class="grid">
+                <div class="grid-head">
+                    <div class="title-area">
+                        <h2 class="title" th:text="${#messages.msg('deliveryMgmt.deliveryDetail.subTitle3')}"></h2>
+                    </div>
+                    <div class="option-area">
+                        <div class="page-option" grid-id="deliveryGoodsGrid">
+                            <span class="total">총 <span id="deliveryGoodsGrid-totalcount">0</span>건</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- //grid-head -->
+
+                <div class="grid-body with-head">
+                    <div id="deliveryGoodsGrid" realgrid></div>
+                </div>
+            </div>
+        </div>
+        <!-- //grid-cont -->
+
+    </form>
+    <div class="button-group search-btn">
+        <a href="#" class="button" id="btn_popup_cancel">
+            <span class="text" th:text="${#messages.msg('deliveryMgmt.label.close')}"></span>
+        </a>
+    </div>
+</th:block>
+
+
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+    </script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'delivery/deliveryGoodsGrid.eventHandler.js?202106210001'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'delivery/deliveryGoodsGrid.provider.js?202106210001'" ></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            deliveryGoodsGrid.eventhandler.init();
+        });
+    </script>
+</th:block>
+
+</body>
+</html>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.customerservice.CsCcnOrdGoodsInfoMapper">
+
+    <select id="getCsOrdGoodsData" parameterType="java.lang.String" resultType="CsRelatedResponse">
+        SELECT /* CsCustCnslInfo.getCsOrdGoodsData */
+               CCOGI.CCN_NO
+             , CCOGI.ORD_NO
+             , CCOGI.GOODS_NO
+             , PGB.GOODS_NM
+             , PGB.ENTR_NO
+             , EEB.ENTR_NM
+             , EMB.MBR_NO
+             , EMB.MBR_NM
+             , EMB.MBR_NM AS NO_MASKING_MBR_NM
+             , EMB.LOGIN_ID
+             , EMB.LOGIN_ID AS NO_MASKING_LOGIN_ID
+             , EMRAI.RFD_ACTN_NO
+          FROM CS_CUST_CNSL_INFO CCCI
+             , CS_CCN_ORD_GOODS_INFO CCOGI
+          LEFT OUTER JOIN PR_GOODS_BASE PGB
+                       ON CCOGI.GOODS_NO = PGB.GOODS_NO
+          LEFT OUTER JOIN ET_ENTR_BASE EEB
+                       ON PGB.ENTR_NO = EEB.ENTR_NO
+             , ET_MBR_BASE EMB
+          LEFT OUTER JOIN ET_MBR_RFD_ACTN_INFO EMRAI
+                       ON EMB.MBR_NO = EMRAI.MBR_NO
+         WHERE CCCI.CCN_NO = CCOGI.CCN_NO
+           AND CCCI.MBR_NO = EMB.MBR_NO
+           AND CCCI.CCN_NO = #{ccnNo}
+         ORDER BY CUST_CNSL_SEQ DESC
+         LIMIT 1
+    </select>
+
+</mapper>

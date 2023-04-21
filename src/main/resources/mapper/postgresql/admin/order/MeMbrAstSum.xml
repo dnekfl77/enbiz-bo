@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.order.MeMbrAstSumMapper">
+
+    <sql id="paginatedBase">
+        LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+    </sql>
+
+    <select id="selectMbrAstSum" parameterType="MeMbrAstSum" resultType="MeMbrAstSum">
+        SELECT /* MeMbrAstSum.selectMbrAstSum */
+               MBR_NO
+             , AST_GB_CD
+             , TOT_AMT
+             , USE_AMT
+             , POSN_AMT
+          FROM ME_MBR_AST_SUM
+         WHERE MBR_NO = #{mbrNo}
+           AND AST_GB_CD = #{astGbCd}
+    </select>
+
+</mapper>

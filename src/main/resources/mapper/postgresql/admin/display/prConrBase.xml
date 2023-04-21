@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.display.PrConrBaseMapper">
+
+	<sql id="getPrConrBase">
+		SELECT  /* prConrBase.getPrConrBase */
+				  CB.CONR_NO
+				, CB.CONR_NM
+				, (
+						SELECT
+								ARRAY_TO_STRING(ARRAY_AGG(TMPL_NM),'+')
+						FROM    PR_TMPL_CONR_MAPP_INFO S2
+								, PR_TMPL_BASE S3
+						WHERE   CB.CONR_NO = S2.CONR_NO
+						AND  	S2.TMPL_NO = S3.TMPL_NO
+				) AS TMPL_NM
+				, (
+						SELECT
+								ARRAY_TO_STRING(ARRAY_AGG(FN_GET_CODENAME('DP005',S3.CONR_TGT_CD)),'+')
+						FROM  	PR_CONR_TGT_INFO S3
+						WHERE  	CB.CONR_NO = S3.CONR_NO
+				) AS CONR_TGT_NM
+				, (CASE WHEN CB.SET_USE_YN='Y' THEN '사용' ELSE '사용안함' END) AS SET_USE_YN
+				, CB.USE_YN
+				, UB.USER_NM
+				, CB.SYS_MOD_ID
+				, TO_CHAR(CB.SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+		FROM  	PR_CONR_BASE CB
+				, ST_USER_BASE UB
+		WHERE  	CB.AEMP_ID  = UB.USER_ID
+		AND  	COALESCE(AEMP_ID,'X') LIKE  #{aempId}  || '%'
+		AND  	CB.USE_YN    LIKE #{useYn}  || '%'
+		AND  	CB.CONR_NO   LIKE #{conrNo} || '%'
+		AND  	CB.CONR_NM   LIKE #{conrNm} || '%'
+
+		<if test="conrTgtCd != ''">
+			AND  EXISTS (
+				SELECT 	'1'
+				FROM  	PR_CONR_TGT_INFO S1
+				WHERE  	CB.CONR_NO     = S1.CONR_NO
+				AND  	S1.CONR_TGT_CD  LIKE #{conrTgtCd} || '%'
+			)
+		</if>
+
+		<if test="tmplNo != '' || tmplNm != '' || tmplTypCd != ''">
+			AND  EXISTS (
+				SELECT 	'1'
+				FROM  	PR_TMPL_CONR_MAPP_INFO S2
+						, PR_TMPL_BASE S3
+				WHERE   CB.CONR_NO = S2.CONR_NO
+				AND  	S2.TMPL_NO = S3.TMPL_NO
+				AND  	S3.TMPL_NO     LIKE   #{tmplNo}    || '%'
+				AND  	S3.TMPL_NM     LIKE   #{tmplNm}    || '%'
+				AND  	S3.TMPL_TYP_CD LIKE   #{tmplTypCd} || '%'
+			)
+		</if>
+		ORDER BY CB.CONR_NO
+	</sql>
+
+	<select id="getDisplayCornerList" parameterType="PrConrBaseRequest" resultType="PrConrBaseResponse">
+		<include refid="getPrConrBase" />
+	</select>
+
+	<select id="getDisplayCornerListCount" parameterType="PrConrBaseRequest" resultType="java.lang.Integer">
+		SELECT  /* prConrBase.getDisplayCornerListCount */
+				COUNT(*)
+		FROM (
+				<include refid="getPrConrBase" />
+		) T1
+	</select>
+
+
+	<sql id="TemplateList">
+		SELECT   /* prConrBase.TemplateList */
+				  PTB.TMPL_NO
+				, PTB.TMPL_NM
+				, PTB.TMPL_PATH_NM || PTB.TMPL_FILE_NM AS TMPL_FILE_PATH
+				, (CASE WHEN PTB.USE_YN='Y' THEN '사용' ELSE '사용안함' END) AS USE_YN
+				, FN_GET_CODENAME( 'DP004', PTB.TMPL_TYP_CD ) AS TMPL_TYP_CD
+		FROM
+				  PR_TMPL_BASE PTB
+				, PR_TMPL_CONR_MAPP_INFO CMI
+		WHERE 	PTB.TMPL_NO = CMI.TMPL_NO
+		AND 	CMI.CONR_NO = #{conrNo}
+		ORDER BY PTB.TMPL_NO
+	</sql>
+
+	<select id="getTmplConrMappInfo" parameterType="PrConrBaseRequest" resultType="PrTmplBaseResponse">
+		<include refid="TemplateList" />
+	</select>
+
+	<select id="getTmplConrMappInfoCount" parameterType="PrConrBaseRequest" resultType="java.lang.Integer">
+		SELECT   /* prConrBase.getTmplConrMappInfoCount */
+			COUNT(*)
+		FROM (
+			<include refid="TemplateList" />
+		) T1
+	</select>
+
+	<select id="getDisplayCornerDetail" parameterType="PrConrBaseRequest" resultType="PrConrBaseResponse">
+		SELECT  /* prConrBase.getDisplayCornerDetail */
+				  CB.CONR_NO
+				, CB.CONR_NM
+				, CB.USE_YN
+				, UB.USER_ID
+				, UB.USER_NM
+				, CB.CONR_DESC
+				, CB.CONR_IMG_FILE_NM
+				, CB.CONR_IMG_PATH_NM
+				, CB.SET_USE_YN
+				, CB.SET_CNT
+		FROM  	  PR_CONR_BASE CB
+				, ST_USER_BASE UB
+		WHERE  	  CB.AEMP_ID  = UB.USER_ID
+		AND  	  CB.CONR_NO  = #{conrNo}
+	</select>
+
+	<select id="checkPrConrSetInfo" parameterType="prConrTgtInfo" resultType="java.lang.Integer">
+		SELECT  /* prConrBase.checkPrConrSetInfo */
+		        COUNT(*)
+		FROM 	PR_CONR_SET_INFO
+		WHERE 	CONR_NO = #{conrNo}
+		AND 	CONR_TGT_NO = #{conrTgtNo}
+	</select>
+
+	<select id="checkPrDispConrInfo" parameterType="prConrBase" resultType="java.lang.Integer">
+		SELECT  /* prConrBase.checkPrDispConrInfo */
+				COUNT(*)
+		FROM 	PR_DISP_CONR_INFO
+		WHERE 	CONR_NO = #{conrNo}
+	</select>
+
+	<select id="checkPrTmplConrMappInfo" parameterType="prConrBase" resultType="java.lang.Integer">
+		SELECT  /* prConrBase.checkPrTmplConrMappInfo */
+				COUNT(*)
+		FROM 	PR_TMPL_CONR_MAPP_INFO
+		WHERE 	CONR_NO = #{conrNo}
+	</select>
+
+	<select id="getConnerDetail" parameterType="PrConrBaseRequest" resultType="PrConrBaseResponse">
+		SELECT  /* prConrBase.getConnerDetail */
+				  PCB.CONR_NO
+				, PCB.CONR_NM
+				, UB.USER_NM
+				, PCB.CONR_DESC
+				, PCB.CONR_IMG_PATH_NM
+				, PCB.SET_USE_YN
+		FROM  	  PR_CONR_BASE PCB
+				, ST_USER_BASE UB
+		WHERE  	PCB.AEMP_ID  = UB.USER_ID
+		AND  	PCB.CONR_NO  = #{conrNo}
+	</select>
+
+	<select id="getDispHierarchyNm" parameterType="PrDispCtgBaseRequest" resultType="PrDispCtgBaseResponse">
+		WITH RECURSIVE CTE AS   /* prConrBase.getDispHierarchyNm */
+		(
+			SELECT
+					  DCB.DISP_CTG_NO
+					, DCB.DISP_CTG_NM
+					, DCB.UPR_DISP_CTG_NO
+					, DCB.DPML_NO
+					, 1 AS LEVEL
+					, PDB.DPML_NM || ' >' AS HIERARCHY_NM
+			FROM 	  PR_DISP_CTG_BASE DCB, PR_DPML_BASE PDB
+			WHERE 	  DCB.UPR_DISP_CTG_NO = (
+												SELECT DISP_CTG_NO
+												FROM PR_DISP_CTG_BASE
+												WHERE SITE_NO = #{siteNo}
+												AND UPR_DISP_CTG_NO = '1'
+											)
+			AND 	  DCB.SITE_NO = #{siteNo}
+			AND 	  DCB.DPML_NO = PDB.DPML_NO
+			UNION ALL
+			SELECT
+					  PDCB.DISP_CTG_NO
+					, PDCB.DISP_CTG_NM
+					, PDCB.UPR_DISP_CTG_NO
+					, PDCB.DPML_NO
+					, LEVEL + 1
+					, REGEXP_REPLACE( CONCAT_WS('>', TMP1.HIERARCHY_NM, PDCB.DISP_CTG_NM) , ' >', '') AS HIERARCHY_TEXT
+			FROM 	  PR_DISP_CTG_BASE PDCB
+					, CTE AS TMP1
+			WHERE 	  TMP1.DISP_CTG_NO = PDCB.UPR_DISP_CTG_NO
+		)
+		SELECT 	*
+		FROM 	CTE
+		WHERE 	CTE.DISP_CTG_NO = #{dispCtgNo}
+	</select>
+
+
+	<sql id="setConnerList">
+		SELECT   /* prConrBase.setConnerList */
+				  DISP_CTG_NO
+				, CONR_NO
+				, CONR_TGT_NO
+				, DPTH_NO
+				, SET_NM
+				, DISP_SEQ
+				, DISP_YN
+				, SET_DESC
+				, GRP_TGT_NO
+				, UPR_CONR_TGT_NO
+				, SYS_MOD_ID
+				, TO_CHAR(SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+		FROM 	  PR_CONR_SET_INFO PCSI
+		WHERE 	  DISP_CTG_NO = #{dispCtgNo}
+		AND 	  CONR_NO = #{conrNo}
+		AND 	  DPTH_NO = '1'
+		ORDER BY  DISP_SEQ
+	</sql>
+
+	<select id="getSetConnerList" parameterType="prConrSetInfoRequest" resultType="PrConrSetInfoResponse">
+		<include refid="setConnerList" />
+	</select>
+
+	<select id="getFirstSetConnerList" parameterType="prConrSetInfoRequest" resultType="PrConrSetInfoResponse">
+		SELECT   /* prConrBase.getFirstSetConnerList */
+				  CONR_NO
+				, CONR_TGT_NO
+				, CONR_TGT_NM AS SET_NM
+				, DISP_SEQ
+				, DPTH_NO
+				, 'Y' AS DISP_YN
+				, CONR_TGT_NO AS GRP_TGT_NO
+				, SYS_MOD_ID
+				, TO_CHAR(SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+		FROM 	  PR_CONR_TGT_INFO
+		WHERE 	  CONR_NO = #{conrNo}
+		AND 	  DPTH_NO = '1'
+		ORDER BY  CONR_TGT_NO
+	</select>
+
+	<select id="getSetConnerListCount" parameterType="PrConrBaseRequest" resultType="java.lang.Integer">
+		SELECT   /* prConrBase.getSetConnerListCount */
+			COUNT(*)
+		FROM (
+			<include refid="setConnerList" />
+		) T1
+	</select>
+
+	<sql id="CornerListPopup">
+		SELECT   /* prConrBase.CornerListPopup */
+				  CB.CONR_NO
+				, CB.CONR_NM
+				, (
+					SELECT	ARRAY_TO_STRING(ARRAY_AGG(FN_GET_CODENAME('DP005',S3.CONR_TGT_CD)),'+')
+					FROM  	PR_CONR_TGT_INFO S3
+					WHERE  	CB.CONR_NO = S3.CONR_NO
+				) AS DISP_TGT
+				, (CASE WHEN CB.USE_YN='Y' THEN '사용' ELSE '사용안함' END) AS USE_YN
+				, UB.USER_NM
+		FROM  	  PR_CONR_BASE CB
+				, ST_USER_BASE UB
+		WHERE  	CB.AEMP_ID  = UB.USER_ID
+		AND  	COALESCE(AEMP_ID,'X') LIKE  #{aempId}  || '%'
+		AND  	CB.USE_YN    LIKE #{useYn}  || '%'
+		AND  	CB.CONR_NO   LIKE #{conrNo} || '%'
+		AND  	CB.CONR_NM   LIKE #{conrNm} || '%'
+		<if test="conrTgtCd != ''">
+			AND  EXISTS (
+				SELECT 	'1'
+				FROM  	PR_CONR_TGT_INFO S1
+				WHERE  	CB.CONR_NO     = S1.CONR_NO
+			)
+		</if>
+		ORDER BY CB.CONR_NO
+	</sql>
+
+	<select id="getCornerListPopup" parameterType="PrConrBaseRequest" resultType="PrConrBaseResponse">
+		<include refid="CornerListPopup" />
+	</select>
+
+	<select id="getCornerListPopupCount" parameterType="PrConrBaseRequest" resultType="java.lang.Integer">
+		SELECT   /* prConrBase.getCornerListPopupCount */
+				COUNT(*)
+		FROM (
+				<include refid="CornerListPopup" />
+		) T1
+	</select>
+
+</mapper>
+
+

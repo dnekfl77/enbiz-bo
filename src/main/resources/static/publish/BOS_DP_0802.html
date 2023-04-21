@@ -1,0 +1,88 @@
+<html lang="ko-KR">
+
+<head>
+    <title>x2</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+    <link type="text/css" rel="stylesheet" href="../css/reset.css">
+    <link type="text/css" rel="stylesheet" href="../css/layout.css">
+    <link type="text/css" rel="stylesheet" href="../css/zTree.css">
+    <link type="text/css" rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" type="text/css" href="../css/realgrid-style.css">
+    <script src="../js/libs/jquery/jquery-3.4.1.min.js"></script>
+    <script src="../js/contents.js"></script>
+    <script type="text/javascript" src="../js/libs/jquery/jquery.ztree.all.js?202102260000"></script>
+</head>
+
+<body>
+    <div class="win-popup page-root">
+        <div class="page-fixed">
+            <!-- page-title 가 있을경우 with-title 클래스 추가 -->
+            <div class="search-cont">
+                <div class="header">
+                    <h1 class="title" id="">기획전 메인 등록/수정</h1>
+                </div>
+
+                <!-- data -->
+                <div class="data-cont">
+                    <div class="data">
+                        <div class="data-body">
+                            <table class="data-table">
+                                <colgroup>
+                                    <col width="120">
+                                    <col>
+                                    <col width="120">
+                                    <col>
+                                </colgroup>
+                                <tbody>
+                                    <tr>
+                                        <td class="label">사이트 구분</td>
+                                        <td><input type="text" name="" value="" class="input disabled"></td>
+                                        <td class="label">몰 유형</td>
+                                        <td><input type="text" name="" value="" class="input disabled"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="label">전시몰명</td>
+                                        <td><input type="text" name="" value="" class="input disabled"></td>
+                                        <td class="label"><strong>전시 여부</strong></td>
+                                        <td>
+                                            <label class="radio-inline"><input type="radio" name="name" value="" checked="checked">전시</label>
+                                            <label class="radio-inline"><input type="radio" name="name" value="">전시 안함</label>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="label"><strong>헤더 유형</strong></td>
+                                        <td>
+                                            <select class="form-control">
+                                                <option value="">선택</option>
+                                                <option value="">공통</option>
+                                                <option value="">기타몰</option>
+                                            </select>
+                                        </td>
+                                        <td class="label"><strong>전시 템플릿</strong></td>
+                                        <td>
+                                            <div class="input-group">
+                                                <input type="text" id="" class="input disabled" readonly>
+                                                <input type="text" id="" class="input disabled" readonly>
+                                                <a href="javascript:;" class="button small" onclick=""><i class="icon-sarch"></i></a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- //data-body -->
+                    </div>
+                </div>
+                <!-- //data -->
+            </div>
+            <div class="button-group">
+                <a href="#" class="button"><span class="text">저장</span></a>
+                <a href="#" class="button white"><span class="text">취소</span></a>
+            </div>
+        </div>
+        <!-- //page-fixed -->        
+    </div>
+</body>
+</html>

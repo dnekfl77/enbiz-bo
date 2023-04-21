@@ -1,0 +1,27 @@
+{"properties": [
+  {
+    "name": "jwt.service.key",
+    "type": "java.lang.String",
+    "description": "A description for 'jwt.service.key'"
+  },
+  {
+    "name": "app.api-url.bo",
+    "type": "java.lang.String",
+    "description": "A description for 'app.api-url.bo'"
+  },
+  {
+    "name": "app.api-url.sample",
+    "type": "java.lang.String",
+    "description": "A description for 'app.api-url.sample'"
+  },
+  {
+    "name": "app.lang.default-cntry-cd",
+    "type": "java.lang.String",
+    "description": "A description for 'app.lang.default-cntry-cd'"
+  },
+  {
+    "name": "app.lang.defaultSystemLanguage",
+    "type": "java.lang.String",
+    "description": "A description for 'app.lang.defaultSystemLanguage'"
+  }
+]}

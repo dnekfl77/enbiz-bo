@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.system.StBwInfoMapper">
+
+	<sql id="paginatedBase">
+		LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+	</sql>
+
+	<!-- 금칙어 목록 조회 -->
+	<sql id="badWordListBase">
+		SELECT /* stBwInfo.getBadWordList */
+			   BW_SEQ
+			 , BW_NM
+			 , BW_DESC
+			 , USE_YN
+			 , SYS_REG_ID
+			 , TO_CHAR(SYS_REG_DTM,'yyyy-mm-dd hh24:mi:ss') AS SYS_REG_DTM
+			 , SYS_MOD_ID
+			 , TO_CHAR(SYS_MOD_DTM,'yyyy-mm-dd hh24:mi:ss') AS SYS_MOD_DTM
+		  FROM ST_BW_INFO
+  		 WHERE 1=1
+		   AND BW_NM LIKE #{bwNm} || '%'
+		   AND USE_YN LIKE #{useYn} || '%'
+ 		 ORDER BY BW_SEQ DESC
+	</sql>
+
+	<select id="getBadWordList" parameterType="BadWordMgmtRequest" resultType="BadWordMgmtResponse">
+		/* stBwInfo.getBadWordList */
+		<include refid="badWordListBase" />
+		<include refid="paginatedBase" />
+	</select>
+
+	<select id="getBadWordListCount" parameterType="BadWordMgmtRequest"
+			resultType="java.lang.Integer">
+		SELECT /* stBwInfo.getBadWordListCount */
+		       COUNT(*)
+		  FROM (
+		  	   <include refid="badWordListBase" />
+		       ) v
+	</select>
+
+	<select id="getCountOfExistsStBwInfoByBwNm" parameterType="StBwInfo" resultType="Integer">
+		SELECT /* stBwInfo.getCountOfExistsStBwInfoByBwNm */
+		       COUNT(*)
+		  FROM ST_BW_INFO
+		 WHERE BW_NM = #{bwNm}
+		<if test="bwSeq != null and bwSeq != ''">
+		   AND BW_SEQ <![CDATA[ <> ]]> #{bwSeq}
+		</if>
+	</select>
+
+</mapper>
+
+

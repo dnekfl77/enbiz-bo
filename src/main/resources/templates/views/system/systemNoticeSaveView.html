@@ -1,0 +1,247 @@
+<!--
+* 프로그램명 : 시스템공지 등록/수정 팝업
+* 작 성 일 : 2021.02.23
+* 작 성 자 : 이광진
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 시스템공지 등록/수정 UI
+* 이    력 :
+-->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/popup-layout}">
+<body>
+<th:block layout:fragment="popup-title-area">
+    <th:block layout:insert="~{fragments/popup/popup-title :: popup-title}"
+              th:with="title=${#messages.msg('systemNoticeMgmt.title.sys.ntc.mgmt.reg.mod')}"></th:block>
+</th:block>
+<th:block layout:fragment="popup-search-area">
+    <form id="sysNtcSaveForm">
+    <div class="data">
+        <div class="data-body toggle-cont">
+            <table class="data-table">
+                <colgroup>
+                    <col width="120">
+                    <col>
+                    <col width="120">
+                    <col>
+                </colgroup>
+                <tbody>
+
+                    <tr>
+                        <td class="label">
+                            <strong th:text="${#messages.msg('systemNoticeMgmt.label.sys.ntc.mgmt.sys.sct')}"></strong>
+                        </td>
+                        <td>
+                            <div class="input-group">
+                                <select class="form-control" id="sysGbCd" name="sysGbCd">
+                                </select>
+                            </div>
+                        </td>
+                        <td class="label">
+                            <strong th:text="${#messages.msg('systemNoticeMgmt.label.sys.ntc.mgmt.bb.tp')}"></strong>
+                        </td>
+                        <td>
+                            <select class="form-control" id="bbGbCd" name="bbGbCd">
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">
+                            <strong th:text="${#messages.msg('systemNoticeMgmt.label.sys.ntc.mgmt.ntc.tp')}"></strong>
+                        </td>
+                        <td>
+                            <select class="form-control" id="ntcTypCd" name="ntcTypCd" style="width: 148px;">
+                                <option value="" th:text="${#messages.msg('adminCommon.select')}"></option>
+                            </select>
+                        </td>
+                        <td class="label"><strong><th:block th:text="${#messages.msg('systemNoticeMgmt.label.sys.ntc.mgmt.fix.atcl.yn')}"/></strong></td>
+                        <td>
+                            <div class="input-group">
+                                <label class="radio-inline">
+                                    <input type="radio" name="fxdcYn" value="Y" th:text="${#messages.msg('systemNoticeMgmt.label.sys.ntc.mgmt.fix.atcl.y')}">
+                                </label>
+                                <label class="radio-inline">
+                                    <input type="radio" name="fxdcYn" value="N" checked="checked" th:text="${#messages.msg('systemNoticeMgmt.label.sys.ntc.mgmt.fix.atcl.n')}">
+                                </label>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">
+                            <strong th:text="${#messages.msg('systemNoticeMgmt.label.sys.ntc.mgmt.tit')}"></strong>
+                        </td>
+                        <td colspan="3">
+                            <input type="text" id="title" name="title" class="input w100" maxlength="100">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label">
+                            <strong th:text="${#messages.msg('systemNoticeMgmt.label.sys.ntc.mgmt.ntc')}"></strong>
+                        </td>
+                        <td colspan="3">
+                            <textarea rows="10" class="textarea" id="bbcCont" name="bbcCont" style="display: none"></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label"><strong><th:block th:text="${#messages.msg('adminCommon.bul.yn')}"/></strong></td>
+                        <td>
+                            <div class="input-group">
+                                <label class="radio-inline">
+                                    <input type="radio" name="bbYn" value="Y" checked="checked" th:text="${#messages.msg('adminCommon.bul.y')}">
+                                </label>
+                                <label class="radio-inline">
+                                    <input type="radio" name="bbYn" value="N" th:text="${#messages.msg('adminCommon.bul.n')}">
+                                </label>
+                            </div>
+                        </td>
+                        <td class="label">
+                            <strong th:text="${#messages.msg('systemNoticeMgmt.label.sys.ntc.mgmt.bul.term')}"></strong>
+                        </td>
+                        <td>
+                            <div class="input-group">
+                                <div class="picker-group time-s" data-lopicker="basic" id="bbDtm">
+                                    <input type="text" class="form-control" id="bbStrDtm" name="bbStrDtm" readonly="readonly">
+                                    <span class="input-group-addon">~</span>
+                                    <input type="text" class="form-control" id="bbEndDtm" name="bbEndDtm" readonly="readonly">
+                                    <span class="input-group-addon" id="bbDtm-showCalender"><i class="icon-calendar"></i></span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label"><strong><th:block th:text="${#messages.msg('systemNoticeMgmt.label.sys.ntc.mgmt.ppp.yn')}"/></strong></td>
+                        <td>
+                            <div class="input-group">
+                                <label class="radio-inline">
+                                    <input type="radio" name="popYn" value="Y" th:text="${#messages.msg('adminCommon.use')}">
+                                </label>
+                                <label class="radio-inline">
+                                    <input type="radio" name="popYn" value="N" checked="checked" th:text="${#messages.msg('adminCommon.disuse')}">
+                                </label>
+                            </div>
+                        </td>
+                        <td class="label">
+                            <strong th:text="${#messages.msg('systemNoticeMgmt.label.sys.ntc.mgmt.ppp.bul.term')}"></strong>
+                        </td>
+                        <td>
+                            <div class="input-group">
+                                <div class="picker-group time-s" data-lopicker="basic" id="popBbDtm">
+                                    <input type="text" class="form-control" id="popBbStrDtm" name="popBbStrDtm" readonly="readonly">
+                                    <span class="input-group-addon">~</span>
+                                    <input type="text" class="form-control" id="popBbEndDtm" name="popBbEndDtm" readonly="readonly">
+                                    <span class="input-group-addon"  id="popBbDtm-showCalender"><i class="icon-calendar"></i></span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label" th:text="${#messages.msg('systemNoticeMgmt.label.sys.ntc.mgmt.appx.file')}"></td>
+                        <td colspan="3">
+                            <div class="input-group file-upload">
+                            <!--  <button class="button small gray" id="fileUpload"><span class="text" th:text="${#messages.msg('adminCommon.button.find.file')}"></span></button> -->
+                                <a href="#" class="button small gray" id="fileUpload"><span class="text" th:text="${#messages.msg('adminCommon.button.find.file')}"></span></a>
+                                <input type="text" class="input disabled" disabled="disabled" style="width:244px;">
+<!--                                <div class="tip-wrap">-->
+<!--                                    <p class="tip">압축파일의 종류는 ZIP 파일만 가능합니다.-->
+<!--                                    </p><p class="tip warning">압축파일의 용량은 5M미만이여야 정상적으로 업로드가 가능합니다.</p>-->
+<!--                                </div>-->
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    </form>
+    <div class="grid full-height">
+        <div class="grid-head">
+            <div class="title-area">
+                <h2 class="title" th:text="${#messages.msg('systemNoticeMgmt.label.sys.ntc.mgmt.ntc.tgt')}"></h2>
+            </div>
+            <!-- //title-area -->
+
+            <div class="option-area">
+                <div class="edit-option">
+                    <div class="button-group">
+                        <a class="button inside" id="btn_user_add"><span class="text" th:text="${#messages.msg('adminCommon.button.add')}"></span></a>
+                        <a class="button inside" id="btn_user_del"><span class="text" th:text="${#messages.msg('adminCommon.button.delete')}"></span></a>
+                    </div>
+
+                    <div class="input-group" style="margin-left:7px">
+                        <label for="ntcGbCd">
+                            <input type="checkbox" class="checkbox-inline" id="ntcGbCd" name="ntcGbCd" checked="checked"
+                                   th:text="${#messages.msg('systemNoticeMgmt.label.sys.ntc.mgmt.ntc.sct')}">
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <!-- //option-area-->
+        </div>
+        <!-- //grid-head -->
+
+        <div class="grid-body with-head">
+            <div class="rg-root rg-grid" id="sysNtcTgtGrid" realgrid ></div>
+        </div>
+        <!-- //grid-body -->
+
+    </div>
+
+</th:block>
+<th:block layout:fragment="popup-search-button-area">
+    <th:block layout:insert="~{fragments/popup/popup-btn :: popup-dtl-btn}"/>
+</th:block>
+<th:block layout:fragment="add-script">
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const _mainPath = [[${mainPath}]];
+        const _subPath = [[${subPath}]];
+        const _maxUploadSizePerFile = [[${maxUploadSizePerFile}]];
+        const _allowExtension = [[${allowExtension}]];
+        const codeMap = [[${codeMap}]];
+
+        const _bbInfo = [[${bbInfo}]];
+
+        const msgParam = {
+            _cancelMessage: 'adminCommon.alert.cancel',
+            _userId: "systemNoticeMgmt.label.sys.ntc.mgmt.user.id",
+            _userNm: "systemNoticeMgmt.label.sys.ntc.mgmt.user.nm",
+            _orgTypNm: "systemNoticeMgmt.label.sys.ntc.mgmt.org.typ.nm",
+            _deptNm: "systemNoticeMgmt.label.sys.ntc.mgmt.dept.nm",
+            _rcvYn: "systemNoticeMgmt.label.sys.ntc.mgmt.rcv.yn",
+            _rcvNm: "systemNoticeMgmt.label.sys.ntc.mgmt.rcv.nm",
+            _rcvDtm: "systemNoticeMgmt.label.sys.ntc.mgmt.rcv.dtm",
+            _jobGrpNm: "systemNoticeMgmt.grid.header.label.jobGrpNm",
+            _workStatNm: "systemNoticeMgmt.grid.header.label.workStatNm",
+            _msgEmptyTitle: "systemNoticeMgmt.message.sys.ntc.mgmt.empty.title",
+            _msgEmptySysGbCd: "systemNoticeMgmt.message.sys.ntc.mgmt.empty.sys.gb.cd",
+            _msgEmptyBbGbCd: "systemNoticeMgmt.message.sys.ntc.mgmt.empty.bb.gb.cd",
+            _msgEmptyNtcTypCd: "systemNoticeMgmt.message.sys.ntc.mgmt.empty.ntc.typ.cd",
+            _msgEmptyBbcCont: "systemNoticeMgmt.message.sys.ntc.mgmt.empty.bbc.cont",
+            _msgEmptyBbStrDtm: "systemNoticeMgmt.message.sys.ntc.mgmt.empty.bb.str.dtm",
+            _msgEmptyBbEndDtm: "systemNoticeMgmt.message.sys.ntc.mgmt.empty.bb.end.dtm",
+            _msgEmptyNtcTgt: "systemNoticeMgmt.message.sys.ntc.mgmt.empty.ntc.tgt",
+            _msgEmptyDelTgt: "systemNoticeMgmt.message.sys.ntc.mgmt.delete.empty.ntc.tgt",
+            _msgAtchFileLength: "systemNoticeMgmt.message.sys.ntc.mgmt.atch.file.length",
+            _msgAtchFileLimitSize: "systemNoticeMgmt.message.sys.ntc.mgmt.atch.file.limit.size",
+            _msgTitleLimitLength : "systemNoticeMgmt.message.sys.ntc.mgmt.title.limit.length",
+            _msgBbDtm : "systemNoticeMgmt.message.sys.ntc.mgmt.empty.bb.dtm",
+            _msgPopBbDtm : "systemNoticeMgmt.message.sys.ntc.mgmt.empty.pop.bb.dtm"
+        };
+        window.msg = x2coMessage.getMessage(msgParam);
+        /*]]>*/
+    </script>
+
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'system/sysNtcTgtGrid.provider.js?20211026'" ></script>
+    <script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'system/sysNtcTgtGrid.eventHandler.js?20211026'" ></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            sysNtcTgtGrid.eventhandler.pageInitEvent();
+            sysNtcTgtGrid.eventhandler.bindButtonEvent();
+        });
+    </script>
+</th:block>
+</body>
+</html>

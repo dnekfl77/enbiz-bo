@@ -1,0 +1,589 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.customer.EtMbrBaseMapper">
+
+	<sql id="paginatedBase">
+		LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+	</sql>
+
+	<!-- 회원 목록 조회 -->
+	<sql id="mbrSchListBase">
+		SELECT /* etMbrBase.mbrSchListBase */
+		       MBR_NO
+			 , MBR_NM
+			 , LOGIN_ID
+			 , MBR_GB_CD
+		     , FN_GET_CODENAME('ME001', MBR_GB_CD) AS MBR_GB_NM
+			 , MBR_MGR_CD
+		     , FN_GET_CODENAME('ME002', MBR_MGR_CD) AS MBR_MGR_NM
+			 , MBR_STAT_CD
+		     , FN_GET_CODENAME('ME003', MBR_STAT_CD) AS MBR_STAT_NM
+			 , MBR_GRADE_CD
+		     , FN_GET_CODENAME('ME024', MBR_GRADE_CD) AS MBR_GRADE_NM
+			 , TEL_RGN_NO
+			 , TEL_TXNO_NO
+			 , TEL_END_NO
+			 , CASE COALESCE(TEL_RGN_NO,'') || COALESCE(TEL_TXNO_NO, '') || COALESCE(TEL_END_NO, '')
+		       WHEN '' THEN ''
+		       ELSE COALESCE(TEL_RGN_NO,'') || '-' || COALESCE(TEL_TXNO_NO, '') || '-' || COALESCE(TEL_END_NO, '')
+			   END AS TEL_NO
+			 , CELL_SCT_NO
+			 , CELL_TXNO_NO
+			 , CELL_END_NO
+			 , CASE COALESCE(CELL_SCT_NO,'') || COALESCE(CELL_TXNO_NO, '') || COALESCE(CELL_END_NO, '')
+			   WHEN '' THEN ''
+			   ELSE COALESCE(CELL_SCT_NO,'') || '-' || COALESCE(CELL_TXNO_NO, '') || '-' || COALESCE(CELL_END_NO, '')
+			   END AS CELL_NO
+			 , EMAIL_ADDR
+			 , ZIP_NO_SEQ
+			 , ZIP_NO
+			 , ZIP_ADDR
+			 , DTL_ADDR
+		  FROM ET_MBR_BASE
+		 WHERE MBR_GB_CD = '10'
+		   AND LOGIN_ID LIKE #{loginId} || '%'
+		   AND MBR_NM LIKE #{mbrNm} || '%'
+		   AND MBR_GRADE_CD LIKE #{mbrGradeCd} || '%'
+		   AND COALESCE(EMAIL_ADDR, '') LIKE #{emailAddr} || '%'
+		   AND MBR_STAT_CD LIKE #{mbrStatCd} || '%'
+		<if test='afterNoYn == "Y" and afterNoYn != ""'>
+			AND (
+			COALESCE(TEL_END_NO, '') LIKE #{contactNo} || '%'
+			OR
+			COALESCE(CELL_END_NO, '') LIKE #{contactNo} || '%'
+			)
+		</if>
+		<if test='afterNoYn == "N" and afterNoYn != ""'>
+			AND (
+			COALESCE(TEL_RGN_NO,'') || COALESCE(TEL_TXNO_NO, '') || COALESCE(TEL_END_NO, '')
+			LIKE #{contactNo} || '%'
+			OR
+			COALESCE(CELL_SCT_NO,'') || COALESCE(CELL_TXNO_NO, '') || COALESCE(CELL_END_NO, '')
+			LIKE #{contactNo} || '%'
+			)
+		</if>
+ 		 ORDER BY MBR_NO DESC
+	</sql>
+
+	<select id="getMemberList" parameterType="MemberSearchRequest" resultType="MemberSearchResponse">
+		<include refid="mbrSchListBase" />
+		<include refid="paginatedBase" />
+	</select>
+
+	<select id="getMemberListCount" parameterType="MemberSearchRequest" resultType="java.lang.Integer">
+		SELECT /* etMbrBase.getMemberListCount */
+		       COUNT(*)
+		  FROM (
+		  	   <include refid="mbrSchListBase" />
+		       ) v
+	</select>
+
+	<sql id="customerMgmtView">
+		SELECT /* etMbrBase.customerMgmtView */
+		       MBR_NO
+			 , MBR_NM
+			 , LOGIN_ID
+			 , MBR_MGR_CD
+			 , FN_GET_CODENAME('ME002', MBR_MGR_CD) AS MBR_MGR_NM
+			 , MBR_STAT_CD
+			 , FN_GET_CODENAME('ME003', MBR_STAT_CD) AS MBR_STAT_NM
+			 , MBR_GRADE_CD
+			 , FN_GET_CODENAME('ME024', MBR_GRADE_CD) AS MBR_GRADE_NM
+			 , TEL_RGN_NO
+			 , TEL_TXNO_NO
+			 , TEL_END_NO
+			 , CASE COALESCE(TEL_RGN_NO,'') || COALESCE(TEL_TXNO_NO, '') || COALESCE(TEL_END_NO, '')
+			   WHEN '' THEN ''
+			   ELSE COALESCE(TEL_RGN_NO,'') || '-' || COALESCE(TEL_TXNO_NO, '') || '-' || COALESCE(TEL_END_NO, '')
+			   END AS TEL_NO
+			 , CELL_SCT_NO
+			 , CELL_TXNO_NO
+			 , CELL_END_NO
+			 , CASE COALESCE(CELL_SCT_NO,'') || COALESCE(CELL_TXNO_NO, '') || COALESCE(CELL_END_NO, '')
+			   WHEN '' THEN ''
+			   ELSE COALESCE(CELL_SCT_NO,'') || '-' || COALESCE(CELL_TXNO_NO, '') || '-' || COALESCE(CELL_END_NO, '')
+			   END AS CELL_NO
+			 , EMAIL_ADDR
+			 , ZIP_NO_SEQ
+			 , ZIP_NO
+			 , ZIP_ADDR
+			 , DTL_ADDR
+			 , ZIP_ADDR || ' ' || DTL_ADDR AS ADDRESS
+			 , TO_CHAR(SYS_REG_DTM, 'YYYY-MM-DD HH24:MI:SS') AS SYS_REG_DTM
+			 , SYS_MOD_ID
+			 , TO_CHAR(SYS_MOD_DTM, 'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+		  FROM ET_MBR_BASE
+		 WHERE MBR_GB_CD = '10'
+		   AND MBR_MGR_CD LIKE #{condxMbrMgrCd} || '%'
+		   AND MBR_STAT_CD LIKE #{condxMbrStatCd} || '%'
+		<if test='condxMbrOpt == "ID" and condxMbrOpt != ""'>
+			AND LOGIN_ID LIKE #{condxMbrValue} || '%'
+		</if>
+		<if test='condxMbrOpt == "NAME" and condxMbrOpt != ""'>
+			AND MBR_NM LIKE #{condxMbrValue} || '%'
+		</if>
+		<if test='condxSysRegDtmAll == null'>
+			AND SYS_REG_DTM BETWEEN TO_TIMESTAMP(#{condxSysRegDtmStt}||' 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
+							AND TO_TIMESTAMP(#{condxSysRegDtmEnd}||' 23:59:59', 'YYYY-MM-DD HH24:MI:SS')
+		</if>
+		   AND COALESCE(TEL_RGN_NO,'') || COALESCE(TEL_TXNO_NO, '') || COALESCE(TEL_END_NO, '')
+	   			LIKE #{condxTelNo} || '%'
+		   AND COALESCE(CELL_SCT_NO,'') || COALESCE(CELL_TXNO_NO, '') || COALESCE(CELL_END_NO, '')
+				LIKE #{condxCellNo} || '%'
+		 ORDER BY SYS_REG_DTM DESC
+	</sql>
+
+	<select id="getSearchCustomerByCustomerMgmtViewCount" parameterType="CustomerSearchRequest" resultType="java.lang.Integer">
+		SELECT /* etMbrBase.getSearchCustomerByCustomerMgmtViewCount */
+		       COUNT(*)
+		  FROM (
+		<include refid="customerMgmtView" />
+		       ) v
+	</select>
+
+	<select id="getSearchCustomerByCustomerMgmtViewData" parameterType="CustomerSearchRequest" resultType="CustomerSearchResponse">
+		<include refid="customerMgmtView" />
+		<include refid="paginatedBase" />
+	</select>
+
+	<select id="getCustomerDetailByMbrNo" parameterType="CustomerDetailRequest" resultType="CustomerDetailResponseEx">
+		SELECT /* etMbrBase.getCustomerDetailByMbrNo */
+		       TA.MBR_NO
+			 , TA.MBR_NM
+			 , TA.LOGIN_ID
+			 , TA.PWD
+			 , TA.MBR_GB_CD
+			 , FN_GET_CODENAME('ME001', TA.MBR_GB_CD) AS MSG_GB_NM
+			 , TA.MBR_MGR_CD
+			 , FN_GET_CODENAME('ME002', TA.MBR_MGR_CD) AS MBR_MGR_NM
+			 , TA.BMAN_NO
+			 , TA.CORPN_RPSTMN_NM
+			 , TA.CORPN_AEMP_NM
+			 , TA.CORPN_AEMP_DEPT_NM
+			 , TA.CORPN_FAX_NO
+			 , TA.EMP_NO
+			 , TA.DEPT_NM
+			 , TA.ENTCMP_DT
+			 , TA.RESIGN_DT
+			 , TA.MBR_STAT_CD
+			 , FN_GET_CODENAME('ME003', TA.MBR_STAT_CD) AS MBR_STAT_NM
+			 , TA.LGC_MBR_NO
+			 , TA.MBR_GRADE_CD
+			 , FN_GET_CODENAME('ME024', TA.MBR_GRADE_CD) AS MBR_GRADE_NM
+			 , TA.SOLAR_YN
+			 , TA.BRTH
+			 , TA.SEX_GB_CD
+			 , FN_GET_CODENAME('ME017', TA.SEX_GB_CD) AS SEX_GB_NM
+			 , TA.NAFR_GB_CD
+			 , FN_GET_CODENAME('ME018', TA.NAFR_GB_CD) AS NAFR_GB_NM
+			 , TA.TEL_RGN_NO
+			 , TA.TEL_TXNO_NO
+			 , TA.TEL_END_NO
+			 , CASE COALESCE(TA.TEL_RGN_NO,'') || COALESCE(TA.TEL_TXNO_NO, '') || COALESCE(TA.TEL_END_NO, '')
+			   WHEN '' THEN ''
+			   ELSE COALESCE(TA.TEL_RGN_NO,'') || '-' || COALESCE(TA.TEL_TXNO_NO, '') || '-' || COALESCE(TA.TEL_END_NO, '')
+			   END AS TELL_NO
+			 , TA.CELL_SCT_NO
+			 , TA.CELL_TXNO_NO
+			 , TA.CELL_END_NO
+			 , CASE COALESCE(TA.CELL_SCT_NO,'') || COALESCE(TA.CELL_TXNO_NO, '') || COALESCE(TA.CELL_END_NO, '')
+			   WHEN '' THEN ''
+			   ELSE COALESCE(TA.CELL_SCT_NO,'') || '-' || COALESCE(TA.CELL_TXNO_NO, '') || '-' || COALESCE(TA.CELL_END_NO, '')
+			   END AS CELL_NO
+			 , TA.EMAIL_ADDR
+			 , TA.ZIP_NO_SEQ
+			 , TA.ZIP_NO
+			 , TA.ZIP_ADDR
+			 , TA.DTL_ADDR
+			 , TA.ZIP_ADDR || ' ' || TA.DTL_ADDR AS ADDRESS
+			 , TA.SITE_NO
+			 , TA.ADL_CERTI_YN
+			 , TO_CHAR(TA.ADL_CERTI_DTM,'yyyy-mm-dd hh24:mi:ss') AS ADL_CERTI_DTM
+			 , TO_CHAR(TA.MBR_JOIN_DTM,'yyyy-mm-dd hh24:mi:ss') AS MBR_JOIN_DTM
+			 , TO_CHAR(TA.FRST_ORD_DTM,'yyyy-mm-dd hh24:mi:ss') AS FRST_ORD_DTM
+			 , TO_CHAR(TA.LST_ORD_DTM,'yyyy-mm-dd hh24:mi:ss') AS LST_ORD_DTM
+			 , TO_CHAR(TA.FRST_LOGIN_DTM,'yyyy-mm-dd hh24:mi:ss') AS FRST_LOGIN_DTM
+			 , TO_CHAR(TA.LST_LOGIN_DTM,'yyyy-mm-dd hh24:mi:ss') AS LST_LOGIN_DTM
+			 , TA.PWD_ERR_CNT
+			 , TA.SYS_REG_ID
+			 , TO_CHAR(TA.SYS_REG_DTM,'yyyy-mm-dd hh24:mi:ss') AS SYS_REG_DTM
+			 , TA.SYS_MOD_ID
+			 , TO_CHAR(TA.SYS_MOD_DTM,'yyyy-mm-dd hh24:mi:ss') AS SYS_MOD_DTM
+			 , TB.MBR_WDRA_CAUS_CD
+			 , FN_GET_CODENAME('ME006', TB.MBR_WDRA_CAUS_CD) AS MBR_WDRA_CAUS_NM
+		  FROM ET_MBR_BASE TA
+		 INNER JOIN ET_MBR_DTL_INFO TB
+		    ON TA.MBR_NO = TB.MBR_NO
+		 WHERE TA.MBR_NO = #{mbrNo}
+	</select>
+
+	<select id="getCustomerDeliveryInfoByMbrNoList" parameterType="CustomerDetailRequest" resultType="CustomerDeliveryInfoResponse">
+		SELECT /* etMbrBase.getCustomerDeliveryInfoByMbrNoList */
+		       MBR_NO
+		     , MBR_DLVP_SEQ
+		     , DLVP_NM
+		     , RCVMN_NM
+		     , BASE_DLVP_YN
+		     , USE_YN
+		     , USER_SORT_SEQ
+		     , ZIP_NO_SEQ
+		     , ZIP_NO
+		     , ZIP_ADDR
+		     , DTL_ADDR
+		     , TEL_RGN_NO
+		     , TEL_TXNO_NO
+		     , TEL_END_NO
+		     , CASE COALESCE(TEL_RGN_NO,'') || COALESCE(TEL_TXNO_NO, '') || COALESCE(TEL_END_NO, '')
+		       WHEN '' THEN ''
+		       ELSE COALESCE(TEL_RGN_NO,'') || '-' || COALESCE(TEL_TXNO_NO, '') || '-' || COALESCE(TEL_END_NO, '')
+		       END AS TEL_NO
+		     , CELL_SCT_NO
+		     , CELL_TXNO_NO
+		     , CELL_END_NO
+ 			 , CASE COALESCE(CELL_SCT_NO,'') || COALESCE(CELL_TXNO_NO, '') || COALESCE(CELL_END_NO, '')
+		       WHEN '' THEN ''
+			   ELSE COALESCE(CELL_SCT_NO,'') || '-' || COALESCE(CELL_TXNO_NO, '') || '-' || COALESCE(CELL_END_NO, '')
+			   END AS CELL_NO
+		     , SYS_REG_ID
+		     , SYS_REG_DTM
+		     , SYS_MOD_ID
+		     , SYS_MOD_DTM
+		  FROM ET_MBR_DLVP_INFO
+ 		 WHERE MBR_NO = #{mbrNo}
+	</select>
+
+	<select id="getCustomerTermsAgreeInfoByMbrNoSiteNoList" parameterType="CustomerDetailRequest"
+			resultType="CustomerTermsAgreeInfoResponse">
+		SELECT /* etMbrBase.getCustomerTermsAgreeInfoByMbrNoSiteNoList */
+		       TA.MBR_NO
+			 , TA.SITE_NO
+			 , TA.EMAIL_RECV_AGR_YN
+			 , TA.SMS_RECV_AGR_YN
+			 , TA.APP_PUSH_AGR_YN
+			 , TA.AUTO_LOGIN_AGR_YN
+			 , TA.MOBL_RECT_AGR_YN
+			 , TA.SYS_REG_ID
+			 , TA.SYS_REG_DTM
+			 , TA.SYS_MOD_ID
+			 , TA.SYS_MOD_DTM
+			 , TB.SITE_NM
+		  FROM ET_MBR_SVC_AGR_INFO TA
+		 INNER JOIN CC_SITE_BASE TB
+		    ON TA.SITE_NO = TB.SITE_NO
+		 WHERE TA.MBR_NO = #{mbrNo}
+		   AND TA.SITE_NO = #{siteNo}
+	</select>
+
+	<sql id="mbrDlvpInfo">
+		SELECT /* etMbrBase.mbrDlvpInfo */
+		       MBR_NO
+		     , MBR_DLVP_SEQ
+		     , DLVP_NM
+		     , RCVMN_NM
+		     , BASE_DLVP_YN
+		     , USE_YN
+		     , USER_SORT_SEQ
+		     , ZIP_NO_SEQ
+		     , ZIP_NO
+		     , ZIP_ADDR
+		     , DTL_ADDR
+		     , TEL_RGN_NO
+		     , TEL_TXNO_NO
+		     , TEL_END_NO
+		     , CASE COALESCE(TEL_RGN_NO,'') || COALESCE(TEL_TXNO_NO, '') || COALESCE(TEL_END_NO, '')
+		       WHEN '' THEN ''
+		       ELSE COALESCE(TEL_RGN_NO,'') || '-' || COALESCE(TEL_TXNO_NO, '') || '-' || COALESCE(TEL_END_NO, '')
+		       END AS TEL_NO
+		     , CELL_SCT_NO
+		     , CELL_TXNO_NO
+		     , CELL_END_NO
+		     , CASE COALESCE(CELL_SCT_NO,'') || COALESCE(CELL_TXNO_NO, '') || COALESCE(CELL_END_NO, '')
+		       WHEN '' THEN ''
+		       ELSE COALESCE(CELL_SCT_NO,'') || '-' || COALESCE(CELL_TXNO_NO, '') || '-' || COALESCE(CELL_END_NO, '')
+		       END AS CELL_NO
+		     , SYS_REG_ID
+		     , SYS_REG_DTM
+		     , SYS_MOD_ID
+		     , SYS_MOD_DTM
+		FROM ET_MBR_DLVP_INFO
+		WHERE MBR_NO = #{mbrNo}
+	</sql>
+
+	<select id="getCustomerDeliveryByMbrNoCount" parameterType="MemberSearchRequest" resultType="java.lang.Integer">
+		SELECT /* etMbrBase.getCustomerDeliveryByMbrNoCount */
+		       COUNT(*)
+		  FROM (
+		       <include refid="mbrDlvpInfo" />
+		       ) v
+	</select>
+
+	<select id="getCustomerDeliveryByMbrNoData" parameterType="CustomerDetailRequest"
+			resultType="CustomerDeliveryInfoResponse">
+		<include refid="mbrDlvpInfo" />
+		<include refid="paginatedBase" />
+	</select>
+
+	<sql id="customerTermsAgreeHistoryByMbrNoSiteNo">
+		SELECT /* etMbrBase.customerTermsAgreeHistoryByMbrNoSiteNo */
+		       AGR_CHG_HIST_SEQ
+			 , MBR_NO
+			 , SITE_NO
+			 , SVC_AGR_TYP_CD
+			 , FN_GET_CODENAME('ME025', SVC_AGR_TYP_CD) AS SVC_AGR_TYP_NM
+			 , AGR_YN
+			 , SYS_REG_ID
+			 , TO_CHAR(SYS_REG_DTM,'yyyy-mm-dd hh24:mi:ss') AS SYS_REG_DTM
+		  FROM ET_MBR_AGR_CHG_HIST
+		 WHERE MBR_NO = #{mbrNo}
+		   AND SITE_NO = #{siteNo}
+	</sql>
+	<select id="getCustomerTermsAgreeHistoryByMemberNoSiteNoCount" parameterType="CustomerDetailRequest"
+			resultType="java.lang.Integer">
+		SELECT /* etMbrBase.getCustomerTermsAgreeHistoryByMemberNoSiteNoCount */
+			   COUNT(*)
+		  FROM (
+				<include refid="customerTermsAgreeHistoryByMbrNoSiteNo" />
+			   ) v
+	</select>
+	<select id="getCustomerTermsAgreeHistoryByMemberNoSiteNoData" parameterType="CustomerDetailRequest"
+			resultType="CustomerTermsAgreeHistoryResponse">
+		<include refid="customerTermsAgreeHistoryByMbrNoSiteNo" />
+<!--		<include refid="paginatedBase" />-->
+	</select>
+
+	<select id="getCustomerRefundAccountInfoByMemberNo" parameterType="CustomerDetailRequest"
+			resultType="CustomerRefundAccountInfoResponse">
+		SELECT /* etMbrBase.getCustomerRefundAccountInfoByMemberNo */
+		       MBR_NO
+		     , RFD_BANK_CD
+		     , FN_GET_CODENAME('OM026', RFD_BANK_CD) AS RFD_BANK_NM
+		     , RFD_ACTN_NO
+		     , RFD_ACTN_DEPOSITOR_NM
+		     , RFD_ACTN_CERTI_YN
+			 , SYS_REG_ID
+			 , SYS_REG_DTM
+			 , SYS_MOD_ID
+			 , SYS_MOD_DTM
+		  FROM ET_MBR_RFD_ACTN_INFO
+		 WHERE MBR_NO = #{mbrNo}
+	</select>
+
+	<sql id="etMbrGradeHistByMbrNo">
+		SELECT /* etMbrBase.etMbrGradeHistByMbrNo */
+		       MBR_NO
+			 , MBR_GRADE_CD
+			 , FN_GET_CODENAME('ME024', MBR_GRADE_CD) AS MBR_GRADE_NM
+			 , TO_CHAR(HIST_STR_DTM,'YYYY-MM-DD HH24:MI:SS') AS HIST_STR_DTM
+		  FROM ET_MBR_GRADE_HIST
+		 WHERE MBR_NO = #{mbrNo}
+	</sql>
+	<select id="getCustomerGradeHistoryByMbrNoCount" parameterType="CustomerDetailRequest"
+			resultType="java.lang.Integer">
+		SELECT /* etMbrBase.getCustomerGradeHistoryByMbrNoCount */
+			   COUNT(*)
+		  FROM (
+				<include refid="etMbrGradeHistByMbrNo" />
+			   ) v
+	</select>
+	<select id="getCustomerGradeHistoryByMemberNoData" parameterType="CustomerDetailRequest"
+			resultType="CustomerGradeHistoryResponse">
+		<include refid="etMbrGradeHistByMbrNo" />
+		<!--		<include refid="paginatedBase" />-->
+	</select>
+
+	<sql id="watchCustomerSearchByViewCondition">
+		SELECT /* etMbrBase.watchCustomerSearchByViewCondition */
+		       TA.MGR_MBR_NO
+			 , TA.MBR_NO
+			 , TA.MGR_GB_CD
+			 , FN_GET_CODENAME('ME019', TA.MGR_GB_CD) AS MGR_GB_NM
+			 , TA.MGR_TYP_CD
+			 , FN_GET_CODENAME('ME009', TA.MGR_TYP_CD) AS MGR_TYP_NM
+			 , TA.REG_CAUS_CONT
+			 , TA.ORD_NO
+			 , TO_CHAR(TA.REG_DTM, 'YYYY-MM-DD HH24:MI:SS') AS REG_DTM
+			 , TO_CHAR(TA.RVC_DTM, 'YYYY-MM-DD HH24:MI:SS') AS RVC_DTM
+			 , TA.MGR_MBR_REG_ID
+			 , TA.MGR_MBR_RVC_ID
+			 , TA.SYS_REG_ID
+			 , TA.SYS_REG_DTM
+			 , TA.SYS_MOD_ID
+			 , TA.SYS_MOD_DTM
+			 , TB.MBR_NM
+			 , TB.LOGIN_ID
+		  FROM ET_MGR_MBR_INFO TA
+		 INNER JOIN ET_MBR_BASE TB
+		    ON TA.MBR_NO = TB.MBR_NO
+		 WHERE TB.MBR_GB_CD = '10'
+		   AND TA.MGR_GB_CD LIKE #{condxMgrGbCd} || '%'
+		   AND TA.MGR_TYP_CD LIKE #{condxMgrTypCd} || '%'
+		   AND LOGIN_ID LIKE #{condxLoginId} || '%'
+		   AND MBR_NM LIKE #{condxMbrNm} || '%'
+			<if test='condxSysRegDtmAll == null'>
+				AND TA.REG_DTM BETWEEN TO_TIMESTAMP(#{condxSysRegDtmStt}||' 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
+				AND TO_TIMESTAMP(#{condxSysRegDtmEnd}||' 23:59:59', 'YYYY-MM-DD HH24:MI:SS')
+			</if>
+	</sql>
+	<select id="getWatchCustomerSearchByViewConditionCount" parameterType="CustomerSearchRequest"
+			resultType="java.lang.Integer">
+		SELECT /* etMbrBase.getWatchCustomerSearchByViewConditionCount */
+			   COUNT(*)
+		  FROM (
+			    <include refid="watchCustomerSearchByViewCondition" />
+			   ) v
+	</select>
+	<select id="getWatchCustomerSearchByViewConditionData" parameterType="CustomerSearchRequest"
+			resultType="WatchCustomerSearchResponse">
+		<include refid="watchCustomerSearchByViewCondition" />
+		<include refid="paginatedBase" />
+	</select>
+
+	<select id="getCustomerDetailOrderCallCountByMemberNo" parameterType="CustomerDetailRequest"
+			resultType="CustomerDetailOrderCallCountResponse">
+		SELECT /* etMbrBase.getCustomerDetailOrderCallCountByMemberNo */
+		       TA.MBR_NO
+			 , TA.MBR_NM
+			 , TA.LOGIN_ID
+			 , TA.MBR_GRADE_CD
+			 , FN_GET_CODENAME('ME024', TA.MBR_GRADE_CD) AS MBR_GRADE_NM
+		     , 0 AS ORD_CNT
+			 , 0 AS CALL_CNT
+		  FROM ET_MBR_BASE TA
+		 WHERE TA.MBR_NO = #{mbrNo}
+	</select>
+
+	<sql id="watchCustomerByMbrNo">
+		SELECT /* etMbrBase.watchCustomerByMbrNo */
+		       TA.MGR_MBR_NO
+			 , TA.MBR_NO
+			 , TA.MGR_GB_CD
+			 , FN_GET_CODENAME('ME019', TA.MGR_GB_CD) AS MGR_GB_NM
+			 , TA.MGR_TYP_CD
+			 , FN_GET_CODENAME('ME009', TA.MGR_TYP_CD) AS MGR_TYP_NM
+			 , TA.REG_CAUS_CONT
+			 , TA.ORD_NO
+			 , TO_CHAR(TA.REG_DTM, 'YYYY-MM-DD HH24:MI:SS') AS REG_DTM
+			 , TO_CHAR(TA.RVC_DTM, 'YYYY-MM-DD HH24:MI:SS') AS RVC_DTM
+			 , TA.MGR_MBR_REG_ID
+			 , TA.MGR_MBR_RVC_ID
+			 , TA.SYS_REG_ID
+			 , TA.SYS_REG_DTM
+			 , TA.SYS_MOD_ID
+			 , TA.SYS_MOD_DTM
+		FROM ET_MGR_MBR_INFO TA
+		WHERE TA.MBR_NO = #{mbrNo}
+	</sql>
+	<select id="getWatchCustomerInfoByMbrNoCount" parameterType="CustomerDetailRequest"
+			resultType="java.lang.Integer">
+		SELECT /* etMbrBase.getWatchCustomerInfoByMbrNoCount */
+			   COUNT(*)
+		  FROM (
+				<include refid="watchCustomerByMbrNo" />
+			   ) v
+	</select>
+	<select id="getWatchCustomerInfoByMbrNoData" parameterType="CustomerSearchRequest"
+			resultType="WatchCustomerResponse">
+		<include refid="watchCustomerByMbrNo" />
+<!--		<include refid="paginatedBase" />-->
+	</select>
+
+	<!-- 휴면회원 목록 조회 -->
+	<sql id="sqlDormantCustomerSearch">
+		SELECT /* etMbrBase.sqlDormantCustomerSearch */
+		       MBR_NO
+			 , MBR_NM
+			 , LOGIN_ID
+			 , MBR_MGR_CD
+			 , FN_GET_CODENAME('ME002', MBR_MGR_CD) AS MBR_MGR_NM
+			 , MBR_STAT_CD
+			 , FN_GET_CODENAME('ME003', MBR_STAT_CD) AS MBR_STAT_NM
+			 , MBR_GRADE_CD
+			 , FN_GET_CODENAME('ME024', MBR_GRADE_CD) AS MBR_GRADE_NM
+			 , TEL_RGN_NO
+			 , TEL_TXNO_NO
+			 , TEL_END_NO
+			 , CASE COALESCE(TEL_RGN_NO,'') || COALESCE(TEL_TXNO_NO, '') || COALESCE(TEL_END_NO, '')
+			   WHEN '' THEN ''
+			   ELSE COALESCE(TEL_RGN_NO,'') || '-' || COALESCE(TEL_TXNO_NO, '') || '-' || COALESCE(TEL_END_NO, '')
+			   END AS TEL_NO
+			 , CELL_SCT_NO
+			 , CELL_TXNO_NO
+			 , CELL_END_NO
+			 , CASE COALESCE(CELL_SCT_NO,'') || COALESCE(CELL_TXNO_NO, '') || COALESCE(CELL_END_NO, '')
+			   WHEN '' THEN ''
+			   ELSE COALESCE(CELL_SCT_NO,'') || '-' || COALESCE(CELL_TXNO_NO, '') || '-' || COALESCE(CELL_END_NO, '')
+			   END AS CELL_NO
+			 , EMAIL_ADDR
+			 , ZIP_NO_SEQ
+			 , ZIP_NO
+			 , ZIP_ADDR
+			 , DTL_ADDR
+			 , ZIP_ADDR || ' ' || DTL_ADDR AS ADDRESS
+			 , TO_CHAR(SYS_REG_DTM, 'YYYY-MM-DD HH24:MI:SS') AS SYS_REG_DTM
+			 , SYS_MOD_ID
+			 , TO_CHAR(SYS_MOD_DTM, 'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+		  FROM ET_MBR_BASE
+		 WHERE MBR_GB_CD = '10'
+		   AND MBR_STAT_CD = '20'
+		   <if test="condxLoginId != null and condxLoginId != '' ">
+		   AND LOGIN_ID LIKE #{condxLoginId} || '%'
+		   </if>
+		   <if test="condxMbrNm != null and condxMbrNm != '' ">
+		   AND MBR_NM LIKE #{condxMbrNm} || '%'
+		   </if>
+		   <if test="condxTelNo != null and condxTelNo != '' ">
+		   AND COALESCE(TEL_RGN_NO,'') || COALESCE(TEL_TXNO_NO, '') || COALESCE(TEL_END_NO, '')
+		       LIKE #{condxTelNo} || '%'
+		   </if>
+		   <if test="condxCellNo != null and condxCellNo != '' ">
+		   AND COALESCE(CELL_SCT_NO,'') || COALESCE(CELL_TXNO_NO, '') || COALESCE(CELL_END_NO, '')
+		       LIKE #{condxCellNo} || '%'
+		   </if>
+		<if test='condxSysRegDtmAll == null'>
+			AND SYS_MOD_DTM BETWEEN TO_TIMESTAMP(#{condxSysRegDtmStt}||' 00:00:00', 'YYYY-MM-DD HH24:MI:SS')
+			AND TO_TIMESTAMP(#{condxSysRegDtmEnd}||' 23:59:59', 'YYYY-MM-DD HH24:MI:SS')
+		</if>
+		 ORDER BY SYS_REG_DTM DESC
+	</sql>
+	<select id="getDormantCustomerBySearchConditionCount" parameterType="CustomerSearchRequest"
+			resultType="java.lang.Integer">
+		SELECT /* etMbrBase.getDormantCustomerBySearchConditionCount */
+			   COUNT(*)
+		  FROM (
+		     	<include refid="sqlDormantCustomerSearch" />
+			   ) v
+	</select>
+	<select id="getDormantCustomerBySearchConditionData" parameterType="CustomerSearchRequest"
+			resultType="CustomerSearchResponse">
+		<include refid="sqlDormantCustomerSearch" />
+		<include refid="paginatedBase" />
+	</select>
+
+	<select id="getMemberData" parameterType="java.lang.String" resultType="CustomerNoMaskingResponse">
+	    /* etMbrBase."getMemberData" */
+		SELECT MBR_NO
+			 , MBR_NM
+		     , MBR_GB_CD
+		     , MBR_MGR_CD
+		     , LOGIN_ID
+			 , TEL_RGN_NO
+			 , TEL_TXNO_NO
+			 , TEL_END_NO
+			 , CELL_SCT_NO
+			 , CELL_TXNO_NO
+			 , CELL_END_NO
+		     , FN_GET_CODENAME('ME002', EMB.MBR_MGR_CD) AS MBR_MGR_NM
+		     , FN_GET_CODENAME('ME024', EMB.MBR_GRADE_CD) AS MBR_GRADE_NM
+		     , EMB.MBR_GRADE_CD
+			 , EMAIL_ADDR
+			 , ZIP_NO_SEQ
+			 , ZIP_NO
+			 , ZIP_ADDR
+			 , DTL_ADDR
+		  FROM ET_MBR_BASE EMB
+		 WHERE MBR_NO = #{mbrNo}
+	</select>
+
+</mapper>

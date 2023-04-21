@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ko-KR"
+      xmlns:th="http://www.thymeleaf.org">
+
+<th:block th:fragment="la-pages">
+    <div class="contents">
+        <div class="pages">
+            <div class="cont-tab">
+                <div id="VIEW-TABS">
+                </div>
+            </div>
+            <div class="cont-wrap">
+                <div id="VIEW-PAGE">
+                </div>
+                <!-- //iframe -->
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $(document.body).ready(function(){
+            $('#VIEW-TABS').append("<a href='javascript:void(0)' class='item active' id='dashboard'><span>메인</span></a>");
+            $('#VIEW-PAGE').append("<iframe src='/dashboard.do' width='100%' height='100%' data-id='dashboard' class='active'></iframe>");
+        });
+    </script>
+</th:block>
+</html>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.system.PrFaqInfoMapper">
+
+	<sql id="paginatedBase">
+		LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
+	</sql>
+
+	<sql id="FaqList">
+		SELECT  				/* prFaqInfo.FaqList */
+			  PFI.FAQ_NO
+			, FN_GET_CODENAME( 'CM014', PFI.FAQ_LGRP_CD ) AS FAQ_LGRP_CD
+			, FN_GET_CODENAME( 'CM015', PFI.FAQ_MGRP_CD ) AS FAQ_MGRP_CD
+			, PFI.TITLE
+			, PFI.BB_YN
+			, PFI.SORT_SEQ
+			, PFI.QRY_CNT
+			, PFI.SYS_MOD_ID
+			, TO_CHAR(PFI.SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+			, PFI.SYS_REG_ID
+			, TO_CHAR(PFI.SYS_REG_DTM, 'YYYY-MM-DD HH24:MI:SS') AS SYS_REG_DTM
+		FROM
+			PR_FAQ_INFO PFI 	-- FAQ정보
+		<where>
+			<if test="faqLgrpCd != null and faqLgrpCd != '' ">
+			AND PFI.FAQ_LGRP_CD	= #{faqLgrpCd}
+			</if>
+			<if test="faqMgrpCd != null and faqMgrpCd != '' ">
+			AND	PFI.FAQ_MGRP_CD	= #{faqMgrpCd}
+			</if>
+			<if test="title != null and title != '' ">
+			AND PFI.TITLE LIKE '%' || #{title} || '%'
+			</if>
+			<if test="bbYn != null and bbYn != '' ">
+			AND PFI.BB_YN LIKE '%' || #{bbYn}  || '%'
+			</if>
+		</where>
+		ORDER BY SYS_REG_DTM DESC
+	</sql>
+
+	<select id="getFaqList" parameterType="FaqRequest" resultType="FaqResponse">
+		<include refid="FaqList" />
+		<include refid="paginatedBase" />
+	</select>
+
+	<select id="getFaqListCount" parameterType="FaqRequest" resultType="java.lang.Integer">
+		SELECT   /* prFaqInfo.getFaqListCount */
+				COUNT(*)
+		FROM (
+				<include refid="FaqList" />
+		) T1
+	</select>
+
+	<select id="getFaqDetail" parameterType="FaqRequest" resultType="FaqResponse">
+		SELECT  				/* prFaqInfo.getFaqDetail */
+				  PFI.FAQ_NO
+				, PFI.FAQ_LGRP_CD
+				, PFI.FAQ_MGRP_CD
+				, PFI.TITLE
+				, PFI.BB_YN
+				, PFI.SORT_SEQ
+				, PFI.UPR_FIX_YN
+				, PFI.PC_NTC_CONT
+				, PFI.MO_NTC_CONT
+		FROM 	  PR_FAQ_INFO PFI
+		WHERE 	  PFI.FAQ_NO = #{faqNo}
+	</select>
+
+	<select id="faqOverLapCheck" parameterType="FaqRequest" resultType="java.lang.Integer">
+		SELECT   /* prFaqInfo.faqOverLapCheck */
+			COUNT(*)
+		FROM
+			PR_FAQ_INFO
+		<where>
+			FAQ_LGRP_CD    = #{faqLgrpCd}
+			AND FAQ_MGRP_CD    = #{faqMgrpCd}
+			<if test="faqNo != null and faqNo != '' ">
+			AND FAQ_NO <![CDATA[ <> ]]> #{faqNo} -- 업데이트시 체크할때는 본인꺼 제외하고 체크
+			</if>
+		</where>
+	</select>
+
+</mapper>
+
+

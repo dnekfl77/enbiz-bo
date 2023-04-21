@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enbiz.bo.app.repository.goods.PrEvltValInfoTrxMapper">
+
+    <insert id="insertPrEvltValInfo" parameterType="PrEvltValInfo">
+        INSERT INTO PR_EVLT_VAL_INFO ( /* prEvltValInfoTrx.insertPrEvltValInfo */
+               EVLT_ITEM_NO
+             , EVLT_VAL_NO
+             , EVLT_VAL
+             , SORT_SEQ
+             , SYS_REG_ID
+             , SYS_REG_DTM
+             , SYS_MOD_ID
+             , SYS_MOD_DTM
+        ) VALUES (
+               #{evltItemNo}
+             , (SELECT LPAD((COALESCE(MAX(EVLT_VAL_NO::INTEGER), 0) + 1)::TEXT, 3, '0') FROM PR_EVLT_VAL_INFO WHERE EVLT_ITEM_NO = #{evltItemNo})
+             , #{evltVal}
+             , #{sortSeq}
+             , #{sysRegId}
+             , now()
+             , #{sysRegId}
+             , now()
+        )
+    </insert>
+
+    <update id="updatePrEvltValInfo" parameterType="PrEvltValInfo">
+        UPDATE PR_EVLT_VAL_INFO /* prEvltValInfoTrx.updatePrEvltValInfo */
+           SET EVLT_VAL = #{evltVal}
+             , SORT_SEQ = #{sortSeq}
+             , SYS_MOD_ID = #{sysModId}
+             , SYS_MOD_DTM = now()
+         WHERE EVLT_ITEM_NO = #{evltItemNo}
+           AND EVLT_VAL_NO = #{evltValNo}
+    </update>
+
+    <delete id="deletePrEvltValInfo" parameterType="PrEvltValInfo">
+        DELETE  /* prEvltValInfoTrx.deletePrEvltValInfo */
+          FROM PR_EVLT_VAL_INFO
+         WHERE EVLT_ITEM_NO = #{evltItemNo}
+           AND EVLT_VAL_NO = #{evltValNo}
+    </delete>
+</mapper>

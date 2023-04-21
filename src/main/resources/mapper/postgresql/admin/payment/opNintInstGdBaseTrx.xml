@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.payment.OpNintInstGdBaseTrxMapper">
+
+	<insert id="insertOpNintInstGdBase" parameterType="opNintInstGdBase">
+		<selectKey keyProperty="nintInstGdNo" resultType="String" order="BEFORE">
+			SELECT NEXTVAL('OP_NINT_INST_GD_BASE_SQ01') AS nintInstGdNo
+		</selectKey>
+		INSERT INTO OP_NINT_INST_GD_BASE (  /* opNintInstGdBaseTrx.insertOpNintInstGdBase */
+				  NINT_INST_GD_NO
+				, ACQR_CD
+				, APLY_STR_DTM
+				, APLY_END_DTM
+				, NINT_INST_NM
+				, SYS_REG_ID
+				, SYS_REG_DTM
+				, SYS_MOD_ID
+				, SYS_MOD_DTM
+		) VALUES (
+				  #{nintInstGdNo}
+				, #{acqrCd}
+				, TO_TIMESTAMP(#{aplyStrDtm}, 'YYYY-MM-DD HH24:MI:SS')
+				, TO_TIMESTAMP(#{aplyEndDtm}, 'YYYY-MM-DD HH24:MI:SS')
+				, #{nintInstNm}
+				, #{sysRegId}
+				, now()
+				, #{sysRegId}
+				, now()
+		)
+	</insert>
+
+	<update id="updateOpNintInstGdBase" parameterType="opNintInstGdBase">
+		UPDATE OP_NINT_INST_GD_BASE   /* opNintInstGdBaseTrx.updateOpNintInstGdBase */
+		SET   ACQR_CD           = #{acqrCd}
+		, APLY_STR_DTM      	= TO_TIMESTAMP(#{aplyStrDtm}, 'YYYY-MM-DD HH24:MI:SS')
+		, APLY_END_DTM      	= TO_TIMESTAMP(#{aplyEndDtm}, 'YYYY-MM-DD HH24:MI:SS')
+		, NINT_INST_NM      	= #{nintInstNm}
+		, SYS_MOD_ID        	= #{sysRegId}
+		, SYS_MOD_DTM       	= now()
+		WHERE NINT_INST_GD_NO   = #{nintInstGdNo}
+	</update>
+
+	<delete id="deleteOpNintInstGdBase" parameterType="opNintInstGdBase">
+		DELETE FROM OP_NINT_INST_GD_BASE   /* opNintInstGdBaseTrx.deleteOpNintInstGdBase */
+		WHERE NINT_INST_GD_NO   = #{nintInstGdNo}
+	</delete>
+
+</mapper>
+
+

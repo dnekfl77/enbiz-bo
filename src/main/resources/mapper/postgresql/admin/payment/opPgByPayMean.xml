@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enbiz.bo.app.repository.payment.OpPgByPayMeanMapper">
+
+	<sql id="pgList">
+		SELECT  				/* opPgByPayMean.pgList */
+				  CD
+				, CD_NM
+				, USE_YN
+		FROM 	  ST_STD_CD
+		WHERE 	  GRP_CD = 'OM030'
+	</sql>
+
+	<select id="getPgList" resultType="OpPgByPayMeanResponse">
+		<include refid="pgList" />
+	</select>
+
+	<select id="getPgListCount" resultType="java.lang.Integer">
+		SELECT   /* opPgByPayMean.getPgListCount */
+				COUNT(*)
+		FROM (
+				<include refid="pgList" />
+		) T1
+	</select>
+
+	<sql id="methodsOfPaymentList">
+		SELECT  				/* opPgByPayMean.methodsOfPaymentList */
+				  PG_GB_CD
+				, PAY_WAY_CD
+				, LINK_YN
+				, SYS_MOD_ID
+				, TO_CHAR(SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+		FROM 	  OP_PG_BY_PAY_MEAN
+		WHERE 	  PG_GB_CD = #{pgGbCd}
+	</sql>
+
+	<select id="getMethodsOfPaymentList" resultType="OpPgByPayMeanResponse">
+		<include refid="methodsOfPaymentList" />
+	</select>
+
+	<select id="getMethodsOfPaymentListCount" resultType="java.lang.Integer">
+		SELECT   /* opPgByPayMean.getMethodsOfPaymentListCount */
+				COUNT(*)
+		FROM (
+				<include refid="methodsOfPaymentList" />
+		) T1
+	</select>
+
+</mapper>
+
+

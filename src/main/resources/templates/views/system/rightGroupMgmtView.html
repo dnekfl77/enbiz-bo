@@ -1,0 +1,245 @@
+<!--
+* 프로그램명 : 권한 그룹 관리
+* 작 성 일 : 2021.03.02
+* 작 성 자 : 이시현
+* 수 정 자 :
+* 버    전 : 1.0
+* 개    요 : 권한 그룹 관리를 하는 UI
+* 이    력 :
+-->
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layouts/page-realgrid-layout}">
+
+<head>
+<title>sub title</title>
+</head>
+<body>
+	<th:block layout:fragment="page-title-area">
+		<div class="page-title">
+			<div class="left">
+				<h1><th:block th:text="${#messages.msg('rightGroupMgmt.label.rtgrp.management')}" /></h1>
+			</div>
+		</div>
+	</th:block>
+	<th:block layout:fragment="page-contents">
+		<div class="page-fixed with-title">
+			<div class="search-cont">
+				<!-- 조회테이블 -->
+				<div class="search">
+					<div class="search-body">
+						<form name="stRtGrpBaseGridForm" id="stRtGrpBaseGridForm">
+							<table class="search-table">
+								<colgroup>
+									<col width="120">
+									<col>
+									<col width="120">
+									<col>
+									<col width="120">
+									<col>
+									<col width="120">
+									<col>
+								</colgroup>
+								<tbody>
+									<tr>
+										<td class="label" th:text="${#messages.msg('rightGroupMgmt.label.rtgrp.base.sys.gb')}"></td>
+										<td>
+											<select id="sysGbCd" name="sysGbCd" class="input">
+                                    			<option value="" th:text="${#messages.msg('adminCommon.entirety')}"></option>
+                                    			<option th:each="list : ${codeList.UR005}" th:value="${list.cd}" th:utext="${list.cdNm}"></option>
+                                			</select>
+										</td>
+										<td class="label" th:text="${#messages.msg('rightGroupMgmt.label.rtgrp.base.no')}"></td>
+										<td><input class="input w100" type="text" maxlength="15" name="rtGrpNo" id="rtGrpNo" /></td>
+										<td class="label" th:text="${#messages.msg('rightGroupMgmt.label.rtgrp.base.nm')}"></td>
+										<td colspan="3">
+											<input class="input w100" type="text" maxlength="300" name="rtGrpNm" id="rtGrpNm" />
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</form>
+					</div>
+				</div>
+				<!-- //조회테이블 -->
+				<!-- 검색버튼 -->
+				<div class="button-group search-btn">
+					<a href="#" class="btn_gblue button white" id="btn_init">
+						<span class="text" th:text="${#messages.msg('adminCommon.button.init')}" />
+					</a>
+					<a href="#" class="btn_blue button dark" id="btn_search">
+						<span class="text" th:text="${#messages.msg('adminCommon.button.search')}" />
+					</a>
+				</div>
+				<!-- //검색버튼 -->
+
+				<!-- 리얼그리드 -->
+				<div class="grid-cont">
+					<div class="grid" style="overflow: hidden;">
+						<div class="grid_box grid-head">
+							<div class="title-area">
+								<h2 class="title"
+									th:text="${#messages.msg('rightGroupMgmt.label.rtgrp.rt.grp')}" />
+							</div>
+							<div class="option-area">
+								<div class="edit-option">
+									<div class="button-group">
+										<a href="#" class="button inside" id="btn_grid_add">
+											<span class="text" th:text="${#messages.msg('adminCommon.grid.button.add.row')}" />
+										</a>
+										<a href="#" class="button inside" id="btn_grid_reset">
+											<span class="text" th:text="${#messages.msg('adminCommon.grid.button.cancel')}" />
+										</a>
+										<a href="#" class="button inside" id="btn_grid_save">
+											<span class="text" th:text="${#messages.msg('adminCommon.grid.button.save')}" />
+										</a>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="grid-body">
+							<div class="rg-root rg-grid" id="stRtGrpBaseGrid" realgrid></div>
+						</div>
+					</div>
+				</div>
+				<!-- //리얼그리드 -->
+
+				<!-- 리얼그리드 -->
+				<div class="grid-cont col-50 mt20">
+					<div class="grid" style="overflow: hidden;">
+						<form name="stRtGrpMenuGridForm" id="stRtGrpMenuGridForm" hidden="true">
+							<input class="input" type="text" name="rtGrpNo" id="stRtGrpMenuGrid_rtGrpNo" value=""/>
+							<input class="input" type="text" name="sysGbCd" id="stRtGrpMenuGrid_sysGbCd" value=""/>
+						</form>
+						<div class="grid-head">
+							<div class="title-area">
+								<h2 class="title"
+									th:text="${#messages.msg('rightGroupMgmt.label.rtgrp.rt.grp.menu')}" />
+							</div>
+							<div class="option-area">
+								<div class="edit-option">
+									<div class="button-group">
+										<a href="#" class="button inside" id="btn_grid_use_yn_all">
+											<span class="text" th:text="${#messages.msg('rightGroupMgmt.label.data.use.yn.all')}" />
+										</a>
+										<a href="#" class="button inside" id="btn_grid_menu_reset">
+											<span class="text" th:text="${#messages.msg('adminCommon.grid.button.cancel')}" />
+										</a>
+										<a href="#" class="button inside" id="btn_grid_menu_save">
+											<span class="text" th:text="${#messages.msg('adminCommon.grid.button.save')}" />
+										</a>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="grid-body">
+							<div class="rg-root rg-grid" id="stRtGrpMenuGrid" realgrid></div>
+						</div>
+					</div>
+					<div class="grid" style="overflow: hidden;">
+						<div class="grid_box grid-head">
+							<form name="stRtGrpBtnGridForm" id="stRtGrpBtnGridForm" hidden="true">
+								<input class="input" type="text" name="rtGrpNo" id="stRtGrpBtnGrid_rtGrpNo" value=""/>
+								<input class="input" type="text" name="sysGbCd" id="stRtGrpBtnGrid_sysGbCd" value=""/>
+								<input class="input" type="text" name="rtTgtSeq" id="stRtGrpBtnGrid_rtTgtSeq" value=""/>
+							</form>
+							<div class="title-area">
+								<h2 class="title"
+									th:text="${#messages.msg('rightGroupMgmt.label.rtgrp.rt.grp.button')}" />
+							</div>
+							<div class="option-area">
+								<div class="edit-option">
+									<div class="button-group">
+										<a href="#" class="button inside" id="btn_grid_btn_use_yn_all">
+											<span class="text" th:text="${#messages.msg('rightGroupMgmt.label.data.use.yn.all')}" />
+										</a>
+										<a href="#" class="button inside" id="btn_grid_btn_reset">
+											<span class="text" th:text="${#messages.msg('adminCommon.grid.button.cancel')}" />
+										</a>
+										<a href="#" class="button inside" id="btn_grid_btn_save">
+											<span class="text" th:text="${#messages.msg('adminCommon.grid.button.save')}" />
+										</a>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="grid-body">
+							<div class="rg-root rg-grid" id="stRtGrpBtnGrid" realgrid></div>
+						</div>
+					</div>
+				</div>
+				<!-- //리얼그리드 -->
+			</div>
+		</div>
+	</th:block>
+	<th:block layout:fragment="add-script">
+		<script th:inline="javascript">
+			// 그리드 내 selectBox 옵션 셋팅 (시스템구분코드, 권한대상유형코드)
+			var systemList = [[${codeList.UR005}]];
+			var systemCode = [];
+			var systemValues = [];
+			if(systemList != null){
+				for(const item of systemList){
+					systemCode.push(item.cd);
+					systemValues.push(item.cdNm);
+				}
+			}
+			systemCode.unshift('');
+			systemValues.unshift('선택');
+
+			var rtTgtTypList = [[${codeList.UR010}]];
+			var rtTgtTypCode = [];
+			var rtTgtTypValues = [];
+			if(rtTgtTypList != null){
+				for(const item of rtTgtTypList){
+					rtTgtTypCode.push(item.cd);
+					rtTgtTypValues.push(item.cdNm);
+				}
+			}
+			rtTgtTypCode.unshift('');
+			rtTgtTypValues.unshift('선택');
+
+			var col = x2coMessage.getMessage({
+						rt_grp_no : "rightGroupMgmt.label.rtgrp.base.no",
+						sys_gb_cd : "rightGroupMgmt.label.rtgrp.base.sys.gb",
+						rt_grp_nm : "rightGroupMgmt.label.rtgrp.base.nm",
+						use_yn : "adminCommon.use.yn",
+						aply_str_dt : "rightGroupMgmt.label.data.aply.strt.dttm",
+						aply_end_dt : "rightGroupMgmt.label.data.aply.end.dttm",
+						sysModDtm : "adminCommon.label.sys.mod.date",
+						sysModId : "adminCommon.label.sys.mod.id",
+						rt_tgt_nm : "rightGroupMgmt.label.rttgt.base.nm",
+						rt_tgt_seq : "rightGroupMgmt.label.rttgt.base.seq",
+						rt_tgt_nm_btn : "rightGroupMgmt.label.rtgrp.rt.grp.btn.nm",
+						rt_tgt_typ_cd : "rightGroupMgmt.label.rtgrp.rt.tgt.typ.cd",
+						popup_use_yn : "rightGroupMgmt.label.menuGrid.popup.use.yn"
+			});
+
+			var msg = x2coMessage.getMessage({
+						necessaryCheckMessage : "rightGroupMgmt.message.necessaryCheckMessage",
+						aplyStrEndDtCheck : "rightGroupMgmt.message.rttgt.aply.str.end.dt",
+						initGridMessage : "adminCommon.grid.alert.init",
+						messageNotCheckedData : "adminCommon.grid.alert.no.selected.row"
+			});
+		</script>
+
+		<script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'system/stRtGrpBaseGrid.provider.js?2021043000001'"></script>
+		<script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'system/stRtGrpBaseGrid.eventHandler.js?2021043000001'"></script>
+
+		<script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'system/stRtGrpMenuGrid.provider.js?202104260002'"></script>
+		<script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'system/stRtGrpMenuGrid.eventHandler.js?202104260002'"></script>
+
+		<script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'system/stRtGrpBtnGrid.provider.js?202104260002'"></script>
+		<script type="text/javascript" th:src="${@domainConfig.getProperty('jsUrl')} + 'system/stRtGrpBtnGrid.eventHandler.js?202104260002'"></script>
+
+		<script type="text/javascript">
+			$(document).ready(function() {
+				stRtGrpBaseGrid.eventhandler.init();
+				stRtGrpMenuGrid.eventhandler.init();
+				stRtGrpBtnGrid.eventhandler.init();
+			});
+		</script>
+	</th:block>
+
+</body>
+</html>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enbiz.bo.app.repository.goods.PrGoodsSafeCertiHistMapper">
+
+    <select id="getGoodsSafeCertiHistList" parameterType="java.lang.String" resultType="PrGoodsSafeCertiHist">
+        SELECT GOODS_NO /* prGoodsSafeCertiHis.getGoodsSafeCertiHistList */
+             , SAFE_CERTI_GB_CD
+             , SAFE_CERTI_NO
+             , SUBSTRING(APLY_STR_DT,1,4)||'-'||SUBSTRING(APLY_STR_DT,5,2)||'-'||SUBSTRING(APLY_STR_DT,7,2) AS APLY_STR_DT
+             , SUBSTRING(APLY_END_DT,1,4)||'-'||SUBSTRING(APLY_END_DT,5,2)||'-'||SUBSTRING(APLY_END_DT,7,2) AS APLY_END_DT
+             , SAFE_CERTI_ORN_NM
+             , SYS_REG_ID
+             , TO_CHAR(SYS_REG_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_REG_DTM
+             , SYS_MOD_ID
+             , TO_CHAR(SYS_MOD_DTM,'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
+          FROM PR_GOODS_SAFE_CERTI_HIST
+         WHERE GOODS_NO = #{goodsNo}
+    </select>
+</mapper>
