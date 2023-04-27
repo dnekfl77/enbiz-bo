@@ -7,11 +7,15 @@ import org.apache.ibatis.type.Alias;
 import com.enbiz.common.base.entity.BaseCommonEntity;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 @Alias("StUserBase")
 @Getter
 @Setter
+@Accessors(chain = true)
+@NoArgsConstructor
 public class StUserBase extends BaseCommonEntity {
     private	String userId;					// 사용자아이디 varchar(30) NOT NULL
 	private	String userGbCd;				// 사용자구분코드(UR001) varchar(10) NOT NULL
@@ -42,9 +46,5 @@ public class StUserBase extends BaseCommonEntity {
 	private	LocalDateTime lstPwdChgDtm;		// 최종비밀번호변경일시 timestamp NULL
 	private	String pwdLockYn;				// 비밀번호잠김여부 varchar(1) NOT NULL
 	private	String pwdIniYn;				// 비밀번호초기화여부 varchar(1) NOT NULL DEFAULT 'N'::character varying
-	private	String sysRegId;				// 시스템등록자ID varchar(30) NOT NULL
-	private	String sysRegDtm;				// 시스템등록일시 timestamp NOT NULL
-	private	String sysModId;				// 시스템수정자ID varchar(30) NOT NULL
-	private	String sysModDtm;				// 시스템수정일시 timestamp NOT NULL
 	private String randomPasswd;			// 초기화된 비밀번호
 }

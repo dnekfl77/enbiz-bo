@@ -12,17 +12,16 @@ import com.enbiz.bo.app.dto.code.CodeReqDto;
 import com.enbiz.bo.app.dto.code.CodeResDto;
 import com.enbiz.bo.app.entity.StStdCd;
 import com.enbiz.common.base.rest.Response;
-import com.enbiz.common.base.rest.RestApiUtil;
+import com.enbiz.common.base.rest.RestApiComponent;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Lazy
-@Slf4j
 @RequiredArgsConstructor
 public class CodeService {
-	private final RestApiUtil restApiUtil;
+
+	private final RestApiComponent restApiUtil;
 	@Value("${app.apiUrl.bo}")
 	private String boApiUrl;
 
@@ -30,17 +29,17 @@ public class CodeService {
      * 공통코드 조회
      * @param grpCds
      * @return
-     * @throws Exception 
+     * @throws Exception
      */
     public Map<String, List<StStdCd>> getStStdCd(String grpCds) throws Exception {
 		return this.restApiUtil.get(boApiUrl+ "/api/bo/common/code/getStStdCd", grpCds, new ParameterizedTypeReference<Response<Map<String, List<StStdCd>>>>() {}).getPayload();
     }
-    
+
     /**
      * 공통코드 역순 조회
      * @param grpCds
      * @return
-     * @throws Exception 
+     * @throws Exception
      */
     public Map<String, List<StStdCd>> getReverseStStdCd(String grpCds) throws Exception {
     	return this.restApiUtil.get(boApiUrl+ "/api/bo/common/code/getReverseStStdCd", grpCds, new ParameterizedTypeReference<Response<Map<String, List<StStdCd>>>>() {}).getPayload();

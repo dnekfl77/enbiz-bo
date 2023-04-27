@@ -3,8 +3,9 @@ package com.enbiz.bo.app.service.system;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,30 +14,23 @@ import com.enbiz.bo.app.dto.request.realgrid.RealGridCUDRequest;
 import com.enbiz.bo.app.dto.request.system.ZipNoMgmtCudRequest;
 import com.enbiz.bo.app.dto.request.system.ZipNoMgmtRequest;
 import com.enbiz.bo.app.dto.response.system.ZipNoMgmtResponse;
-import com.enbiz.bo.app.entity.StBldgAddrInfo;
-import com.enbiz.bo.app.entity.StZipNo;
-import com.enbiz.bo.app.repository.system.StBldgAddrInfoTrxMapper;
-import com.enbiz.bo.app.repository.system.StZipNoMapper;
-import com.enbiz.bo.app.repository.system.StZipNoTrxMapper;
-import com.enbiz.common.base.Validator;
-import com.enbiz.common.base.exception.MessageResolver;
+import com.enbiz.common.base.rest.Response;
+import com.enbiz.common.base.rest.RestApiComponent;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * 우편번호조회 service
  */
 @Service
 @Lazy
-@Slf4j
 @RequiredArgsConstructor
-@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 public class ZipNoServiceImpl implements ZipNoService {
 
-    private final StZipNoMapper stZipNoMapper;
-    private final StZipNoTrxMapper stZipNoTrxMapper;
-    private final StBldgAddrInfoTrxMapper stBldgAddrInfoTrxMapper;
+	private final RestApiComponent restApiComponent;
+
+	@Value("${app.apiUrl.bo}")
+	private String boApiUrl;
 
     /**
      * 우편번호 목록 총 건수 조회
@@ -47,7 +41,7 @@ public class ZipNoServiceImpl implements ZipNoService {
     @Override
     public int getZipNoListCount(ZipNoMgmtRequest req) throws Exception {
         req = getZipNoMgmtRequest(req);
-        return stZipNoMapper.getZipNoListTotalCnt(req);
+		return restApiComponent.get(boApiUrl + "/api/bo/system/zipNoMgmt/getZipNoListCount", req, new ParameterizedTypeReference<Response<Integer>>() {}).getPayload();
     }
 
     /**
@@ -58,10 +52,8 @@ public class ZipNoServiceImpl implements ZipNoService {
      */
     @Override
     public List<ZipNoMgmtResponse> getZipNoList(ZipNoMgmtRequest req) throws Exception {
-
         req = getZipNoMgmtRequest(req);
-
-        return stZipNoMapper.getZipNoList(req);
+		return restApiComponent.get(boApiUrl + "/api/bo/system/zipNoMgmt/getZipNoList", req, new ParameterizedTypeReference<Response<List<ZipNoMgmtResponse>>>() {}).getPayload();
     }
 
     /**
@@ -88,7 +80,7 @@ public class ZipNoServiceImpl implements ZipNoService {
      */
     @Override
     public List<String> getCityProvinceNameList() throws Exception {
-        return stZipNoMapper.getCtpNmList();
+		return restApiComponent.get(boApiUrl + "/api/bo/system/zipNoMgmt/getCityProvinceNameList", null, new ParameterizedTypeReference<Response<List<String>>>() {}).getPayload();
     }
 
     /**
@@ -99,7 +91,7 @@ public class ZipNoServiceImpl implements ZipNoService {
      */
     @Override
     public List<String> getSiGunGuNameList(String ctpNm) throws Exception {
-        return stZipNoMapper.getSigNmList(ctpNm);
+		return restApiComponent.get(boApiUrl + "/api/bo/system/zipNoMgmt/getSiGunGuNameList", new ZipNoMgmtRequest().setCtpNmParam(ctpNm), new ParameterizedTypeReference<Response<List<String>>>() {}).getPayload();
     }
 
     /**
@@ -110,75 +102,7 @@ public class ZipNoServiceImpl implements ZipNoService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class, readOnly = false)
     public void saveZipNoList(RealGridCUDRequest<ZipNoMgmtCudRequest> cudReq) throws Exception {
-
-        for(ZipNoMgmtCudRequest updateReq : cudReq.getUpdate()) {
-            validZipNoPrimary(updateReq);
-            validZipNoUpdateData(updateReq);
-
-            StZipNo stZipNo = new StZipNo();
-            BeanUtils.copyProperties(updateReq, stZipNo);
-            stZipNoTrxMapper.updateStZipNo(stZipNo);
-
-            StBldgAddrInfo stBldgAddrInfo = new StBldgAddrInfo();
-            BeanUtils.copyProperties(updateReq, stBldgAddrInfo);
-            stBldgAddrInfoTrxMapper.updateBldgAddrInfo(stBldgAddrInfo);
-        }
-
-        for(ZipNoMgmtCudRequest deleteReq : cudReq.getDelete()) {
-            validZipNoPrimary(deleteReq);
-
-            StZipNo stZipNo = new StZipNo();
-            BeanUtils.copyProperties(deleteReq, stZipNo);
-            stZipNoTrxMapper.deleteStZipNo(stZipNo);
-        }
+		restApiComponent.get(boApiUrl + "/api/bo/system/zipNoMgmt/saveZipNoList", cudReq, new ParameterizedTypeReference<Response<Void>>() {}).getPayload();
     }
 
-    private void validZipNoPrimary(ZipNoMgmtCudRequest item) throws Exception {
-    	Validator.throwIfEmpty(item.getZipNoSeq(), MessageResolver.getMessage("adminCommon.message.parameter.empty", new String[] {"ZipNoSeq"}));
-    }
-
-    private void validZipNoUpdateData(ZipNoMgmtCudRequest updateItem) throws Exception {
-    	Validator.throwIfEmpty(updateItem.getZipNoSeq(), MessageResolver.getMessage("adminCommon.message.parameter.empty", new String[] {"ZipNoSeq"}));
-
-    	Validator.throwIfEmpty(updateItem.getCtpNm(), MessageResolver.getMessage("adminCommon.message.parameter.empty", new String[] {"CtpNm"}));
-    	
-    	Validator.throwIfLongerThan(updateItem.getCtpNm(), 10, MessageResolver.getMessage("adminCommon.message.parameter.length.exceed", new String[] {"CtpNm","10"}));
-    	
-        Validator.throwIfEmpty(updateItem.getSigNm(), MessageResolver.getMessage("adminCommon.message.parameter.empty", new String[] {"SigNm"}));
-        
-        Validator.throwIfLongerThan(updateItem.getSigNm(), 10, MessageResolver.getMessage("adminCommon.message.parameter.length.exceed", new String[] {"SigNm","10"}));
-
-        Validator.throwIfEmpty(updateItem.getHemdNm(), MessageResolver.getMessage("adminCommon.message.parameter.empty", new String[] {"HemdNm"}));
-        
-        Validator.throwIfLongerThan(updateItem.getHemdNm(), 10, MessageResolver.getMessage("adminCommon.message.parameter.length.exceed", new String[] {"HemdNm","10"}));
-
-        Validator.throwIfEmpty(updateItem.getLnbrMnnm(), MessageResolver.getMessage("adminCommon.message.parameter.empty", new String[] {"LnbrMnnm"}));
-        
-        Validator.throwIfLongerThan(updateItem.getLnbrMnnm(), 4, MessageResolver.getMessage("adminCommon.message.parameter.length.exceed", new String[] {"LnbrMnnm","4"}));
-
-        Validator.throwIfEmpty(updateItem.getLnbrSlno(), MessageResolver.getMessage("adminCommon.message.parameter.empty", new String[] {"LnbrSlno"}));
-        
-        Validator.throwIfLongerThan(updateItem.getLnbrSlno(), 4, MessageResolver.getMessage("adminCommon.message.parameter.length.exceed", new String[] {"LnbrSlno","4"}));
-
-        Validator.throwIfEmpty(updateItem.getRoadNm(), MessageResolver.getMessage("adminCommon.message.parameter.empty", new String[] {"RoadNm"}));
-        
-        Validator.throwIfLongerThan(updateItem.getRoadNm(), 20, MessageResolver.getMessage("adminCommon.message.parameter.length.exceed", new String[] {"RoadNm","20"}));
-
-        Validator.throwIfEmpty(updateItem.getBuldMnnm(), MessageResolver.getMessage("adminCommon.message.parameter.empty", new String[] {"BuldMnnm"}));
-        
-        Validator.throwIfLongerThan(updateItem.getBuldMnnm(), 20, MessageResolver.getMessage("adminCommon.message.parameter.length.exceed", new String[] {"BuldMnnm","20"}));
-
-        Validator.throwIfEmpty(updateItem.getBuldSlno(), MessageResolver.getMessage("adminCommon.message.parameter.empty", new String[] {"BuldSlno"}));
-        
-        Validator.throwIfLongerThan(updateItem.getBuldSlno(), 4, MessageResolver.getMessage("adminCommon.message.parameter.length.exceed", new String[] {"BuldSlno","4"}));
-
-        Validator.throwIfEmpty(updateItem.getPosBulNm(), MessageResolver.getMessage("adminCommon.message.parameter.empty", new String[] {"PosBulNm"}));
-        
-        Validator.throwIfLongerThan(updateItem.getPosBulNm(), 30, MessageResolver.getMessage("adminCommon.message.parameter.length.exceed", new String[] {"PosBulNm","30"}));
-
-        Validator.throwIfEmpty(updateItem.getBuldDtlNm(), MessageResolver.getMessage("adminCommon.message.parameter.empty", new String[] {"BuldDtlNm"}));
-        
-        Validator.throwIfLongerThan(updateItem.getBuldDtlNm(), 30, MessageResolver.getMessage("adminCommon.message.parameter.length.exceed", new String[] {"BuldDtlNm","30"}));
-        
-    }
 }

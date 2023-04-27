@@ -2,17 +2,17 @@ package com.enbiz.bo.app.service.popup;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.enbiz.bo.app.dto.request.popup.MemberSearchRequest;
 import com.enbiz.bo.app.dto.response.popup.MemberSearchResponse;
-import com.enbiz.bo.app.repository.customer.EtMbrBaseMapper;
+import com.enbiz.common.base.rest.Response;
+import com.enbiz.common.base.rest.RestApiComponent;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * 회원 조회 팝업
@@ -20,20 +20,21 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Service
 @Lazy
-@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-@Slf4j
 @RequiredArgsConstructor
 public class MemberSearchPopupServiceImpl implements MemberSearchPopupService {
 
-    private final EtMbrBaseMapper etMbrBaseMapper;
+	private final RestApiComponent restApiComponent;
+
+    @Value("${app.apiUrl.bo}")
+	private String boApiUrl;
 
     @Override
     public int getMemberListCount(MemberSearchRequest memberSearchRequest) throws Exception {
-        return etMbrBaseMapper.getMemberListCount(memberSearchRequest);
+    	return restApiComponent.get(boApiUrl+ "/api/bo/main/customerMgmt/getMemberListCount", memberSearchRequest, new ParameterizedTypeReference<Response<Integer>>() {}).getPayload();
     }
 
     @Override
     public List<MemberSearchResponse> getMemberList(MemberSearchRequest memberSearchRequest) throws Exception {
-        return etMbrBaseMapper.getMemberList(memberSearchRequest);
+    	return restApiComponent.get(boApiUrl+ "/api/bo/main/customerMgmt/getMemberList", memberSearchRequest, new ParameterizedTypeReference<Response<List<MemberSearchResponse>>>() {}).getPayload();
     }
 }

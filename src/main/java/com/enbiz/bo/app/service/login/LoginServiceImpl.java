@@ -10,18 +10,16 @@ import com.enbiz.bo.app.dto.request.system.PasswordChangeRequest;
 import com.enbiz.bo.app.dto.response.login.LoginResponse;
 import com.enbiz.bo.app.entity.StLoginLog;
 import com.enbiz.common.base.rest.Response;
-import com.enbiz.common.base.rest.RestApiUtil;
+import com.enbiz.common.base.rest.RestApiComponent;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Service
-@Slf4j
 @Lazy
 @RequiredArgsConstructor
 public class LoginServiceImpl implements LoginService {
-	
-	private final RestApiUtil restApiUtil;
+
+	private final RestApiComponent restApiUtil;
 
 	@Value("${app.apiUrl.bo}")
 	private String boApiUrl;
@@ -78,5 +76,5 @@ public class LoginServiceImpl implements LoginService {
 	public LoginResponse getLoginUser(String loginId) throws Exception {
 		return restApiUtil.get(boApiUrl+ "/api/bo/login/login/updatePasswordByPasswordInitialize", loginId, new ParameterizedTypeReference<Response<LoginResponse>>() {}).getPayload();
 	}
-	
+
 }

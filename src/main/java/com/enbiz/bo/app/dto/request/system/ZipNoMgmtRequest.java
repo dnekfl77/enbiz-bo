@@ -7,11 +7,15 @@ import org.apache.ibatis.type.Alias;
 import com.enbiz.bo.app.entity.BaseCommonDto;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 @Alias("ZipNoMgmtRequest")
 @Getter
 @Setter
+@Accessors(chain = true)
+@NoArgsConstructor
 public class ZipNoMgmtRequest extends BaseCommonDto {
 
     @NotEmpty

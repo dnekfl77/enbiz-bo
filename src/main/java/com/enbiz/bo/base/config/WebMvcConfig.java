@@ -3,7 +3,6 @@ package com.enbiz.bo.base.config;
 import java.util.List;
 
 import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +19,7 @@ import com.navercorp.lucy.security.xss.servletfilter.XssEscapeServletFilter;
 
 @Configuration
 @MapperScan(basePackages = "com.enbiz.bo.app.repository")
-public class WebMvcConfig implements WebMvcConfigurer { 
+public class WebMvcConfig implements WebMvcConfigurer {
     /*
      * 컨트롤러 공통 Interceptor 설정
      * */
@@ -28,7 +27,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public ControllerInterceptor controllerInterceptor() {
         return new ControllerInterceptor();
     }
-    
+
 	/**
 	 * lucy Xss Filter 설정
 	 * @return
@@ -50,20 +49,20 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .setCachePeriod(20)
                 ;
     }
-    
+
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
         argumentResolvers.add(baseCommonEntityAttributeResolver());
         argumentResolvers.add(realgridCUDFormDataResolver());
         argumentResolvers.add(realgridCUDResolver());
     }
-    
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(controllerInterceptor())
                 .addPathPatterns("/**/*.do");
     }
-    
+
     @Bean
     public HandlerMethodArgumentResolver baseCommonEntityAttributeResolver() {
         return new BaseCommonEntityAttributeResolver();
@@ -76,5 +75,5 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public HandlerMethodArgumentResolver realgridCUDResolver() {
         return new RealgridCUDResolver();
     }
-        
+
 }

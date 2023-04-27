@@ -4,12 +4,8 @@ import java.util.List;
 
 import com.enbiz.bo.app.dto.request.system.UserDetailRequest;
 import com.enbiz.bo.app.dto.request.system.UserListRequest;
-import com.enbiz.bo.app.dto.request.system.UserRightGroupRequest;
 import com.enbiz.bo.app.dto.response.system.UserDetailResponse;
 import com.enbiz.bo.app.dto.response.system.UserListResponse;
-import com.enbiz.bo.app.dto.response.system.UserMenuRtInfoResponse;
-import com.enbiz.bo.app.dto.response.system.UserRightGroupResponse;
-import com.enbiz.bo.app.entity.StRtInfo;
 /**
  * 사용자관리 서비스
  */
@@ -66,24 +62,6 @@ public interface UserMgmtService {
     UserDetailResponse initializePassword(String userId) throws Exception;
 
     /**
-     * 사용자 메뉴(권한정보) CUD
-     *
-     * @param createList, updateList, deleteList
-     * @return void
-     * @throws
-     */
-    void saveUserMenuRt(List<StRtInfo> createList, List<StRtInfo> updateList, List<StRtInfo> deleteList);
-
-    /**
-     * 사용자 메뉴(권한정보) 조회
-     *
-     * @param userId
-     * @return 메뉴(권한정보) 리스트
-     * @throws
-     */
-    List<UserMenuRtInfoResponse> getUserMenuRtInfoList(String userId);
-
-    /**
      * 사용자 저장
      *
      * @param request
@@ -92,19 +70,4 @@ public interface UserMgmtService {
      */
     UserDetailResponse saveUser(UserDetailRequest request) throws Exception;
 
-    /**
-     * 사용자 권한그룹 목록 조회
-     *
-     * @param request
-     * @return 권한그룹 목록
-     */
-    List<UserRightGroupResponse> getUserRightGroupInfo(UserRightGroupRequest request);
-
-    /**
-     * 사용자 권한그룹 목록 카운팅
-     *
-     * @param request
-     * @return 권한그룹 목록 카운팅
-     */
-    int getUserRightGroupListCount(UserRightGroupRequest request);
 }

@@ -38,7 +38,6 @@ import com.enbiz.bo.app.entity.SmsMsg;
 import com.enbiz.bo.app.entity.StLoginLog;
 import com.enbiz.bo.app.service.common.AdminCommonService;
 import com.enbiz.bo.app.service.login.LoginService;
-import com.enbiz.bo.app.service.system.PersonalMgmtService;
 import com.enbiz.bo.base.annotation.SkipAuthorityCheck;
 import com.enbiz.bo.base.properties.EnvironmentsConfig;
 import com.enbiz.common.base.constant.BaseConstants;
@@ -59,32 +58,30 @@ public class LoginController extends BaseController {
 
     @Autowired
     private LoginService loginService;
-    
-    @Autowired
-    private PersonalMgmtService personalMgmtService;
+
 
     @Autowired
     private AdminCommonService adminCommonService;
-    
+
     @Autowired
 	private PasswordEncoder passwordEncoder;
 
     @RequestMapping("redirect.do")
     public String redirect(String url, String message, Model model) {
     	Map<String, String> result = new HashMap<>();
-    	
+
     	result.put("loginReturnMessage", message);
         result.put("returnUrl", url);
-        
+
         model.addAttribute("result",result);
-    	
+
     	return "views/common/redirect";
     }
 
     @RequestMapping(ACTION_LOGIN_FORM)
     public String showLoginPage(@ModelAttribute LoginFormRequest loginFormRequest,
     		@AuthenticationPrincipal CurrentUser currentUser, Model model, HttpServletRequest request) throws Exception {
-    	
+
         // 정상 로그인이 아닌경우 세션 정보를 clear 하고 나머지 사항 진행함!!
         if (!StringUtils.equals("10", loginFormRequest.getTpCd())) {
             if (currentUser != null) {
@@ -143,7 +140,7 @@ public class LoginController extends BaseController {
                 loginRequest.setPwd(encryptedPassword);
 
                 // 패스워드 초기화
-                personalMgmtService.saveChangePassword(loginRequest);
+//                personalMgmtService.saveChangePassword(loginRequest);
 
                 loginService.updateIdUnlock(loginRequest);
                 // SMS 발송

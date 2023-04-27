@@ -21,15 +21,9 @@ import com.enbiz.bo.app.dto.response.system.SystemNoticeAttachFileResponse;
 import com.enbiz.bo.app.dto.response.system.SystemNoticeInfoResponse;
 import com.enbiz.bo.app.dto.response.system.SystemNoticeTargetInfoResponse;
 import com.enbiz.bo.app.entity.StUserBase;
-import com.enbiz.bo.app.repository.system.StBbAtchFileMapper;
-import com.enbiz.bo.app.repository.system.StBbTgtInfoMapper;
-import com.enbiz.bo.app.repository.system.StSysBbInfoMapper;
-import com.enbiz.bo.app.repository.system.StSysBbInfoTrxMapper;
 import com.enbiz.bo.app.service.common.AdminCommonService;
-import com.enbiz.common.base.Validator;
-import com.enbiz.common.base.exception.MessageResolver;
 import com.enbiz.common.base.rest.Response;
-import com.enbiz.common.base.rest.RestApiUtil;
+import com.enbiz.common.base.rest.RestApiComponent;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,12 +33,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 public class SystemNoticeMgmtServiceImpl implements SystemNoticeMgmtService {
-	private final RestApiUtil restApiUtil;
-    private final StSysBbInfoTrxMapper stSysBbInfoTrxMapper;
-    private final StSysBbInfoMapper stSysBbInfoMapper;
-    private final StBbAtchFileMapper stBbAtchFileMapper;
-    private final StBbTgtInfoMapper stBbTgtInfoMapper;
     private final AdminCommonService adminCommonService;
+
+    private final RestApiComponent restApiComponent;
 
 	@Value("${app.apiUrl.bo}")
 	private String boApiUrl;
@@ -62,9 +53,9 @@ public class SystemNoticeMgmtServiceImpl implements SystemNoticeMgmtService {
     	RegisterSystemNoticeRequest registerSystemNoticeRequest = new RegisterSystemNoticeRequest();
     	registerSystemNoticeRequest.setReq(req);
     	registerSystemNoticeRequest.setCudList(cudList);
-		
-		restApiUtil.post(boApiUrl+"/api/bo/system/systemNoticeMgmt/registSystemNoticeInfo", registerSystemNoticeRequest, new ParameterizedTypeReference<Response<String>>() {});
-		
+
+    	restApiComponent.post(boApiUrl+"/api/bo/system/systemNoticeMgmt/registSystemNoticeInfo", registerSystemNoticeRequest, new ParameterizedTypeReference<Response<String>>() {});
+
 		adminCommonService.confirmFile();
     }
 
@@ -80,7 +71,7 @@ public class SystemNoticeMgmtServiceImpl implements SystemNoticeMgmtService {
     	ModifySystemNoticeRequest modifySystemNoticeRequest = new ModifySystemNoticeRequest();
     	modifySystemNoticeRequest.setReq(req);
     	modifySystemNoticeRequest.setCudList(cudList);
-    	restApiUtil.put(boApiUrl+ "/api/bo/system/systemNoticeMgmt/modifySystemNoticeInfo", modifySystemNoticeRequest, new ParameterizedTypeReference<Response<String>>() {}).getPayload();
+    	restApiComponent.put(boApiUrl+ "/api/bo/system/systemNoticeMgmt/modifySystemNoticeInfo", modifySystemNoticeRequest, new ParameterizedTypeReference<Response<String>>() {}).getPayload();
 		adminCommonService.confirmFile();
     }
 
@@ -92,49 +83,46 @@ public class SystemNoticeMgmtServiceImpl implements SystemNoticeMgmtService {
      */
     @Override
     public SystemNoticeInfoResponse getSystemNoticeInfo(String bbcNo) throws Exception {
-    	return restApiUtil.get(boApiUrl+ "/api/bo/system/systemNoticeMgmt/getSystemNoticeInfo", bbcNo, new ParameterizedTypeReference<Response<SystemNoticeInfoResponse>>() {}).getPayload();
+    	return restApiComponent.get(boApiUrl+ "/api/bo/system/systemNoticeMgmt/getSystemNoticeInfo", bbcNo, new ParameterizedTypeReference<Response<SystemNoticeInfoResponse>>() {}).getPayload();
     }
 
     /**
      * 시스템 대상 정보 조회
      * @param bbcNo
      * @return
-     * @throws Exception 
+     * @throws Exception
      */
     @Override
     public List<SystemNoticeTargetInfoResponse> getSystemNoticeTargetInfoList(String bbcNo) throws Exception {
-    	return restApiUtil.get(boApiUrl+ "/api/bo/system/systemNoticeMgmt/getSystemNoticeTargetInfoList", bbcNo, new ParameterizedTypeReference<Response<List<SystemNoticeTargetInfoResponse>>>() {}).getPayload();
+    	return restApiComponent.get(boApiUrl+ "/api/bo/system/systemNoticeMgmt/getSystemNoticeTargetInfoList", bbcNo, new ParameterizedTypeReference<Response<List<SystemNoticeTargetInfoResponse>>>() {}).getPayload();
     }
 
     /**
      * 시스템공지관리 목록 조회
      * @param  SystemNoticeManagementListRequest
      * @return 시스템공지관리 목록
-     * @throws Exception 
+     * @throws Exception
      * @throws
      */
     @Override
     public RealGridListResponse getSystemNoticeList(SystemNoticeListRequest systemNoticeListRequest) throws Exception {
-    	return restApiUtil.get(boApiUrl+"/api/bo/system/systemNoticeMgmt/getSystemNoticeList", systemNoticeListRequest, new ParameterizedTypeReference<Response<RealGridListResponse>>() {}).getPayload();
+    	return restApiComponent.get(boApiUrl+"/api/bo/system/systemNoticeMgmt/getSystemNoticeList", systemNoticeListRequest, new ParameterizedTypeReference<Response<RealGridListResponse>>() {}).getPayload();
     }
 
     @Override
     public List<DashboardNoticeResponse> getSystemNoticeInfoListByToday(DashboardNoticeRequest dashboardNoticeRequest) {
-        return stSysBbInfoMapper.getSysNtcInfoListByToday(dashboardNoticeRequest);
+    	return restApiComponent.get(boApiUrl+"/api/bo/system/systemNoticeMgmt/getSystemNoticeInfoListByToday", dashboardNoticeRequest, new ParameterizedTypeReference<Response<List<DashboardNoticeResponse>>>() {}).getPayload();
     }
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class, readOnly = false)
 	public DashboardNoticeResponse getSystemNoticeInfoListByTodayDetail(DashboardNoticeRequest dashboardNoticeRequest) {
-		DashboardNoticeResponse notice = stSysBbInfoMapper.getSysNtcInfoListByTodayDetail(dashboardNoticeRequest);
-		Validator.throwIfNull(notice, MessageResolver.getMessage("adminCommon.message.invaild.access"));
-		stSysBbInfoTrxMapper.updateStSysBbInfoQryCnt(dashboardNoticeRequest.getBbcNo());
-		return notice;
+    	return restApiComponent.get(boApiUrl+"/api/bo/system/systemNoticeMgmt/getSystemNoticeInfoListByTodayDetail", dashboardNoticeRequest, new ParameterizedTypeReference<Response<DashboardNoticeResponse>>() {}).getPayload();
 	}
 
 	@Override
 	public List<SystemNoticeAttachFileResponse> getAttachFileList(String bbcNo) {
-		return stBbAtchFileMapper.getStBbAtchFileList(bbcNo);
+    	return restApiComponent.get(boApiUrl+"/api/bo/system/systemNoticeMgmt/getAttachFileList", new DashboardNoticeRequest().setBbcNo(bbcNo), new ParameterizedTypeReference<Response<List<SystemNoticeAttachFileResponse>>>() {}).getPayload();
 	}
 
 }

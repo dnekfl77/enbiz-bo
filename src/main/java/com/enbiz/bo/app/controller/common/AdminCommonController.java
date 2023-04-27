@@ -1,8 +1,6 @@
 package com.enbiz.bo.app.controller.common;
 
 import java.io.IOException;
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -30,17 +28,13 @@ import org.springframework.web.servlet.ModelAndView;
 import com.enbiz.bo.app.dto.ajax.JSONResponseEntity;
 import com.enbiz.bo.app.dto.code.CodeReqDto;
 import com.enbiz.bo.app.dto.login.CurrentUser;
-import com.enbiz.bo.app.dto.request.delivery.FullOrderRequest;
-import com.enbiz.bo.app.dto.response.delivery.FullOrderResponse;
 import com.enbiz.bo.app.dto.response.realgrid.RealGridListResponse;
 import com.enbiz.bo.app.enums.common.AttacheFileKind;
 import com.enbiz.bo.app.service.code.CodeService;
 import com.enbiz.bo.app.service.common.AdminCommonService;
-import com.enbiz.bo.app.service.delivery.FullOrderInquiryService;
 import com.enbiz.common.base.entity.BaseCommonEntity;
 import com.enbiz.common.base.exception.MessageResolver;
 import com.enbiz.common.base.util.ExcelUtils;
-import com.enbiz.common.base.util.ReflectionUtils;
 
 import lombok.RequiredArgsConstructor;
 import net.sf.json.JSONArray;
@@ -60,8 +54,7 @@ public class AdminCommonController {
 
     private final AdminCommonService adminCommonService;
 	private final CodeService codeService;
-	private final FullOrderInquiryService fullOrderInquiryService;
-	
+
 	@RequestMapping("/index.do")
     public String showIndexPage() throws Exception {
         return "views/index/index";
@@ -266,31 +259,7 @@ public class AdminCommonController {
     		String originalFileName) throws IOException {
         return adminCommonService.downloadFile(fullPath,originalFileName);
     }
-    
-    @GetMapping("/dlvOrdExcelDownload.do")
-    public void getDlvOrdExcelDownload(HttpServletResponse response) throws Exception {
-        FullOrderRequest fullOrderRequest = new FullOrderRequest();
 
-        List<FullOrderResponse> fullOrderExcelResponseList =
-                fullOrderInquiryService.getExcelFullOrderInquiryList(fullOrderRequest);
-
-        List titles = new ArrayList();
-
-        titles.add("주문자");
-        titles.add("주문일");
-        titles.add("배송일");
-
-        List<Map<String, Object>> convertFullOrders = ReflectionUtils.convertToMaps(fullOrderExcelResponseList);
-
-        ExcelUtils.createExcelToResponse(
-                convertFullOrders,
-                titles,
-                String.format("%s-%s", "orders", LocalDate.now().toString()),
-                "배송주문내역",
-                response
-        );
-
-    }
 
 }
 

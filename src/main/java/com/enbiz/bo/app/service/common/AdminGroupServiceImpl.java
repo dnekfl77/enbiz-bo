@@ -7,24 +7,22 @@ import org.springframework.stereotype.Service;
 
 import com.enbiz.bo.app.dto.request.login.LoginRequest;
 import com.enbiz.common.base.rest.Response;
-import com.enbiz.common.base.rest.RestApiUtil;
+import com.enbiz.common.base.rest.RestApiComponent;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Lazy
-@Slf4j
 @RequiredArgsConstructor
 public class AdminGroupServiceImpl implements AdminGroupService {
-	
-	private final RestApiUtil restApiUtil;
-	
+
+	private final RestApiComponent restApiComponent;
+
 	@Value("${app.apiUrl.bo}")
 	private String boApiUrl;
 
     @Override
     public int getAdminGroups(LoginRequest loginRequest) throws Exception {
-    	return restApiUtil.get(boApiUrl+ "/api/bo/common/common/getAdminGroups", loginRequest, new ParameterizedTypeReference<Response<Integer>>() {}).getPayload();
+    	return restApiComponent.get(boApiUrl+ "/api/bo/common/common/getAdminGroups", loginRequest, new ParameterizedTypeReference<Response<Integer>>() {}).getPayload();
     }
 }
