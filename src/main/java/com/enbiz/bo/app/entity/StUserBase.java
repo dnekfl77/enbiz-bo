@@ -29,9 +29,13 @@ public class StUserBase extends BaseCommonEntity {
 	private	String cellEndNo;				// 휴대폰끝번호 varchar(4) NOT NULL
 	private	String emailAddr;				// 이메일주소 varchar(200) NOT NULL
 	private	String indInfoDealYn;			// 개인정보취급여부 varchar(1) NOT NULL
+	private String indInfoDealCausCont;		//개인정보취급사유내용
+	private	String empNo;					// 사원번호 varchar(20) NULL
 	private	String jobGrpCd;				// 업무그룹코드(UR002) varchar(10) NOT NULL
 	private	String ocpCd;					// 직책코드(UR003) varchar(10) Not Null
 	private	String workStatCd;				// 근무상태코드(Ur004) varchar(10) Not Null
+	private String atchFileRouteNm;			// 첨부파일경로명 varchar(1000)
+	private String atchFileNm;				// 첨부파일명 varchar(200)
 	private	String useStrtDt;				// 입사일자 varchar(8) Not Null
 	private	String useEndDt;				// 퇴사일자 varchar(8) Not Null
 	private	String cnslEntpNm;				// 상담업체명 varchar(200) Null
@@ -47,4 +51,8 @@ public class StUserBase extends BaseCommonEntity {
 	private	String sysModId;				// 시스템수정자ID varchar(30) NOT NULL
 	private	String sysModDtm;				// 시스템수정일시 timestamp NOT NULL
 	private String randomPasswd;			// 초기화된 비밀번호
+	private String siteNo;					// 사이트번호
+	private String siteNm;					// 사이트명
+	private String siteNoq;
+	private	String entrNm;					// 
 }

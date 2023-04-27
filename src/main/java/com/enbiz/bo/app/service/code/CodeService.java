@@ -1,5 +1,6 @@
 package com.enbiz.bo.app.service.code;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -33,7 +34,7 @@ public class CodeService {
      * @throws Exception 
      */
     public Map<String, List<StStdCd>> getStStdCd(String grpCds) throws Exception {
-		return this.restApiUtil.get(boApiUrl+ "/api/bo/common/code/getStStdCd", grpCds, new ParameterizedTypeReference<Response<Map<String, List<StStdCd>>>>() {}).getPayload();
+		return this.restApiUtil.get(boApiUrl+ "/api/bo/common/code/getStStdCd", Collections.singletonMap("grpCds", grpCds), new ParameterizedTypeReference<Response<Map<String, List<StStdCd>>>>() {}).getPayload();
     }
     
     /**
@@ -63,6 +64,6 @@ public class CodeService {
     }
 
     public Map<String, List<CodeResDto>> getForwardCdCdNmByMixedCode(List<CodeReqDto> params) throws Exception {
-    	return this.restApiUtil.get(boApiUrl+ "/api/bo/common/code/getForwardCdCdNmByMixedCode", params, new ParameterizedTypeReference<Response<Map<String, List<CodeResDto>>>>() {}).getPayload();
+    	return this.restApiUtil.post(boApiUrl+ "/api/bo/common/code/getForwardCdCdNmByMixedCode", params, new ParameterizedTypeReference<Response<Map<String, List<CodeResDto>>>>() {}).getPayload();
     }
 }

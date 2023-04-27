@@ -5,14 +5,18 @@
 <mapper namespace="com.enbiz.bo.app.repository.system.StIndInfoQryRtInfoTrxMapper">
 	
 	<update id="saveStIndInfoQryRtInfo" parameterType="StIndInfoQryRtInfo">
-		INSERT INTO ST_IND_INFO_QRY_RT_INFO(/* stIndInfoQryRtInfo.saveStIndInfoQryRtInfo */
+INSERT INTO ST_IND_INFO_QRY_RT_INFO(/* stIndInfoQryRtInfo.saveStIndInfoQryRtInfo */
             USER_ID,
             IND_INFO_GB_CD,
             USE_YN,
             SYS_REG_ID,
             SYS_REG_DTM,
             SYS_MOD_ID,
-            SYS_MOD_DTM
+            SYS_MOD_DTM,
+            SYS_REG_MENU_ID,
+            SYS_REG_IP_ADDR,
+            SYS_MOD_MENU_ID,
+            SYS_MOD_IP_ADDR
         ) VALUES (
              #{userId},
              #{indInfoGbCd},
@@ -20,7 +24,11 @@
              #{sysRegId},
              NOW(),
              #{sysModId},
-             NOW()
+             NOW(),
+             #{sysRegMenuId},
+			 #{sysRegIpAddr},
+			 #{sysModMenuId},
+			 #{sysModIpAddr}
         )
 		ON CONFLICT (USER_ID,IND_INFO_GB_CD)
 		DO UPDATE

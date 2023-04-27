@@ -5,7 +5,7 @@
 
     <select id="getUserRtGrpInfo" parameterType="UserRightGroupRequest" resultType="UserRightGroupResponse">
         SELECT RT_GRP_NO /* stUserRtGrp.getUserRtGrpInfo */
-             , FN_GET_CODENAME('UR005', SYS_GB_CD) SYS_GB_NM
+             , (SELECT CD_NM FROM ST_STD_CD WHERE GRP_CD = 'UR005' AND CD =  SYS_GB_CD) SYS_GB_NM
              , RT_GRP_NM
              , SUBSTRING(APLY_STR_DT,1,4)||'-'||SUBSTRING(APLY_STR_DT,5,2)||'-'||SUBSTRING(APLY_STR_DT,7,2) AS APLY_STR_DT
              , SUBSTRING(APLY_END_DT,1,4)||'-'||SUBSTRING(APLY_END_DT,5,2)||'-'||SUBSTRING(APLY_END_DT,7,2) AS APLY_END_DT
@@ -21,7 +21,7 @@
         <if test="rtGrpNm != null and rtGrpNm != ''">
             AND RT_GRP_NM LIKE '%' || #{rtGrpNm} || '%'
         </if>
-         ORDER BY RT_GRP_NO :: INT
+         ORDER BY RT_GRP_NO
          LIMIT ${rowsPerPage} OFFSET (${pageIdx} - 1) * ${rowsPerPage}
     </select>
 

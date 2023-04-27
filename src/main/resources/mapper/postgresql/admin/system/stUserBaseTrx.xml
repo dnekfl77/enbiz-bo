@@ -83,6 +83,10 @@
 			, cell_end_no				-- 휴대폰끝번호 varchar(4) NOT NULL
 			, email_addr				-- 이메일주소 varchar(200) NOT NULL
 			, ind_info_deal_yn			-- 개인정보취급여부 varchar(1) NOT NULL
+			, ind_info_deal_caus_cont	-- 개인정보취급사유내용 varchar(4000)
+			, atch_file_route_nm		-- 첨부파일 경로명 varchar(1000)
+			, atch_file_nm				-- 첨부파일명 varchar(200)
+			, emp_no					-- 사번 varchar(20)
 			, JOB_GRP_CD				-- 업무그룹코드(UR002) varchar(10) NOT NULL
 			, ocp_cd					-- 직책코드(UR003) varchar(10) NOT NULL
 			, work_stat_cd				-- 근무상태코드(UR004) varchar(10) NOT NULL
@@ -100,6 +104,10 @@
 			, sys_reg_dtm				-- 시스템등록일시 timestamp NOT NULL
 			, sys_mod_id				-- 시스템수정자ID varchar(30) NOT NULL
 			, sys_mod_dtm				-- 시스템수정일시 timestamp NOT NULL
+			, sys_reg_menu_id			-- 시스템등록메뉴id varchar(15) NOT NULL
+			, sys_reg_ip_addr			-- 시스템등록자IP주소 varchar(200) NOT NULL
+			, sys_mod_menu_id			-- 시스템수정메뉴ID varchar(15) NOT NULL
+			, sys_mod_ip_addr			-- 시스템수정자IP주소 varchar(200) NOT NULL
 		) VALUES (
 			#{userId}                   -- 사용자아이디 varchar(30) NOT NULL
 			, #{userGbCd}               -- 사용자구분코드(UR001) varchar(10) NOT NULL
@@ -117,6 +125,10 @@
 			, #{cellEndNo}              -- 휴대폰끝번호 varchar(4) NOT NULL
 			, #{emailAddr}              -- 이메일주소 varchar(200) NOT NULL
 			, #{indInfoDealYn}          -- 개인정보취급여부 varchar(1) NOT NULL
+			, #{indInfoDealCausCont}	-- 개인정보취급사유내용 varchar(4000)
+			, #{atchFileRouteNm}		-- 첨부파일경로명 varchar(1000)
+			, #{atchFileNm}				-- 첨부파일명 varchar(200)
+			, #{empNo}					-- 사번 varchar(20)
 			, #{jobGrpCd}               -- 업무그룹코드(UR002) varchar(10) NOT NULL
 			, #{ocpCd}                  -- 직책코드(UR003) varchar(10) NOT NULL
 			, #{workStatCd}             -- 근무상태코드(UR004) varchar(10) NOT NULL
@@ -134,6 +146,10 @@
 			, NOW()                     -- 시스템등록일시 timestamp NOT NULL
 			, #{sysModId}               -- 시스템수정자ID varchar(30) NOT NULL
 			, NOW()                     -- 시스템수정일시 timestamp NOT NULL
+			, #{sysRegMenuId}			-- 시스템등록메뉴ID varchar(15) NOT NULL
+			, #{sysRegIpAddr}			-- 시스템등록자IP주소 varchar(200) NOT NULL
+			, #{sysModMenuId}			-- 시스템수정메뉴ID varchar(15) NOT NULL
+			, #{sysModIpAddr}			-- 시스템수정자IP주소 varchar(200) NOT NULL
 		 )
 	</insert>
 
