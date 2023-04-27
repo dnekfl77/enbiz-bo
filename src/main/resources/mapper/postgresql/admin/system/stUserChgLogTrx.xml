@@ -19,6 +19,8 @@
             , CHG_CONT
             , SYS_REG_ID
             , SYS_REG_DTM
+            , SYS_REG_MENU_ID
+            , SYS_REG_IP_ADDR
         )
         VALUES (
             #{userId}
@@ -28,6 +30,8 @@
             , #{chgTgtTpCd}
             , #{chgCont}
             , #{sysRegId}
+            , NOW()
+            , #{sysRegMenuId}
             , NOW()
         )
     </insert>
