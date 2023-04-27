@@ -1,13 +1,13 @@
 package com.enbiz.bo.app.service.system;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -15,29 +15,18 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.enbiz.bo.app.dto.login.CurrentUser;
-import com.enbiz.bo.app.dto.request.system.IndividualInfoRightCudRequest;
-import com.enbiz.bo.app.dto.request.system.UserCudRequest;
 import com.enbiz.bo.app.dto.request.system.UserDetailRequest;
 import com.enbiz.bo.app.dto.request.system.UserListRequest;
 import com.enbiz.bo.app.dto.request.system.UserRightGroupRequest;
-import com.enbiz.bo.app.dto.response.login.PrivacyPolicyInfo;
 import com.enbiz.bo.app.dto.response.system.UserDetailResponse;
 import com.enbiz.bo.app.dto.response.system.UserListResponse;
 import com.enbiz.bo.app.dto.response.system.UserMenuRtInfoResponse;
 import com.enbiz.bo.app.dto.response.system.UserRightGroupResponse;
-import com.enbiz.bo.app.entity.StIndInfoQryRtInfo;
 import com.enbiz.bo.app.entity.StRtInfo;
 import com.enbiz.bo.app.entity.StUserBase;
-import com.enbiz.bo.app.repository.system.StIndInfoQryRtInfoMapper;
-import com.enbiz.bo.app.repository.system.StIndInfoQryRtInfoTrxMapper;
-import com.enbiz.bo.app.repository.system.StRtInfoMapper;
-import com.enbiz.bo.app.repository.system.StRtInfoTrxMapper;
-import com.enbiz.bo.app.repository.system.StUserBaseMapper;
-import com.enbiz.bo.app.repository.system.StUserBaseTrxMapper;
-import com.enbiz.bo.app.repository.system.StUserRtGrpMapper;
-import com.enbiz.common.base.Validator;
-import com.enbiz.common.base.exception.MessageResolver;
 import com.enbiz.common.base.constant.BaseConstants;
+import com.enbiz.common.base.rest.Response;
+import com.enbiz.common.base.rest.RestApiUtil;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -49,14 +38,11 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 public class UserMgmtServiceImpl implements UserMgmtService{
 
+	private final RestApiUtil restApiUtil;
     private final StUserChgLogService stUserChgLogService;
-    private final StUserBaseMapper userMapper;
-    private final StUserBaseTrxMapper userTrxMapper;
-    private final StIndInfoQryRtInfoMapper stIndInfoRtInfoMapper;
-    private final StIndInfoQryRtInfoTrxMapper stIndInfoQryRtInfoTrxMapper;
-    private final StRtInfoMapper stRtInfoMapper;
-    private final StRtInfoTrxMapper stRtInfoTrxMapper;
-    private final StUserRtGrpMapper stUserRtGrpMapper;
+    
+	@Value("${app.apiUrl.bo}")
+	private String boApiUrl;
     
     @Autowired
 	private PasswordEncoder passwordEncoder;
@@ -67,8 +53,8 @@ public class UserMgmtServiceImpl implements UserMgmtService{
      * @return 사용자 목록
      */
     @Override
-    public int getUserListInUserMenuCount(UserListRequest userListRequest) {
-        return userMapper.getUserListInUserMenuCount(userListRequest);
+    public int getUserListInUserMenuCount(UserListRequest userListRequest) throws Exception {
+    	return restApiUtil.get(boApiUrl+ "/api/bo/system/userMgmt/getUserListInUserMenuCount", userListRequest, new ParameterizedTypeReference<Response<Integer>>() {}).getPayload();    	
     }
 
     /**
@@ -77,49 +63,37 @@ public class UserMgmtServiceImpl implements UserMgmtService{
      * @return 사용자 목록
      */
     @Override
-    public List<UserListResponse> getUserListInUserMenu(UserListRequest userListRequest) {
-        return userMapper.getUserListInUserMenu(userListRequest);
+    public List<UserListResponse> getUserListInUserMenu(UserListRequest userListRequest) throws Exception  {
+    	return restApiUtil.get(boApiUrl+ "/api/bo/system/userMgmt/getUserListInUserMenu", userListRequest, new ParameterizedTypeReference<Response<List<UserListResponse>>>() {}).getPayload();
     }
 
     @Override
-    public UserDetailResponse getUserDetail(String userId) {
-        StUserBase userInfo = userMapper.getUserDetail(userId);
-        List<PrivacyPolicyInfo> rtInfoList = stIndInfoRtInfoMapper.getStIndInfoQryRtInfoList(userId);
-        UserDetailResponse response = new UserDetailResponse();
-        response.setUserInfo(userInfo);
-        response.setIndividualInfoRightList(rtInfoList);
-        return response;
+    public UserDetailResponse getUserDetail(String userId) throws Exception {
+        return restApiUtil.get(boApiUrl+ "/api/bo/system/userMgmt/getUserDetail", Collections.singletonMap("userId", userId), new ParameterizedTypeReference<Response<UserDetailResponse>>() {}).getPayload();
     }
 
     @Override
-    public int getUserCount(String userId) {
-        return userMapper.getUserCount(userId);
+    public int getUserCount(String userId) throws Exception {
+        //return userMapper.getUserCount(userId);
+    	return restApiUtil.get(boApiUrl+ "/api/bo/system/userMgmt/getUserCount", Collections.singletonMap("userId", userId), new ParameterizedTypeReference<Response<Integer>>() {}).getPayload();
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    //@Transactional(rollbackFor = Exception.class)
     public UserDetailResponse unlockPassword(String userId) throws Exception {
         StUserBase param = new StUserBase();
         param.setUserId(userId);
         param.setPwdLockYn(BaseConstants.N);
         param.setPwdCntnFailCnt(0L);
-        userTrxMapper.updatePwdUnlock(param);
+        restApiUtil.get(boApiUrl+ "/api/bo/system/userMgmt/modifyUpdatePwdUnlock", param, new ParameterizedTypeReference<Response<String>>() {}).getPayload();
         return getUserDetail(userId);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public UserDetailResponse initializePassword(String userId) throws Exception {
-        String currentPasswd = getUserDetail(userId).getUserInfo().getPwd();
-        String randomPasswd = createRandomPasswd();
-        String encryptedPasswd = this.passwordEncoder.encode(randomPasswd);
-        StUserBase param = makeInitPasswdParam(userId, encryptedPasswd);
-        userTrxMapper.updateInitPassword(param);
-        stUserChgLogService.savePasswdChgLog(userId, currentPasswd);
-        //패스워드 초기화후 변경된 비밀번호를 아무도 알수없어서 일단 return 에서 관리자에게 알려줌.
-        UserDetailResponse user = this.getUserDetail(userId);
-        user.getUserInfo().setRandomPasswd(randomPasswd);
-        return getUserDetail(userId);
+        
+        return restApiUtil.post(boApiUrl+ "/api/bo/system/userMgmt/modifyInitializePassword", userId, new ParameterizedTypeReference<Response<UserDetailResponse>>() {}).getPayload();
     }
 
     private StUserBase makeInitPasswdParam(String userId, String encryptedPasswd) {
@@ -136,92 +110,23 @@ public class UserMgmtServiceImpl implements UserMgmtService{
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void saveUserMenuRt(List<StRtInfo> createList, List<StRtInfo> updateList, List<StRtInfo> deleteList) {
-        createList.forEach(stRtInfoTrxMapper::saveStRtInfo);
-        updateList.forEach(stRtInfoTrxMapper::saveStRtInfo);
-        deleteList.forEach(stRtInfoTrxMapper::deleteStRtInfo);
+    public List<UserMenuRtInfoResponse> getUserMenuRtInfoList(String userId) throws Exception {
+    	return restApiUtil.get(boApiUrl+ "/api/bo/system/userMgmt/getUserMenuRtInfoList", userId, new ParameterizedTypeReference<Response<List<UserMenuRtInfoResponse>>>() {}).getPayload();
     }
 
     @Override
-    public List<UserMenuRtInfoResponse> getUserMenuRtInfoList(String userId) {
-        return stRtInfoMapper.getUserMenuRtInfoList(userId);
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
     public UserDetailResponse saveUser(UserDetailRequest request) throws Exception{
-    	CurrentUser currentUser = (CurrentUser)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String sessionId = currentUser.getLoginId();
-        UserCudRequest userInfoReq = request.getUserInfo();
-
-        Validator.throwIfEmpty(userInfoReq.getUserId(), MessageResolver.getMessage("userMgmt.err.msg.noParameterError", new String[] {"userId"}));
-        Validator.throwIfEmpty(userInfoReq.getUserNm(), MessageResolver.getMessage("userMgmt.err.msg.noParameterError", new String[] {"userNm"}));
-        Validator.throwIfEmpty(userInfoReq.getCellTxnoNo(), MessageResolver.getMessage("userMgmt.err.msg.noParameterError", new String[] {"cellTxnoNo"}));
-        Validator.throwIfEmpty(userInfoReq.getCellEndNo(), MessageResolver.getMessage("userMgmt.err.msg.noParameterError", new String[] {"cellEndNo"}));
-        Validator.throwIfEmpty(userInfoReq.getRtGrpNo(), MessageResolver.getMessage("userMgmt.err.msg.noParameterError", new String[] {"rtGrpNo"}));
-        Validator.throwIfEmpty(userInfoReq.getEmailAddr(), MessageResolver.getMessage("userMgmt.err.msg.noParameterError", new String[] {"emailAddr"}));
-        Validator.throwIfEmpty(userInfoReq.getJobGrpCd(), MessageResolver.getMessage("userMgmt.err.msg.noParameterError", new String[] {"jobGrpCd"}));
-        Validator.throwIfEmpty(userInfoReq.getOcpCd(), MessageResolver.getMessage("userMgmt.err.msg.noParameterError", new String[] {"ocpCd"}));
-        Validator.throwIfEmpty(userInfoReq.getWorkStatCd(), MessageResolver.getMessage("userMgmt.err.msg.noParameterError", new String[] {"workStatCd"}));
-
-        if (BaseConstants.Y.equals(request.getCreateYn())) {
-            insertUserBase(sessionId, userInfoReq);
-            saveStIndInfoQryRtInfo(sessionId, request.getIndividualInfoRightList());
-            stUserChgLogService.saveCreateUserLog(userInfoReq.getUserId());
-        } else {
-            updateUserBase(sessionId, userInfoReq);
-            saveStIndInfoQryRtInfo(sessionId, request.getIndividualInfoRightList());
-            if (BaseConstants.Y.equals(request.getChangeRtGrpNoYn())) {
-                stUserChgLogService.saveRtGrpChangeLog(userInfoReq.getUserId(), request.getBeforeRtGrpNo());
-            }
-        }
-
-        return getUserDetail(userInfoReq.getUserId());
-    }
-
-    private void insertUserBase(String currentUser, UserCudRequest userInfoReq) throws Exception {
-        StUserBase userParam = new StUserBase();
-        BeanUtils.copyProperties(userParam, userInfoReq);
-        userParam.setPwd(this.passwordEncoder.encode(userInfoReq.getPwd()));
-        userParam.setUseStrtDt(DateTimeFormatter.BASIC_ISO_DATE.format(LocalDate.now()));
-        userParam.setUseEndDt(DateTimeFormatter.BASIC_ISO_DATE.format(LocalDate.of(2999, 12, 31)));
-        userParam.setPwdCntnFailCnt(0L);
-        userParam.setPwdLockYn(BaseConstants.N);
-        userParam.setPwdIniYn(BaseConstants.N);
-        userParam.setSysRegId(currentUser);
-        userParam.setSysModId(currentUser);
-        userTrxMapper.insertUserBase(userParam);
-    }
-
-    private void saveStIndInfoQryRtInfo(String currentUser, List<IndividualInfoRightCudRequest> indInfoCudReqList) throws Exception {
-    	for (IndividualInfoRightCudRequest request : indInfoCudReqList) {
-            StIndInfoQryRtInfo indInfoCudParam = new StIndInfoQryRtInfo();
-            BeanUtils.copyProperties(indInfoCudParam, request);
-            indInfoCudParam.setSysRegId(currentUser);
-            indInfoCudParam.setSysModId(currentUser);
-            stIndInfoQryRtInfoTrxMapper.saveStIndInfoQryRtInfo(indInfoCudParam);
-        }
-    }
-
-    private void updateUserBase(String currentUser, UserCudRequest userInfoReq) throws Exception {
-
-        StUserBase userParam = new StUserBase();
-        BeanUtils.copyProperties(userParam, userInfoReq);
-        userParam.setSysModId(currentUser);
-
-        log.debug("[userParam]{}", userParam);
-        userTrxMapper.updateUserBase(userParam);
+        return restApiUtil.post(boApiUrl+ "/api/bo/system/userMgmt/saveUser", request, new ParameterizedTypeReference<Response<UserDetailResponse>>() {}).getPayload();
     }
 
     @Override
-    public List<UserRightGroupResponse> getUserRightGroupInfo(UserRightGroupRequest UserRightGroupRequest) {
-        return stUserRtGrpMapper.getUserRtGrpInfo(UserRightGroupRequest);
+    public List<UserRightGroupResponse> getUserRightGroupInfo(UserRightGroupRequest UserRightGroupRequest) throws Exception {
+    	return restApiUtil.get(boApiUrl+ "/api/bo/system/userMgmt/getUserRightGroupInfo", UserRightGroupRequest, new ParameterizedTypeReference<Response<List<UserRightGroupResponse>>>() {}).getPayload();
     }
 
     @Override
-    public int getUserRightGroupListCount(UserRightGroupRequest request) {
-        return stUserRtGrpMapper.getUserRtGrpBtnGridListCount(request);
+    public int getUserRightGroupListCount(UserRightGroupRequest request) throws Exception  {
+    	return restApiUtil.get(boApiUrl+ "/api/bo/system/userMgmt/getUserRightGroupListCount", request, new ParameterizedTypeReference<Response<Integer>>() {}).getPayload();
     }
 
     public String createRandomPasswd() {
@@ -240,5 +145,4 @@ public class UserMgmtServiceImpl implements UserMgmtService{
         }
         return rdStr.toString();
     }
-
 }

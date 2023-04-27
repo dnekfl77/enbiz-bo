@@ -70,7 +70,7 @@ public class UserMgmtController extends BaseController {
 	 */
 	@GetMapping(value = "/system/userMgmt.getUserList.do", produces = "application/json;charset=UTF-8")
 	@ResponseBody
-	public RealGridListResponse getUserList(UserListRequest userListRequest) {
+	public RealGridListResponse getUserList(UserListRequest userListRequest) throws Exception{
 		int totalCount = userMgmtService.getUserListInUserMenuCount(userListRequest);
 		List<UserListResponse> searchedUsers = userMgmtService.getUserListInUserMenu(userListRequest);
 		return new RealGridListResponse(searchedUsers, totalCount);
@@ -85,7 +85,7 @@ public class UserMgmtController extends BaseController {
 	 */
 	@GetMapping(value = "/system/userMgmt.getUserDetail.do", produces = "application/json;charset=UTF-8")
 	@ResponseBody
-	public JSONResponseEntity<UserDetailResponse> getUserDetail(String userId) {
+	public JSONResponseEntity<UserDetailResponse> getUserDetail(String userId) throws Exception{
 		JSONResponseEntity<UserDetailResponse> response = new JSONResponseEntity<UserDetailResponse>();
 		response.setSucceeded(true);
 		response.setData(userMgmtService.getUserDetail(userId));
@@ -101,7 +101,7 @@ public class UserMgmtController extends BaseController {
 	 */
 	@GetMapping(value = "/system/userMgmt.getUserCount.do", produces = "application/json;charset=UTF-8")
 	@ResponseBody
-	public JSONResponseEntity<Integer> getUserCount(String userId) {
+	public JSONResponseEntity<Integer> getUserCount(String userId) throws Exception{
 		int count = 0;
 		JSONResponseEntity<Integer> response = new JSONResponseEntity<Integer>();
 		count = userMgmtService.getUserCount(userId);

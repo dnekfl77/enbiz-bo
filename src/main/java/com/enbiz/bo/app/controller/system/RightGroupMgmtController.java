@@ -56,28 +56,28 @@ public class RightGroupMgmtController extends BaseController {
 	 */
 	@GetMapping(value = "/system/rightGroupMgmt.getUserMenuRightInfoList.do", produces = "application/json;charset=UTF-8")
 	@ResponseBody
-	public RealGridListResponse getUserMenuRightInfoList(String userId) {
+	public RealGridListResponse getUserMenuRightInfoList(String userId) throws Exception{
 		List<UserMenuRtInfoResponse> stRtInfoList = userMgmtService.getUserMenuRtInfoList(userId);
 		return new RealGridListResponse(stRtInfoList, stRtInfoList.size());
 	}
 
-	/**
-	 * 사용자 메뉴목록 저장
-	 *
-	 * @param realGridCUD 신규, 수정, 삭제목록
-	 * @return 성공 메시지
-	 * @throws Exception
-	 */
-	@PostMapping("/system/rightGroupMgmt.saveMenuList.do")
-	@ResponseBody
-	public JSONResponseEntity<Void> saveMenuList(
-			@RealGridCUD(type = StRtInfo.class) RealGridCUDRequest<StRtInfo> realGridCUD) throws Exception {
-		List<StRtInfo> createList = realGridCUD.getCreate(), updateList = realGridCUD.getUpdate(),
-				deleteList = realGridCUD.getDelete();
-		userMgmtService.saveUserMenuRt(createList, updateList, deleteList);
-		JSONResponseEntity<Void> jsonResponseEntity = new JSONResponseEntity<Void>(MessageResolver.getMessage("adminCommon.message.saved.successfully"));
-		return jsonResponseEntity;
-	}
+//	/**
+//	 * 사용자 메뉴목록 저장
+//	 *
+//	 * @param realGridCUD 신규, 수정, 삭제목록
+//	 * @return 성공 메시지
+//	 * @throws Exception
+//	 */
+//	@PostMapping("/system/rightGroupMgmt.saveMenuList.do")
+//	@ResponseBody
+//	public JSONResponseEntity<Void> saveMenuList(
+//			@RealGridCUD(type = StRtInfo.class) RealGridCUDRequest<StRtInfo> realGridCUD) throws Exception {
+//		List<StRtInfo> createList = realGridCUD.getCreate(), updateList = realGridCUD.getUpdate(),
+//				deleteList = realGridCUD.getDelete();
+//		userMgmtService.saveUserMenuRt(createList, updateList, deleteList);
+//		JSONResponseEntity<Void> jsonResponseEntity = new JSONResponseEntity<Void>(MessageResolver.getMessage("adminCommon.message.saved.successfully"));
+//		return jsonResponseEntity;
+//	}
 
 	/**
 	 * 권한 그룹 관리
@@ -110,8 +110,7 @@ public class RightGroupMgmtController extends BaseController {
 	@PostMapping(value = "/system/rightGroupMgmt.saveRightGroupBaseList.do")
 	@ResponseBody
 	public JSONResponseEntity<Void> saveRightGroupBaseList(@RealGridCUD(type = RightGroupBaseRequest.class) RealGridCUDRequest<RightGroupBaseRequest> realGridCUD) throws Exception {
-		List<RightGroupBaseRequest> createList = realGridCUD.getCreate(), updateList = realGridCUD.getUpdate();
-		rightGroupMgmtService.saveRightGroupBaseList(createList, updateList);
+		rightGroupMgmtService.saveRightGroupBaseList(realGridCUD);
 		JSONResponseEntity<Void> jsonResponseEntity = new JSONResponseEntity<Void>(MessageResolver.getMessage("adminCommon.message.saved.successfully"));
 		return jsonResponseEntity;
 	}
