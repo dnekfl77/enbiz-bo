@@ -10,6 +10,8 @@ import com.enbiz.bo.app.entity.StUserBase;
 public interface StUserBaseTrxMapper {
 
     void updateChagePassword(StUserBase stUserBase) throws Exception;
+
+    // 하단은 호출하는 부분 없음 .. 추후 확인 
     void updateIdUnlock(StUserBase stUserBase) throws Exception;
     void updateIdLockYnCheck(StUserBase stUserBase) throws Exception;
     /**
@@ -17,26 +19,6 @@ public interface StUserBaseTrxMapper {
      * @param stUserBase
      */
     void updateLoginSuccess(StUserBase stUserBase) throws Exception;
-
-    /**
-     * 사용자관리 비밀번호 잠김 해제 업데이트
-     * @param stUserBase
-     */
-    void updatePwdUnlock(StUserBase stUserBase) throws Exception;
-
-    /**
-     * 사용자관리 비밀번호 초기화 업데이트
-     * @param stUserBase
-     */
-    void updateInitPassword(StUserBase stUserBase);
-
-    /**
-     * 사용자관리 사용자 저장
-     * @param stUserBase
-     */
-    void insertUserBase(StUserBase stUserBase);
-
-    void updateUserBase(StUserBase stUserBase);
 
     void updatePasswordByPasswordInitialize(StUserBase userParam);
 }

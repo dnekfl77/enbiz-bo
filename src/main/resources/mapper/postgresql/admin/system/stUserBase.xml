@@ -204,50 +204,6 @@
 
 
 
-	<select id="getUserListInUserMenuCount" parameterType="UserListRequest" resultType="java.lang.Integer">
-		SELECT /* stUserBase.getUserListInUserMenuCount */
-			   COUNT(*)
-		  FROM ST_USER_BASE
-		 WHERE 1=1
-		<if test="jobGrpCd != null and jobGrpCd != ''">
-			AND JOB_GRP_CD = #{jobGrpCd}
-		</if>
-		<if test="userId != null and userId != ''">
-			AND USER_ID LIKE '%' || #{userId} || '%'
-		</if>
-		<if test="userNm != null and userNm != ''">
-			AND USER_Nm LIKE '%' || #{userNm} || '%'
-		</if>
-	</select>
-	<select id="getUserListInUserMenu" parameterType="UserListRequest" resultType="UserListResponse">
-		SELECT /* stUserBase.getUserListInUserMenu */
-			  SUB.USER_ID														-- 사용자아이디 varchar(30) NOT NULL
-			, SUB.USER_NM													-- 사용자명 varchar(100) NOT NULL
-			, FN_GET_CODENAME('UR002', SUB.JOB_GRP_CD) AS ORG_TYP_NM		-- 업무그룹코드(UR002) varchar(10) NOT NULL
-			, SDC.DEPT_NM AS DEPT_NM										-- 부서명 varchar(300) NOT NULL
-			, FN_GET_CODENAME('UR003', SUB.OCP_CD) AS OCP_NM				-- 직책코드(UR003)varchar(10) NOT NULL
-			, FN_GET_CODENAME('UR004', SUB.WORK_STAT_CD) AS WORK_STAT_NM	-- 근무상태코드(UR004) varchar(10) NOT NULL
-			, SUB.PWD_LOCK_YN												-- 비밀번호잠김여부 varchar(1) NOT NULL
-			, SUB.IND_INFO_DEAL_YN											-- 개인정보취급여부 varchar(1) NOT NULL
-			, SUB.SYS_MOD_ID												-- 시스템수정자ID varchar(30) NOT NULL
-			, TO_CHAR(SUB.SYS_MOD_DTM, 'YYYY-MM-DD HH24:MI:SS') AS SYS_MOD_DTM
-			, SUB.SYS_REG_ID
-            , TO_CHAR(SUB.SYS_REG_DTM, 'YYYY-MM-DD HH24:MI:SS') AS SYS_REG_DTM												-- 시스템수정일시 timestamp NOT NULL
-		 FROM ST_USER_BASE SUB
-		 LEFT OUTER JOIN ST_DEPT_CD SDC ON SUB.DEPT_CD = SDC.DEPT_CD
-		WHERE 1=1
-		<if test="jobGrpCd != null and jobGrpCd != ''">
-			AND SUB.JOB_GRP_CD = #{jobGrpCd}
-		</if>
-		<if test="userId != null and userId != ''">
-			AND SUB.USER_ID LIKE #{userId} || '%'
-		</if>
-		<if test="userNm != null and userNm != ''">
-			AND SUB.USER_NM LIKE #{userNm} || '%'
-		</if>
-		ORDER BY SYS_REG_DTM DESC
-		<include refid="paginatedBase" />
-	</select>
 
 	<select id="getUserDetail" parameterType="String" resultType="StUserBase">
 		SELECT /* stUserBase.getUserDetail */
@@ -291,12 +247,6 @@
 		WHERE USER_ID = #{userId}
 	</select>
 
-	<select id="getUserCount" parameterType="String" resultType="int">
-		SELECT /* stUserBase.getUserCount */
-			COUNT(*)
-		FROM ST_USER_BASE
-		WHERE USER_ID = #{userId}
-	</select>
 
 	<select id="getPasswd" resultType="String" parameterType="String">
 		SELECT /* stUserBase.getPasswdConfirm */

@@ -38,26 +38,6 @@ public interface StRtTgtBaseMapper {
     List<StRtTgtMenuResponse> getMenuList(StRtTgtMenuRequest stRtTgtMenuRequest);
 
     /**
-     * 권한 관리 메뉴 조회 
-     */
-	List<RightTargetBaseMenuResponse> getStRtGrpMenuBaseList(RightTargetBaseMenuRequest stRtTgtMenuRequest);
-
-	/**
-     * 권한 관리 메뉴 count 조회 
-     */
-	int getStRtGrpMenuBaseListCount(RightTargetBaseMenuRequest stRtTgtMenuRequest);
-
-	/**
-     * 권한 관리 버튼 조회 
-     */
-	List<RightTargetBaseMenuResponse> getStRtGrpBtnBaseList(RightTargetBaseMenuRequest stRtTgtMenuRequest);
-
-	/**
-     * 권한 관리 버튼 count 조회 
-     */
-	int getStRtGrpBtnBaseListCount(RightTargetBaseMenuRequest stRtTgtMenuRequest);
-
-    /**
      * 메뉴 트리 리스트 조회
      */
     List<RtTargetBaseResponse> getMenuMgmtTreeList(RtTargetBaseRequest RtTargetBaseRequest) throws Exception;

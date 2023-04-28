@@ -72,34 +72,12 @@ public interface StUserBaseMapper {
     LoginResponse getStUserBaseExistsLogin(LoginRequest requestedAdminUser) throws Exception;
 
     /**
-     * 사용자메뉴 검색 조건에 부합하는 사용자 목록 수 조회
-     * @param userListRequest
-     * @return 사용자 목록
-     */
-    int getUserListInUserMenuCount(UserListRequest userListRequest);
-
-
-
-    /**
-     * 사용자메뉴 검색 조건에 부합하는 사용자 목록 조회
-     * @param userListRequest
-     * @return 사용자 목록
-     */
-    List<UserListResponse> getUserListInUserMenu(UserListRequest userListRequest);
-
-    /**
      * 사용자 상세정보 조회
      * @param userId
      * @return 사용자 상세정보
      */
     StUserBase getUserDetail(String userId);
 
-    /**
-     * 사용자 카운트 조회
-     * @param userId
-     * @return 사용자 카운트
-     */
-    int getUserCount(String userId);
 
     /**
      * 패스워드 조회
