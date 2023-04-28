@@ -16,4 +16,9 @@ public class RtTargetBaseRequest extends BaseCommonDto {
     private String rtTgtSeq;
     private String uprRtTgtSeq;
 
+    private String rtGrpNo;
+    private String rtSubGbCd;
+    
+    private String indivRtNo;
+
 }

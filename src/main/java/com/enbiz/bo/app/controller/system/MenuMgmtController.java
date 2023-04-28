@@ -1,8 +1,11 @@
 package com.enbiz.bo.app.controller.system;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.context.annotation.Lazy;
@@ -11,8 +14,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.enbiz.bo.app.controller.BaseController;
 import com.enbiz.bo.app.dto.ajax.JSONResponseEntity;
 import com.enbiz.bo.app.dto.request.realgrid.RealGridCUDRequest;
@@ -29,7 +35,6 @@ import com.enbiz.common.base.exception.MessageResolver;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 /**
  * 시스템 관리
  */
@@ -122,8 +127,7 @@ public class MenuMgmtController extends BaseController {
     @PostMapping("/system/menuMgmt.saveSubMenuList.do")
     @ResponseBody
     public JSONResponseEntity<Void> saveSubMenuList(@RealGridCUD(type = StRtTgtBase.class) RealGridCUDRequest<StRtTgtBase> realGridCUD) throws Exception {
-        List<StRtTgtBase> createList = realGridCUD.getCreate(), updateList = realGridCUD.getUpdate(), deleteList = realGridCUD.getDelete();
-        menuMgmtService.saveSubMenu(createList, updateList, deleteList);
+        menuMgmtService.saveSubMenu(realGridCUD);
         JSONResponseEntity<Void> jsonResponseEntity = new JSONResponseEntity<Void>(MessageResolver.getMessage("adminCommon.message.saved.successfully"));
         return jsonResponseEntity;
     }
@@ -149,5 +153,28 @@ public class MenuMgmtController extends BaseController {
         }
         return response;
     }
-
+    
+    /**
+     * 메뉴권한 사용여부 저장
+     * @param json
+     * @return
+     * @throws
+     */
+    @PostMapping(value = "/system/menuMgmt.modifyMenuRight.do", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public JSONResponseEntity<Void> modifyMenuRight(@RequestParam Map<String, Object> paramList) throws Exception{
+    	menuMgmtService.modifyMenuRight(paramList);
+    	
+    	JSONResponseEntity<Void> jsonResponseEntity = new JSONResponseEntity<Void>(MessageResolver.getMessage("adminCommon.message.saved.successfully"));
+    	return jsonResponseEntity;
+    }
+    
+    @PostMapping(value = "/system/menuMgmt.saveMenuRightIndiv.do")
+    @ResponseBody
+    public JSONResponseEntity<Void> saveMenuRightIndiv(@RequestParam Map<String, Object> paramList) throws Exception{
+    	menuMgmtService.saveMenuRightIndiv(paramList);
+    	
+    	JSONResponseEntity<Void> jsonResponseEntity = new JSONResponseEntity<Void>(MessageResolver.getMessage("adminCommon.message.saved.successfully"));
+    	return jsonResponseEntity;
+    }
 }

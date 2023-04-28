@@ -1,25 +1,27 @@
 package com.enbiz.bo.app.service.system;
 
 import java.util.List;
+import java.util.Map;
 
-import org.apache.commons.beanutils.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.enbiz.bo.app.dto.request.realgrid.RealGridCUDRequest;
 import com.enbiz.bo.app.dto.request.system.RtTargetBaseCudRequest;
 import com.enbiz.bo.app.dto.request.system.RtTargetBaseRequest;
 import com.enbiz.bo.app.dto.response.system.RtTargetBaseResponse;
 import com.enbiz.bo.app.entity.StRtTgtBase;
-import com.enbiz.bo.app.repository.system.StRtTgtBaseMapper;
-import com.enbiz.bo.app.repository.system.StRtTgtBaseTrxMapper;
 import com.enbiz.common.base.Validator;
 import com.enbiz.common.base.exception.MessageResolver;
+import com.enbiz.common.base.rest.Response;
+import com.enbiz.common.base.rest.RestApiUtil;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 /**
  * 메뉴관리 서비스 IMPL
  */
@@ -29,115 +31,63 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 public class MenuMgmtServiceImpl implements MenuMgmtService{
-
-    private final StRtTgtBaseMapper stRtTgtBaseMapper;
-    private final StRtTgtBaseTrxMapper stRtTgtBaseTrxMapper;
+	private final RestApiUtil restApiUtil;
+	@Value("${app.apiUrl.bo}")
+	private String boApiUrl;
 
     @Override
     public List<RtTargetBaseResponse> getMenuMgmtTreeList(RtTargetBaseRequest RtTargetBaseRequest) throws Exception {
         Validator.throwIfEmpty(RtTargetBaseRequest.getSysGbCd()        , MessageResolver.getMessage("adminCommon.message.parameter.empty", new String[]{"시스템구분코드"}));
-        return stRtTgtBaseMapper.getMenuMgmtTreeList(RtTargetBaseRequest);
+        return this.restApiUtil.get(boApiUrl+ "/api/bo/system/menuMgmt/getMenuMgmtTreeList", RtTargetBaseRequest, new ParameterizedTypeReference<Response<List<RtTargetBaseResponse>>>() {}).getPayload();
     }
 
     @Override
     public RtTargetBaseResponse getMenuInfo(RtTargetBaseRequest RtTargetBaseRequest) throws Exception {
-        return stRtTgtBaseMapper.getMenuInfo(RtTargetBaseRequest);
+        return this.restApiUtil.get(boApiUrl+ "/api/bo/system/menuMgmt/getMenuInfo", RtTargetBaseRequest, new ParameterizedTypeReference<Response<RtTargetBaseResponse>>() {}).getPayload();
     }
 
     @Override
     public int getSubMenuListCount(RtTargetBaseRequest RtTargetBaseRequest) throws Exception {
-        return stRtTgtBaseMapper.getSubMenuListCount(RtTargetBaseRequest);
+        return this.restApiUtil.get(boApiUrl+ "/api/bo/system/menuMgmt/getSubMenuListCount", RtTargetBaseRequest, new ParameterizedTypeReference<Response<Integer>>() {}).getPayload();
     }
 
     @Override
     public List<RtTargetBaseResponse> getSubMenuList(RtTargetBaseRequest RtTargetBaseRequest) throws Exception {
-        return stRtTgtBaseMapper.getSubMenuList(RtTargetBaseRequest);
+        return this.restApiUtil.get(boApiUrl+ "/api/bo/system/menuMgmt/getSubMenuList", RtTargetBaseRequest, new ParameterizedTypeReference<Response<List<RtTargetBaseResponse>>>() {}).getPayload();
     }
 
     @Override
     public void registMenuInfo(RtTargetBaseCudRequest RtTargetBaseCudRequest) throws Exception {
-        StRtTgtBase stRtTgtBase = new StRtTgtBase();
-        BeanUtils.copyProperties(stRtTgtBase, RtTargetBaseCudRequest);
-        Validator.throwIfEmpty(stRtTgtBase.getSysGbCd()        , MessageResolver.getMessage("adminCommon.message.parameter.empty", new String[]{"시스템구분코드"}));
-        Validator.throwIfEmpty(stRtTgtBase.getRtTgtTypCd()     , MessageResolver.getMessage("adminCommon.message.parameter.empty", new String[]{"권한대상유형코드"}));
-        Validator.throwIfEmpty(stRtTgtBase.getRtTgtNm()        , MessageResolver.getMessage("adminCommon.message.parameter.empty", new String[]{"권한대상명"}));
-        Validator.throwIfEmpty(stRtTgtBase.getSortSeq()        , MessageResolver.getMessage("adminCommon.message.parameter.empty", new String[]{"정렬순서"}));
-        Validator.throwIfEmpty(stRtTgtBase.getUseYn()          , MessageResolver.getMessage("adminCommon.message.parameter.empty", new String[]{"사용여부"}));
-        Validator.throwIfEmpty(stRtTgtBase.getUprRtTgtSeq()    , MessageResolver.getMessage("adminCommon.message.parameter.empty", new String[]{"상위권한대상순번"}));
-        Validator.throwIfEmpty(stRtTgtBase.getSysRegId()       , MessageResolver.getMessage("adminCommon.message.parameter.empty", new String[]{"시스템등록자ID"}));
-        Validator.throwIfEmpty(stRtTgtBase.getSysModId()       , MessageResolver.getMessage("adminCommon.message.parameter.empty", new String[]{"시스템수정자ID"}));
-        stRtTgtBaseTrxMapper.insertMenuInfo(stRtTgtBase);
+        this.restApiUtil.post(boApiUrl+ "/api/bo/system/menuMgmt/registMenuInfo", RtTargetBaseCudRequest, new ParameterizedTypeReference<Response<String>>() {}).getPayload();
     }
 
     @Override
     public void modifyMenuInfo(RtTargetBaseCudRequest RtTargetBaseCudRequest) throws Exception {
-        StRtTgtBase stRtTgtBase = new StRtTgtBase();
-        BeanUtils.copyProperties(stRtTgtBase, RtTargetBaseCudRequest);
-        Validator.throwIfEmpty(stRtTgtBase.getRtTgtSeq()       , MessageResolver.getMessage("adminCommon.message.parameter.empty", new String[]{"권한대상순번"}));
-        Validator.throwIfEmpty(stRtTgtBase.getRtTgtTypCd()     , MessageResolver.getMessage("adminCommon.message.parameter.empty", new String[]{"권한대상유형코드"}));
-        Validator.throwIfEmpty(stRtTgtBase.getRtTgtNm()        , MessageResolver.getMessage("adminCommon.message.parameter.empty", new String[]{"권한대상명"}));
-        Validator.throwIfEmpty(stRtTgtBase.getSortSeq()        , MessageResolver.getMessage("adminCommon.message.parameter.empty", new String[]{"정렬순서"}));
-        Validator.throwIfEmpty(stRtTgtBase.getUseYn()          , MessageResolver.getMessage("adminCommon.message.parameter.empty", new String[]{"사용여부"}));
-        Validator.throwIfEmpty(stRtTgtBase.getCustInfoInclYn() , MessageResolver.getMessage("adminCommon.message.parameter.empty", new String[]{"고객정보포함여부"}));
-        Validator.throwIfEmpty(stRtTgtBase.getPopupYn()        , MessageResolver.getMessage("adminCommon.message.parameter.empty", new String[]{"팝업여부"}));
-        Validator.throwIfEmpty(stRtTgtBase.getLeafMenuYn()     , MessageResolver.getMessage("adminCommon.message.parameter.empty", new String[]{"최하위메뉴여부"}));
-        Validator.throwIfEmpty(stRtTgtBase.getSysModId()       , MessageResolver.getMessage("adminCommon.message.parameter.empty", new String[]{"시스템수정자ID"}));
-        stRtTgtBaseTrxMapper.updateMenuDtlInfo(stRtTgtBase);
+        this.restApiUtil.post(boApiUrl+ "/api/bo/system/menuMgmt/modifyMenuInfo", RtTargetBaseCudRequest, new ParameterizedTypeReference<Response<String>>() {}).getPayload();
     }
 
     @Override
-    public void registSubMenu(List<StRtTgtBase> createList) throws Exception {
-        for (StRtTgtBase stRtTgtBase : createList) {
-            Validator.throwIfEmpty(stRtTgtBase.getSysGbCd()        , MessageResolver.getMessage("adminCommon.message.parameter.empty", new String[]{"시스템구분코드"}));
-            Validator.throwIfEmpty(stRtTgtBase.getRtTgtTypCd()     , MessageResolver.getMessage("adminCommon.message.parameter.empty", new String[]{"권한대상유형코드"}));
-            Validator.throwIfEmpty(stRtTgtBase.getRtTgtNm()        , MessageResolver.getMessage("adminCommon.message.parameter.empty", new String[]{"권한대상명"}));
-            Validator.throwIfEmpty(stRtTgtBase.getSortSeq()        , MessageResolver.getMessage("adminCommon.message.parameter.empty", new String[]{"정렬순서"}));
-            Validator.throwIfEmpty(stRtTgtBase.getUseYn()          , MessageResolver.getMessage("adminCommon.message.parameter.empty", new String[]{"사용여부"}));
-            Validator.throwIfEmpty(stRtTgtBase.getUprRtTgtSeq()    , MessageResolver.getMessage("adminCommon.message.parameter.empty", new String[]{"상위권한대상순번"}));
-            Validator.throwIfEmpty(stRtTgtBase.getSysRegId()       , MessageResolver.getMessage("adminCommon.message.parameter.empty", new String[]{"시스템등록자ID"}));
-            Validator.throwIfEmpty(stRtTgtBase.getSysModId()       , MessageResolver.getMessage("adminCommon.message.parameter.empty", new String[]{"시스템수정자ID"}));
-            stRtTgtBaseTrxMapper.insertMenuInfo(stRtTgtBase);
-        }
-    }
-
-    @Override
-    public void modifySubMenu(List<StRtTgtBase> updateList) throws Exception {
-        for (StRtTgtBase stRtTgtBase : updateList) {
-            Validator.throwIfEmpty(stRtTgtBase.getRtTgtSeq()       , MessageResolver.getMessage("adminCommon.message.parameter.empty", new String[]{"권한대상순번"}));
-            Validator.throwIfEmpty(stRtTgtBase.getRtTgtTypCd()     , MessageResolver.getMessage("adminCommon.message.parameter.empty", new String[]{"권한대상유형코드"}));
-            Validator.throwIfEmpty(stRtTgtBase.getRtTgtNm()        , MessageResolver.getMessage("adminCommon.message.parameter.empty", new String[]{"권한대상명"}));
-            Validator.throwIfEmpty(stRtTgtBase.getSortSeq()        , MessageResolver.getMessage("adminCommon.message.parameter.empty", new String[]{"정렬순서"}));
-            Validator.throwIfEmpty(stRtTgtBase.getUseYn()          , MessageResolver.getMessage("adminCommon.message.parameter.empty", new String[]{"사용여부"}));
-            Validator.throwIfEmpty(stRtTgtBase.getPopupYn()        , MessageResolver.getMessage("adminCommon.message.parameter.empty", new String[]{"팝업여부"}));
-            Validator.throwIfEmpty(stRtTgtBase.getUprRtTgtSeq()    , MessageResolver.getMessage("adminCommon.message.parameter.empty", new String[]{"상위권한대상순번"}));
-            Validator.throwIfEmpty(stRtTgtBase.getSysModId()       , MessageResolver.getMessage("adminCommon.message.parameter.empty", new String[]{"시스템수정자ID"}));
-            stRtTgtBaseTrxMapper.updateSubMenu(stRtTgtBase);
-        }
-    }
-
-    @Override
-    public void deleteSubMenu(List<StRtTgtBase> deleteList) throws Exception {
-        for (StRtTgtBase stRtTgtBase : deleteList) {
-            Validator.throwIfEmpty(stRtTgtBase.getRtTgtSeq()       , MessageResolver.getMessage("adminCommon.message.parameter.empty", new String[]{"권한대상순번"}));
-            stRtTgtBaseTrxMapper.deleteSubMenu(stRtTgtBase);
-        }
-    }
-
-    @Override
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class, readOnly = false)
-    public void saveSubMenu(List<StRtTgtBase> createList, List<StRtTgtBase> updateList, List<StRtTgtBase> deleteList) throws Exception {
-        registSubMenu(createList);
-        modifySubMenu(updateList);
-        deleteSubMenu(deleteList);
+    public void saveSubMenu(RealGridCUDRequest<StRtTgtBase> realGridCUD) throws Exception {
+    	this.restApiUtil.post(boApiUrl+ "/api/bo/system/menuMgmt/saveSubMenu", realGridCUD, new ParameterizedTypeReference<Response<String>>() {}).getPayload();
     }
 
     @Override
     public int getSubMenuCheck(RtTargetBaseRequest RtTargetBaseRequest) throws Exception {
-        return stRtTgtBaseMapper.getSubMenuCheck(RtTargetBaseRequest);
+        return this.restApiUtil.get(boApiUrl+ "/api/bo/system/menuMgmt/getSubMenuCheck", RtTargetBaseRequest, new ParameterizedTypeReference<Response<Integer>>() {}).getPayload();
     }
 
     @Override
     public int getRtInfoCheck(RtTargetBaseRequest RtTargetBaseRequest) throws Exception {
-        return stRtTgtBaseMapper.getStRtInfoCheck(RtTargetBaseRequest);
+        return this.restApiUtil.get(boApiUrl+ "/api/bo/system/menuMgmt/getRtInfoCheck", RtTargetBaseRequest, new ParameterizedTypeReference<Response<Integer>>() {}).getPayload();
+    }
+    
+    @Override
+    public void modifyMenuRight(Map<String, Object> list) throws Exception {
+    	this.restApiUtil.post(boApiUrl + "/api/bo/system/menuMgmt/modifyMenuRight", list, new ParameterizedTypeReference<Response<String>>() {}).getPayload();
+    }
+    
+    @Override
+    public void saveMenuRightIndiv(Map<String, Object> list) throws Exception {
+    	this.restApiUtil.post(boApiUrl + "/api/bo/system/menuMgmt/saveMenuRightIndiv", list, new ParameterizedTypeReference<Response<String>>() {}).getPayload();
     }
 }
