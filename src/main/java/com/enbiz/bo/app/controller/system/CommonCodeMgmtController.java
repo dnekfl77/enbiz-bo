@@ -96,18 +96,16 @@ public class CommonCodeMgmtController extends BaseController {
 	}
 	
 	/**
-	 * 기준코드목록 저장
-	 *
-	 * @param RealGridCUDRequest<StStdCdEx> 신규, 수정, 삭제목록
-	 * @return 성공 메시지
+	 * 기준코드 목록 저장
+	 * @param realGridCUD 신규, 수정목록
+	 * @return
 	 * @throws Exception
 	 */
 	@PostMapping(value = "/system/commonCodeMgmt.saveStandardCode.do")
 	@ResponseBody
 	public JSONResponseEntity<Void> saveStandardCode(
 			@Valid @RealGridCUD(type = StandardCodeRequest.class) RealGridCUDRequest<StandardCodeRequest> realGridCUD) throws Exception {
-		List<StandardCodeRequest> createList = realGridCUD.getCreate(), updateList = realGridCUD.getUpdate();
-		commonCodeMgmtService.saveStandardCode(createList, updateList);
+		commonCodeMgmtService.saveStandardCode(realGridCUD);
 		return new JSONResponseEntity<Void>(MessageResolver.getMessage("adminCommon.message.saved.successfully"));
 	}
 
