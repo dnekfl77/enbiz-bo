@@ -23,27 +23,6 @@ import com.enbiz.bo.app.entity.StUserBase;
 public interface StUserBaseMapper {
 
     /**
-     * 사용자 목록 수 조회
-     * @param stUserBase
-     * @return 사용자 목록 수
-     */
-    int getUserListCount(StUserBaseRequest stUserBase) throws Exception;
-
-    /**
-     * 사용자 목록 조회
-     * @param stUserBase
-     * @return 사용자 목록
-     */
-    List<StUserBaseResponse> getUserList(StUserBaseRequest stUserBase) throws Exception;
-
-    /**
-     * 사용자 목록 조회 (페이징 처리 미포함)
-     * @param stUserBase
-     * @return 사용자 목록
-     */
-    List<StUserBaseResponse> getUserListNoPage(StUserBaseRequest stUserBase);
-
-    /**
      * 사용자아이디, 전화번호 로 사용여부 'Y' 인 사용자 조회
      * @param loginRequest
      * @return
