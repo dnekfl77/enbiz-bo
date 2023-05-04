@@ -79,8 +79,7 @@ public class UserFavoriteMenuMgmtController extends BaseController {
 	@PostMapping(value = "/system/userFavoriteMenuMgmt.saveUserFavoriteMenu.do")
 	@ResponseBody
 	public JSONResponseEntity<Void> saveUserFavoriteMenu(@RealGridCUD(type = StUserFvtInfo.class) RealGridCUDRequest<StUserFvtInfo> realGridCUD ) throws Exception {
-		List<StUserFvtInfo> updateList = realGridCUD.getUpdate(), deleteList = realGridCUD.getDelete();
-		userFavoriteMenuMgmtService.saveUserFavoriteMenu(updateList,deleteList);
+		userFavoriteMenuMgmtService.saveUserFavoriteMenu(realGridCUD);
 		JSONResponseEntity<Void> jsonResponseEntity = new JSONResponseEntity<Void>(MessageResolver.getMessage("adminCommon.message.saved.successfully"));
 		return jsonResponseEntity;
 	}
