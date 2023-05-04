@@ -90,7 +90,9 @@ spring:
       message.system.userAccessHistoryInquiry,
       message.system.userFavoriteMenuMgmt,
       message.system.passwordChange,
-      message.system.individualRightMgmt
+      message.system.individualRightMgmt,
+      message.system.batchMgmt,
+      message.system.batchLog 
 # TODO redis session 설정은 dev,stg,prd 설정으로 이동
 #  redis:
 #    host: 54.180.43.197
