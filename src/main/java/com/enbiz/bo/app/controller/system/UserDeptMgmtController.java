@@ -92,9 +92,7 @@ public class UserDeptMgmtController extends BaseController {
     @ResponseBody
     public JSONResponseEntity<Void> saveUserDeptList(
             @RealGridCUD(type = UserDeptRequest.class)RealGridCUDRequest<UserDeptRequest> realGridCUD) throws Exception{
-    	log.debug("[realGridCUD]{}", realGridCUD);
-        List<UserDeptRequest> createList = realGridCUD.getCreate(), updateList = realGridCUD.getUpdate(), deleteList = realGridCUD.getDelete();
-        userDeptMgmtService.saveUserDeptList(createList, updateList, deleteList);
+        userDeptMgmtService.saveUserDeptList(realGridCUD);
         JSONResponseEntity<Void> jsonResponseEntity = new JSONResponseEntity<Void>(MessageResolver.getMessage("adminCommon.message.saved.successfully"));
         return jsonResponseEntity;
     }

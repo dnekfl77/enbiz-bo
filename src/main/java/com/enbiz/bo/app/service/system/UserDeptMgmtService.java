@@ -2,11 +2,13 @@ package com.enbiz.bo.app.service.system;
 
 import java.util.List;
 
+import com.enbiz.bo.app.dto.request.realgrid.RealGridCUDRequest;
 import com.enbiz.bo.app.dto.request.system.UserDeptRequest;
 import com.enbiz.bo.app.dto.response.system.UserDeptResponse;
+
 public interface UserDeptMgmtService {
 
-    /**
+	   /**
      * 부서 계층구조 목록 조회
      * @return 표준 분류 목록
      * @throws Exception
@@ -36,6 +38,5 @@ public interface UserDeptMgmtService {
      * @param deleteList 삭제 목록
      * @throws Exception
      */
-    void saveUserDeptList(List<UserDeptRequest> createList, List<UserDeptRequest> updateList, List<UserDeptRequest> deleteList) throws Exception;
-
+    void saveUserDeptList(RealGridCUDRequest<UserDeptRequest> realGridCUD) throws Exception;
 }

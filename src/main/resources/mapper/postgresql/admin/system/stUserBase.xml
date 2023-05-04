@@ -169,13 +169,5 @@
 		  ) v
 	</select>
 
-	<!-- 특정부서가 세팅되어 있는 사용자 정보 조회 -->
-	<select id="getUserInfoMappedToDept"  parameterType="java.lang.String" resultType="StUserBase">
-		/* stUserBase.getUserInfoMappedToDept */
-		SELECT USER_ID, DEPT_CD
-		  FROM ST_USER_BASE
-		WHERE DEPT_CD = #{deptCd}
-		   LIMIT 1
-	</select>
 
 </mapper>

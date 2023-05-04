@@ -74,10 +74,4 @@ public interface StUserBaseMapper {
      */
     int getDeptUserListCount(CsDeptUserRequest request);
     
-    /**
-     * 특정부서가 세팅되어 있는 사용자 정보 조회
-     * @return
-     */
-    StUserBase getUserInfoMappedToDept(String deptCd);
-    
 }
