@@ -92,7 +92,8 @@ spring:
       message.system.passwordChange,
       message.system.individualRightMgmt,
       message.system.batchMgmt,
-      message.system.batchLog 
+      message.system.batchLog ,
+      message.adjust.vendorCommission
 # TODO redis session 설정은 dev,stg,prd 설정으로 이동
 #  redis:
 #    host: 54.180.43.197
